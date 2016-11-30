@@ -1,0 +1,145 @@
+/**/
+.new_goodbox{
+	width: 100%;
+	overflow:auto;
+	float: right;
+}
+.new_goodbox dl dt .my_checkbox{
+	float: left;
+	display: block;
+	width: 14px;
+	height: 14px;
+	border-radius: 7px;
+	border: #DDDDDD 1px solid;
+	margin-top: 54px;
+	margin: 4px;
+	background: #fbfbfb;
+}
+.new_goodbox dl{
+	width: 94%;
+	padding: 0 3%;
+	overflow: hidden;
+	height: 100px;
+	margin: auto;
+	background: white;
+	margin-top: 10px;
+}
+.new_goodbox dl dt{
+	width: 84px;
+	float: left;
+	height: 100px;	
+}
+.new_goodbox dl dt a{
+	float: left;
+	display: block;
+	width: 70px;
+	height: 70px;
+	border: #DDDDDD 1px solid; 
+	margin-top: 15px;
+	
+}
+.new_goodbox dl dt a img{
+	width: 60px;
+	height: 60px;
+	margin-top: 7px;
+}
+.new_goodbox dl dd{
+	max-width: 70%;
+	float: right;
+	padding:14px 0;
+
+}
+.new_goodbox dl dd p{
+	width: 100%;
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	-o-text-overflow:ellipsis;
+	white-space:nowrap;
+	float: left;
+}
+.new_goodbox dl dd .fen_div01{
+	width: 100%;
+	margin-top: 10px;
+	overflow: hidden;
+	float:left;
+}
+.new_goodbox dl dd .fen_div01 span{
+	float: left;
+	width: 40px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	background: #f43744;
+	color: white;
+}
+.new_goodbox dl dd .fen_div01 a{
+	float: right;
+	width: 20px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	background: #fafafa;
+	border: #DDDDDD 1px solid;
+}
+.new_goodbox dl dd .fen_div01 a:nth-of-type(1){
+	border-left: none;
+	margin-right:4px;
+}
+.new_goodbox dl dd .fen_div01 a:nth-of-type(2){
+	border-right: none;
+}
+.new_goodbox dl dd .fen_div01 input{
+	float: right;
+	text-align: center;
+	width: 40px;
+	height: 20px;
+	border: #DDDDDD 1px solid;
+}
+.new_goodbox dl dd .fen_div02{
+	width: 100%;
+	margin-top:9px;
+	overflow: hidden;
+	float:left;
+}
+.new_goodbox dl dd .fen_div02 a{
+	float: left;
+	color: #cc1421;
+}
+.new_goodbox dl dd .fen_div02 span{
+	float:right;
+	margin-right: 8px;
+}
+.switch-title-group {
+	overflow: hidden;
+	background: #fff;
+}
+.switch-title-group li {
+	float: left;
+	width: 33.33%;
+}
+.switch-title-group li a {
+	display: block;
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.1em;
+	text-align: center;
+}
+.switch-title-group li.current a {color: #cc1421;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1 @@
+<div class="alert alert-danger">您没有权限获取数据信息</div>

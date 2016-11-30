@@ -1,0 +1,458 @@
+@charset "utf-8";
+/*CSS Document*/
+
+/*账号设置*/
+.base-info .message {
+	overflow: hidden;
+	padding: 4%;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.base-info .message label {
+	float: left;
+	height: 60px;
+	line-height: 60px;
+	font-size: 1.2em;
+	color: #666;
+	text-align: left;
+}
+.base-info .message .editable-info {
+	float: right;
+}
+.base-info .message .editable-info a {
+	display: block;
+	padding-right: 30px;
+	height: 60px;
+	line-height: 60px;
+	text-align: right;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 22px;
+					background-size: auto 22px;
+}
+.base-info .message .head-pic {
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+}
+
+.common-info .messagebox {
+	overflow: hidden;
+	padding: 2% 4%;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.common-info .messagebox label {
+	float: left;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.2em;
+	color: #666;
+	text-align: left;
+}
+.common-info .messagebox .editable-info {
+	float: right;
+	padding-right: 30px;
+	height: 40px;
+	line-height: 40px;
+	text-align: right;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 22px;
+					background-size: auto 22px;
+}
+.common-info .messagebox .editable-info .jump {
+	display: block;
+	padding-right: 22px;
+	height: 40px;
+	text-align: right;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 22px;
+					background-size: auto 22px;
+}
+.common-info .messagebox .no-icon-next {
+	width: 75%;
+	padding-right: 0;
+	background: none;
+}
+.common-info .messagebox .editable-info input {
+	margin-top: 5px;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	color: #999;
+	text-align: right;
+	border: none;
+}
+/*模拟select选择框*/
+.btn-select {
+	position: relative;
+	display: inline-block;
+	margin-top: 5px;
+	width: 30%;
+	height: 30px;
+	font: 14px/20px "Microsoft YaHei";
+	color: #999;
+	text-align: right;
+}
+.btn-select .cur-select {
+	position: absolute;
+	display: block;
+	padding-right: 20px;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	text-align: right;
+	text-indent: 10px;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 16px;
+					background-size: auto 16px;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+.btn-select select {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	opacity: 0;
+	filter: alpha(opacity: 0;);
+	font: 14px/20px "Microsoft YaHei";
+}
+.btn-select select option {
+	text-indent: 10px;
+}
+.common-info .messagebox .editable-info .select-date {
+	padding-right: 20px;
+	width: 90%;
+	text-align: right;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 16px;
+					background-size: auto 16px;
+}
+
+.jump-shipping-address {margin-top: 4%;}
+
+/*账号设置 END*/
+
+/*收货地址*/
+.shipping-address dt,
+.shipping-address dd {
+	margin-bottom: 4%;
+	background: #fff;
+}
+.shipping-address .address {
+	padding: 2% 0;
+	border-bottom: 1px solid #ddd;
+}
+.shipping-address .address .div1 {
+	padding: 0 2%;
+	line-height: 30px;
+	font-size: 1.2em;
+}
+.shipping-address .address .div2 {
+	padding: 0 2%;
+	line-height: 20px;
+	font-size: 1.1em;
+}
+
+.shipping-address .editable {
+	padding: 2%;
+	text-align: right;
+	border-bottom: 1px solid #ddd;
+}
+.shipping-address .editable a {
+	display: inline-block;
+	padding-left: 22px;
+	margin-left: 10px;
+	height: 20px;
+	line-height: 20px;
+	background-repeat: no-repeat;
+	background-position: left center;
+	-webkit-background-size: auto 16px;
+					background-size: auto 16px;
+}
+.shipping-address .editable a.a1 {background-image: url(/client/images/x_icon_setcollect.png);} 
+.shipping-address .editable a.a2 {background-image: url(/client/images/x_icon_modify.png);} 
+.shipping-address .editable a.a3 {background-image: url(/client/images/x_icon_delete.png);} 
+/*收货地址 END*/
+
+/*选择城区*/
+.add-shipping-address .current-location {
+	padding: 2%;
+	background: #fff;	
+	border-bottom: 1px solid #ddd;
+}
+.add-shipping-address .current-location div {
+	padding-left: 20px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 1.2em;
+	background: url(/client/images/x_icon_current_location.png) no-repeat left center;
+	-webkit-background-size: auto 20px;
+					background-size: auto 20px;
+}
+.add-shipping-address .current-location div span {color: #666;}
+
+.add-shipping-address .select-city {
+	overflow: hidden;
+	padding: 2%;
+	font-size: 1.2em;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.add-shipping-address .select-city span {
+	float: left;
+	height: 30px;
+	line-height: 30px;
+}
+.add-shipping-address .select-city select {
+	position: relative;
+	float: right;
+	margin-left: 2%;
+	width: 80%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 1em;
+	color: #666;
+	border: none;
+	-webkit-appearance:none;
+					appearance:none;
+}
+.add-shipping-address .select-city em {
+	position: absolute;
+	right: 3%;
+	top: 14%;
+	width: 10px;
+	height: 30px;
+	background: url(/client/images/x_icon_next_1.png) no-repeat right center;	
+	-webkit-background-size: auto 20px;
+					background-size: auto 20px;
+}
+@media screen and (min-width: 640px) {
+	.add-shipping-address .select-city select{width: 88%;}
+	.add-shipping-address .select-city em {right: 2.8%;top: 21%;}
+}
+@media screen and (min-width: 1024px) {
+	.add-shipping-address .select-city select{width: 90%;}
+	.add-shipping-address .select-city em {right: 2.5%;}
+}
+
+/*选择城区 END*/
+
+/*添加、编辑收货地址*/
+.edit-shipping-address .edit-info {
+	overflow: hidden;
+	padding: 2%;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.edit-shipping-address .edit-info label {
+	float: left;
+	width: 25%;
+	max-width: 75px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 1.1em;
+}
+.edit-shipping-address .edit-info input {
+	float: right;
+	width: 75%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 1.1em;
+	color: #666;
+	text-align: right;
+	border: none;
+}
+.edit-shipping-address .edit-city {
+	float: right;
+	padding-right: 20px;
+	width: 75%;
+	height: 30px;
+	line-height: 30px;
+	color: #666;
+	text-align: right;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 16px;
+					background-size: auto 16px;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+@media screen and (min-width: 360px){
+	.edit-shipping-address .edit-info input,
+	.edit-shipping-address .edit-city {width: 78%;}
+}
+@media screen and (min-width: 414px){
+	.edit-shipping-address .edit-info input,
+	.edit-shipping-address .edit-city {width: 80%;}
+}
+@media screen and (min-width: 640px){
+	.edit-shipping-address .edit-info input,
+	.edit-shipping-address .edit-city {width: 87%;}
+}
+@media screen and (min-width: 768px){
+	.edit-shipping-address .edit-info input,
+	.edit-shipping-address .edit-city {width: 89%;}
+}
+@media screen and (min-width: 1024px){
+	.edit-shipping-address .edit-info input,
+	.edit-shipping-address .edit-city {width: 92%;}
+}
+/*添加、编辑收货地址 END*/
+
+/*账户安全*/
+.account-security .edit-info {
+	overflow: hidden;
+	padding: 2%;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.account-security .edit-info label {
+	float: left;
+	width: 25%;
+	max-width: 75px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 1.1em;
+}
+.account-security .edit-info .edit-city {
+	float: right;
+	padding-right: 20px;
+	width: 75%;
+	height: 30px;
+	line-height: 30px;
+	color: #666;
+	text-align: right;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 16px;
+					background-size: auto 16px;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+/*账户安全 END*/
+
+/*设置新密码*/
+.change-password .title {
+	padding: 2%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 1.2em;
+	color: #666;
+}
+.change-password .password {
+	padding: 0 2%;
+	width: 96%;
+	height: 40px;
+	line-height: 40px;
+	border: none;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+/*设置新密码 END*/
+
+/*验证码*/
+.security-code .get-code {
+	overflow: hidden;
+	padding: 2%;
+	margin: 4% auto;
+	width: 96%;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.2em;
+	color: #666;
+	background: #fff;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+.security-code .get-code label {
+	float: left;
+	width: 30%;
+	max-width: 90px;
+}
+.security-code .get-code input {
+	float: left;
+	width: 40%;
+	height: 40px;
+	line-height: 40px;
+	border: none;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+#btn-send-code {
+	float: right;
+	padding: 0 5px;
+	margin-top: 5px;
+	width: 30%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 0.9em;
+	border-style:solid;
+	border-width:1px;
+	background:#fff;
+	border-radius: 3px;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+.security-code .get-code .btn-send-code-agin {
+	float: right;
+	padding: 0 5px;
+	margin-top: 5px;
+	width: 30%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 12px;
+	color: #999;
+	border: 1px solid #999;
+	border-radius: 3px;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+.security-code .get-code .btn-send-code-agin span {color: #cc1421;}
+.security-code .change-phone-num {
+	padding: 2%;
+	height: 30px;
+	line-height: 30px;
+}
+.security-code .change-phone-num a {color: #cc1421;}
+
+/*验证码 END*/
+
+/*门店归属*/
+.home-stores div {
+	padding: 2%;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.2em;
+	color: #666;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.home-stores .title {
+	margin-top: 4%;
+	color: #333;
+}
+.home-stores .title select {
+	display: block;
+	margin: 5px 0;
+	width: 60%;
+	height: 30px;
+	font-size: 1.1em;
+	color: #666;
+	background: url(/client/images/x_icon_arrow.png) no-repeat right center;
+	border-bottom: 1px solid #ddd;
+	-webkit-appearance:none;
+					appearance:none;
+}
+.home-stores .stores-list {font-size: 1.1em;}
+/*门店归属 END*/
+.loginout {
+    display: block;
+    border-radius: 5px;
+    width: 96%;
+    height: 36px;
+    margin: 5px 2%;
+    background: #cc1421;
+    line-height: 36px;
+    color: #ffffff;
+    font-size: 1.2em;
+}

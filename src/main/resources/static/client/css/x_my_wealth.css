@@ -1,0 +1,542 @@
+@charset "utf-8";
+/* CSS Document */
+
+/*余额充值*/
+.recharge {
+	margin: 4% 0;
+	padding: 7px 2%;
+	width: 100%;
+	background: #fff;
+	border-top: 1px solid #9f9f9f;
+	border-bottom: 1px solid #9f9f9f;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+.recharge div {
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 1.5em;
+	color: #666;
+}
+.recharge div span.sp1 {float: left;}
+.recharge div span.sp2 {float: right;}
+.recharge div input {
+	float: left;
+	margin: 0 2%;
+	height: 30px;
+	line-height: 30px;
+	font-size: 0.8em;
+	border: 0;
+	width:60%;
+	vertical-align: middle;
+}
+
+/*提现金额*/
+.withdrawal-amount {
+	padding: 2%;
+	margin-bottom: 4%;
+	font-size: 1.1em;
+	color: #999;
+}
+.withdrawal-amount span {color: #fd9b1d;}
+/*充值方式*/
+.pay-way {
+	background: #fff;
+}
+.pay-way .title {
+	padding: 4% 2%;
+	width: 96%;
+	height: 30px;	
+	line-height: 30px;
+	border-bottom: 1px solid #dfdfdf;
+}
+.pay-way .paylist {
+	overflow: hidden;
+	padding: 2% 0;
+	width: 100%;
+	border-bottom: 1px solid #dfdfdf;
+}
+.pay-way .paylist .left {
+	float: left;
+	width: 30%;
+}
+.pay-way .paylist .pre-deposit {
+	line-height: 40px;
+	font-size: 16px;
+	text-align: center;
+}
+.pay-way .paylist .left img {
+	display: block;
+	margin: 0 auto;
+}
+.pay-way .paylist .way {
+	width: 78px;
+	height: 40px;
+}
+.pay-way .paylist .zfb {
+	float: left;
+	width: 60%;
+}
+.pay-way .paylist .zfb div {
+	line-height: 20px;
+}
+.pay-way .paylist .zfb div.div2 {
+	overflow: hidden;
+	width: 100%;
+	height: 20px;
+	color: #999;
+}
+.pay-way .paylist .right {
+	float: left;
+	width: 10%;
+}
+.pay-way .paylist .check {
+	display: block;
+	margin: 8px auto;
+	width: 24px;
+	height: 24px;
+}
+
+/*下一步按钮*/
+.btn-next {
+	display: block;
+	margin: 4% auto;
+	width: 96%;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.5em;
+	color: #fff;
+	background: #cc1421;
+	border-radius: 3px;
+}
+
+/*选择支付方式*/
+.next-page {
+	position: fixed;
+	left: 0;
+	bottom: 0;
+	display: block;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	color: #999;
+	text-align: center;
+}
+/*余额充值 END*/
+
+/*我的产品劵*/
+.tab-view {
+	width: 100%;
+}
+.tab-view .title-1 {
+	overflow: hidden;
+	padding: 0 2%;
+	width: 96%;
+	height: 40px;
+	background: #fff;
+}
+.tab-view .title-1 li {
+	float: left;
+	width: 33.33%;
+}
+.tab-view .title-1 li a {
+	display: block;
+	width: 100%;
+	height: 40px;
+	line-height: 40px;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+.tab-view .title-1 li.active a {
+	border-bottom: 3px solid #cc1421;
+}
+
+/*优惠劵总数*/
+.coupons-total {
+	margin: 10px 0;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	background-color: #fff;
+}
+.coupons-total span {color: #cc1421;}
+
+.tab-content li {
+	display: none;
+	padding: 2%;
+}
+.tab-content li:first-child {display: block;}
+.tab-content li section {
+	margin-bottom: 4%;
+	width: 100%;
+	text-align: center;
+}
+.tab-content li section a {display: block;}
+.tab-content li section .bg-pic {
+	position: relative;
+	margin: 0 auto;
+}
+.tab-content li section div.div1 {
+	position: absolute;
+	right: 8px;
+	bottom: 8px;
+	color: #ddd;
+	text-align: right;
+}
+.tab-content li section div.div2 {
+	position: absolute;
+	left: 5px;
+	top: 20px;
+	color: #fea710;
+	font-size: 10px;
+}
+.tab-content li section div.div2 span {
+	font-size: 3em;
+}
+.tab-content li.li2 section div.div2,
+.tab-content li.li3 section div.div2 {
+	color: #ddd;
+}
+.tab-content li section div.div3 {
+	position: absolute;
+	left: 130px;
+	bottom: 45px;
+	color: #999;
+}
+.tab-content li section .product-pic {
+	position: absolute;
+	left: 30px;
+	top: 20px;
+	width: 50px;
+	height: 50px;
+}
+@media screen and (min-width: 360px){
+	.tab-content li section div.div3 {
+		left: 145px;
+		bottom: 50px;
+	}
+	.tab-content li section .product-pic {
+		left: 30px;
+		top: 20px;
+		width: 60px;
+		height: 60px;
+	}
+}
+@media screen and (min-width: 375px){
+	.tab-content li section div.div3 {
+		left: 150px;
+		bottom: 60px;
+	}
+}
+@media screen and (min-width: 414px){
+	.tab-content li section div.div3 {
+		left: 165px;
+		bottom: 60px;
+	}
+	.tab-content li section .product-pic {
+		left: 45px;
+		top: 30px;
+	}
+}
+@media screen and (min-width: 640px){
+  .tab-content li section div.div1 {
+  	font-size: 2em;
+  	right: 30px;bottom:18px;
+  }
+  .tab-content li section div.div2 {
+		left: 38px;
+		top: 20px;
+		font-size: 5em;
+  }
+  .tab-content li section div.div2 span {
+		font-size: 1.5em;
+  }
+  .tab-content li section div.div3 {
+  	font-size: 2em;
+		left: 250px;
+		bottom: 88px;
+  }
+  .tab-content li section .product-pic {
+		left: 80px;
+		top: 50px;
+		width: 80px;
+		height: 80px;
+  }
+}
+@media screen and (min-width: 768px) {
+  .tab-content li section div.div3 {
+		left: 306px;
+		bottom: 110px;
+  }
+  .tab-content li section .product-pic {
+		left: 110px;
+		top: 50px;
+		width: 100px;
+		height: 100px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  .tab-content li section div.div2 {
+		left: 100px;
+		top: 80px;
+  }
+  .tab-content li section div.div3 {
+		left: 406px;
+		bottom: 155px;
+  }
+  .tab-content li section .product-pic {
+		left: 130px;
+		top: 65px;
+		width: 150px;
+		height: 150px;
+  }
+}
+/*我的产品劵 END*/
+
+/*我的钱包*/
+.total-assets{
+	background: #2c82d2;
+}
+.total-assets .title {
+	padding: 4% 0;
+	line-height: 40px;
+	font-size: 1.3em;
+	color: #fff;
+	text-align: center;
+}
+.total-assets .recharge-withdrawal {
+	overflow: hidden;
+	padding-bottom: 4%;
+}
+.total-assets .recharge-withdrawal .div1,
+.total-assets .recharge-withdrawal .div2 {
+	float: left;
+	width: 50%;
+	line-height: 20px;
+	color: #fff;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+.total-assets .recharge-withdrawal .div1 {border-right: 1px solid #fff;}
+
+.total-assets .recharge-withdrawal .div1 a,
+.total-assets .recharge-withdrawal .div2 a {
+	margin-left: 5px;
+	color: #fea710;
+}
+
+/*提示信息*/
+.tips {
+	overflow: hidden;
+	padding: 2%;
+	width: 96%;
+	line-height: 20px;
+	color: #999;
+	font-size: 0.8em;
+	text-align: left;
+}
+
+/*余额明细*/
+.balance-details .title {
+	padding: 2%;
+	line-height: 30px;
+	font-size: 1.2em;
+	color: #666;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+
+.balance-details .details-list {
+	overflow: hidden;
+	padding: 2%;
+	font-size: 1.2em;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.balance-details .details-list .div1,
+.balance-details .details-list .div2 {
+	float: left;
+	width: 50%;
+	text-align: left;
+}
+.balance-details .details-list .div2 {text-align: right;}
+.balance-details .details-list .div1 div,
+.balance-details .details-list .div2 div {line-height: 24px;}
+
+.balance-details .details-list .div1 div:last-child,
+.balance-details .details-list .div2 div:last-child {font-size: 0.9em;}
+/*我的钱包 END*/
+
+/*我的财富*/
+.mine-wealth .wallet-balance {	
+	padding: 4%;
+	background: #fff;
+}
+.mine-wealth .wallet-balance a {
+	overflow: hidden;
+	display: block;
+}
+.mine-wealth .wallet-balance .div1 {
+	float: left;
+	padding-left: 50px;
+	height: 40px;
+	line-height: 40px;
+	font-size: 1.3em;
+	text-align: left;
+	background: url(/client/images/x_icon_balance.png) no-repeat left center;
+	-webkit-background-size: auto 40px;
+					background-size: auto 40px;
+}
+.mine-wealth .wallet-balance .div1 span {color: #ffa146;}
+
+.mine-wealth .wallet-balance .div2 {
+	float: right;
+	width: 20px;
+	height: 40px;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 20px;
+					background-size: auto 20px;
+}
+
+.mine-wealth .sec2 {
+	margin-bottom: 4%;
+	width: 100%;
+	height: 50px;
+	line-height: 50px;
+	background: #fff;
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+}
+.mine-wealth .sec2 .div1,
+.mine-wealth .sec2 .div2 {
+	float: left;
+	width: 50%;
+	-webkit-box-sizing: border-box;
+					box-sizing: border-box;
+}
+.mine-wealth .sec2 .div1 {border-right: 1px solid #ddd;}
+.mine-wealth .sec2 .div1 a,
+.mine-wealth .sec2 .div2 a {
+	display: block;
+	width: 100%;
+	color: #999;
+	background-repeat: no-repeat;
+	background-position: 30% center;
+	-webkit-background-size: auto 20px;
+					background-size: auto 20px;
+}
+.mine-wealth .sec2 .div1 a {background-image: url(/client/images/x_icon_recharge.png);}
+.mine-wealth .sec2 .div2 a {
+	background-image: url(/client/images/x_icon_withdraw.png);
+	-webkit-background-size: auto 16px;
+					background-size: auto 16px;
+}
+
+/*优惠劵*/
+.mine-wealth .coupon {	
+	padding: 2% 4%;
+	background: #fff;
+	border-bottom: 1px solid #ddd;
+}
+.mine-wealth .coupon a {
+	overflow: hidden;
+	display: block;
+}
+.mine-wealth .coupon .div1 {
+	float: left;
+	padding-left: 30px;
+	height: 40px;
+	line-height: 40px;
+	text-align: left;
+	background: url(/client/images/x_icon_product_cert.png) no-repeat left center;
+	-webkit-background-size: auto 25px;
+					background-size: auto 25px;
+}
+.mine-wealth .coupon .div1 span {color: #ffa146;}
+
+.mine-wealth .coupon .div2 {
+	float: right;
+	padding-right: 20px;
+	height: 40px;
+	line-height: 40px;
+	text-align: left;
+	background: url(/client/images/x_icon_next.png) no-repeat right center;
+	-webkit-background-size: auto 16px;
+					background-size: auto 16px;
+}
+
+.mine-wealth .cash-coupon .div1 {background-image: url(/client/images/x_icon_cash_cert.png);}
+/*我的财富 END*/
+
+/*支付成功*/
+.success-pay {
+	margin-top: 30px;
+	width: 100%;
+	text-align: center;
+}
+.success-pay img {
+	width: 80px;
+	height: 80px;
+}
+.success-pay div {
+	line-height: 40px;
+	font-size: 1.5em;
+}
+/*支付成功 END*/
+
+/* 提现 */
+.tixian {
+    margin-top: 4%;
+    border-top: 1px solid #ddd;
+}
+.tixian .inp_text {
+    padding: 0 2%;
+    width: 96%;
+    height: 40px;
+    line-height: 40px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+.tixian .inp_text label {
+    float: left;
+    width: 15%;
+    text-align: center;
+}
+.tixian .inp_text .text {
+    float: left;
+    margin: 5px 0;
+    width: 85%;
+    height: 30px;
+    line-height: 30px;
+    border: none;
+}
+.tixian .inp_text .select {
+    color: #666;
+    background: url(img/x_icon_next.png) no-repeat right center;
+    -webkit-background-size: auto 15px;
+    background-size: auto 15px;
+    -webkit-appearance:none;
+    appearance:none;
+    outline: none;
+}
+.tixian .money {
+    margin-top: 4%;
+    border-top: 1px solid #ddd;
+}
+.tixian .tips {text-align: center;}
+.tixian .tips span {color: #f60;}
+/* 提现结束 */
+
+/* 优惠券使用说明 */
+.word-description {
+    margin: 2%;
+    padding: 2%;
+    width: 92%;
+    min-height: 300px;
+    background-color: #fff;
+}
+/* 优惠券使用说明结束 */

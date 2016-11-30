@@ -1,0 +1,477 @@
+.top_head{width: 100%; height: 1.2rem; background: #cc1421; float: left;}
+.top_head .head_back{width: 30%; height: 1.2rem; background: url(/client/images/back_icon.png) no-repeat 20px; background-size: 20%; float: left;}
+.top_head .head_title{width: 40%; height: 1.2rem;text-align: center; font-size:0.6rem; color: white; line-height: 1.2rem; float: left; padding-right: 30%;}
+
+
+
+.index_banner{
+	width: 100%;
+	overflow: hidden;	
+	position: relative;
+}
+.scroll_box{
+	width: 500%;
+	height: 100%;
+	position: absolute;
+	left: -200%;
+	top: 0px;
+	overflow: hidden;		
+}
+.scroll_box img{
+	width: 20%;
+	height: 100%;
+	float: left;
+}
+.scroll_btn{
+	position: absolute;
+	left: 0px;
+	bottom: 6px;
+	width: 100%;
+
+}
+.scroll_btn ul{
+	margin: auto;
+	width: 80px;
+	overflow: hidden;
+}
+.scroll_btn ul li{
+	float: left;
+	width: 10px;
+	height: 10px;
+	margin-left: 4px;
+	border-radius: 5px;
+	border: #d0d0d0 1px solid;
+	background: white;
+}
+.index_nav{
+	width: 100%;
+	margin-top: 20px;
+}
+.index_nav li{
+	width: 100%;
+	float: left;
+	margin-top: 6px;
+}
+.index_nav li a{
+	width: 25%;
+	display: block;
+	text-align: center;
+	float: left;
+}
+.index_nav li a img{
+	width: 60%;
+	height: 60%;
+}
+.index_nav li a span{
+	width: 100%;
+	display: block;
+	margin-top: 6px;
+	font-size: 1.1em;
+}
+.index_content{
+	width: 100%;
+	overflow: hidden;
+}
+.index_news{
+	width: 90%;
+	height: 40px;
+	padding:4px 5%;
+	margin-top: 10px;
+	overflow: hidden;
+	border-top:#e5e5e5 1px solid ;
+	border-bottom:#e5e5e5 1px solid ;	
+}
+.index_news dt{
+	width: 33%;
+	height: 40px;
+	float: left;
+	line-height: 40px;
+	/*background: url(../img/scroll_news.png) no-repeat center;
+	background-size: 140px;*/
+	padding-right: 1%;
+	text-align: center;
+}
+.index_news dt img{
+	height: 26px;
+	margin-top: 7px;
+	
+}
+.index_news dd{
+	width: 65%;
+	height: 38px;
+	float: left;
+	border-left:#DDDDDD 1px solid ;
+}
+.scroll_newsbox{
+	width: 100%;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+	
+}
+.scroll_newsbox a{
+	display: block;
+	width: 96%;
+	padding-left: 4%;
+	height: 40px;
+	line-height: 40px;
+	text-align: left;
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	-o-text-overflow:ellipsis;
+	white-space:nowrap;
+}
+
+.index_goods01{
+	width: 100%;
+	padding-bottom: 2%;
+
+}
+.index_goods01 dt{
+	width: 100%;
+}
+.index_goods01 dt p{
+	width: 65%;
+	float: left;
+	color: #CC1421;
+	font-size: 1.6em;
+	margin-left: 5%;
+	padding: 2% 0;
+}
+.index_goods01 dt p span{
+	color: #999999;
+	font-size: 0.8em;
+	margin-left: 4px;
+}
+.index_goods01 dt a{
+	display: block;
+	width: 40px;
+	height: 30px;
+	float: right;
+}
+.index_goods01 dt a img{
+	height:20px;
+	margin-top: 5px;
+}
+.index_goods01 dd{
+	width: 100%;
+	float: left;
+	position: relative;
+}
+
+.index_scroll_goods{
+	width:230%;
+	height: 100%;
+	overflow: hidden;
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+.index_scroll_goods a{
+	display: block;
+	width: 11.5%;
+	height: 100%;
+	margin-left: 1%;
+	float: left;
+}
+.index_scroll_goods a div{
+	width: 100%;
+	height: 76%;
+	border: #e8e8e8 1px solid;
+	position: relative;
+}
+.index_scroll_goods a div img{
+	width: 80%;
+	height: 90%;
+	margin-top: 10%;
+}
+.index_scroll_goods a  p{
+	text-align: center;
+	color: #333333;
+	font-size: 1.1em;
+	margin-top: 6%;
+}
+.index_scroll_goods a div span{
+	width: 40%;
+	padding: 3% 0;
+	display: block;
+	text-align: center;
+	color: white;
+	position: absolute;
+	
+}
+.index_scroll_goods a span:nth-last-child(2){
+	background: #f43744;
+	right: 0px;
+	bottom: 4px;
+}
+.index_scroll_goods a span:nth-last-child(1){
+	background: #f99638;
+	right: 0px;
+	bottom: 8px;
+}
+
+.index_goods02{
+	width: 100%;
+	overflow: hidden;
+}
+.index_goods02 dl{
+	width: 100%;
+	height: 40%;
+	overflow: hidden;
+	border-bottom: #e5e5e5 1px solid;
+	border-top: #e5e5e5 1px solid;
+
+}
+.index_goods02 dl dt{
+	width: 46%;
+	height: 95%;
+	padding:2% 2%;
+	float: left;
+	overflow: hidden;
+}
+.my_indexgood{
+	width: 100%;
+	height: 100%;
+	display: block;
+	text-align:left;
+}
+.my_indexgood h3{
+	font-size: 1.2em;
+	float: left;
+}
+.my_indexgood .guide{
+	width: 40%;
+	height: 20px;
+	float: left;
+	background: url(/client/images/index_good_guideright.png) no-repeat 10px;
+	background-size: 16px;
+}
+
+.my_indexgood p{
+	width: 100%;
+	text-align: left;
+	float: left;
+}
+.my_indexgood span{
+	display: block;
+	width: 40%;
+	float: left;
+	color:#cc1421 ;
+}
+.my_indexgood div{
+	width: 60%;
+	float: right;
+	height: 70%;
+}
+.my_indexgood div img{
+	width: 100%;
+	height: 100%;
+	
+}
+.index_goods02 dl dd{
+	width: 46%;
+	height: 40%;
+	padding:2% 2%;
+	float: left;
+	overflow: hidden;
+}
+.my_indexgood02{
+	width: 100%;
+	height: 100%;
+	display: block;
+	text-align:left;
+	position: relative;
+}
+.my_indexgood02 .rich_box{
+	float: left;
+	width: 56%;
+	height: 100%;
+}
+.my_indexgood02 h3{
+	font-size: 1.2em;
+	float: left;
+	display: block;	
+}
+.my_indexgood02 .guide{
+	width: 34%;
+	height: 20px;
+	float: left;
+	background: url(/client/images/index_good_guideright.png) no-repeat 10px;
+	background-size: 16px;
+	margin: 0px;
+}
+
+.my_indexgood02 p{
+	width: 100%;
+	text-align: left;
+	float: left;
+	overflow: hidden; 
+	text-overflow: ellipsis;
+	-o-text-overflow:ellipsis;
+	white-space:nowrap;
+}
+.my_indexgood02 span{
+	display: block;
+	width: 70%;
+	float: left;
+	color:#cc1421 ;
+}
+.my_indexgood02 div{
+	width: 44%;
+	height: 100%;
+	float: right;
+}
+.my_indexgood02 div img{
+	width: 80%;
+	height: 80%;
+	
+}
+.index_goods02 ul{
+	width: 100%;
+	height: 60%;
+	overflow: hidden;
+	border-bottom: #e5e5e5 1px solid;
+	border-top: #e5e5e5 1px solid;
+
+}
+.index_goods02 ul li{
+	width: 30%;
+	height: 95%;
+	padding:2% 1%;
+	float: left;
+	overflow: hidden;
+}
+.my_indexgood03{
+	width: 100%;
+	height: 100%;
+	display: block;
+	text-align:left;
+}
+.my_indexgood03 h3{
+	font-size: 1.2em;
+	float: left;
+}
+.my_indexgood03 .guide{
+	width: 40%;
+	height: 20px;
+	float: left;
+	background: url(/client/images/index_good_guideright.png) no-repeat 10px;
+	background-size: 16px;
+}
+.my_indexgood03 p{
+	width: 100%;
+	text-align: left;
+	float: left;
+}
+.my_indexgood03 span{
+	display: block;
+	width: 100%;
+	float: left;
+	color:#cc1421 ;
+}
+.my_indexgood03 div{
+	width: 100%;
+	float: right;
+	height: 60%;
+	text-align: center;
+}
+.my_indexgood03 div img{
+	width: 80%;
+	height: 80%;
+	margin-top: 14%;
+	
+}
+
+.index_goods03{
+	width: 100%;
+	overflow: hidden;
+	background: #f4f4f4;	
+}
+.goods03_title{
+	width: 100%;
+}
+.goods03_title img{
+	width: 100%;
+	height: 100%;
+}
+.index_goods03 ul{
+	width: 100%;
+	overflow: hidden;
+}
+.index_goods03 ul li{
+	width: 96%;
+	padding: 0 2%;
+	overflow: hidden;
+	float: left;
+}
+.good03_box{
+	width: 48%;
+	display: block;
+	float: left;
+	background: white;
+	overflow: hidden;
+}
+.index_goods03 ul li a{
+	margin-top: 10px;
+	padding-bottom: 2%;
+}
+.index_goods03 ul li a:nth-child(2n-1){
+	float: left;
+}
+.index_goods03 ul li a:nth-child(2n){
+	float: right;
+}
+.good03_box div{
+	width: 96%;
+	height: 60%;
+	margin-top: 2%;
+	margin-left:2%;
+	float: left;
+	background: #e8e8e8 1px scroll;
+	position: relative;
+}
+.good03_box div img{
+	width: 100%;
+	height: 100%;
+}
+.good03_box div span{
+	display: block;
+	position: absolute;
+	 width: 60px;
+	 height: 26px;
+	 line-height: 26px;
+	 color: white;
+	 border-bottom-left-radius: 30px;
+	 border-top-left-radius: 30px;
+}
+.good03_box div span{
+	right: 0px;
+	bottom: 10px;
+	background: #f43744;
+
+}
+.good03_box p{
+	float: left;
+	width: 100%;
+	font-size: 1.1em;
+	min-height: 20%;
+	padding: 4% 0;	
+}
+.good03_box .box03_pri{
+	width: 100%;
+	display: block;
+	text-align: center;
+	font-size: 1.2em;
+	color: #cc1421;
+}
+
+
+
+
+
+
+
+
+
+

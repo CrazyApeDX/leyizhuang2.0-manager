@@ -1,0 +1,247 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>自定义图片裁剪</title>
+    <link rel="stylesheet" href="jquery.Jcrop.css" type="text/css" />
+    <link href="/editor/themes/default/default.css" rel="stylesheet" type="text/css" />
+    <script src="/Scripts/jquery-1.4.1.min.js" type="text/javascript"></script>
+    <script type="text/javascript" src="/editor/kindeditor.js"></script>
+    <script src="/Scripts/artDialog4.1.6/artDialog.js?skin=default" type="text/javascript"></script>
+    <script src="/Scripts/artDialog4.1.6/plugins/iframeTools.source.js" type="text/javascript"></script>
+    <script src="jquery.Jcrop.js" type="text/javascript"></script>
+    <style type="text/css">
+        .jcropper-holder
+        {
+            border: 1px black solid;
+        }
+        .div_tool
+        {
+            padding: 5px;
+            margin: 5px;
+            border: none;
+	        box-shadow: 1px 1px 10px #888888;
+        }
+    </style>
+    <script type="text/javascript">
+
+        function linkUp(unusedIndex, container) {
+            //将DOM对象转换成jquery对象
+            container = $(container);
+
+            //在容器中找到原始图片
+            var image = container.find("img.image");
+
+            //计算出原始图片的长宽比例
+            var originalRatio = image.width() / image.height()
+
+            //样式名keepAspectRatio的checkbox 用来控制是否固定图片的比例.
+            var keepRatio = container.find('.keepAspectRatio').size() < 1 ? false : container.find('.keepAspectRatio').is(':checked');
+
+            //是否启用jCrop的强制等比例图片缩放:
+            var forcedRatio = keepRatio ? originalRatio : null;
+
+            //去掉原始图片url中的参数.
+            var path = image.attr('src');
+            if (path.indexOf('?') > 0) path = path.substr(0, path.indexOf('?'));
+            if (path.indexOf(';') > 0) path = path.substr(0, path.indexOf(';'));
+
+            //使用CloudFront 友好 URLs.
+            var cloudFront = image.attr('src').indexOf(';') > -1;
+
+            //找到div内preview的图片，该图片用来显示在线裁剪的缩略图.
+            var divPreview = container.find("div.preview");
+
+            //给preview缩略图设置默认宽高
+            var previewFallbackWidth = 100;
+            var previewFallbackHeight = 100;
+
+            //允许自定义宽高覆盖默认设置的宽高
+            var previewMaxWidth = (divPreview.attr('style') != null && divPreview.attr('style').indexOf('width') > -1) ? divPreview.width() : previewFallbackWidth;
+            var previewMaxHeight = (divPreview.attr('style') != null && divPreview.attr('style').indexOf('height') > -1) ? divPreview.height() : previewFallbackHeight;
+            //设置对应的值.
+            divPreview.css({
+                width: previewMaxWidth + 'px',
+                height: previewMaxHeight + 'px',
+                overflow: 'hidden'
+            });
+
+            //动态创建一个div，并添加样式作为预览图片的容器
+            var innerPreview = $('<div />').css({
+                overflow: 'hidden'
+            }).addClass('innerPreview').appendTo(divPreview);
+
+            //创建一个图片将裁剪的图片插入进去
+            $('<img />').attr('src', image.attr('src')).appendTo(innerPreview);
+
+            //下面两行获取result所有的a标签或者按钮，为后面展示结果做好准备
+
+            var inputs = container.find('input.result');
+
+
+            //这个函数用来动态更新links和inputs及preview里的图片
+            var update = function (coords) {
+                //获取裁剪区域的宽高
+                if (parseInt(coords.w) <= 0 || parseInt(coords.h) <= 0) return;
+
+                //上面已经做了介绍，这里就不再多说了
+                var cropRatio = keepRatio ? originalRatio : (coords.w / coords.h);
+
+                var innerWidth = cropRatio >= (previewMaxWidth / previewMaxHeight) ? previewMaxWidth : previewMaxHeight * cropRatio;
+                var innerHeight = cropRatio < (previewMaxWidth / previewMaxHeight) ? previewMaxHeight : previewMaxWidth / cropRatio;
+
+                innerPreview.css({
+                    width: Math.ceil(innerWidth) + 'px',
+                    height: Math.ceil(innerHeight) + 'px',
+                    marginTop: (previewMaxHeight - innerHeight) / 2 + 'px',
+                    marginLeft: (previewMaxWidth - innerWidth) / 2 + 'px',
+                    overflow: 'hidden'
+                });
+                //设置外部div的填充，使其保持居中
+                divPreview.css({
+
+            });
+
+
+            //计算图片在预览窗口的显示比例
+            var scalex = innerWidth / coords.w;
+            var scaley = innerHeight / coords.h;
+
+            //设置预览图片的宽高.
+            innerPreview.find('img').css({
+                width: Math.round(scalex * image.width()) + 'px',
+                height: Math.round(scaley * image.height()) + 'px',
+                marginLeft: '-' + Math.round(scalex * coords.x) + 'px',
+                marginTop: '-' + Math.round(scaley * coords.y) + 'px'
+            });
+
+            var query = '?';
+
+            //如果指定了大小测获取知道的覆盖.
+            var inputWidth = container.find('input.width');
+            var inputHeight = container.find('input.height');
+            if (inputWidth.size() > 0 && parseInt(inputWidth.val()) > 1) query += 'maxwidth=' + inputWidth.val() + '&';
+            if (inputHeight.size() > 0 && parseInt(inputHeight.val()) > 1) query += 'maxheight=' + inputHeight.val() + '&';
+
+            //获取图片裁剪区域的坐标
+            query += 'crop=(' + coords.x + ',' + coords.y + ',' + coords.x2 + ',' + coords.y2 + ')&cropxunits=' + image.width() + '&cropyunits=' + image.height()
+            //将? 和& 替换成 ; 
+            if (cloudFront) query = query.replace(/\?\&/g, ';');
+
+            //最后更新链接和按钮
+            //这里将上传图片的相对路径与参数整合
+            //inputs.attr('value', path + query);
+            inputs.attr('value', $("#url").val() + query);
+
+        }
+
+        //配置jCrop
+        var jcrop_reference = $.Jcrop(image);
+        jcrop_reference.setOptions({
+            onChange: update,
+            onSelect: update,
+            aspectRatio: forcedRatio,
+            bgColor: 'black',
+            bgOpacity: 0.6
+        });
+
+        //调用update初始化预览图片
+        update({ x: 0, y: 0, x2: image.width(), y2: image.height(), w: image.width(), h: image.height() });
+
+        //处理checkbox的change事件，动态改变裁剪是否按比例裁剪
+        container.find('.keepAspectRatio').change(function (e) {
+            keepRatio = this.checked;
+            forcedRatio = keepRatio ? originalRatio : null;
+            jcrop_reference.setOptions({ aspectRatio: forcedRatio });
+            jcrop_reference.focus();
+        });
+
+    }
+
+    function initImg(url) {
+        $(".image-cropper").show();
+        $("#td_img2").html('<div class="preview" style="width: 200px; height: 200px"></div>');
+        var Img = $('<img class="image" style="width:500px" src="' + url + '" />');
+        Img.load(function () {
+            $('.image-cropper').each(linkUp);
+        })
+        $("#td_img1").empty().append(Img);
+    }
+    function submitforms() {
+
+        if ($("#txtImgPath").val() == "") {
+            alert("请先裁剪图片");
+            return;
+        }
+        else {
+            $.ajax({
+                type: "POST",
+                url: "/tools/thumb_handler.ashx",
+                dataType: 'json',
+                data: "ImgResult=" + escape($("#txtImgPath").val()),
+                success: function (msg) {
+                    if (msg.success) {
+                        var origin = artDialog.open.origin;
+                        origin.editor1.insertHtml('<img src="' + msg.path + '"/>');
+                        art.dialog.close();
+                    } else {
+                        alert("上传出错");
+                    }
+                }
+            });
+        }
+    }
+    KindEditor.ready(function (K) {
+        var uploadbutton = K.uploadbutton({
+            button: K('#uploadButton')[0],
+            fieldName: 'imgFile',
+            url: '/tools/upload_json.ashx',
+            afterUpload: function (data) {
+                if (data.error === 0) {
+                    var url = K.formatUrl(data.url, 'absolute');
+                    K('#url').val(url);
+                    initImg(url);
+                } else {
+                    alert(data.message);
+                }
+            },
+            afterError: function (str) {
+                alert('自定义错误信息: ' + str);
+            }
+        });
+        uploadbutton.fileBox.change(function (e) {
+            uploadbutton.submit();
+        });        
+    });
+       
+    </script>
+</head>
+<body>
+    <div class="div_tool">
+        <div class="upload">
+            <input class="ke-input-text" style="width: 400px;" type="text" id="url" value="" readonly="readonly" />
+            <input type="button" id="uploadButton" value="浏览..." />
+        </div>
+    </div>
+    <div class="image-cropper" style="display: none;">
+        <table style="width:100%">
+            <tr>
+                <td id="td_img1" style="padding:5px 10px 5px 10px;">
+                </td>
+                <td style="vertical-align: top;padding:5px 5px 5px 10px;">
+                    <div id="td_img2">
+                    </div>
+                    <div class="jc_coords">
+                        <input type="checkbox" class="keepAspectRatio" />
+                        是否锁定比例<br />
+                        宽度:<input type="text" class="width" value="400" /><br />
+                        高度:<input type="text" class="height" value="300" /><br />
+                        <input id='txtImgPath' type="hidden" class="result" value="" />
+                    </div>
+                    <div style="padding: 10px;">
+                        <input type="button" value="确定裁剪" class="btnSubmit" onclick="submitforms()" /></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,12 @@
+/target/
+.idea/
+.settings/
+doc/
+/bin/
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+/com/
+=======
+>>>>>>> refs/remotes/origin/Version-1.0.0
+>>>>>>> refs/remotes/origin/Version-1.0.0
