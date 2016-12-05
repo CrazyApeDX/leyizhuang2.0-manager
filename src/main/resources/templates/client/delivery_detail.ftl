@@ -129,7 +129,7 @@ function submitReturn(id)
 		return;
 	}
 	
-	if (0 === Number(returnCount)) {
+	if (1 === Number(returnCount)) {
 		$.ajax({ 
 			url: "/delivery/submitReturn", 
 			type: "post",
@@ -376,7 +376,7 @@ function payedChange(){
         <div class="mesg">需代收金额：<#if ownrecord?? && ownrecord.isEnable?? && ownrecord.isEnable == true && ownrecord.ispassed == true><#if ownrecord.owned??>${ownrecord.owned?c}<#else>0.00</#if><#else><#if td_order.allTotalPay?? && td_order.allActualPay??>${td_order.allTotalPay-td_order.allActualPay}<#else>0</#if></#if>元</div>
         <div class="mesg">实代收金额：<#if ownrecord?? && ownrecord.isEnable?? && ownrecord.isEnable == true && ownrecord.ispassed == true><#if ownrecord.payed??>${ownrecord.payed?c}<#else>0.00</#if><#else><#if td_order.allActualPay??>${td_order.allActualPay?c}<#else>0.00</#if></#if>元</div>
         -->
-        <div class="mesg">订单总金额：<#if allMoney??>${allMoney?string(0.00)}<#else>0.00</#if>元</div>
+        <div class="mesg">订单总金额：<#if allMoney??>${allMoney?string('0.00')}<#else>0.00</#if>元</div>
         <div class="mesg">需代收金额：<span id="agencyFund"><#if allMoney?? && isOnlinePay?? && isOnlinePay==false>${allMoney?c}<#else>0</#if></span>元</div>
         <div class="mesg">实代收金额：<#if (ownrecord?? && ownrecord.isEnable?? && ownrecord.isEnable == true && ownrecord.ispassed == true) || (ownrecord?? && ownrecord.isOwn?? && ownrecord.isOwn==false)><#if ownrecord.payed??>${ownrecord.payed?c}<#else>	0.00</#if><#else>0.00</#if>元</div>
       </div>

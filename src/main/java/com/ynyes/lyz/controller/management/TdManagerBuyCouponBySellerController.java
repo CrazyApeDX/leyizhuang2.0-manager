@@ -117,7 +117,7 @@ public class TdManagerBuyCouponBySellerController {
 
 	@Autowired
 	private TdCashReciptInfService tdCashReciptInfService;
-	
+
 	@Autowired
 	private TdOwnMoneyRecordService tdOwnMoneyRecordService;
 
@@ -217,6 +217,8 @@ public class TdManagerBuyCouponBySellerController {
 			return res;
 		}
 
+		Map<Long, Object[]> param = new HashMap<>();
+
 		Long siteId = seller.getUpperDiySiteId();
 		TdDiySite site = tdDiySiteService.findOne(siteId);
 
@@ -267,6 +269,11 @@ public class TdManagerBuyCouponBySellerController {
 			totalGoods += (price * numbers[i]);
 			totalCoupon += (subPrice * coupons[i]);
 
+			Object[] var = new Object[2];
+			var[0] = numbers[i];
+			var[1] = (price * numbers[i]) - (subPrice * coupons[i]);
+			param.put(goods.getId(), var);
+
 			// 创建订单商品
 			TdOrderGoods orderGoods = new TdOrderGoods();
 			orderGoods.setGoodsId(goods.getId());
@@ -305,7 +312,12 @@ public class TdManagerBuyCouponBySellerController {
 		order = this.getGift(username, order);
 		Double activitySubPrice = null == order.getActivitySubPrice() ? 0d : order.getActivitySubPrice();
 		order.setTotalPrice(order.getTotalPrice() - activitySubPrice);
-		
+
+		// 计算满减分摊价
+		if (activitySubPrice > 0d) {
+			this.subActivityPriceShare(order, param);
+		}
+
 		req.getSession().setAttribute("MANAGER_ORDER", order);
 
 		res.put("total", order.getTotalPrice());
@@ -325,7 +337,7 @@ public class TdManagerBuyCouponBySellerController {
 		pos = null == pos ? 0 : pos;
 		cash = null == cash ? 0 : cash;
 		other = null == other ? 0 : other;
-		
+
 		order.setPosPay(pos);
 		order.setCashPay(cash);
 		order.setBackOtherPay(other);
@@ -353,7 +365,7 @@ public class TdManagerBuyCouponBySellerController {
 		}
 		own.setRealPayTime(date);
 		tdOwnMoneyRecordService.save(own);
-		
+
 		this.dismantleOrder(order, username);
 
 		res.put("status", 0);
@@ -597,7 +609,7 @@ public class TdManagerBuyCouponBySellerController {
 
 					Boolean allZero = true;
 					Long allNumber = 0L;
-					
+
 					// 满数量组合促销的方法
 					if (null == isCombo || isCombo) {
 						// 获取倍数关系
@@ -626,7 +638,7 @@ public class TdManagerBuyCouponBySellerController {
 
 						// 集合中最小的数字即为倍数
 						min = Collections.min(mutipuls);
-						
+
 						if (allZero) {
 							min = allNumber / totalNumber;
 						}
@@ -1104,7 +1116,7 @@ public class TdManagerBuyCouponBySellerController {
 				order.setAllTotalPay(order_temp.getTotalPrice());
 				// 设置是否是电子券
 				order.setIsCoupon(order_temp.getIsCoupon());
-				
+
 				order.setSendTime(order_temp.getSendTime());
 				order.setReceiveTime(order_temp.getReceiveTime());
 				// 设置其他收入
@@ -1222,7 +1234,7 @@ public class TdManagerBuyCouponBySellerController {
 			otherPay = 0.00;
 		}
 
-//		totalPrice = totalPrice + cashBalanceUsed + unCashBalanceUsed;
+		// totalPrice = totalPrice + cashBalanceUsed + unCashBalanceUsed;
 
 		// 遍历当前生成的订单
 		for (TdOrder order : order_map.values()) {
@@ -1284,11 +1296,11 @@ public class TdManagerBuyCouponBySellerController {
 				order = tdOrderService.save(order);
 
 				TdUser user = tdUserService.findByUsername(username);
-				
+
 				Double cash = new Double(order.getCashPay() == null ? 0d : order.getCashPay());
 				Double pos = new Double(order.getPosPay() == null ? 0d : order.getPosPay());
 				Double other = new Double(order.getBackOtherPay() == null ? 0d : order.getBackOtherPay());
-				
+
 				if (cash < 0) {
 					if (cash + pos >= 0) {
 						pos += cash;
@@ -1537,12 +1549,33 @@ public class TdManagerBuyCouponBySellerController {
 		}
 		return order;
 	}
-	
+
 	private String getTimestamp() {
-		int i = (int)(Math.random() * 900) + 100;
+		int i = (int) (Math.random() * 900) + 100;
 		Date date = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		String format = sdf.format(date);
 		return format + i;
+	}
+
+	private void subActivityPriceShare(TdOrder order, Map<Long, Object[]> param) {
+		Double activitySubPrice = order.getActivitySubPrice();
+		Double totalPrice = order.getTotalPrice();
+		Double realTotal = totalPrice + activitySubPrice;
+		List<TdOrderGoods> orderGoodsList = order.getOrderGoodsList();
+		for (TdOrderGoods orderGoods : orderGoodsList) {
+			Long goodsId = orderGoods.getGoodsId();
+			Object[] var = param.get(goodsId);
+			Long number = (Long) var[0];
+			Double goodsTotal = (Double) var[1];
+
+			DecimalFormat df = new DecimalFormat("#.00");
+
+			Double point = goodsTotal / realTotal;
+			Double shareSub = activitySubPrice * point;
+			Double shareUnit = Double.valueOf(df.format(shareSub / number));
+
+			orderGoods.setPrice(orderGoods.getPrice() - shareUnit);
+		}
 	}
 }

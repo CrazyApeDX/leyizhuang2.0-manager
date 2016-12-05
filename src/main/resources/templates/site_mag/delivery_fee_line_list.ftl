@@ -80,7 +80,7 @@ function __doPostBack(eventTarget, eventArgument) {
                 <td align="center">${item.minNumber!0}</td>
                 <td align="center">${item.maxNumber!0}</td>
                 <td align="center">${(item.unit!0.00)?string("0.00")}</td>
-                <td align="center"><#if deliveryFeeLine?? && deliveryFeeLine.fixedPrice??>${deliveryFeeLine.fixedPrice?string("0.00")}<#else>无</#if></td>
+                <td align="center"><#if item??&&item.fixedPrice??>${item.fixedPrice?string("0.00")}<#else>无</#if></td>
                 <td align="center">
                 	<a href="/Verwalter/delivery/fee/line/edit/${(headId!0)?c}/${item.id?c}">编辑</a>
             	</td>

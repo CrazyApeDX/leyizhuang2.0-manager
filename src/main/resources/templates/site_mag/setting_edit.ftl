@@ -278,6 +278,18 @@ $(function () {
             <input name="maxShipping" rows="2" cols="6" class="input" datatype="*0-255" sucmsg=" " value="<#if setting??&&setting.maxShipping??>${setting.maxShipping?c}<#else>0</#if>" />&nbsp;&nbsp;
         </dd>
     </dl>
+    <dl>
+        <dt>最小运费额</dt>
+        <dd>
+            <input name="minDeliveryFee" rows="2" cols="6" class="input" datatype="n" sucmsg=" " value="<#if setting??&&setting.minDeliveryFee??>${setting.minDeliveryFee?string("0.00")}<#else>0.00</#if>" />&nbsp;&nbsp;
+        </dd>
+    </dl>
+    <dl>
+        <dt>最大运费额</dt>
+        <dd>
+            <input name="maxDeliveryFee" rows="2" cols="6" class="input" datatype="n" sucmsg=" " value="<#if setting??&&setting.maxDeliveryFee??>${setting.maxDeliveryFee?string("0.00")}<#else>0.00</#if>" />&nbsp;&nbsp;
+        </dd>
+    </dl>
 </div>
 <div class="tab-content" style="display: none;">
     <dl>

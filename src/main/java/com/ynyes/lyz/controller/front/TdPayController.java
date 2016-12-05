@@ -29,6 +29,7 @@ import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdRecharge;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.service.TdBalanceLogService;
+import com.ynyes.lyz.service.TdDiySiteInventoryService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdPriceCountService;
 import com.ynyes.lyz.service.TdReChargeService;
@@ -54,6 +55,9 @@ public class TdPayController {
 
 	@Autowired
 	private TdPriceCountService tdPriceCountService;
+	
+	@Autowired
+	private TdDiySiteInventoryService tdDiySiteInventoryService;
 
 	@Autowired
 	@Qualifier("settlementService")
@@ -230,6 +234,10 @@ public class TdPayController {
 							// 虚拟订单需要分单
 							if (out_trade_no.contains("XN")) {
 								// tdCommonService.dismantleOrder(req);
+								if (!"门店自提".equals(order.getDeliverTypeTitle())) {
+									// 拆单钱先去扣减库存
+									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
+								}
 								try {
 									settlementService.disminlate(req, order);
 								} catch (Exception e) {
@@ -348,6 +356,10 @@ public class TdPayController {
 							}
 							// 虚拟订单需要分单
 							if (out_trade_no.contains("XN")) {
+								if (!"门店自提".equals(order.getDeliverTypeTitle())) {
+									// 拆单钱先去扣减库存
+									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
+								}
 								try {
 									settlementService.disminlate(req, order);
 								} catch (Exception e) {
@@ -514,6 +526,10 @@ public class TdPayController {
 								e1.printStackTrace();
 							}
 							if (ORDERID.contains("XN")) {
+								if (!"门店自提".equals(order.getDeliverTypeTitle())) {
+									// 拆单钱先去扣减库存
+									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
+								}
 								try {
 									settlementService.disminlate(req, order);
 								} catch (Exception e) {
@@ -662,6 +678,10 @@ public class TdPayController {
 							TdUser realUser = tdUserService.findOne(id);
 							settlementService.mainOrderDataAction(order, realUser);
 							if (out_trade_no.contains("XN")) {
+								if (!"门店自提".equals(order.getDeliverTypeTitle())) {
+									// 拆单钱先去扣减库存
+									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
+								}
 								try {
 									settlementService.disminlate(req, order);
 								} catch (Exception e) {

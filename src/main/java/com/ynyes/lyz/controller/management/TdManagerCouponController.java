@@ -106,7 +106,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 
 	@Autowired
 	private TdCouponModuleService tdCouponModuleService;
-	
+
 	@RequestMapping(value = "/down/order/use")
 	public void couponUseDetail() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
@@ -195,7 +195,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 			} else if (__EVENTTARGET.equalsIgnoreCase("btnSave")) {
 				btnModuleSave(listId, listSortId);
 				tdManagerLogService.addLog("edit", "修改优惠券模板", req);
-			}else if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
+			} else if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
 				if (null != __EVENTARGUMENT) {
 					page = Integer.parseInt(__EVENTARGUMENT);
 				}
@@ -320,12 +320,12 @@ public class TdManagerCouponController extends TdManagerBaseController {
 
 	@RequestMapping(value = "/module/check")
 	@ResponseBody
-	public Map<String, Object> moduleCheck(Long cityId, Long goodsId, Long moduleId,Long type) {
+	public Map<String, Object> moduleCheck(Long cityId, Long goodsId, Long moduleId, Long type) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 
-		TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId, cityId,type);
-		if (null != module && !(null != moduleId && module.getId() == moduleId)) {
+		TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId, cityId, type);
+		if (null != module && !(null != moduleId && module.getId().equals(moduleId))) {
 			res.put("message", "该城市指定商品和类型的优惠券模块已经添加");
 			return res;
 		}
@@ -413,9 +413,9 @@ public class TdManagerCouponController extends TdManagerBaseController {
 			}
 			// return "/site_mag/coupon_edit_hasId";
 		}
-		
+
 		map.addAttribute("siteList", tdDiySiteService.findAll());
-		
+
 		return "/site_mag/coupon_edit";
 	}
 
@@ -662,8 +662,8 @@ public class TdManagerCouponController extends TdManagerBaseController {
 	}
 
 	@RequestMapping(value = "/save")
-	public String orderEdit(TdCoupon tdCoupon, Long diyId, String __VIEWSTATE, Long leftNumber, Long typeId, ModelMap map,
-			HttpServletRequest req) {
+	public String orderEdit(TdCoupon tdCoupon, Long diyId, String __VIEWSTATE, Long leftNumber, Long typeId,
+			ModelMap map, HttpServletRequest req) {
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
@@ -696,13 +696,13 @@ public class TdManagerCouponController extends TdManagerBaseController {
 				tdCoupon.setCityName(city.getCityName());
 			}
 		}
-		
+
 		if (tdCoupon.getTypeCategoryId().longValue() == 3) {
 			TdDiySite diySite = tdDiySiteService.findOne(diyId);
 			tdCoupon.setDiySiteTital(diySite.getTitle());
 			tdCoupon.setDiySiteCode(diySite.getStoreCode());
 		}
-		
+
 		tdCouponService.save(tdCoupon);
 
 		return "redirect:/Verwalter/coupon/list";
@@ -774,40 +774,41 @@ public class TdManagerCouponController extends TdManagerBaseController {
 	}
 
 	/**
-	 * 指定商品券和产品券 关键字收索商品
-	 * 搜索条件增加公司id 增加城市字段  增加搜索类型(searchType):1L优惠卷模板搜索
+	 * 指定商品券和产品券 关键字收索商品 搜索条件增加公司id 增加城市字段 增加搜索类型(searchType):1L优惠卷模板搜索
+	 * 
 	 * @author Max
 	 */
 	@RequestMapping(value = "/search", method = RequestMethod.POST)
-	public String goodsSeach(String keywords, Integer page, HttpServletRequest req, ModelMap map,Long brandId,Long cityId,Long searchType) {
+	public String goodsSeach(String keywords, Integer page, HttpServletRequest req, ModelMap map, Long brandId,
+			Long cityId, Long searchType) {
 
-		TdCity city=null;
-		if(cityId!=null){
-			city= tdCityService.findOne(cityId);
+		TdCity city = null;
+		if (cityId != null) {
+			city = tdCityService.findOne(cityId);
 		}
-		//查询条件 不存在是默认-1 不查询
-		Long cityCode=-1L;
-		if(city!=null){
-			cityCode=city.getSobIdCity();
+		// 查询条件 不存在是默认-1 不查询
+		Long cityCode = -1L;
+		if (city != null) {
+			cityCode = city.getSobIdCity();
 		}
-		//查询条件 不存在是默认-1 不查询
-		if(brandId==null){
-			brandId=-1L;
+		// 查询条件 不存在是默认-1 不查询
+		if (brandId == null) {
+			brandId = -1L;
 		}
-		//查询商品
-		List<TdGoods> goods_list=null;
-		if(searchType!=null && searchType==1L){
-			//优惠卷模板搜索 商品不分品牌
-			cityCode=cityId;
-			goods_list=tdGoodsService.queryCouponGooddsOrderBySortIdAsc(cityCode, keywords);
-		}else{
-			goods_list= tdGoodsService.queryCouponGooddsOrderBySortIdAsc(cityCode, brandId, keywords);
+		// 查询商品
+		List<TdGoods> goods_list = null;
+		if (searchType != null && searchType == 1L) {
+			// 优惠卷模板搜索 商品不分品牌
+			cityCode = cityId;
+			goods_list = tdGoodsService.queryCouponGooddsOrderBySortIdAsc(cityCode, keywords);
+		} else {
+			goods_list = tdGoodsService.queryCouponGooddsOrderBySortIdAsc(cityCode, brandId, keywords);
 		}
-		map.addAttribute("goodsList",goods_list);
-		
+		map.addAttribute("goodsList", goods_list);
+
 		return "/site_mag/coupon_goods";
 	}
-	
+
 	@RequestMapping(value = "/get/diy", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> couponGetDiy(Long cityId) {
@@ -815,7 +816,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 		res.put("status", -1);
 		List<TdDiySite> cityList = tdDiySiteService.findByCityId(cityId);
 		res.put("cities", cityList);
-		
+
 		res.put("status", 0);
 		return res;
 	}
@@ -920,7 +921,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 				tdCoupon.setAddTime(coupon.getAddTime());
 				tdCoupon.setTypePicUri(coupon.getTypePicUri());
 				tdCoupon.setExpireTime(coupon.getExpireTime());
-				
+
 				tdCoupon.setDiySiteCode(coupon.getDiySiteCode());
 				tdCoupon.setDiySiteTital(coupon.getDiySiteTital());
 

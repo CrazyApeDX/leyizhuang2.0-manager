@@ -138,4 +138,11 @@ public class TdCashReciptInfService {
     	return repository.findByReceiptTypeAndSendFlag(reciptType, flag);
     }
     
+    public List<TdCashReciptInf> findBySendFlag(Integer flag) {
+    	if (null == flag) {
+    		return null;
+    	}
+    	return repository.findBySendFlag(flag);
+    }
+    
 }

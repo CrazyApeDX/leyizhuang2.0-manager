@@ -22,6 +22,7 @@ import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdPayType;
+import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeLine;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.excp.AppErrorParamsExcp;
@@ -31,6 +32,7 @@ import com.ynyes.lyz.service.TdCommonService;
 import com.ynyes.lyz.service.TdCouponService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdPayTypeService;
+import com.ynyes.lyz.service.TdSettingService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
 import com.ynyes.lyz.service.delivery.TdDeliveryFeeLineService;
@@ -73,6 +75,9 @@ public class SettlementServiceImpl implements ISettlementService {
 
 	@Autowired
 	private TdDeliveryFeeLineService tdDeliveryFeeLineService;
+	
+	@Autowired
+	private TdSettingService tdSettingService;
 
 	@Override
 	public void orderBasicValidate(TdOrder order) throws Exception {
@@ -722,7 +727,7 @@ public class SettlementServiceImpl implements ISettlementService {
 						subOrder.setCashBalanceUsed(Double.parseDouble(scale2_cash));
 						subOrder.setOtherPay(Double.parseDouble(scale2_other));
 						subOrder.setActualPay(subOrder.getUnCashBalanceUsed() + subOrder.getCashBalanceUsed());
-
+						subOrder.setPoint(point);
 						String leftPrice = df.format(subOrder.getTotalPrice() - subOrder.getActualPay());
 						subOrder.setTotalPrice(Double.parseDouble(leftPrice));
 
@@ -835,7 +840,20 @@ public class SettlementServiceImpl implements ISettlementService {
 					Double fee = this.countOrderGoodsDeliveryFee(user, orderGoods);
 					deliveryFee += fee;
 				}
+				TdSetting setting = tdSettingService.findTopBy();
+				
+				Double settingMinFee = null == setting.getMinDeliveryFee() ? 0d : setting.getMinDeliveryFee();
+				if (deliveryFee < settingMinFee) {
+					deliveryFee = settingMinFee;
+				}
+				
+				Double settingMaxFee = null == setting.getMaxDeliveryFee() ? 0d : setting.getMaxDeliveryFee();
+				if (deliveryFee > settingMaxFee) {
+					deliveryFee = settingMaxFee;
+				}
+				
 				order.setDeliverFee(deliveryFee);
+				order.setReceivableFee(deliveryFee);
 				return deliveryFee;
 			}
 		}

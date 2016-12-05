@@ -382,6 +382,14 @@ public class TdOrder {
 	// 是否以一口价的形式收取运费
 	@Column
 	private Boolean isFixedDeliveryFee;
+	
+	// 应收运费
+	@Column(scale = 2)
+	private Double receivableFee;
+	
+	// 分单占主单的比例
+	@Column(scale = 2)
+	private Double point;
 
 	public Double getRefund() {
 		return refund;
@@ -1072,5 +1080,21 @@ public class TdOrder {
 
 	public void setIsFixedDeliveryFee(Boolean isFixedDeliveryFee) {
 		this.isFixedDeliveryFee = isFixedDeliveryFee;
+	}
+
+	public Double getPoint() {
+		return point;
+	}
+
+	public void setPoint(Double point) {
+		this.point = point;
+	}
+
+	public Double getReceivableFee() {
+		return receivableFee;
+	}
+
+	public void setReceivableFee(Double receivableFee) {
+		this.receivableFee = receivableFee;
 	}
 }

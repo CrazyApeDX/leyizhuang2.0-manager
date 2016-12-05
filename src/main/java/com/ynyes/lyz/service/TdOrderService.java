@@ -262,7 +262,8 @@ public class TdOrderService {
 		if (null == username || null == statusId) {
 			return null;
 		}
-		return repository.findByUsernameAndStatusIdOrRealUserUsernameAndStatusIdOrderByIdDesc(username, statusId,username, statusId);
+		return repository.findByUsernameAndStatusIdOrRealUserUsernameAndStatusIdOrderByIdDesc(username, statusId,
+				username, statusId);
 	}
 
 	// 根据用户名查找所有的订单（不分页）
@@ -363,8 +364,8 @@ public class TdOrderService {
 			return null;
 		}
 
-		return repository.findDistinctMainOrderNumberByStatusIdAndDeliveryTimeAfterAndOrderNumberInOrderByIdDesc(statusId,
-				time, orderNumberList);
+		return repository.findDistinctMainOrderNumberByStatusIdAndDeliveryTimeAfterAndOrderNumberInOrderByIdDesc(
+				statusId, time, orderNumberList);
 	}
 
 	public List<TdOrder> findByStatusIdAndDeliveryTimeAfterOrStatusIdAndDeliveryTimeAfter(Long statusId, Long statusId2,
@@ -390,8 +391,8 @@ public class TdOrderService {
 				statusId, start, end, orderNumberList);
 	}
 
-	public List<TdOrder> findByStatusIdAndDeliveryTimeBetweenOrStatusIdAndOrderTimeBetween(Long statusId, Long statusId2,
-			List<String> orderNumberList, Date start, Date end) {
+	public List<TdOrder> findByStatusIdAndDeliveryTimeBetweenOrStatusIdAndOrderTimeBetween(Long statusId,
+			Long statusId2, List<String> orderNumberList, Date start, Date end) {
 
 		if (null == statusId || null == statusId2 || null == start || null == end || null == orderNumberList
 				|| orderNumberList.size() == 0) {
@@ -408,8 +409,8 @@ public class TdOrderService {
 			return null;
 		}
 
-		return repository.countDistinctMainOrderNumberByStatusIdAndDeliveryTimeAfterAndOrderNumberInOrderByIdDesc(statusId,
-				time, orderNumberList);
+		return repository.countDistinctMainOrderNumberByStatusIdAndDeliveryTimeAfterAndOrderNumberInOrderByIdDesc(
+				statusId, time, orderNumberList);
 	}
 
 	public Integer countByStatusIdAndDeliveryTimeAfterOrStatusIdAndDeliveryTimeAfter(Long statusId, Long statusId2,
@@ -458,13 +459,11 @@ public class TdOrderService {
 		if (null == e) {
 			return e;
 		}
-		//过滤特殊字符
-		if (e.getRemark() != null)
-		{
+		// 过滤特殊字符
+		if (e.getRemark() != null) {
 			e.setRemark(StringUtils.StringFilter(e.getRemark()));
 		}
-		if (e.getRemarkInfo() != null)
-		{
+		if (e.getRemarkInfo() != null) {
 			e.setRemarkInfo(StringUtils.StringFilter(e.getRemarkInfo()));
 		}
 		return repository.save(e);
@@ -488,7 +487,8 @@ public class TdOrderService {
 			return null;
 		}
 		PageRequest pageRequest = new PageRequest(page, size);
-		return repository.findByUsernameAndStatusIdNotOrRealUserUsernameAndStatusIdNotOrderByOrderTimeDesc(username, 8L,username, 8L, pageRequest);
+		return repository.findByUsernameAndStatusIdNotOrRealUserUsernameAndStatusIdNotOrderByOrderTimeDesc(username, 8L,
+				username, 8L, pageRequest);
 	}
 
 	public List<TdOrder> findByOrderNumberContaining(String orderNumber) {
@@ -531,13 +531,13 @@ public class TdOrderService {
 	}
 
 	/**
-	 * 订单条件查询 分页
-	 * 修改城市查询
+	 * 订单条件查询 分页 修改城市查询
+	 * 
 	 * @return
 	 */
 	public Page<TdOrder> findAll(String keywords, String orderStartTime, String orderEndTime, List<String> usernameList,
 			String sellerRealName, String shippingAddress, String shippingPhone, String deliveryTime, String userPhone,
-			String shippingName, String sendTime, Long statusId, String diyCode,String city,List<String> roleCitys,
+			String shippingName, String sendTime, Long statusId, String diyCode, String city, List<String> roleCitys,
 			List<String> roleDiys, int size, int page) {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdOrder> c = new Criteria<TdOrder>();
@@ -565,7 +565,7 @@ public class TdOrderService {
 			c.add(Restrictions.like("shippingAddress", shippingAddress, true));
 		}
 
-		if (null != usernameList && usernameList.size()>0) {
+		if (null != usernameList && usernameList.size() > 0) {
 			c.add(Restrictions.in("username", usernameList, true));
 		}
 		if (null != deliveryTime && !deliveryTime.equals("")) {
@@ -583,14 +583,14 @@ public class TdOrderService {
 		if (null != diyCode && !"".equals(diyCode)) {
 			c.add(Restrictions.eq("diySiteCode", diyCode, true));
 		}
-		//city为收货人地址
-//		if (null != city && !"".equals(city)) {
-//			c.add(Restrictions.eq("city", city, true));
-//		}
-		if (null != roleCitys && roleCitys.size()>0) {
+		// city为收货人地址
+		// if (null != city && !"".equals(city)) {
+		// c.add(Restrictions.eq("city", city, true));
+		// }
+		if (null != roleCitys && roleCitys.size() > 0) {
 			c.add(Restrictions.in("diySiteCode", roleCitys, true));
 		}
-		if (null != roleDiys && roleDiys.size()>0) {
+		if (null != roleDiys && roleDiys.size() > 0) {
 			c.add(Restrictions.in("diySiteCode", roleDiys, true));
 		}
 		c.setOrderByDesc("orderTime");
@@ -690,7 +690,10 @@ public class TdOrderService {
 		if (null == keywords || null == username) {
 			return null;
 		}
-		return repository.findByUsernameContainingAndUsernameOrOrderNumberContainingAndUsernameOrSellerUsernameContainingAndUsernameOrShippingNameContainingAndUsernameOrShippingAddressContainingAndUsernameOrderByOrderTimeDesc(keywords, username, keywords, username, keywords, username, keywords, username,keywords,username);
+		return repository
+				.findByUsernameContainingAndUsernameOrOrderNumberContainingAndUsernameOrSellerUsernameContainingAndUsernameOrShippingNameContainingAndUsernameOrShippingAddressContainingAndUsernameOrderByOrderTimeDesc(
+						keywords, username, keywords, username, keywords, username, keywords, username, keywords,
+						username);
 	}
 
 	/**
@@ -703,7 +706,10 @@ public class TdOrderService {
 		if (null == keywords || null == sellerId) {
 			return null;
 		}
-		return repository.findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrShippingNameContainingAndSellerIdOrShippingAddressContainingAndSellerIdOrRealUserRealNameContainingAndSellerIdOrRealUserUsernameContainingAndSellerIdOrderByOrderTimeDesc(keywords, sellerId, keywords, sellerId, keywords, sellerId, keywords, sellerId, keywords, sellerId, keywords, sellerId);
+		return repository
+				.findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrShippingNameContainingAndSellerIdOrShippingAddressContainingAndSellerIdOrRealUserRealNameContainingAndSellerIdOrRealUserUsernameContainingAndSellerIdOrderByOrderTimeDesc(
+						keywords, sellerId, keywords, sellerId, keywords, sellerId, keywords, sellerId, keywords,
+						sellerId, keywords, sellerId);
 	}
 
 	/**
@@ -716,79 +722,100 @@ public class TdOrderService {
 		if (null == keywords || null == diySiteId) {
 			return null;
 		}
-		return repository.findByUsernameContainingAndDiySiteIdOrOrderNumberContainingAndDiySiteIdOrShippingNameContainingAndDiySiteIdOrShippingAddressContainingAndDiySiteIdOrderByOrderTimeDesc(keywords, diySiteId, keywords, diySiteId, keywords, diySiteId, keywords, diySiteId);
+		return repository
+				.findByUsernameContainingAndDiySiteIdOrOrderNumberContainingAndDiySiteIdOrShippingNameContainingAndDiySiteIdOrShippingAddressContainingAndDiySiteIdOrderByOrderTimeDesc(
+						keywords, diySiteId, keywords, diySiteId, keywords, diySiteId, keywords, diySiteId);
 	}
-	
+
 	/**
 	 * 根据城市名称和订单时间查询订单
+	 * 
 	 * @return
 	 */
-	public List<TdOrder> findByCityAndOrderTimeAfterAndOrderTimeBeforeOrderByOrderTimeDesc(String city,
-			Date begin, Date end) {
+	public List<TdOrder> findByCityAndOrderTimeAfterAndOrderTimeBeforeOrderByOrderTimeDesc(String city, Date begin,
+			Date end) {
 		return repository.findByCityAndOrderTimeAfterAndOrderTimeBeforeOrderByOrderTimeDesc(city, begin, end);
 	}
+
 	/**
 	 * 配送员搜索查询
-	 * @param statusIds 订单状态
-	 * @param keyword 关键字 (订单号,收货人,收货人电话,收货人地址)
-	 * @param opUser 配送员编号
+	 * 
+	 * @param statusIds
+	 *            订单状态
+	 * @param keyword
+	 *            关键字 (订单号,收货人,收货人电话,收货人地址)
+	 * @param opUser
+	 *            配送员编号
 	 * @return 查询结果
 	 * @author zp
 	 */
-	public List<TdOrder> queryDeliverysearch(List<Long> statusIds,String keyword,String opUser){
+	public List<TdOrder> queryDeliverysearch(List<Long> statusIds, String keyword, String opUser) {
 		return repository.queryDeliverysearch(statusIds, keyword, opUser);
 	}
+
 	/**
 	 * 配送员搜索查询
-	 * @param statusIds 订单状态
-	 * @param keyword 关键字 (订单号,收货人,收货人电话,收货人地址)
-	 * @param opUser 配送员编号
+	 * 
+	 * @param statusIds
+	 *            订单状态
+	 * @param keyword
+	 *            关键字 (订单号,收货人,收货人电话,收货人地址)
+	 * @param opUser
+	 *            配送员编号
 	 * @return 查询结果
 	 * @author zp
 	 */
-	public Integer queryCountDeliverysearch(List<Long> statusIds,String keyword,String opUser){
+	public Integer queryCountDeliverysearch(List<Long> statusIds, String keyword, String opUser) {
 		return repository.queryCountDeliverysearch(statusIds, keyword, opUser);
 	}
-	
+
 	/**
 	 * 修改订单实收款
-	 * @param cash 收款现金
-	 * @param pos 收款pos
-	 * @param mainOrderNumber 主单号
+	 * 
+	 * @param cash
+	 *            收款现金
+	 * @param pos
+	 *            收款pos
+	 * @param mainOrderNumber
+	 *            主单号
 	 * @return 默认不会出现问题 没想好怎么处理这些异常状态
 	 * @author zp
 	 */
-	public Long modifyOrderPay(Double cash,Double pos,Double other,String mainOrderNumber){
-		//主单号为空 
-		if(mainOrderNumber==null){
+	public Long modifyOrderPay(Double cash, Double pos, Double other, String mainOrderNumber) {
+		// 主单号为空
+		if (mainOrderNumber == null) {
 			return 1L;
 		}
-		cash=Utils.checkNull(cash);
-		pos=Utils.checkNull(pos);
+		cash = Utils.checkNull(cash);
+		pos = Utils.checkNull(pos);
 		other = Utils.checkNull(other);
-		//收款为0 
-		if(cash==0.0 && pos==0.0 && other==0.0){
+		// 收款为0
+		if (cash == 0.0 && pos == 0.0 && other == 0.0) {
 			return 2L;
 		}
-		List<TdOrder> orderList= repository.findByMainOrderNumberIgnoreCase(mainOrderNumber);
-		//意思一下 
-		if(orderList!=null && orderList.size()>0){
-			//循环所有分单
+		List<TdOrder> orderList = repository.findByMainOrderNumberIgnoreCase(mainOrderNumber);
+		// 意思一下
+		if (orderList != null && orderList.size() > 0) {
+			// 循环所有分单
 			for (TdOrder order : orderList) {
-				//计算比例(暂定)
-				Double point=order.getTotalPrice()/order.getAllTotalPay();
-				//修改实收款
-				order.setCashPay(cash*point+Utils.checkNull(order.getCashPay()));
-				order.setPosPay(pos*point+Utils.checkNull(order.getPosPay()));
-				order.setBackOtherPay(other*point+Utils.checkNull(order.getBackOtherPay()));
-				//保存修改
+				// 计算比例(暂定)
+				Double point;
+				point = order.getPoint();
+				if (null == point) {
+					point = order.getTotalPrice() / order.getAllTotalPay();
+				}
+				// 修改实收款
+				order.setCashPay(cash * point + Utils.checkNull(order.getCashPay()));
+				order.setPosPay(pos * point + Utils.checkNull(order.getPosPay()));
+				order.setBackOtherPay(other * point + Utils.checkNull(order.getBackOtherPay()));
+				// 保存修改
 				repository.save(order);
 			}
 		}
-		
+
 		return 0L;
 	}
-	
+
 	// 根据用户名查找所有的订单（不分页）
 	public List<TdOrder> findByRealUserUsernameOrderByIdDesc(String username) {
 		if (null == username) {

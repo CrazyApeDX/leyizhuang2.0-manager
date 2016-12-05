@@ -451,6 +451,31 @@ public class TdIndexController {
 		return res;
 	}
 	
+	@RequestMapping(value = "/recover/recharge/all")
+	@ResponseBody
+	public Map<String, Object> recoverRechargeAll(String token) {
+		Map<String, Object> res = new HashMap<>();
+		res.put("status", -1);
+		if (!"600ca5685906e53f453f191711125a38".equals(token) && !"f14d1baec94eda4de55466471eb54489".equals(token)) {
+			res.put("message", "token验证失败");
+			return res;
+		}
+		
+		List<TdCashReciptInf> list01 = tdCashReciptInfService.findBySendFlag(1);
+		StringBuffer result = new StringBuffer();
+		
+		for (TdCashReciptInf item : list01) {
+			if (null != item) {
+				String resultStr = tdInterfaceService.ebsWithObject(item, INFTYPE.CASHRECEIPTINF);
+				result.append(resultStr);
+			}
+		}
+		res.put("message", "调用接口成功");
+		res.put("EBS_MESSAGE", result.toString());
+		res.put("status", 0);
+		return res;
+	}
+	
 	@RequestMapping(value = "/recover/recharge/{id}")
 	@ResponseBody
 	public Map<String, Object> recoverRechargeById(@PathVariable Long id, String token){

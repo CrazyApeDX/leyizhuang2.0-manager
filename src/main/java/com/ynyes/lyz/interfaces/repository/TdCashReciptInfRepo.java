@@ -14,5 +14,7 @@ public interface TdCashReciptInfRepo extends PagingAndSortingRepository<TdCashRe
 	
 	// 查询未成功的充值记录
 	List<TdCashReciptInf> findByReceiptTypeAndSendFlag(String reciptType, Integer flag);
+	
+	List<TdCashReciptInf> findBySendFlag(Integer flag);
 }
 

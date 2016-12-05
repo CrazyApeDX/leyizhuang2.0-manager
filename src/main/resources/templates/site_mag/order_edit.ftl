@@ -78,12 +78,16 @@
         });
 
         //确认收货
+        var orderReceiveCount = 0;
         function OrderReceive() {
             var dialog = $.dialog.confirm('该步骤将确认收货，确认要继续吗？', function () {
+            	orderReceiveCount++;
                 var orderNumber = $.trim($("#spanOrderNumber").text());
                 var postData = { "orderNumber": orderNumber, "type": "orderReceive" };
                 //发送AJAX请求
-                sendAjaxUrl(dialog, postData, "/Verwalter/order/param/edit");
+                if (orderReceiveCount === 1) {
+                	sendAjaxUrl(dialog, postData, "/Verwalter/order/param/edit");
+                }
                 return false;
             });
 

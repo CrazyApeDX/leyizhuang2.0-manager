@@ -483,7 +483,11 @@ public class TdDeliveryIndexController {
 
 			if (null != orderList) {
 				for (TdOrder subOrder : orderList) {
-					subOrder.setStatusId(5L);
+					if (subOrder.getOrderNumber().contains("YF")) {
+						subOrder.setStatusId(6L);
+					} else {
+						subOrder.setStatusId(5L);
+					}
 					subOrder.setDeliveryTime(new Date());
 					subOrder = tdOrderService.save(subOrder);
 				}
@@ -620,6 +624,7 @@ public class TdDeliveryIndexController {
 								rec.setMoney(0d);
 								rec.setPos(0d);
 								rec.setUsername(order.getUsername());
+								rec.setIspassed(true);
 								rec.setIsOwn(true);
 								rec.setIsEnable(true);
 								rec.setIsPayed(false);
@@ -629,7 +634,12 @@ public class TdDeliveryIndexController {
 						} else {
 							// do nothing!
 						}
+						subOrder.setStatusId(6L);
+						tdOrderService.save(subOrder);
 					} else {
+
+						// 获取退货单价
+						Map<Long, Double> returnUnitPrice = tdPriceCountService.getReturnUnitPrice(subOrder);
 
 						subOrder.setStatusId(12L);
 						subOrder.setDeliveryTime(new Date());
@@ -716,12 +726,16 @@ public class TdDeliveryIndexController {
 									orderGoods.setPoints(oGoods.getPoints());
 									orderGoods.setReturnNoteNumber(returnNote.getReturnNumber());
 									// tdOrderGoodsService.save(orderGoods);
+									Double returnUnit = returnUnitPrice.get(oGoods.getGoodsId());
+									returnUnit = null == returnUnit ? 0d : returnUnit;
+									orderGoods.setReturnUnitPrice(returnUnit);
 									// 添加商品信息
 									orderGoodsList.add(orderGoods);
 
 									// 订单商品设置退货为True
 									oGoods.setIsReturnApplied(true);
 									// 更新订单商品信息是否退货状态
+
 									tdOrderGoodsService.save(oGoods);
 								}
 							}
@@ -748,6 +762,9 @@ public class TdDeliveryIndexController {
 									orderGoods.setPoints(oGoods.getPoints());
 									orderGoods.setReturnNoteNumber(returnNote.getReturnNumber());
 									// tdOrderGoodsService.save(orderGoods);
+									Double returnUnit = returnUnitPrice.get(oGoods.getGoodsId());
+									returnUnit = null == returnUnit ? 0d : returnUnit;
+									orderGoods.setReturnUnitPrice(returnUnit);
 									// 添加商品信息
 									orderGoodsList.add(orderGoods);
 
@@ -780,6 +797,9 @@ public class TdDeliveryIndexController {
 									orderGoods.setPoints(oGoods.getPoints());
 									orderGoods.setReturnNoteNumber(returnNote.getReturnNumber());
 									// tdOrderGoodsService.save(orderGoods);
+									Double returnUnit = returnUnitPrice.get(oGoods.getGoodsId());
+									returnUnit = null == returnUnit ? 0d : returnUnit;
+									orderGoods.setReturnUnitPrice(returnUnit);
 									// 添加商品信息
 									orderGoodsList.add(orderGoods);
 
