@@ -1457,9 +1457,10 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 			{
 				if (listInventory[changeIndex] != diySiteInventory.getInventory()) 
 				{
-					tdDiySiteInventoryLogService.saveChangeLog(diySiteInventory, listInventory[changeIndex] - diySiteInventory.getInventory(), null, req,"管理员修改");
-					//设置剩余库存
+					Long changeValue = listInventory[changeIndex] - diySiteInventory.getInventory();
 					diySiteInventory.setInventory(listInventory[changeIndex]);
+					tdDiySiteInventoryLogService.saveChangeLog(diySiteInventory, changeValue, null, req,"管理员修改");
+					//设置剩余库存
 					tdDiySiteInventoryService.save(diySiteInventory);
 				}
 			}

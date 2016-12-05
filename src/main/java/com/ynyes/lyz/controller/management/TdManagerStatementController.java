@@ -1353,12 +1353,10 @@ public class TdManagerStatementController extends TdManagerBaseController {
  
         // 第五步，设置值  
         List<TdSales> tdSalesList = tdSalesService.queryDownList(begin, end, cityName, diyCode, roleDiyIds);
-        //System.out.println(tdSalesList);
-//        long startTimne = System.currentTimeMillis();
-        
+        System.out.println("总共有"+tdSalesList.size()+"条记录");
         //excel单表最大行数是65535
         int maxRowNum = 60000;
-        int maxSize=0;
+        int maxSize=0;	
         if(tdSalesList!=null){
         	maxSize=tdSalesList.size();
         }
