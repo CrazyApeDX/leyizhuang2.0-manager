@@ -1443,10 +1443,14 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				row.createCell(12).setCellValue(objToString(sales.getGoodsTitle()));
 				
 				//赠品标识
-				if(sales.getIsGift().equalsIgnoreCase("N")){
+				if(null != sales.getIsGift()){
+					if(sales.getIsGift().equalsIgnoreCase("N")){
+						row.createCell(13).setCellValue("否");
+					}else {
+						row.createCell(13).setCellValue("是");
+					}
+				}else{
 					row.createCell(13).setCellValue("否");
-				}else {
-					row.createCell(13).setCellValue("是");
 				}
 				
 				//商品单价
