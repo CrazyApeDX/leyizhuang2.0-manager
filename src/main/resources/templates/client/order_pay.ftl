@@ -5,6 +5,9 @@
         <meta name="keywords" content="">
         <meta name="copyright" content="" />
         <meta name="description" content="">
+        <meta http-equiv="Pragma" content="no-cache">
+		<meta http-equiv="Cache-Control" content="no-cache">
+		<meta http-equiv="Expires" content="0"> 
         <meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
         <title>乐易装</title>
         <!-- css -->
