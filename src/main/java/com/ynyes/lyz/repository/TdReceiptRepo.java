@@ -110,7 +110,7 @@ public interface TdReceiptRepo extends PagingAndSortingRepository<TdReceipt, Lon
 			+" AND o.pay_time <= ?2 "
 			+" AND c.city_name LIKE ?3 "
 			+" AND o.diy_site_code LIKE ?4 "
-			+" AND o.order_number in (select DISTINCT order_number from td_cash_recipt_inf cash where cash.receipt_class = '电子券') "
+			+" AND o.is_coupon=1 "
 			+" AND o.diy_site_id IN ?5 "
 			+" GROUP BY "
 			+" 	main_order_number "

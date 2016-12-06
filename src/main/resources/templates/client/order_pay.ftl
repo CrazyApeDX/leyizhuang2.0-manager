@@ -14,6 +14,18 @@
         <!-- js -->
         <script type="text/javascript" src="/client/js/jquery-1.11.0.js"></script>
         <script type="text/javascript" src="/client/js/order_pay.js"></script>
+        <script>
+        		
+        	 $(function(){
+        	 	var flag = $("#flag").val();
+        	 	if("Y"!=flag){
+        	 		window.location.href="/order?back=1";
+        	 	}else{
+        	 		$("#flag").val('');
+        	 	}
+        		
+        	});
+        </script>
     </head>
     <body class="bgc-f3f4f6">
         <#-- 引入警告提示样式 -->
@@ -199,5 +211,6 @@
             <a class="btn-clearing" id="buyNow" href="javascript:confirmPay();">去支付</a>
         </footer>
         <!-- 底部 END -->
+        <input type="hidden" id="flag" name="flag" value="${flag!''}" >
     </body>
 </html>

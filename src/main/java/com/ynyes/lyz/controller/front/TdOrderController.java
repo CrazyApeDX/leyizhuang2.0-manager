@@ -343,6 +343,7 @@ public class TdOrderController {
 		map.addAttribute("order", order_temp);
 		map.addAttribute("no_product_coupon_list", no_product_coupon_list);
 		map.addAttribute("product_coupon_list", product_coupon_list);
+		map.addAttribute("flag", "Y");
 		return "/client/order_pay";
 
 	}
