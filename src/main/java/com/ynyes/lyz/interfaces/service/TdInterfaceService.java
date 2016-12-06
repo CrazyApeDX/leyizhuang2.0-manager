@@ -393,7 +393,7 @@ public class TdInterfaceService {
 		String[] couponIds = couponIdsStr.split(",");
 		for (String string : couponIds) {
 			if (org.apache.commons.lang3.StringUtils.isNotBlank(string)) {
-				long couponId = Long.parseLong(string);
+				Long couponId = Long.parseLong(string);
 				TdCoupon tdCoupon = tdCouponService.findOne(couponId);
 				if (tdCoupon != null) {
 					// 优惠券
