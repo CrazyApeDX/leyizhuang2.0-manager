@@ -531,13 +531,84 @@ public class TdOrderService {
 	}
 
 	/**
+	 * 订单条件查询 分页 
+	 * ======== 2016-12-07 ======= yanle ======= 增加‘配送方式’查询条件 ========
+	 * 
+	 * @return
+	 */
+	public Page<TdOrder> findAllAddConditionDeliveryType(String keywords, String orderStartTime, String orderEndTime, List<String> usernameList,
+			String sellerRealName, String shippingAddress, String shippingPhone, String deliveryTime, String userPhone,
+			String shippingName, String sendTime, Long statusId, String diyCode, String city,String deliverTypeTitle,List<String> roleCitys,
+			List<String> roleDiys, int size, int page) {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Criteria<TdOrder> c = new Criteria<TdOrder>();
+		if (null != keywords && !keywords.equalsIgnoreCase("")) {
+			c.add(Restrictions.like("orderNumber", keywords, true));
+		}
+		if (null != orderStartTime && !orderStartTime.equals("")) {
+			c.add(Restrictions.gte("orderTime", stringToDate(orderStartTime, null), true));
+
+		}
+		if (null != orderEndTime && !orderEndTime.equals("")) {
+			c.add(Restrictions.lte("orderTime", stringToDate(orderEndTime, null), true));
+		}
+
+		if (null != userPhone && !"".equals(userPhone)) {
+			c.add(Restrictions.like("username", userPhone, true));
+		}
+		if (null != shippingName && !"".equals(shippingName)) {
+			c.add(Restrictions.like("shippingName", shippingName, true));
+		}
+		if (null != shippingPhone && !"".equals(shippingPhone)) {
+			c.add(Restrictions.like("shippingPhone", shippingPhone, true));
+		}
+		if (null != shippingAddress && !"".equals(shippingAddress)) {
+			c.add(Restrictions.like("shippingAddress", shippingAddress, true));
+		}
+
+		if (null != usernameList && usernameList.size() > 0) {
+			c.add(Restrictions.in("username", usernameList, true));
+		}
+		if (null != deliveryTime && !deliveryTime.equals("")) {
+			c.add(Restrictions.eq("realUserRealName", stringToDate(deliveryTime, null), true));
+		}
+		if (null != sendTime && !sendTime.equals("")) {
+			c.add(Restrictions.eq("sendTime", stringToDate(sendTime, null), true));
+		}
+		if (null != sellerRealName && !"".equals(sellerRealName)) {
+			c.add(Restrictions.eq("sellerRealName", sellerRealName, true));
+		}
+		if (null != statusId && !statusId.equals(0L)) {
+			c.add(Restrictions.eq("statusId", statusId, true));
+		}
+		if (null != diyCode && !"".equals(diyCode)) {
+			c.add(Restrictions.eq("diySiteCode", diyCode, true));
+		}
+		// city为收货人地址
+		// if (null != city && !"".equals(city)) {
+		// c.add(Restrictions.eq("city", city, true));
+		// }
+		if (null != roleCitys && roleCitys.size() > 0) {
+			c.add(Restrictions.in("diySiteCode", roleCitys, true));
+		}
+		if (null != roleDiys && roleDiys.size() > 0) {
+			c.add(Restrictions.in("diySiteCode", roleDiys, true));
+		}
+		if(null != deliverTypeTitle && !"".equals(deliverTypeTitle)){
+			c.add(Restrictions.eq("deliverTypeTitle", deliverTypeTitle, true));
+		}
+		c.setOrderByDesc("orderTime");
+		return repository.findAll(c, pageRequest);
+	}
+	
+	/**
 	 * 订单条件查询 分页 修改城市查询
 	 * 
 	 * @return
 	 */
 	public Page<TdOrder> findAll(String keywords, String orderStartTime, String orderEndTime, List<String> usernameList,
 			String sellerRealName, String shippingAddress, String shippingPhone, String deliveryTime, String userPhone,
-			String shippingName, String sendTime, Long statusId, String diyCode, String city, List<String> roleCitys,
+			String shippingName, String sendTime, Long statusId, String diyCode, String city,List<String> roleCitys,
 			List<String> roleDiys, int size, int page) {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdOrder> c = new Criteria<TdOrder>();
@@ -596,6 +667,7 @@ public class TdOrderService {
 		c.setOrderByDesc("orderTime");
 		return repository.findAll(c, pageRequest);
 	}
+
 
 	/**
 	 * 字符串转换时间默认格式yyyy-MM-dd HH:mm:ss

@@ -651,7 +651,7 @@ public class TdManagerOrderController {
 			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE, Long[] listId, Integer[] listChkId,
 			ModelMap map, HttpServletRequest req, String orderStartTime, String orderEndTime, String realName,
 			String sellerRealName, String shippingAddress, String shippingPhone, String deliveryTime, String userPhone,
-			Long orderStatusId, String shippingName, String sendTime, String diyCode, String city) {
+			Long orderStatusId, String shippingName, String sendTime, String diyCode, String city,String deliveryType) {
 		String username = (String) req.getSession().getAttribute("manager");
 
 		if (null == username) {
@@ -761,11 +761,12 @@ public class TdManagerOrderController {
 						cityDiyCodes.add("null");
 					}
 				}
+				
 
 				map.addAttribute("order_page",
-						tdOrderService.findAll(keywords, orderStartTime, orderEndTime, usernameList, sellerRealName,
+						tdOrderService.findAllAddConditionDeliveryType(keywords, orderStartTime, orderEndTime, usernameList, sellerRealName,
 								shippingAddress, shippingPhone, deliveryTime, userPhone, shippingName, sendTime,
-								statusId, diyCode, city, cityDiyCodes, roleDiyCodes, size, page));
+								statusId, diyCode, city,deliveryType, cityDiyCodes, roleDiyCodes, size, page));
 			}
 		}
 
@@ -804,6 +805,7 @@ public class TdManagerOrderController {
 		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
 		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		map.addAttribute("deliveryType", deliveryType);
 
 		return "/site_mag/order_list";
 	}
