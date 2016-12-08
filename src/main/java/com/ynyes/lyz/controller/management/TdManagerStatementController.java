@@ -1729,7 +1729,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	       	//设置标题
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
-	        String[] cellValues={"城市","门店","券订单号","确认日期","会员姓名","会员电话","销顾姓名",
+	        String[] cellValues={"城市","未提货类型","门店","券订单号","确认日期","会员姓名","会员电话","销顾姓名",
 	        		"商品编码","数量","单价","总额"};
 			cellDates(cellValues, style, row);
 			
@@ -1744,36 +1744,39 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		        	//城市
 		        	row.createCell(0).setCellValue(objToString(tdReserveOrder.getCity()));
 		        	
+		        	//未提货类型
+		        	row.createCell(1).setCellValue(objToString(tdReserveOrder.getReserveType()));
+		        	
 		        	//门店
 		        	
-		        	row.createCell(1).setCellValue(objToString(tdReserveOrder.getDiySiteName()));
+		        	row.createCell(2).setCellValue(objToString(tdReserveOrder.getDiySiteName()));
 		        	
 		        	//券订单号
-		        	row.createCell(2).setCellValue(objToString(tdReserveOrder.getCouponOrderNumber()));
+		        	row.createCell(3).setCellValue(objToString(tdReserveOrder.getCouponOrderNumber()));
 
 		        	//确认日期
-		        	row.createCell(3).setCellValue(objToString(tdReserveOrder.getGetTime()));
+		        	row.createCell(4).setCellValue(objToString(tdReserveOrder.getGetTime()));
 		        	
 		        	//会员姓名
-		        	row.createCell(4).setCellValue(objToString(tdReserveOrder.getRealUserRealName()));
+		        	row.createCell(5).setCellValue(objToString(tdReserveOrder.getRealUserRealName()));
 		        	
 		        	//会员电话
-		        	row.createCell(5).setCellValue(objToString(tdReserveOrder.getUsername()));
+		        	row.createCell(6).setCellValue(objToString(tdReserveOrder.getUsername()));
 		        	
 		        	//销顾姓名
-					row.createCell(6).setCellValue(objToString(tdReserveOrder.getSellerRealName()));
+					row.createCell(7).setCellValue(objToString(tdReserveOrder.getSellerRealName()));
 					
 					//商品编码
-					row.createCell(7).setCellValue(objToString(tdReserveOrder.getSku()));
+					row.createCell(8).setCellValue(objToString(tdReserveOrder.getSku()));
 					
 					//数量
-					row.createCell(8).setCellValue(objToString(tdReserveOrder.getQuantity()));
+					row.createCell(9).setCellValue(objToString(tdReserveOrder.getQuantity()));
 					
 					//单价
-					row.createCell(9).setCellValue(objToString(tdReserveOrder.getBuyPrice()));
+					row.createCell(10).setCellValue(objToString(tdReserveOrder.getBuyPrice()));
 					
 					//总额
-					row.createCell(10).setCellValue(objToString(tdReserveOrder.getQuantity()*tdReserveOrder.getBuyPrice()));
+					row.createCell(11).setCellValue(objToString(tdReserveOrder.getQuantity()*tdReserveOrder.getBuyPrice()));
 					
 					
 				

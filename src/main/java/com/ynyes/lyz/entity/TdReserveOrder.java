@@ -18,6 +18,11 @@ public class TdReserveOrder {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private String id;
+	
+	//未提货类型
+	
+	@Column
+	private String reserveType;
 
 	// 门店名称
 	@Column
@@ -159,15 +164,26 @@ public class TdReserveOrder {
 	public void setCity(String city) {
 		this.city = city;
 	}
+	
+	
+
+	public String getReserveType() {
+		return reserveType;
+	}
+
+	public void setReserveType(String reserveType) {
+		this.reserveType = reserveType;
+	}
 
 	@Override
 	public String toString() {
-		return "TdReserveOrder [id=" + id + ", diySiteName=" + diySiteName + ", city=" + city + ", getTime=" + getTime
-				+ ", realUserRealName=" + realUserRealName + ", username=" + username + ", sellerRealName="
-				+ sellerRealName + ", sku=" + sku + ", quantity=" + quantity + ", buyPrice=" + buyPrice
-				+ ", totalPrice=" + totalPrice + ", couponOrderNumber=" + couponOrderNumber + "]";
+		return "TdReserveOrder [id=" + id + ", reserveType=" + reserveType + ", diySiteName=" + diySiteName + ", city="
+				+ city + ", getTime=" + getTime + ", realUserRealName=" + realUserRealName + ", username=" + username
+				+ ", sellerRealName=" + sellerRealName + ", sku=" + sku + ", quantity=" + quantity + ", buyPrice="
+				+ buyPrice + ", totalPrice=" + totalPrice + ", couponOrderNumber=" + couponOrderNumber + "]";
 	}
 
+	
 	
 	
 	
