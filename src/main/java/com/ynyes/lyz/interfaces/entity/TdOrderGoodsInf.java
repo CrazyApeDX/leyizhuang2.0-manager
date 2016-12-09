@@ -208,4 +208,12 @@ public class TdOrderGoodsInf extends TdInfBaseEntity {
 		this.attribute5 = attribute5;
 	}
 
+	@Override
+	public String toString() {
+		return "TdOrderGoodsInf [orderHeaderId=" + orderHeaderId + ", orderLineId=" + orderLineId + ", goodsId="
+				+ goodsId + ", goodsTitle=" + goodsTitle + ", goodsSubTitle=" + goodsSubTitle + ", sku=" + sku
+				+ ", quantity=" + quantity + ", jxPrice=" + jxPrice + ", lsPrice=" + lsPrice + ", giftFlag=" + giftFlag
+				+ ", promotion=" + promotion + ", attribute1=" + attribute1 + ", attribute2=" + attribute2
+				+ ", attribute3=" + attribute3 + ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + "]";
+	}
 }

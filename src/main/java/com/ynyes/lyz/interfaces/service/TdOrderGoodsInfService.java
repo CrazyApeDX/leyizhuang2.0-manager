@@ -113,4 +113,18 @@ public class TdOrderGoodsInfService {
 		return repository.findBySendFlag(flag);
 	}
 
+	public TdOrderGoodsInf findByOrderHeaderIdAndGoodsIdAndGiftFlag(Long orderHeaderId, Long goodsId, String giftFlag) {
+		if (null == orderHeaderId || null == goodsId || null == giftFlag) {
+			return null;
+		}
+		return repository.findByOrderHeaderIdAndGoodsIdAndGiftFlag(orderHeaderId, goodsId, giftFlag);
+	}
+
+	public TdOrderGoodsInf findByOrderHeaderIdAndSkuAndGiftFlag(Long orderHeaderId, String sku, String giftFlag) {
+		if (null == orderHeaderId || null == sku || null == giftFlag) {
+			return null;
+		}
+		return repository.findByOrderHeaderIdAndSkuAndGiftFlag(orderHeaderId, sku, giftFlag);
+	}
+
 }

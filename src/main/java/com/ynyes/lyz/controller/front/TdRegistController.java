@@ -92,7 +92,7 @@ public class TdRegistController {
 		res.put("status", -1);
 		String smsCode = (String) req.getSession().getAttribute("SMSCODE");
 		String smsMobile = (String) req.getSession().getAttribute("SMSMOBILE");
-		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(phone);
+		TdUser user = tdUserService.findByUsername(phone);
 		if (null == cityInfo || "".equals(cityInfo) || "地区".equals(cityInfo)) {
 			res.put("message", "您还未选择您的地区");
 			return res;

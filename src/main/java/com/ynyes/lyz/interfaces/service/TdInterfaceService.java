@@ -317,7 +317,11 @@ public class TdInterfaceService {
 		} else {
 			orderInf.setRecAmt(tdOrder.getTotalPrice());
 		}
-		if (!tdOrder.getProductCouponId().equals("")) {
+		
+		String cashCouponId = (null == tdOrder.getCashCouponId()) ? "" : tdOrder.getCashCouponId();
+		String productCouponId = (null == tdOrder.getProductCouponId()) ? "" : tdOrder.getProductCouponId();
+		String couponIdsStr = cashCouponId + productCouponId;
+		if (!couponIdsStr.equals("")) {
 			orderInf.setCouponFlag('Y');
 		} else {
 			orderInf.setCouponFlag('N');;
@@ -337,7 +341,7 @@ public class TdInterfaceService {
 			for (TdOrderGoods tdOrderGoods : goodsList) {
 				TdOrderGoodsInf goodsInf = new TdOrderGoodsInf();
 				goodsInf.setOrderHeaderId(orderInf.getHeaderId());
-				goodsInf.setGoodsId(tdOrderGoods.getId());
+				goodsInf.setGoodsId(tdOrderGoods.getGoodsId());
 				goodsInf.setGoodsTitle(tdOrderGoods.getGoodsTitle());
 				goodsInf.setGoodsSubTitle(tdOrderGoods.getGoodsSubTitle());
 				goodsInf.setSku(tdOrderGoods.getSku());
@@ -356,7 +360,7 @@ public class TdInterfaceService {
 			for (TdOrderGoods tdOrderGoods : gifList) {
 				TdOrderGoodsInf goodsInf = new TdOrderGoodsInf();
 				goodsInf.setOrderHeaderId(orderInf.getHeaderId());
-				goodsInf.setGoodsId(tdOrderGoods.getId());
+				goodsInf.setGoodsId(tdOrderGoods.getGoodsId());
 				goodsInf.setGoodsTitle(tdOrderGoods.getGoodsTitle());
 				goodsInf.setGoodsSubTitle(tdOrderGoods.getGoodsSubTitle());
 				goodsInf.setSku(tdOrderGoods.getSku());
@@ -374,7 +378,7 @@ public class TdInterfaceService {
 			for (TdOrderGoods tdOrderGoods : presentedList) {
 				TdOrderGoodsInf goodsInf = new TdOrderGoodsInf();
 				goodsInf.setOrderHeaderId(orderInf.getHeaderId());
-				goodsInf.setGoodsId(tdOrderGoods.getId());
+				goodsInf.setGoodsId(tdOrderGoods.getGoodsId());
 				goodsInf.setGoodsTitle(tdOrderGoods.getGoodsTitle());
 				goodsInf.setGoodsSubTitle(tdOrderGoods.getGoodsSubTitle());
 				goodsInf.setSku(tdOrderGoods.getSku());
@@ -387,9 +391,6 @@ public class TdInterfaceService {
 			}
 		}
 
-		String cashCouponId = tdOrder.getCashCouponId();
-		String productCouponId = tdOrder.getProductCouponId();
-		String couponIdsStr = cashCouponId + productCouponId;
 		String[] couponIds = couponIdsStr.split(",");
 		for (String string : couponIds) {
 			if (org.apache.commons.lang3.StringUtils.isNotBlank(string)) {
@@ -400,7 +401,7 @@ public class TdInterfaceService {
 					TdOrderCouponInf couponInf = new TdOrderCouponInf();
 					couponInf.setOrderHeaderId(orderInf.getHeaderId());
 					couponInf.setCouponTypeId(StringTools.coupontypeWithCoupon(tdCoupon));
-					couponInf.setSku(tdCoupon.getSku().trim());
+					couponInf.setSku(null == tdCoupon.getSku() ? null : tdCoupon.getSku().trim());
 					couponInf.setQuantity(1L);
 					if (null != tdCoupon.getTypeCategoryId()) {
 						Long type = tdCoupon.getTypeCategoryId();

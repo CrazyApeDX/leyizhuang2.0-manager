@@ -13,5 +13,9 @@ public interface TdOrderGoodsInfRepo
 	List<TdOrderGoodsInf> findByOrderHeaderId(Long headerId);
 	
 	List<TdOrderGoodsInf> findBySendFlag(Integer sendFlag);
+	
+	TdOrderGoodsInf findByOrderHeaderIdAndGoodsIdAndGiftFlag(Long orderHeaderId, Long goodsId, String giftFlag);
+	
+	TdOrderGoodsInf findByOrderHeaderIdAndSkuAndGiftFlag(Long orderHeaderId, String sku, String giftFlag);
 }
 

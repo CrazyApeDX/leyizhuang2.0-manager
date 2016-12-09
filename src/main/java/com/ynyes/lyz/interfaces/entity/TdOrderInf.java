@@ -414,5 +414,19 @@ public class TdOrderInf extends TdInfBaseEntity {
 	public void setDeliveryFee(Double deliveryFee) {
 		this.deliveryFee = deliveryFee;
 	}
-	
+
+	@Override
+	public String toString() {
+		return "TdOrderInf [sobId=" + sobId + ", headerId=" + headerId + ", orderNumber=" + orderNumber + ", orderDate="
+				+ orderDate + ", mainOrderNumber=" + mainOrderNumber + ", productType=" + productType + ", orderTypeId="
+				+ orderTypeId + ", userid=" + userid + ", username=" + username + ", userphone=" + userphone
+				+ ", diySiteId=" + diySiteId + ", diySiteCode=" + diySiteCode + ", diySiteName=" + diySiteName
+				+ ", diySitePhone=" + diySitePhone + ", province=" + province + ", city=" + city + ", disctrict="
+				+ disctrict + ", shippingName=" + shippingName + ", shippingPhone=" + shippingPhone
+				+ ", deliverTypeTitle=" + deliverTypeTitle + ", isonlinepay=" + isonlinepay + ", payType=" + payType
+				+ ", payDate=" + payDate + ", payAmt=" + payAmt + ", prepayAmt=" + prepayAmt + ", recAmt=" + recAmt
+				+ ", attribute1=" + attribute1 + ", attribute2=" + attribute2 + ", attribute3=" + attribute3
+				+ ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + ", couponFlag=" + couponFlag
+				+ ", deliveryFee=" + deliveryFee + "]";
+	}
 }

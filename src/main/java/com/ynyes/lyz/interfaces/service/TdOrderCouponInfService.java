@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ynyes.lyz.interfaces.entity.TdOrderCouponInf;
 import com.ynyes.lyz.interfaces.repository.TdOrderCouponInfRepo;
 
-
 /**
  * TdOrderInf 服务类
  * 
@@ -21,100 +20,96 @@ import com.ynyes.lyz.interfaces.repository.TdOrderCouponInfRepo;
 @Service
 @Transactional
 public class TdOrderCouponInfService {
-    
-    @Autowired
-    private TdOrderCouponInfRepo repository;
-    
-    /**
-     * 删除
-     * 
-     * @param id 菜单项ID
-     */
-    public void delete(Long id)
-    {
-        if (null != id)
-        {
-            repository.delete(id);
-        }
-    }
-    
-    /**
-     * 删除
-     * 
-     * @param e 菜单项
-     */
-    public void delete(TdOrderCouponInf e)
-    {
-        if (null != e)
-        {
-            repository.delete(e);
-        }
-    }
-    
-    public void delete(List<TdOrderCouponInf> entities)
-    {
-        if (null != entities)
-        {
-            repository.delete(entities);
-        }
-    }
-    
-    /**
-     * 查找
-     * 
-     * @param id ID
-     * @return
-     */
-    public TdOrderCouponInf findOne(Long id)
-    {
-        if (null == id)
-        {
-            return null;
-        }
-        
-        return repository.findOne(id);
-    }
-    
-    /**
-     * 查找
-     * 
-     * @param ids
-     * @return
-     */
-    public List<TdOrderCouponInf> findAll(Iterable<Long> ids)
-    {
-        return (List<TdOrderCouponInf>) repository.findAll(ids);
-    }
-    
-    public List<TdOrderCouponInf> findAll()
-    {
-        return (List<TdOrderCouponInf>) repository.findAll();
-    }
-    
-    public List<TdOrderCouponInf> findByorderHeaderId(Long headerId)
-    {
-    	return repository.findByOrderHeaderId(headerId);
-    }
-    
-    /**
-     * 保存
-     * 
-     * @param e
-     * @return
-     */
-    public TdOrderCouponInf save(TdOrderCouponInf e)
-    {
-    	if (null == e.getInitDate())
-        {
-            e.setInitDate(new Date());
-        }
-    	e.setModifyDate(new Date());
-        return repository.save(e);
-    }
-    
-    public List<TdOrderCouponInf> save(List<TdOrderCouponInf> entities)
-    {
-        return (List<TdOrderCouponInf>) repository.save(entities);
-    }
-    
+
+	@Autowired
+	private TdOrderCouponInfRepo repository;
+
+	/**
+	 * 删除
+	 * 
+	 * @param id
+	 *            菜单项ID
+	 */
+	public void delete(Long id) {
+		if (null != id) {
+			repository.delete(id);
+		}
+	}
+
+	/**
+	 * 删除
+	 * 
+	 * @param e
+	 *            菜单项
+	 */
+	public void delete(TdOrderCouponInf e) {
+		if (null != e) {
+			repository.delete(e);
+		}
+	}
+
+	public void delete(List<TdOrderCouponInf> entities) {
+		if (null != entities) {
+			repository.delete(entities);
+		}
+	}
+
+	/**
+	 * 查找
+	 * 
+	 * @param id
+	 *            ID
+	 * @return
+	 */
+	public TdOrderCouponInf findOne(Long id) {
+		if (null == id) {
+			return null;
+		}
+
+		return repository.findOne(id);
+	}
+
+	/**
+	 * 查找
+	 * 
+	 * @param ids
+	 * @return
+	 */
+	public List<TdOrderCouponInf> findAll(Iterable<Long> ids) {
+		return (List<TdOrderCouponInf>) repository.findAll(ids);
+	}
+
+	public List<TdOrderCouponInf> findAll() {
+		return (List<TdOrderCouponInf>) repository.findAll();
+	}
+
+	public List<TdOrderCouponInf> findByorderHeaderId(Long headerId) {
+		return repository.findByOrderHeaderId(headerId);
+	}
+
+	/**
+	 * 保存
+	 * 
+	 * @param e
+	 * @return
+	 */
+	public TdOrderCouponInf save(TdOrderCouponInf e) {
+		if (null == e.getInitDate()) {
+			e.setInitDate(new Date());
+		}
+		e.setModifyDate(new Date());
+		return repository.save(e);
+	}
+
+	public List<TdOrderCouponInf> save(List<TdOrderCouponInf> entities) {
+		return (List<TdOrderCouponInf>) repository.save(entities);
+	}
+
+	public List<TdOrderCouponInf> findByOrderHeaderIdAndCouponTypeId(Long headerId, Integer couponTypeId) {
+		if (null == headerId || null == couponTypeId) {
+			return null;
+		}
+		return repository.findByOrderHeaderIdAndCouponTypeId(headerId, couponTypeId);
+	}
+
 }

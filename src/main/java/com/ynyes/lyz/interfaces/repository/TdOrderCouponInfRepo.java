@@ -8,8 +8,9 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import com.ynyes.lyz.interfaces.entity.TdOrderCouponInf;
 
 public interface TdOrderCouponInfRepo
-		extends PagingAndSortingRepository<TdOrderCouponInf, Long>, JpaSpecificationExecutor<TdOrderCouponInf> 
-{
-	List<TdOrderCouponInf> findByOrderHeaderId(Long headerId);
-}
+		extends PagingAndSortingRepository<TdOrderCouponInf, Long>, JpaSpecificationExecutor<TdOrderCouponInf> {
 
+	List<TdOrderCouponInf> findByOrderHeaderId(Long headerId);
+
+	List<TdOrderCouponInf> findByOrderHeaderIdAndCouponTypeId(Long headerId, Integer couponTypeId);
+}

@@ -356,6 +356,7 @@ public class SettlementServiceImpl implements ISettlementService {
 							subOrder.getTotalGoodsPrice() + (orderGoods.getPrice() * orderGoods.getQuantity()));
 					subOrder.setTotalPrice(
 							subOrder.getTotalPrice() + (orderGoods.getPrice() * orderGoods.getQuantity()));
+					subOrder = tdOrderService.save(subOrder);
 					subOrderMap.put(brandId, subOrder);
 				}
 			}
@@ -378,6 +379,7 @@ public class SettlementServiceImpl implements ISettlementService {
 					}
 
 					subOrder.getGiftGoodsList().add(orderGoods);
+					subOrder = tdOrderService.save(subOrder);
 					subOrderMap.put(brandId, subOrder);
 				}
 			}
@@ -507,7 +509,8 @@ public class SettlementServiceImpl implements ISettlementService {
 										}
 										subOrder.setCashCoupon(subOrder.getCashCoupon() + coupon.getRealPrice());
 										subOrder.setTotalPrice(subOrder.getTotalPrice() - coupon.getRealPrice());
-
+										subOrder = tdOrderService.save(subOrder);
+										
 										// 设置该优惠券为已使用
 										setCouponUsed(coupon, subOrder);
 									}
@@ -549,6 +552,7 @@ public class SettlementServiceImpl implements ISettlementService {
 											}
 										}
 										subOrder.setTotalPrice(subOrder.getTotalPrice() - coupon.getRealPrice());
+										subOrder = tdOrderService.save(subOrder);
 
 										// 设置该优惠券为已使用
 										setCouponUsed(coupon, subOrder);
@@ -611,6 +615,7 @@ public class SettlementServiceImpl implements ISettlementService {
 					order.setActivitySubPrice(0d);
 				}
 				order.setTotalPrice(order.getTotalPrice() - order.getActivitySubPrice());
+				order = tdOrderService.save(order);
 				subOrderMap.put(brandId, order);
 			}
 		}
@@ -636,6 +641,7 @@ public class SettlementServiceImpl implements ISettlementService {
 				}
 				order.setTotalPrice(order.getTotalPrice() + order.getDeliverFee());
 				if (!order.getTotalPrice().equals(0d)) {
+					order = tdOrderService.save(order);
 					subOrderMap.put(0L, order);
 				}
 			}
@@ -730,6 +736,8 @@ public class SettlementServiceImpl implements ISettlementService {
 						subOrder.setPoint(point);
 						String leftPrice = df.format(subOrder.getTotalPrice() - subOrder.getActualPay());
 						subOrder.setTotalPrice(Double.parseDouble(leftPrice));
+						
+						subOrder = tdOrderService.save(subOrder);
 
 						// 不可提现预存款
 						if (new Double(scale2_uncash).doubleValue() != 0d) {

@@ -9,11 +9,11 @@ import com.ynyes.lyz.interfaces.entity.TdOrderInf;
 
 public interface IGenerationService {
 
-	void generateOrderData(List<TdOrder> orderList);
+	String generateOrderData(TdOrder order);
 	
 	TdOrderInf generateOrderInf(TdOrder order);
 	
-	List<TdOrderGoodsInf> generateOrderGoodsInf(TdOrder order);
+	List<TdOrderGoodsInf> generateOrderGoodsInf(TdOrder order, TdOrderInf orderInf);
 	
-	List<TdOrderCouponInf> generateOrderCouponInf(TdOrder order);
+	List<TdOrderCouponInf> generateOrderCouponInf(TdOrder order, TdOrderInf orderInf);
 }

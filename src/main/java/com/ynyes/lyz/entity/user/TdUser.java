@@ -14,9 +14,6 @@ import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import com.ynyes.lyz.annotation.AppManyToOne;
-import com.ynyes.lyz.entity.TdCity;
-import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdShippingAddress;
 
 @Entity
@@ -82,12 +79,10 @@ public class TdUser {
 	private Double balance;
 	
 	// 所属城市名
-	@AppManyToOne(target = TdCity.class, field = "cityName")
 	@Column(length = 10, nullable = false)
 	private String cityName;
 	
 	// 所属门店名
-	@AppManyToOne(target = TdDiySite.class, field = "title")
 	@Column(length = 15, nullable = false)
 	private String diyName;
 	
@@ -126,7 +121,6 @@ public class TdUser {
 	private String sex = "保密";
 	
 	// 用户所属门店id
-	@AppManyToOne(target = TdDiySite.class, field = "id")
 	@Column(length = 20, nullable = false)
 	private Long upperDiySiteId;
 	
@@ -147,7 +141,6 @@ public class TdUser {
 	private Double unCashBalance;
 	
 	// 用户城市id，实际上是引用EBS提供的SOB_ID
-	@AppManyToOne(target = TdCity.class, field = "sobIdCity")
 	@Column(length = 10, nullable = false)
 	private Long cityId;
 	
@@ -161,7 +154,6 @@ public class TdUser {
 	private Date birthday;
 	
 	// 客户id，由EBS提供
-	@AppManyToOne(target = TdDiySite.class, field = "customerId")
 	@Column(length = 10, nullable = false)
 	private Long customerId;
 	
@@ -183,17 +175,14 @@ public class TdUser {
 	private String loginSession;
 	
 	// 所属销顾id
-	@AppManyToOne(target = TdUser.class, field = "id")
 	@Column(length = 20)
 	private Long sellerId;
 	
 	// 所属销顾姓名
-	@AppManyToOne(target = TdUser.class, field = "realName")
 	@Column(length = 10)
 	private String sellerName;
 	
 	// 所属门店编码
-	@AppManyToOne(target = TdDiySite.class, field = "storeCode")
 	@Column(length = 10, nullable = false)
 	private String diyCode;
 	

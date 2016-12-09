@@ -168,6 +168,12 @@ public class TdOrderCouponInf extends TdInfBaseEntity {
 	public void setAttribute5(String attribute5) {
 		this.attribute5 = attribute5;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "TdOrderCouponInf [orderHeaderId=" + orderHeaderId + ", lineId=" + lineId + ", couponTypeId="
+				+ couponTypeId + ", sku=" + sku + ", quantity=" + quantity + ", price=" + price + ", historyFlag="
+				+ historyFlag + ", promotion=" + promotion + ", attribute1=" + attribute1 + ", attribute2=" + attribute2
+				+ ", attribute3=" + attribute3 + ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + "]";
+	}
 }

@@ -27,6 +27,7 @@ import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdPayType;
+import com.ynyes.lyz.entity.TdPriceList;
 import com.ynyes.lyz.entity.TdPriceListItem;
 import com.ynyes.lyz.entity.TdRecharge;
 import com.ynyes.lyz.entity.TdReturnNote;
@@ -83,6 +84,12 @@ public class TdPriceCountService {
 	
 	@Autowired
 	private TdOrderGoodsService tdOrderGoodsService;
+	
+	@Autowired
+	private TdPriceListService tdPriceListService;
+	
+	@Autowired
+	private TdPriceListItemService tdPriceListItemService;
 	
 	/**
 	 * 计算订单价格和能使用的最大的预存款的方法
@@ -2361,5 +2368,57 @@ public class TdPriceCountService {
 				}
 			}
 		}
+	}
+	
+	public Double getGoodsPrice(Long sobId, TdOrderGoods goods) {
+
+		if (null == goods) {
+			return 0d;
+		}
+
+		String productFlag = goods.getBrandTitle();
+
+		if (null == productFlag) {
+			return 0d;
+		}
+
+		String priceType = null;
+
+		// 零售价
+		if (productFlag.equalsIgnoreCase("华润")) {
+			priceType = "LS";
+		}
+		// 乐意装价
+		else if (productFlag.equalsIgnoreCase("乐易装")) {
+			priceType = "LYZ";
+		}
+		// 莹润价
+		else if (productFlag.equalsIgnoreCase("莹润")) {
+			priceType = "YR";
+		}
+		// 不支持的价格
+		else {
+			return 0d;
+		}
+
+		List<TdPriceList> priceList_list = tdPriceListService
+				.findBySobIdAndPriceTypeAndStartDateActiveAndEndDateActive(sobId, priceType, new Date(), new Date());
+
+		if (null == priceList_list || priceList_list.size() == 0 || priceList_list.size() > 1) {
+			return 0d;
+		}
+
+		// 价目表ID
+		Long list_header_id = 0L;
+		list_header_id = priceList_list.get(0).getListHeaderId();
+
+		List<TdPriceListItem> priceItemList = tdPriceListItemService
+				.findValidItemByPriceListHeaderIdAndGoodsCode(list_header_id, goods.getSku());
+
+		if (null == priceItemList || priceItemList.size() == 0 || priceItemList.size() > 1) {
+			return 0d;
+		}
+
+		return priceItemList.get(0).getPrice();
 	}
 }

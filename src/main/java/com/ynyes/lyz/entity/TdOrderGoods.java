@@ -151,6 +151,10 @@ public class TdOrderGoods {
 	// 该商品运费单价
 	@Column(scale = 2)
 	private Double deliveryUnit;
+	
+	// 满减分摊金额
+	@Column(scale = 2)
+	private Double shareUnit;
 
 	public String getSubOrderNumber() {
 		return subOrderNumber;
@@ -422,5 +426,13 @@ public class TdOrderGoods {
 
 	public void setDeliveryUnit(Double deliveryUnit) {
 		this.deliveryUnit = deliveryUnit;
+	}
+
+	public Double getShareUnit() {
+		return shareUnit;
+	}
+
+	public void setShareUnit(Double shareUnit) {
+		this.shareUnit = shareUnit;
 	}
 }

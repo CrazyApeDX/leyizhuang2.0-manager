@@ -311,6 +311,7 @@ public class TdManagerBuyCouponBySellerController {
 		order = this.getPresent(username, order);
 		order = this.getGift(username, order);
 		Double activitySubPrice = null == order.getActivitySubPrice() ? 0d : order.getActivitySubPrice();
+		order.setActivitySubPrice(activitySubPrice);
 		order.setTotalPrice(order.getTotalPrice() - activitySubPrice);
 
 		// 计算满减分摊价
@@ -321,6 +322,10 @@ public class TdManagerBuyCouponBySellerController {
 		req.getSession().setAttribute("MANAGER_ORDER", order);
 
 		res.put("total", order.getTotalPrice());
+		
+		/* 2016-12-08修改：获取用户的预存款总额 */
+		res.put("balance", user.getBalance());
+		
 		res.put("status", 0);
 		return res;
 	}
@@ -1575,7 +1580,9 @@ public class TdManagerBuyCouponBySellerController {
 			Double shareSub = activitySubPrice * point;
 			Double shareUnit = Double.valueOf(df.format(shareSub / number));
 
-			orderGoods.setPrice(orderGoods.getPrice() - shareUnit);
+			orderGoods.setShareUnit(shareUnit);
+			tdOrderGoodsService.save(orderGoods);
+//			orderGoods.setPrice(orderGoods.getPrice() - shareUnit);
 		}
 	}
 }
