@@ -21,9 +21,9 @@ import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeLine;
 import com.ynyes.lyz.service.TdCityService;
+import com.ynyes.lyz.service.TdDeliveryFeeHeadService;
+import com.ynyes.lyz.service.TdDeliveryFeeLineService;
 import com.ynyes.lyz.service.TdGoodsService;
-import com.ynyes.lyz.service.delivery.TdDeliveryFeeHeadService;
-import com.ynyes.lyz.service.delivery.TdDeliveryFeeLineService;
 import com.ynyes.lyz.util.SiteMagConstant;
 
 @Controller

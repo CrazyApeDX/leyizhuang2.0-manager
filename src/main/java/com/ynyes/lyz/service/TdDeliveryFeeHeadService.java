@@ -1,4 +1,4 @@
-package com.ynyes.lyz.service.delivery;
+package com.ynyes.lyz.service;
 
 import java.util.List;
 
