@@ -81,7 +81,7 @@ public class CouponInfo {
 	}
 
 	public Double getTradeTotal() {
-		tradeTotal = tradePrice * quantity;
+		tradeTotal = tradePrice * tradeQuantity;
 		return tradeTotal;
 	}
 

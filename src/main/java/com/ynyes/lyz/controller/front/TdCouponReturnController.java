@@ -161,11 +161,13 @@ public class TdCouponReturnController {
 			couponInf.setPrice(couponList.get(0).getBuyPrice());
 
 			Double totalPrice = 0d;
-			List<TdOrderGoods> orderGoodsList = tdOrderService.findByOrderNumber(order.getOrderNumber()).getOrderGoodsList();
-			for (TdOrderGoods tdOrderGoods : orderGoodsList) {
-				if (tdOrderGoods.getGoodsId().equals(goodsId)) {
-					totalPrice += tdOrderGoods.getRealPrice() * tdOrderGoods.getQuantity();
+
+			for (TdCoupon coupon : couponList) {
+				Double buyPrice = coupon.getBuyPrice();
+				if (null == buyPrice) {
+					buyPrice = 0d;
 				}
+				totalPrice += buyPrice;
 			}
 
 			couponInf.setTotalPrice(totalPrice);
