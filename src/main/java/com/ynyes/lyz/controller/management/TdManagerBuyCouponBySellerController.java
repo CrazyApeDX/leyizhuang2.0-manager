@@ -198,7 +198,7 @@ public class TdManagerBuyCouponBySellerController {
 	@RequestMapping(value = "/count", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> countPrice(HttpServletRequest req, String username, String sellerUsername, Long[] ids,
-			Long[] numbers, Long[] coupons) {
+			Long[] numbers, Long[] coupons, String remark) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 
@@ -214,6 +214,14 @@ public class TdManagerBuyCouponBySellerController {
 		TdUser seller = tdUserService.findByUsername(sellerUsername);
 		if (null == seller || seller.getUserType().longValue() == 0L || seller.getUserType().longValue() == 5L) {
 			res.put("message", "销顾不存在");
+			return res;
+		}
+		
+		if (remark.contains("&")) {
+			res.put("message", "备注不能输入特殊符号&");
+			return res;
+		} else if (remark.contains("'")) {
+			res.put("message", "备注不能输入特殊符号'");
 			return res;
 		}
 
@@ -247,6 +255,7 @@ public class TdManagerBuyCouponBySellerController {
 		order.setReceiveTime(new Date());
 		// order.setStatusId(5L);
 		order.setUsername(sellerUsername);
+		order.setRemark(remark);
 
 		for (int i = 0; i < ids.length; i++) {
 			Long id = ids[i];
@@ -1087,6 +1096,7 @@ public class TdManagerBuyCouponBySellerController {
 				TdOrder order = new TdOrder();
 				order.setOrderNumber(order_temp.getOrderNumber().replace("XN", brand.getShortName()));
 
+				order.setRemark(order_temp.getRemark());
 				order.setDiySiteId(order_temp.getDiySiteId());
 				order.setDiySiteCode(order_temp.getDiySiteCode());
 				order.setDiySiteName(order_temp.getDiySiteName());

@@ -239,7 +239,7 @@ public class StringUtils {
 			return null;
 		}
 //		String regEx="[`~!@$%^&*+=|{}':;'\\[\\].<>/?~！@#￥%……&*——+|{}【】‘；：”“’。、？]"; 
-		String regEx="[&]";
+		String regEx="[&]'";
 		Pattern p = Pattern.compile(regEx); 
 		Matcher m = p.matcher(str);
 		return m.replaceAll("").trim().replaceAll("\">", "");

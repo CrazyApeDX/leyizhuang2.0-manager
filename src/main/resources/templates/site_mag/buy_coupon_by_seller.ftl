@@ -488,6 +488,13 @@ function checkDate(){
                 </table>
             </dd>
         </dl>
+        <dl>
+            <dt>备注</dt>
+            <dd>
+                <input name="remark" id="remark" type="text" class="input normal">
+                <span class="Validform_checktip"></span>
+            </dd>
+        </dl>
     </div>
     
     <!--/内容-->
@@ -536,6 +543,8 @@ function checkDate(){
 		    			}
 		    		}
 		    		
+		    		var remark = $("#remark").val(); 
+		    		
 		    		$("#username").attr("readOnly", true);
 		    		$("#sellerUsername").attr("readOnly", true);
 		    		
@@ -548,7 +557,8 @@ function checkDate(){
 		    				username : username,
 		    				ids : ids,
 		    				numbers : numbers,
-		    				coupons : coupons
+		    				coupons : coupons,
+		    				remark : remark
 		    			},
 		    			success : function(res) {
 		    				if (0 === res.status) {
