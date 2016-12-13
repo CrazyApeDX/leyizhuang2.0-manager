@@ -1383,7 +1383,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	       	//设置标题
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
-	        String[] cellValues={"城市","品牌","门店","项目","主单号","分单号","订单日期","会员编号","会员姓名","销顾电话",
+	        String[] cellValues={"城市","品牌","门店","项目","主单号","分单号","订单日期","客户编号","客户姓名","客户类型","销顾电话",
 	        		"销顾姓名","商品编码","商品名称","赠品标识","商品单价","商品数量","商品总价","产品现金券单价","产品现金券数量","产品现金券总额","产品券单价","产品券数量","产品券总额","汇总"};
 			cellDates(cellValues, style, row);
 			
@@ -1430,24 +1430,34 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//会员名称
 				row.createCell(8).setCellValue(objToString(sales.getRealName()));
 				
+				if(null!=sales.getIdentityType()){
+					if(sales.getIdentityType()==true){
+						row.createCell(9).setCellValue("零售");
+					}else{
+						row.createCell(9).setCellValue("会员");
+					}
+				}else{
+					row.createCell(9).setCellValue("未知");
+				}
+				
 				//销顾电话
-				row.createCell(9).setCellValue(objToString(sales.getSellerUsername()));
+				row.createCell(10).setCellValue(objToString(sales.getSellerUsername()));
 				
 				//销顾姓名
-				row.createCell(10).setCellValue(objToString(sales.getSellerRealName()));
+				row.createCell(11).setCellValue(objToString(sales.getSellerRealName()));
 				
 				//产品编码
-				row.createCell(11).setCellValue(objToString(sales.getSku()));
+				row.createCell(12).setCellValue(objToString(sales.getSku()));
 				
 				//产品名称
-				row.createCell(12).setCellValue(objToString(sales.getGoodsTitle()));
+				row.createCell(13).setCellValue(objToString(sales.getGoodsTitle()));
 				
 				//赠品标识
 				if(null != sales.getIsGift()){
 					if(sales.getIsGift().equalsIgnoreCase("N")){
-						row.createCell(13).setCellValue("否");
+						row.createCell(14).setCellValue("否");
 					}else {
-						row.createCell(13).setCellValue("是");
+						row.createCell(14).setCellValue("是");
 					}
 				}else{
 					row.createCell(13).setCellValue("否");
@@ -1456,46 +1466,46 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//商品单价
 				if(null==sales.getGoodsPrice()){
 					sales.setGoodsPrice(0.0);
-					row.createCell(14).setCellValue(objToString(0));
+					row.createCell(15).setCellValue(objToString(0));
 				}else{
-					row.createCell(14).setCellValue(objToString(sales.getGoodsPrice()));
+					row.createCell(15).setCellValue(objToString(sales.getGoodsPrice()));
 				}
 	        	//商品数量
 				if(null == sales.getGoodsQuantity()){
 					sales.setGoodsQuantity(0L);
-					row.createCell(15).setCellValue(objToString(0));
+					row.createCell(16).setCellValue(objToString(0));
 				}else{
-					 row.createCell(15).setCellValue(objToString(sales.getGoodsQuantity()));
+					 row.createCell(16).setCellValue(objToString(sales.getGoodsQuantity()));
 				}
 	          	//商品总价
 	            
-				row.createCell(16).setCellValue(objToString(df.format(sales.getGoodsPrice()*sales.getGoodsQuantity())));
+				row.createCell(17).setCellValue(objToString(df.format(sales.getGoodsPrice()*sales.getGoodsQuantity())));
 				
 				//产品现金券单价
 				if(null==sales.getCashCouponPrice()){
 					sales.setCashCouponPrice(0.0);
-					row.createCell(17).setCellValue(objToString(sales.getCashCouponPrice()));
+					row.createCell(18).setCellValue(objToString(sales.getCashCouponPrice()));
 				}else{
-					row.createCell(17).setCellValue(objToString(sales.getCashCouponPrice()));
+					row.createCell(18).setCellValue(objToString(sales.getCashCouponPrice()));
 				}
 	    		
 				//产品现金券数量
 				if(null == sales.getCashCouponQuantity()){
 					sales.setCashCouponQuantity(0L);
-					row.createCell(18).setCellValue(objToString(sales.getCashCouponQuantity()));
+					row.createCell(19).setCellValue(objToString(sales.getCashCouponQuantity()));
 				}else{
-					row.createCell(18).setCellValue(objToString(sales.getCashCouponQuantity()));
+					row.createCell(19).setCellValue(objToString(sales.getCashCouponQuantity()));
 				}
 				
 				//产品现金券总额
-	        	row.createCell(19).setCellValue(objToString(df.format(sales.getCashCouponPrice()*sales.getCashCouponQuantity())));
+	        	row.createCell(20).setCellValue(objToString(df.format(sales.getCashCouponPrice()*sales.getCashCouponQuantity())));
 	        	
 	        	//产品券单价
 	        	if(null == sales.getProductCouponPrice()){
 	        		sales.setCashCouponPrice(0.0);
-	        		 row.createCell(20).setCellValue(objToString(sales.getProductCouponPrice()));
+	        		 row.createCell(21).setCellValue(objToString(sales.getProductCouponPrice()));
 	        	}else{
-	        		 row.createCell(20).setCellValue(objToString(sales.getProductCouponPrice()));
+	        		 row.createCell(21).setCellValue(objToString(sales.getProductCouponPrice()));
 	        	}
 				
 	           
@@ -1505,13 +1515,13 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        		sales.setCashCouponQuantity(0L);
 	        		
 	        	}else{
-	        		row.createCell(21).setCellValue(objToString(sales.getProductCouponQuantity()));
+	        		row.createCell(22).setCellValue(objToString(sales.getProductCouponQuantity()));
 	        	}
 	        	
 	        	//产品券总额
-	        	row.createCell(22).setCellValue(objToString(df.format(sales.getProductCouponPrice()*sales.getProductCouponQuantity())));
+	        	row.createCell(23).setCellValue(objToString(df.format(sales.getProductCouponPrice()*sales.getProductCouponQuantity())));
 	        	//汇总
-	        	row.createCell(23).setCellValue(objToString(df.format(sales.getGoodsPrice()*(sales.getGoodsQuantity()-sales.getProductCouponQuantity())-sales.getCashCouponPrice()*sales.getCashCouponQuantity())));
+	        	row.createCell(24).setCellValue(objToString(df.format(sales.getGoodsPrice()*(sales.getGoodsQuantity()-sales.getProductCouponQuantity())-sales.getCashCouponPrice()*sales.getCashCouponQuantity())));
 //	            System.out.println("正在生成excel文件的 sheet"+(i+1)+"第"+(j+1)+"行");
 			}
 //			System.out.println("正在生成excel文件的 sheet"+(i+1));

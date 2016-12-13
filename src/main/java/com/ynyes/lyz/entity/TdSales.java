@@ -47,8 +47,13 @@ public class TdSales {
 	@Column
 	private String username;
 	// 客户名称
-	@Column
+	@Column 
 	private String realName;
+	
+	//客户类型
+	
+	@Column
+	private Boolean identityType;
 
 	// 销顾电话
 	@Column
@@ -179,6 +184,15 @@ public class TdSales {
 
 	public void setRealName(String realName) {
 		this.realName = realName;
+	}
+	
+	
+	public Boolean getIdentityType() {
+		return identityType;
+	}
+
+	public void setidentityType(Boolean identityType) {
+		this.identityType = identityType;
 	}
 
 	public String getSellerUsername() {

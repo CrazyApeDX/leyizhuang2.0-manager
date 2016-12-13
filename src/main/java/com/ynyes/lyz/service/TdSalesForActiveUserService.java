@@ -116,18 +116,30 @@ public class TdSalesForActiveUserService {
 				}
 			}
 			
-			//会员电话
+			//客户电话
 			if(null!=sale.getUsername()&& !"".equalsIgnoreCase(sale.getUsername())){
 				saleForAcitveUser.setUsername(sale.getUsername());
 			}else{
 				saleForAcitveUser.setUsername("");
 			}
-			//会员姓名
+			//客户姓名
 			if(null!=sale.getRealName()&& !"".equalsIgnoreCase(sale.getRealName())){
 				saleForAcitveUser.setRealName(sale.getRealName());
 			}else{
 				saleForAcitveUser.setRealName("");
 			}
+			
+			//客户类型
+			if(null!=sale.getIdentityType()){
+				if(sale.getIdentityType()==true){
+					saleForAcitveUser.setIdentityType("零售");
+				}else{
+					saleForAcitveUser.setIdentityType("会员");
+				}
+			}else{
+				saleForAcitveUser.setIdentityType("未知");
+			}
+			
 			
 			//导购电话
 			if(null!=sale.getSellerUsername()&& !"".equalsIgnoreCase(sale.getSellerUsername())){
