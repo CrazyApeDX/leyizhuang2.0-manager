@@ -351,19 +351,19 @@ public class TdOrder {
 	// 第三方支付的金额
 	@Column
 	private Double otherPay;
-	
+
 	// POS支付的金额
 	@Column
 	private Double posPay;
 
-	//现金支付的金额
+	// 现金支付的金额
 	@Column
 	private Double cashPay;
-	
+
 	// 新增：2016-08-25收款方式其他，只有门店能够使用
 	@Column
 	private Double backOtherPay;
-	
+
 	// 有效时间(超过有效时间未支付将重新计算价格)
 	@Column
 	private Date validTime;
@@ -378,18 +378,34 @@ public class TdOrder {
 	// 促销减少的金额
 	@Column(scale = 2)
 	private Double activitySubPrice;
-	
+
 	// 是否以一口价的形式收取运费
 	@Column
 	private Boolean isFixedDeliveryFee;
-	
+
 	// 应收运费
 	@Column(scale = 2)
 	private Double receivableFee;
-	
+
 	// 分单占主单的比例
 	@Column(scale = 2)
 	private Double point;
+
+	// 上楼方式
+	@Column(length = 5)
+	private String upstairsType = "不上楼";
+
+	// 楼层
+	@Column(length = 2)
+	private Long floor = 1l;
+
+	// 上楼费
+	@Column(length = 10, scale = 2)
+	private Double upstairsFee = 0d;
+	
+	// 已收上楼费
+	@Column(length = 10, scale = 2)
+	private Double upstairsPayed = 0d;
 
 	public Double getRefund() {
 		return refund;
@@ -1096,5 +1112,37 @@ public class TdOrder {
 
 	public void setReceivableFee(Double receivableFee) {
 		this.receivableFee = receivableFee;
+	}
+
+	public String getUpstairsType() {
+		return upstairsType;
+	}
+
+	public void setUpstairsType(String upstairsType) {
+		this.upstairsType = upstairsType;
+	}
+
+	public Long getFloor() {
+		return floor;
+	}
+
+	public void setFloor(Long floor) {
+		this.floor = floor;
+	}
+
+	public Double getUpstairsFee() {
+		return upstairsFee;
+	}
+
+	public void setUpstairsFee(Double upstairsFee) {
+		this.upstairsFee = upstairsFee;
+	}
+
+	public Double getUpstairsPayed() {
+		return upstairsPayed;
+	}
+
+	public void setUpstairsPayed(Double upstairsPayed) {
+		this.upstairsPayed = upstairsPayed;
 	}
 }

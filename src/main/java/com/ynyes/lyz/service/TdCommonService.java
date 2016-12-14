@@ -192,6 +192,9 @@ public class TdCommonService {
 	
 	@Autowired
 	private ISettlementService settlementService;
+	
+	@Autowired
+	private TdUpstairsSettingService tdUpstairsSettingService;
 
 	/**
 	 * 根据仓库编号获取仓库名
@@ -1323,6 +1326,8 @@ public class TdCommonService {
 			virtual.setPayTypeTitle(top.getTitle());
 		}
 
+		// 计算上楼费
+		virtual.setUpstairsFee(tdUpstairsSettingService.countUpstairsFee(virtual));
 		tdOrderService.save(virtual);
 		
 		return virtual;
