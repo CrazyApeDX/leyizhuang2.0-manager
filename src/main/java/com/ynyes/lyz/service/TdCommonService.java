@@ -3486,7 +3486,9 @@ public class TdCommonService {
 		}
 
 		// 获取用户的门店
-		TdDiySite diySite = this.getDiySite(req);
+//		TdDiySite diySite = this.getDiySite(req);
+		Long diySiteId = order.getDiySiteId();
+		TdDiySite diySite = tdDiySiteService.findOne(diySiteId);
 		// 获取用户门店所能参加的活动
 		List<TdActivity> activity_list = tdActivityService
 				.findByDiySiteIdsContainingAndBeginDateBeforeAndFinishDateAfterAndGiftTypeOrderBySortIdAsc(

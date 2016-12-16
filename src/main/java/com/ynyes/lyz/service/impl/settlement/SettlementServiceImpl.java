@@ -121,6 +121,7 @@ public class SettlementServiceImpl implements ISettlementService {
 		// 开始进行逻辑判断
 		if (unCashBalance >= actualPay) {
 			order.setUnCashBalanceUsed(actualPay);
+			order.setCashBalanceUsed(0d);
 		} else {
 			order.setUnCashBalanceUsed(unCashBalance);
 			order.setCashBalanceUsed(actualPay - unCashBalance);

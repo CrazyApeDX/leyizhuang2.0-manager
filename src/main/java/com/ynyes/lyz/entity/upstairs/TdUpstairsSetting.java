@@ -13,10 +13,23 @@ import javax.persistence.Id;
  */
 @Entity
 public class TdUpstairsSetting {
+	
+	public TdUpstairsSetting() {
+		super();
+	}
+	
+	public TdUpstairsSetting(Long sobIdCity) {
+		super();
+		this.sobIdCity = sobIdCity;
+	}
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
+	
+	// 城市sobid
+	@Column(length = 10, nullable = false, unique = true)
+	private Long sobIdCity;
 
 	// 板材类商品SKU，多个以英文逗号隔开
 	@Column(length = 255, nullable = false)
@@ -52,6 +65,14 @@ public class TdUpstairsSetting {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public Long getSobIdCity() {
+		return sobIdCity;
+	}
+
+	public void setSobIdCity(Long sobIdCity) {
+		this.sobIdCity = sobIdCity;
 	}
 
 	public String getPanelSkus() {
@@ -112,8 +133,8 @@ public class TdUpstairsSetting {
 
 	@Override
 	public String toString() {
-		return "TdUpstairsSetting [id=" + id + ", panelSkus=" + panelSkus + ", keelSkus=" + keelSkus
-				+ ", panelStepUnit=" + panelStepUnit + ", keelStepUnit=" + keelStepUnit + ", panelEleUnit="
+		return "TdUpstairsSetting [id=" + id + ", sobIdCity=" + sobIdCity + ", panelSkus=" + panelSkus + ", keelSkus="
+				+ keelSkus + ", panelStepUnit=" + panelStepUnit + ", keelStepUnit=" + keelStepUnit + ", panelEleUnit="
 				+ panelEleUnit + ", keelEleUnit=" + keelEleUnit + ", keelUnitNumber=" + keelUnitNumber + "]";
 	}
 }

@@ -22,6 +22,9 @@ public class TdUpstairsSettingService {
 
 	@Autowired
 	private TdUpstairsSettingRepo repository;
+	
+	@Autowired
+	private TdCityService tdCityService;
 
 	public TdUpstairsSetting save(TdUpstairsSetting e) {
 		if (null == e) {
@@ -35,12 +38,26 @@ public class TdUpstairsSettingService {
 		setting = (setting == null) ? new TdUpstairsSetting() : setting;
 		return setting;
 	}
+	
+	public TdUpstairsSetting findBySobIdCity(Long sobIdCity) {
+		if (null == sobIdCity) {
+			return null;
+		}
+		TdUpstairsSetting setting = repository.findBySobIdCity(sobIdCity);
+		setting = (setting == null) ? new TdUpstairsSetting(sobIdCity) : setting;
+		return setting;
+	}
 
 	public Double countUpstairsFee(TdOrder order) {
 		Double panelUpstairsFee = 0d;
 		Double keelUpstairsFee = 0d;
-		TdUpstairsSetting setting = this.findTopBy();
+		
+		// 获取订单的sobIdCity
+		Long sobIdCity = tdCityService.findByCityName(order.getCity()).getSobIdCity();
+		
+		TdUpstairsSetting setting = this.findBySobIdCity(sobIdCity);
 		Map<String, Long> result = this.countPanelNumber(order, setting);
+	
 
 		if ("送货上门".equals(order.getDeliverTypeTitle())) {
 			if ("电梯".equals(order.getUpstairsType())) {

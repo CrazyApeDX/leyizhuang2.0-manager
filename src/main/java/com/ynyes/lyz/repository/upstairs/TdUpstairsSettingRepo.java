@@ -11,4 +11,6 @@ public interface TdUpstairsSettingRepo
 		extends PagingAndSortingRepository<TdUpstairsSetting, Long>, JpaSpecificationExecutor<TdUpstairsSetting> {
 
 	TdUpstairsSetting findTopBy();
+
+	TdUpstairsSetting findBySobIdCity(Long sobIdCity);
 }

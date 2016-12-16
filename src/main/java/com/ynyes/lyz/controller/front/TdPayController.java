@@ -120,7 +120,6 @@ public class TdPayController {
 		return "/client/waiting_pay";
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/alipay/return")
 	public String alipayReturn(HttpServletRequest req) {
 		// String username = (String) req.getSession().getAttribute("username");
@@ -252,7 +251,6 @@ public class TdPayController {
 		return "/client/pay_success";
 	}
 
-	@SuppressWarnings("rawtypes")
 	@RequestMapping(value = "/pay/alipay/return/async")
 	@ResponseBody
 	public String payAlipayReturnAsync(HttpServletRequest req) {
