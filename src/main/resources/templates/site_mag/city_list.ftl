@@ -66,6 +66,7 @@ var theForm = document.forms['form1'];
     <th align="left" width="30%">是否开启配送服务</th>
     <th align="center" width="10%">排序号</th>
     <th align="center" width="30">管理</th>
+    <th align="center" width="30">配置</th>
   </tr>
     <#if city_page??>
         <#list city_page.content as item>
@@ -80,6 +81,7 @@ var theForm = document.forms['form1'];
                 <td align="left"><#if item.citySend?? && item.citySend == true>开启<#else>关闭</#if></td>
                 <td align="center">${item.sortId!""}</td>
                 <td align="center"><a href="/Verwalter/delivery/fee/head/${(item.sobIdCity!0)?c}">运费管理</a></td>
+                <td align="center"><a href="/Verwalter/upstair/fee/edit/${(item.sobIdCity!0)?c}">上楼费配置</a></td>
             </tr>
         </#list>
     </#if>
