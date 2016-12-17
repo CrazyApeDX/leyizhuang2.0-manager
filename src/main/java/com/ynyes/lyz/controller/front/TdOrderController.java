@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -48,6 +49,7 @@ import com.ynyes.lyz.service.TdPriceCountService;
 import com.ynyes.lyz.service.TdSettingService;
 import com.ynyes.lyz.service.TdShippingAddressService;
 import com.ynyes.lyz.service.TdSubdistrictService;
+import com.ynyes.lyz.service.TdUpstairsSettingService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
 
@@ -106,6 +108,9 @@ public class TdOrderController {
 	@Autowired
 	private ISettlementService settlementService;
 
+	@Autowired
+	private TdUpstairsSettingService tdUpstairsSettingService;
+
 	/**
 	 * 清空部分信息的控制器
 	 * 
@@ -159,6 +164,19 @@ public class TdOrderController {
 			tdPriceCouintService.sendCoupon(order_temp);
 		} else {
 			order_temp = tdOrderService.findOne(order_temp.getId());
+		}
+
+		if (null == order_temp.getUpstairsType()) {
+			order_temp.setUpstairsType("不上楼");
+		}
+		if (null == order_temp.getFloor()) {
+			order_temp.setFloor(1L);
+		}
+		if (null == order_temp.getUpstairsFee()) {
+			order_temp.setUpstairsFee(0d);
+		}
+		if (null == order_temp.getUpstairsPayed()) {
+			order_temp.setUpstairsPayed(0d);
 		}
 
 		// 判断此单是否拥有商品
@@ -338,6 +356,10 @@ public class TdOrderController {
 		if (orderPresentList != null && orderPresentList.size() > 0) {
 			totalGoods += orderPresentList.size();
 		}
+
+		// 计算上楼费
+		Double countUpstairsFee = tdUpstairsSettingService.countUpstairsFee(order_temp);
+		order_temp.setUpstairsFee(countUpstairsFee);
 
 		map.addAttribute("totalGoods", totalGoods);
 		map.addAttribute("order", order_temp);
@@ -795,6 +817,10 @@ public class TdOrderController {
 					order.setPayTypeTitle(payType.getTitle());
 				}
 			}
+			order.setUpstairsType("不上楼");
+			order.setFloor(1L);
+			order.setUpstairsFee(0d);
+			order.setUpstairsPayed(0d);
 		}
 
 		order.setDeliveryDate(date);
@@ -813,6 +839,41 @@ public class TdOrderController {
 		req.getSession().setAttribute("order_temp", order);
 		tdOrderService.save(order);
 
+		return "redirect:/order";
+	}
+
+	/**
+	 * 跳转到上楼费的控制器
+	 * 
+	 * @author dengxiao
+	 */
+	@RequestMapping(value = "/upstairs", produces = "text/html;charset=utf-8", method = RequestMethod.GET)
+	public String orderUpstairsGet(HttpServletRequest req, ModelMap map) {
+		String username = (String) req.getSession().getAttribute("username");
+		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
+		if (null == user) {
+			return "redirect:/login";
+		}
+		// 从session获取临时订单
+		TdOrder order = (TdOrder) req.getSession().getAttribute("order_temp");
+		map.addAttribute("order", order);
+		return "/client/order_upstairs";
+	}
+	
+	@RequestMapping(value = "/upstairs", produces = "text/html;charset=utf-8", method = RequestMethod.POST)
+	public String orderUpstairsPost(HttpServletRequest req, String type, Long floor) {
+		String username = (String) req.getSession().getAttribute("username");
+		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
+		if (null == user) {
+			return "redirect:/login";
+		}
+		// 从session获取临时订单
+		TdOrder order = (TdOrder) req.getSession().getAttribute("order_temp");
+		order.setUpstairsType(type);
+		order.setFloor(floor);
+		Double upstairsFee = tdUpstairsSettingService.countUpstairsFee(order);
+		order.setUpstairsFee(upstairsFee);
+		tdOrderService.save(order);
 		return "redirect:/order";
 	}
 
@@ -1609,11 +1670,10 @@ public class TdOrderController {
 		}
 
 		// 判断是否为代下单
-		 if (null != order_temp && null != order_temp.getIsSellerOrder() &&
-				order_temp.getIsSellerOrder()) {
+		if (null != order_temp && null != order_temp.getIsSellerOrder() && order_temp.getIsSellerOrder()) {
 			order_temp.setUsername(order_temp.getRealUserUsername());
 			order_temp.setUserId(order_temp.getRealUserId());
-		 }
+		}
 
 		if (null == order_temp.getSellerId() || null == order_temp.getSellerRealName()
 				|| null == order_temp.getSellerUsername()) {
@@ -2017,13 +2077,13 @@ public class TdOrderController {
 				Long diysiteId = tdOrder.getDiySiteId();
 				TdDiySite tdDiySite = tdDiySiteService.findOne(diysiteId);
 				String deliverTypeTitleTemp = order.getDeliverTypeTitle();
-				if(null != deliverTypeTitleTemp && !"".equals(deliverTypeTitleTemp)){
-					if("送货上门".equals(deliverTypeTitleTemp) && tdDiySite.getIsHomeDelivery()==false){
+				if (null != deliverTypeTitleTemp && !"".equals(deliverTypeTitleTemp)) {
+					if ("送货上门".equals(deliverTypeTitleTemp) && tdDiySite.getIsHomeDelivery() == false) {
 						res.put("status", -2);
 						res.put("message", tdDiySite.getTitle() + "门店" + "不允许送货上门,请选择门店自提");
 						return res;
 					}
-				}else{
+				} else {
 					res.put("status", -2);
 					res.put("message", "请选择配送方式");
 					return res;

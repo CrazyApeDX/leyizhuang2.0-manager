@@ -96,6 +96,18 @@
 	                    <div class="div2">${order.deliveryDate!''}  ${order.deliveryDetailId!''}:30-${(order.deliveryDetailId+1)?eval}:30</div>
 	                </section>
                 </#if>
+                <!-- 送货上楼 -->
+                <#if order.deliverTypeTitle??&&order.deliverTypeTitle!='门店自提'>
+	                <section class="pay-method">
+	                    <label>送货上楼</label>
+	                    <a class="target" href="/order/upstairs">
+	                    	${order.upstairsType!''}
+	                    	<#if order.upstairsType??&&order.upstairsType=='步梯'>
+	                    		${order.floor!'1'}楼
+	                    	</#if>
+	                    </a>
+	                </section>
+                </#if>
                 <!-- 支付方式 -->
                 <section class="pay-method">
                     <label>支付方式</label>
@@ -192,6 +204,10 @@
                         <label>运费</label>
                         <div>￥<#if order??&&order.deliverFee??&&!(isFree??&&isFree)>${order.deliverFee?string("0.00")}<#else>0.00</#if></div>
                     </div>
+                    <div class="div1">
+                        <label>上楼费</label>
+                        <div>￥<#if order??&&order.upstairsFee??>${order.upstairsFee?string("0.00")}<#else>0.00</#if></div>
+                    </div>
                     <#if order??&&order.activitySubPrice??&&order.activitySubPrice gt 0>
 	                    <div class="div1">
 	                        <label>促销扣减</label>
@@ -208,7 +224,19 @@
         <!-- 底部 -->
         <footer class="fill-order-foot">
             <div class="disbur">还需支付：￥
-                <span id="order_total_price"><#if order.totalPrice??>${order.totalPrice?string("0.00")}<#else>0.00</#if></span>
+                <span id="order_total_price">
+                	<#if order.totalPrice??>
+                		<#assign totalPrice=order.totalPrice />
+                	<#else>
+                		<#assign totalPrice=0 />
+                	</#if>
+                	<#if order.upstairsFee??>
+                		<#assign upstairsFee=order.upstairsFee />
+                	<#else>
+            			<#assign upstairsFee=0>
+                	</#if>
+                	${(totalPrice + upstairsFee)?string("0.00")}
+    			</span>
             </div>
             <#--<a class="btn-clearing" id="buyNow" href="javascript:orderPay();">去支付</a>-->
             <a class="btn-clearing" id="buyNow" href="javascript:confirmPay();">去支付</a>

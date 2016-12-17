@@ -91,6 +91,9 @@ public class TdPriceCountService {
 	@Autowired
 	private TdPriceListItemService tdPriceListItemService;
 	
+	@Autowired
+	private TdUpstairsSettingService tdUpstairSettingService;
+	
 	/**
 	 * 计算订单价格和能使用的最大的预存款的方法
 	 * 
@@ -253,6 +256,22 @@ public class TdPriceCountService {
 			}
 		}
 
+		// 计算上楼费
+		Double upstairsFee = tdUpstairSettingService.countUpstairsFee(order);
+		order.setUpstairsFee(upstairsFee);
+		
+		// 计算促销减少的价格
+		Double activitySubPrice = order.getActivitySubPrice();
+		if (null == activitySubPrice) {
+			activitySubPrice = 0.00;
+		}
+		order.setTotalPrice(order.getTotalPrice() - activitySubPrice);
+		if (0 > order.getTotalPrice()) {
+			order.setTotalPrice(0.00);
+		}
+
+		order.setIsFixedDeliveryFee(isFixedDeliveryFee);
+		
 		// 开始计算最大能使用的预存款的额度
 		if (canUseBalance) {
 			Double balance = user.getBalance();
@@ -260,12 +279,12 @@ public class TdPriceCountService {
 				balance = 0.00;
 			}
 			// 如果预存款小于订单金额，则能够使用的最大预存款额度为用户的预存款
-			if (balance < order.getTotalPrice()) {
+			if (balance < (order.getTotalPrice() + order.getUpstairsFee())) {
 				max_use = balance;
 			}
 			// 其他情况则为订单的金额
 			else {
-				max_use = order.getTotalPrice();
+				max_use = (order.getTotalPrice() + order.getUpstairsFee());
 			}
 		} else {
 			max_use = 0.00;
@@ -288,18 +307,6 @@ public class TdPriceCountService {
 
 		order.setTotalPrice(order.getTotalPrice() - order.getActualPay());
 
-		// 计算促销减少的价格
-		Double activitySubPrice = order.getActivitySubPrice();
-		if (null == activitySubPrice) {
-			activitySubPrice = 0.00;
-		}
-		order.setTotalPrice(order.getTotalPrice() - activitySubPrice);
-		if (0 > order.getTotalPrice()) {
-			order.setTotalPrice(0.00);
-		}
-
-		order.setIsFixedDeliveryFee(isFixedDeliveryFee);
-		
 		tdOrderService.save(order);
 
 		max_use = order.getTotalPrice() + order.getActualPay();

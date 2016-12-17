@@ -36,6 +36,7 @@ public class TdUpstairsSettingService {
 	public TdUpstairsSetting findTopBy() {
 		TdUpstairsSetting setting = repository.findTopBy();
 		setting = (setting == null) ? new TdUpstairsSetting() : setting;
+		setting = this.save(setting);
 		return setting;
 	}
 	
