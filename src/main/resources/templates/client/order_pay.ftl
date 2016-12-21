@@ -187,7 +187,11 @@
                                                                                 禁止使用
                             <#else>
                             -->
-                                <#if order??&&order.actualPay??>${order.actualPay?string("0.00")}<#else>0.00</#if>
+                                <#if order??&&order.actualPay??&&order??&&order.upstairsBalancePayed??>
+                                	${(order.actualPay + order.upstairsBalancePayed)?string("0.00")}
+                            	<#else>
+                            		0.00
+                        		</#if>
                             <#--
                             </#if>
                             -->
@@ -225,17 +229,7 @@
         <footer class="fill-order-foot">
             <div class="disbur">还需支付：￥
                 <span id="order_total_price">
-                	<#if order.totalPrice??>
-                		<#assign totalPrice=order.totalPrice />
-                	<#else>
-                		<#assign totalPrice=0 />
-                	</#if>
-                	<#if order.upstairsFee??>
-                		<#assign upstairsFee=order.upstairsFee />
-                	<#else>
-            			<#assign upstairsFee=0>
-                	</#if>
-                	${(totalPrice + upstairsFee)?string("0.00")}
+                	${(order.totalPrice + order.upstairsLeftFee)?string("0.00")}
     			</span>
             </div>
             <#--<a class="btn-clearing" id="buyNow" href="javascript:orderPay();">去支付</a>-->

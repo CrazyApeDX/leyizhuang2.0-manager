@@ -7,8 +7,10 @@
 <script type="text/javascript" src="/mag/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="/mag/js/Validform_v5.3.2_min.js"></script>
 <script type="text/javascript" src="/mag/js/lhgdialog.js"></script>
+<script type="text/javascript" src="/mag/js/WdatePicker.js"></script>
 <script type="text/javascript" src="/mag/js/layout.js"></script>
 <link href="/mag/style/style.css" rel="stylesheet" type="text/css">
+<link href="/mag/style/WdatePicker.css" rel="stylesheet" type="text/css">
 <style type="text/css">
 .dialog{
 	position: fixed;
@@ -196,10 +198,10 @@
             <dt>订单号</dt>
             <dd>
             	<input type="hidden" id="ownId" value="${consult.id?c }" />
-                <span id="spanOrderNumber">${order.orderNumber!""}</span>
+                <span id="spanOrderNumber"><#if order??>${order.orderNumber!""}</#if></span>
             </dd>
         </dl>
-        <#if order.photo??>
+        <#if order??&&order.photo??>
             <dl>
                 <dt>签收照片</dt>
                 <dd>
@@ -257,7 +259,7 @@
                 </table> 
             </dd> 
         </dl>
-        <#if order.presentedList??>
+        <#if order??&&order.presentedList??>
              <dl>
                 <dt>赠品列表</dt>
                 <dd>
@@ -306,7 +308,7 @@
                 </dd> 
             </dl>
         </#if>
-        <#if order.giftGoodsList?? && order.giftGoodsList?size gt 0>
+        <#if order??&&order.giftGoodsList?? && order.giftGoodsList?size gt 0>
              <dl>
                 <dt>小辅料列表</dt>
                 <dd>
@@ -367,7 +369,7 @@
                         </th>
                         <td>
                             <div class="position">
-                            <span><#if order.sellerRealName??>${order.sellerRealName!""}</#if> </span>
+                            <span><#if order??&&order.sellerRealName??>${order.sellerRealName!""}</#if> </span>
                             </div>
                         </td>
                     </tr>
@@ -379,7 +381,7 @@
                         <td>
                             <div class="position">
                                 <span id="spanRealAmountValue">
-                                    <#if order.totalGoodsPrice??>${order.totalGoodsPrice?string("0.00")}</#if>
+                                    <#if order??&&order.totalGoodsPrice??>${order.totalGoodsPrice?string("0.00")}</#if>
                                 </span> 元
                             </div>
                         </td>
@@ -392,8 +394,8 @@
                         </th>
                         <td>
                             <div class="position">
-                                <span id="spanExpressFeeValue"><#if order.deliverTypeFee??>${order.deliverTypeFee?string("0.00")}</#if></span> 元
-                                <#if order.statusId==1 || order.statusId==2 && order.isOnlinePay>
+                                <span id="spanExpressFeeValue"><#if order??&&order.deliverTypeFee??>${order.deliverTypeFee?string("0.00")}</#if></span> 元
+                                <#if order??&&(order.statusId==1 || order.statusId==2 && order.isOnlinePay)>
                                 <input type="button" id="btnEditExpressFee" class="ibtn" value="调价">
                                 </#if>
                             </div>
@@ -406,8 +408,8 @@
                         </th>
                         <td>
                             <div class="position">
-                                <span id="spanPaymentFeeValue"><#if order.payTypeFee??>${order.payTypeFee?string("0.00")}</#if></span> 元
-                                <#if order.statusId==1 || order.statusId==2 && order.isOnlinePay>
+                                <span id="spanPaymentFeeValue"><#if order??&&order.payTypeFee??>${order.payTypeFee?string("0.00")}</#if></span> 元
+                                <#if order??&&(order.statusId==1 || order.statusId==2 && order.isOnlinePay)>
                                 <input type="button" id="btnEditPaymentFee" class="ibtn" value="调价">
                                 </#if>
                             </div>
@@ -421,7 +423,7 @@
                         </th>
                         <td>
                             <div class="position">
-                                ${order.points!"0"}分
+                                <#if order??>${order.points!"0"}分</#if>
                             </div>
                         </td>
                     </tr>
@@ -430,8 +432,8 @@
                             订单使用预存款
                         </th>
                         <td>
-                         可用预存款：<#if order.cashBalanceUsed??> ${order.cashBalanceUsed?string("0.00")}<#else>0.00</#if>元 | 
-                        不可用预存款：<#if order.unCashBalanceUsed??>${order.unCashBalanceUsed?string("0.00")}<#else>0.00</#if>元
+                         可用预存款：<#if order??&&order.cashBalanceUsed??> ${order.cashBalanceUsed?string("0.00")}<#else>0.00</#if>元 | 
+                        不可用预存款：<#if order??&&order.unCashBalanceUsed??>${order.unCashBalanceUsed?string("0.00")}<#else>0.00</#if>元
                             </td>
                     </tr>
                      -->
@@ -485,7 +487,7 @@
             </dd>
         </dl>
         
-        <#if order.deliverTypeTitle!='门店自提'>
+        <#if order??&&order.deliverTypeTitle!='门店自提'>
         <dl>
             <dt>收货信息</dt>
             <dd>
@@ -496,7 +498,7 @@
                         </th>
                         <td>
                             <div class="position">
-                                <span id="spanAcceptName">${order.shippingName!""}</span>
+                                <span id="spanAcceptName"><#if order??>${order.shippingName!""}</#if></span>
                             </div>
                         </td>
                     </tr>
@@ -506,21 +508,21 @@
                         </th>
                         <td>
                             <span id="spanArea"></span> 
-                            <span id="spanAddress">${order.shippingAddress!""}</span>
+                            <span id="spanAddress"><#if order??>${order.shippingAddress!""}</#if></span>
                         </td>
                     </tr>
                     <#--<tr>
                         <th>
                             邮政编码
                         </th>
-                        <td><span id="spanPostCode">${order.postalCode!""}</span></td>
+                        <td><span id="spanPostCode"><#if order??>${order.postalCode!""}</#if></span></td>
                     </tr>
                     -->
                     <tr>
                         <th>
                             电话
                         </th>
-                        <td><span id="spanMobile">${order.shippingPhone!""}</span></td>
+                        <td><span id="spanMobile"><#if order??>${order.shippingPhone!""}</#if></span></td>
                     </tr>
                     <#--
                     <tr>
@@ -529,13 +531,13 @@
                         </th>
                         
                         <td>
-                            <span id="spanInvoice"><#if order.isNeedInvoice?? && order.isNeedInvoice>是<#else>否</#if></span>
+                            <span id="spanInvoice"><#if order??&&order.isNeedInvoice?? && order.isNeedInvoice>是<#else>否</#if></span>
                         </td>
                         </tr>
                         <tr>
                         <th>发票抬头</th>
                         <td>
-                            <span id="spanInvoice">${order.invoiceTitle!""}</span>
+                            <span id="spanInvoice"><#if order??>${order.invoiceTitle!""}</#if></span>
                         </td>
                         
                     </tr>
@@ -549,7 +551,9 @@
             <dt>支付配送</dt>
             <dd>
                 <table border="0" cellspacing="0" cellpadding="0" class="border-table" width="98%">
-                    <tbody><tr>
+                	<#if order??>
+                    <tbody>
+                    <tr>
                         <th width="20%">
                             支付方式
                         </th>
@@ -583,7 +587,9 @@
                             </div>
                         </td>
                     </tr>
-                </tbody></table>
+                </tbody>
+                </#if>
+                </table>
             </dd>
         </dl>
         

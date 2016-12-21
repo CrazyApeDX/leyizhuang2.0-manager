@@ -573,6 +573,10 @@ public class CallWMSImpl implements ICallWMS {
 				tdDeliveryInfoDetailService.save(infoDetail);
 				if (c_reserved1 != null) {
 					TdOrder tdOrder = tdOrderService.findByOrderNumber(c_reserved1);
+					if (null == tdOrder) {
+						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>单号为" + c_reserved1
+								+ "的单据不存在</MESSAGE></STATUS></RESULTS>";
+					}
 					List<TdOrder> orders = tdOrderService.findByMainOrderNumberIgnoreCase(tdOrder.getMainOrderNumber());
 					if (null != orders && orders.size() > 0) {
 						for (TdOrder order : orders) {
@@ -1266,7 +1270,6 @@ public class CallWMSImpl implements ICallWMS {
 				}
 				recd.setDpsQty(c_dps_qty);
 				recd.setInitTime(new Date());
-				tdTbwRecdService.save(recd);
 				TdGoods tdGoods = tdGoodsService.findByCodeAndStatus(gcode, 1l);
 				if (StringUtils.isBlank(recQty)) {
 					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>商品验收数量不能为空</MESSAGE></STATUS></RESULTS>";
@@ -1275,6 +1278,12 @@ public class CallWMSImpl implements ICallWMS {
 					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>商品编码为：" + gcode
 							+ "的商品不存在或者不可用</MESSAGE></STATUS></RESULTS>";
 				}
+				Long count = this.tdTbwRecdService.countByGcodeAndRecNo(gcode, recNo);
+				if (count > 0) {
+					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>该数据已经成功接收，请勿重复传输</MESSAGE></STATUS></RESULTS>";
+				}
+				
+				tdTbwRecdService.save(recd);
 			}
 			return "<RESULTS><STATUS><CODE>0</CODE><MESSAGE></MESSAGE></STATUS></RESULTS>";
 		} else if (STRTABLE.equalsIgnoreCase("tbw_rec_m"))// 城市采购入库主档
@@ -1505,8 +1514,8 @@ public class CallWMSImpl implements ICallWMS {
 					TdDiySiteInventory inventory = tdDiySiteInventoryService
 							.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(gcode, cCompanyId);
 					if (inventory == null) {
-						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId
-								+ "的城市不存在</MESSAGE></STATUS></RESULTS>";
+						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + gcode
+								+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
 					}
 					Double.parseDouble(tdTbwRecd.getRecQty());
 					Double cRecQty = Double.parseDouble(tdTbwRecd.getRecQty());

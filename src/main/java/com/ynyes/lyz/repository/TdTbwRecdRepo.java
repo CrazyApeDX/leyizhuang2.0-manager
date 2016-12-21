@@ -14,7 +14,9 @@ import com.ynyes.lyz.entity.TdTbwRecd;
  *
  */
 
-public interface TdTbwRecdRepo extends PagingAndSortingRepository<TdTbwRecd, Long>, JpaSpecificationExecutor<TdTbwRecd> 
-{
+public interface TdTbwRecdRepo
+		extends PagingAndSortingRepository<TdTbwRecd, Long>, JpaSpecificationExecutor<TdTbwRecd> {
 	List<TdTbwRecd> findByRecNo(String recNo);
+	
+	Long countByGcodeAndRecNo(String gcode, String recNo);
 }

@@ -127,6 +127,14 @@ public class TdRequisition {
     @Column
     private Integer goodsQuantity;
     
+    // 上楼费总额
+    @Column
+    private Double upstairsAll = 0d;
+    
+    // 剩余上楼费
+    @Column
+    private Double upstairsLeft = 0d;
+    
 	public String getSellerRealName() {
 		return sellerRealName;
 	}
@@ -335,6 +343,22 @@ public class TdRequisition {
 		this.goodsQuantity = goodsQuantity;
 	}
 
+	public Double getUpstairsAll() {
+		return upstairsAll;
+	}
+
+	public void setUpstairsAll(Double upstairsAll) {
+		this.upstairsAll = upstairsAll;
+	}
+
+	public Double getUpstairsLeft() {
+		return upstairsLeft;
+	}
+
+	public void setUpstairsLeft(Double upstairsLeft) {
+		this.upstairsLeft = upstairsLeft;
+	}
+
 	@Override
 	public String toString() {
 		return "TdRequisition [id=" + id + ", diySiteTitle=" + diySiteTitle + ", diySiteId=" + diySiteId
@@ -345,7 +369,7 @@ public class TdRequisition {
 				+ detailAddress + ", receivePhone=" + receivePhone + ", requisiteGoodsList=" + requisiteGoodsList
 				+ ", orderTime=" + orderTime + ", typeId=" + typeId + ", remarkInfo=" + remarkInfo + ", diySiteTel="
 				+ diySiteTel + ", diyCode=" + diyCode + ", sellerRealName=" + sellerRealName + ", sellerTel="
-				+ sellerTel + ", goodsQuantity=" + goodsQuantity + "]";
+				+ sellerTel + ", goodsQuantity=" + goodsQuantity + ", upstairsAll=" + upstairsAll + ", upstairsLeft="
+				+ upstairsLeft + "]";
 	}
-    
 }

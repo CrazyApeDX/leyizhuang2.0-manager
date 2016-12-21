@@ -359,6 +359,8 @@ function payedChange(){
 		        	</#list>
 		        </#if>
 		        <div class="mesg">支付方式：${sub_order.payTypeTitle!''}</div>
+		        <div class="mesg">上楼费总额：${sub_order.upstairsFee?string('0.00')}</div>
+		        <div class="mesg">剩余上楼费：${sub_order.upstairsLeftFee?string('0.00')}</div>
 		        <#--
 		        <div class="mesg">已交款：${sub_order.actualPay!'0'}元</div>
         		<div class="mesg">欠款：<#if sub_order.totalPrice?? && sub_order.actualPay??>${sub_order.totalPrice-sub_order.actualPay}<#else>0</#if>元</div>

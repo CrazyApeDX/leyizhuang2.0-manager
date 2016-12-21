@@ -304,12 +304,17 @@ public class TdPriceCountService {
 		if (order.getActualPay() > order.getTotalPrice()) {
 			order.setActualPay(order.getTotalPrice());
 		}
-
+		
+		// 判断上楼费是否多收
+		if (order.getUpstairsBalancePayed() > order.getUpstairsFee()) {
+			order.setUpstairsBalancePayed(order.getUpstairsFee());
+		}
+		
 		order.setTotalPrice(order.getTotalPrice() - order.getActualPay());
 
 		tdOrderService.save(order);
 
-		max_use = order.getTotalPrice() + order.getActualPay();
+//		max_use = order.getTotalPrice() + order.getActualPay();
 
 		results.put("result", order);
 		results.put("max", max_use);

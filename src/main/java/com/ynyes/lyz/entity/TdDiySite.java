@@ -111,7 +111,7 @@ public class TdDiySite {
 	@Column
 	private Boolean isDirect;
 
-	// 门店属性（0. 直营门店；1. 加盟门店；2. 虚拟门店；3. 第三方）
+	// 门店属性（0. 直营门店；1. 加盟门店；2. 虚拟门店；3. 第三方；4. 装修公司）
 	@Column
 	private Long status;
 
@@ -146,7 +146,6 @@ public class TdDiySite {
 	//价目表名
 	@Column
 	private String priceListName;
-	
 	//是否开启门店送货上门的配送方式
 	@Column
 	private Boolean isHomeDelivery;

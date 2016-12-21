@@ -175,8 +175,11 @@ public class TdOrderController {
 		if (null == order_temp.getUpstairsFee()) {
 			order_temp.setUpstairsFee(0d);
 		}
-		if (null == order_temp.getUpstairsPayed()) {
-			order_temp.setUpstairsPayed(0d);
+		if (null == order_temp.getUpstairsBalancePayed()) {
+			order_temp.setUpstairsBalancePayed(0d);
+		}
+		if (null == order_temp.getUpstairsOtherPayed()) {
+			order_temp.setUpstairsOtherPayed(0d);
 		}
 
 		// 判断此单是否拥有商品
@@ -820,7 +823,8 @@ public class TdOrderController {
 			order.setUpstairsType("不上楼");
 			order.setFloor(1L);
 			order.setUpstairsFee(0d);
-			order.setUpstairsPayed(0d);
+			order.setUpstairsBalancePayed(0d);
+			order.setUpstairsOtherPayed(0d);
 		}
 
 		order.setDeliveryDate(date);
@@ -859,7 +863,7 @@ public class TdOrderController {
 		map.addAttribute("order", order);
 		return "/client/order_upstairs";
 	}
-	
+
 	@RequestMapping(value = "/upstairs", produces = "text/html;charset=utf-8", method = RequestMethod.POST)
 	public String orderUpstairsPost(HttpServletRequest req, String type, Long floor) {
 		String username = (String) req.getSession().getAttribute("username");
@@ -1731,7 +1735,7 @@ public class TdOrderController {
 
 		if (isOnline) {
 			// 判断是否还有未支付的金额
-			if (order_temp.getTotalPrice() > 0) {
+			if ((order_temp.getTotalPrice() + order_temp.getUpstairsLeftFee()) > 0) {
 				// 修改有效支付时间
 				orderValidTimeSet(req, order_temp);
 				// status的值为3代表需要通过第三方支付
@@ -1890,12 +1894,32 @@ public class TdOrderController {
 
 		// 获取虚拟订单
 		TdOrder order = (TdOrder) req.getSession().getAttribute("order_temp");
+		
+		// 清空原来的预存款支付金额，重新算价
+		order.setTotalPrice(order.getTotalPrice() + order.getActualPay());
+		order.setActualPay(0d);
+		order.setUpstairsBalancePayed(0d);
+		order.getUpstairsLeftFee();
 
 		// 四舍五入used
 		if (null != used) {
 			BigDecimal b = new BigDecimal(used);
 			used = b.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-			order.setActualPay(used);
+			if (used > order.getTotalPrice()) {
+				order.setActualPay(
+						new BigDecimal(order.getTotalPrice()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+				Double left = used - order.getTotalPrice();
+				left = new BigDecimal(left).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+				if (left > order.getUpstairsFee()) {
+					order.setUpstairsBalancePayed(order.getUpstairsFee());
+				} else {
+					order.setUpstairsBalancePayed(left);
+				}
+			} else {
+				order.setActualPay(used);
+			}
+
+			order.getUpstairsLeftFee();
 			req.getSession().setAttribute("order_temp", order);
 			tdOrderService.save(order);
 		}

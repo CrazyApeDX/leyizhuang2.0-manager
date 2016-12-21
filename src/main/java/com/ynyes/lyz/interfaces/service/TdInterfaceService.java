@@ -317,14 +317,15 @@ public class TdInterfaceService {
 		} else {
 			orderInf.setRecAmt(tdOrder.getTotalPrice());
 		}
-		
+
 		String cashCouponId = (null == tdOrder.getCashCouponId()) ? "" : tdOrder.getCashCouponId();
 		String productCouponId = (null == tdOrder.getProductCouponId()) ? "" : tdOrder.getProductCouponId();
 		String couponIdsStr = cashCouponId + productCouponId;
 		if (!couponIdsStr.equals("")) {
 			orderInf.setCouponFlag('Y');
 		} else {
-			orderInf.setCouponFlag('N');;
+			orderInf.setCouponFlag('N');
+			;
 		}
 		Double deliverFee = tdOrder.getDeliverFee();
 		if (null != deliverFee && deliverFee > 0d) {
@@ -457,6 +458,71 @@ public class TdInterfaceService {
 		 * cashReciptInf.setAmount(tdOrder.getOtherPay());
 		 * tdCashReciptInfService.save(cashReciptInf); }
 		 */
+
+		/* 如果在线上支付的上楼费，就需要传递给EBS */
+		// if (tdOrder.getUpstairsBalancePayed() > 0) {
+		// TdCashReciptInf cashReciptInf = new TdCashReciptInf();
+		// cashReciptInf.setSobId(SobId);
+		// cashReciptInf.setReceiptNumber(tdOrder.getOrderNumber());
+		// cashReciptInf.setUserid(tdOrder.getRealUserId());
+		// cashReciptInf.setUsername(tdOrder.getRealUserRealName());
+		// cashReciptInf.setUserphone(tdOrder.getRealUserUsername());
+		// cashReciptInf.setDiySiteCode(tdOrder.getDiySiteCode());
+		// cashReciptInf.setReceiptClass(StringTools.productClassStrByBoolean(tdOrder.getIsCoupon()));
+		// cashReciptInf.setOrderHeaderId(orderInf.getHeaderId());
+		// cashReciptInf.setOrderNumber(tdOrder.getOrderNumber());
+		// cashReciptInf.setProductType(StringTools.getProductStrByOrderNumber(tdOrder.getOrderNumber()));
+		// cashReciptInf.setReceiptType(tdOrder.getPayTypeTitle());
+		// cashReciptInf.setReceiptDate(new Date());
+		// cashReciptInf.setAmount(tdOrder.getOtherPay());
+		// tdCashReciptInfService.save(cashReciptInf);
+		//
+		// }
+
+		if (tdOrder.getUpstairsBalancePayed() > 0) {
+			TdCashReciptInf cashReciptInf = tdCashReciptInfService
+					.findByOrderNumberAndReceiptClassAndReceiptType(tdOrder.getMainOrderNumber(), "上楼费", "预收款");
+			if (null == cashReciptInf) {
+				if (tdOrder.getUpstairsBalancePayed() > 0) {
+					cashReciptInf = new TdCashReciptInf();
+					cashReciptInf.setSobId(SobId);
+					cashReciptInf.setReceiptNumber(tdOrder.getMainOrderNumber().replace("XN", "UPB"));
+					cashReciptInf.setUserid(tdOrder.getRealUserId());
+					cashReciptInf.setUsername(tdOrder.getRealUserRealName());
+					cashReciptInf.setUserphone(tdOrder.getRealUserUsername());
+					cashReciptInf.setDiySiteCode(tdOrder.getDiySiteCode());
+					cashReciptInf.setReceiptClass("上楼费");
+					cashReciptInf.setOrderNumber(tdOrder.getMainOrderNumber());
+					cashReciptInf.setProductType("UPSTAIRS");
+					cashReciptInf.setReceiptType("预收款");
+					cashReciptInf.setReceiptDate(new Date());
+					cashReciptInf.setAmount(tdOrder.getUpstairsBalancePayed());
+					tdCashReciptInfService.save(cashReciptInf);
+				}
+			}
+		}
+		if (tdOrder.getUpstairsOtherPayed() > 0) {
+			TdCashReciptInf cashReciptInf = tdCashReciptInfService.findByOrderNumberAndReceiptClassAndReceiptType(
+					tdOrder.getMainOrderNumber(), "上楼费", tdOrder.getPayTypeTitle());
+			if (null == cashReciptInf) {
+				if (tdOrder.getUpstairsBalancePayed() > 0) {
+					cashReciptInf = new TdCashReciptInf();
+					cashReciptInf.setSobId(SobId);
+					cashReciptInf.setReceiptNumber(tdOrder.getMainOrderNumber().replace("XN", "UPO"));
+					cashReciptInf.setUserid(tdOrder.getRealUserId());
+					cashReciptInf.setUsername(tdOrder.getRealUserRealName());
+					cashReciptInf.setUserphone(tdOrder.getRealUserUsername());
+					cashReciptInf.setDiySiteCode(tdOrder.getDiySiteCode());
+					cashReciptInf.setReceiptClass("上楼费");
+					cashReciptInf.setOrderNumber(tdOrder.getMainOrderNumber());
+					cashReciptInf.setProductType("UPSTAIRS");
+					cashReciptInf.setReceiptType(tdOrder.getPayTypeTitle());
+					cashReciptInf.setReceiptDate(new Date());
+					cashReciptInf.setAmount(tdOrder.getUpstairsOtherPayed());
+					tdCashReciptInfService.save(cashReciptInf);
+				}
+			}
+		}
 		return orderInf;
 	}
 
@@ -1245,41 +1311,28 @@ public class TdInterfaceService {
 		case ORDERINF: {
 			TdOrderInf object = (TdOrderInf) entity;
 			String payDate = sdf.format(object.getPayDate());
-			xml = "<TABLE>"
-					+ "<SOB_ID>" + object.getSobId() + "</SOB_ID>" 
-					+ "<ORDER_HEADER_ID>" + object.getHeaderId() + "</ORDER_HEADER_ID>" 
-					+ "<ORDER_NUMBER>" + object.getOrderNumber() + "</ORDER_NUMBER>"
-					+ "<ORDER_DATE>" + object.getOrderDate() + "</ORDER_DATE>" 
-					+ "<MAIN_ORDER_NUMBER>" + object.getMainOrderNumber() + "</MAIN_ORDER_NUMBER>" 
-					+ "<PRODUCT_TYPE>" + object.getProductType() + "</PRODUCT_TYPE>" 
-					+ "<ORDER_TYPE_ID>" + object.getOrderTypeId() + "</ORDER_TYPE_ID>" 
-					+ "<USERID>" + object.getUserid() + "</USERID>" 
-					+ "<USERNAME>" + object.getUsername() + "</USERNAME>"
-					+ "<USERPHONE>" + object.getUserphone() + "</USERPHONE>" 
-					+ "<DIY_SITE_ID>" + object.getDiySiteId() + "</DIY_SITE_ID>" 
-					+ "<DIY_SITE_CODE>" + object.getDiySiteCode() + "</DIY_SITE_CODE>"
-					+ "<DIY_SITE_NAME>" + object.getDiySiteName() + "</DIY_SITE_NAME>" 
-					+ "<DIY_SITE_PHONE>"+ object.getDiySitePhone() + "</DIY_SITE_PHONE>" 
-					+ "<PROVINCE>" + object.getProvince() + "</PROVINCE>" 
-					+ "<CITY>" + object.getCity() + "</CITY>" 
-					+ "<DISCTRICT>" + object.getDisctrict() + "</DISCTRICT>" 
-					+ "<SHIPPING_NAME>" + object.getShippingName() + "</SHIPPING_NAME>"
-					+ "<SHIPPING_PHONE>" + object.getShippingPhone() + "</SHIPPING_PHONE>" 
-					+ "<DELIVER_TYPE_TITLE>" + object.getDeliverTypeTitle() + "</DELIVER_TYPE_TITLE>" 
-					+ "<ISONLINEPAY>" + object.getIsonlinepay() + "</ISONLINEPAY>" 
-					+ "<PAY_TYPE>" + object.getPayType() + "</PAY_TYPE>" 
-					+ "<PAY_DATE>" + payDate + "</PAY_DATE>" 
-					+ "<PAY_AMT>" + object.getPayAmt() + "</PAY_AMT>" 
-					+ "<PREPAY_AMT>" + object.getPrepayAmt() + "</PREPAY_AMT>" 
-					+ "<REC_AMT>" + object.getRecAmt() + "</REC_AMT>"
-					+ "<ATTRIBUTE1>" + object.getAttribute1() + "</ATTRIBUTE1>" 
-					+ "<ATTRIBUTE2>" + object.getAttribute2() + "</ATTRIBUTE2>" 
-					+ "<ATTRIBUTE3>" + object.getAttribute3() + "</ATTRIBUTE3>" 
-					+ "<ATTRIBUTE4>" + object.getAttribute4() + "</ATTRIBUTE4>" 
-					+ "<ATTRIBUTE5>" + object.getAttribute5() + "</ATTRIBUTE5>"
-					+ "<COUPON_FLAG>" + object.getCouponFlag() + "</COUPON_FLAG>"
-					+ "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>"
-				+ "</TABLE>";
+			xml = "<TABLE>" + "<SOB_ID>" + object.getSobId() + "</SOB_ID>" + "<ORDER_HEADER_ID>" + object.getHeaderId()
+					+ "</ORDER_HEADER_ID>" + "<ORDER_NUMBER>" + object.getOrderNumber() + "</ORDER_NUMBER>"
+					+ "<ORDER_DATE>" + object.getOrderDate() + "</ORDER_DATE>" + "<MAIN_ORDER_NUMBER>"
+					+ object.getMainOrderNumber() + "</MAIN_ORDER_NUMBER>" + "<PRODUCT_TYPE>" + object.getProductType()
+					+ "</PRODUCT_TYPE>" + "<ORDER_TYPE_ID>" + object.getOrderTypeId() + "</ORDER_TYPE_ID>" + "<USERID>"
+					+ object.getUserid() + "</USERID>" + "<USERNAME>" + object.getUsername() + "</USERNAME>"
+					+ "<USERPHONE>" + object.getUserphone() + "</USERPHONE>" + "<DIY_SITE_ID>" + object.getDiySiteId()
+					+ "</DIY_SITE_ID>" + "<DIY_SITE_CODE>" + object.getDiySiteCode() + "</DIY_SITE_CODE>"
+					+ "<DIY_SITE_NAME>" + object.getDiySiteName() + "</DIY_SITE_NAME>" + "<DIY_SITE_PHONE>"
+					+ object.getDiySitePhone() + "</DIY_SITE_PHONE>" + "<PROVINCE>" + object.getProvince()
+					+ "</PROVINCE>" + "<CITY>" + object.getCity() + "</CITY>" + "<DISCTRICT>" + object.getDisctrict()
+					+ "</DISCTRICT>" + "<SHIPPING_NAME>" + object.getShippingName() + "</SHIPPING_NAME>"
+					+ "<SHIPPING_PHONE>" + object.getShippingPhone() + "</SHIPPING_PHONE>" + "<DELIVER_TYPE_TITLE>"
+					+ object.getDeliverTypeTitle() + "</DELIVER_TYPE_TITLE>" + "<ISONLINEPAY>" + object.getIsonlinepay()
+					+ "</ISONLINEPAY>" + "<PAY_TYPE>" + object.getPayType() + "</PAY_TYPE>" + "<PAY_DATE>" + payDate
+					+ "</PAY_DATE>" + "<PAY_AMT>" + object.getPayAmt() + "</PAY_AMT>" + "<PREPAY_AMT>"
+					+ object.getPrepayAmt() + "</PREPAY_AMT>" + "<REC_AMT>" + object.getRecAmt() + "</REC_AMT>"
+					+ "<ATTRIBUTE1>" + object.getAttribute1() + "</ATTRIBUTE1>" + "<ATTRIBUTE2>"
+					+ object.getAttribute2() + "</ATTRIBUTE2>" + "<ATTRIBUTE3>" + object.getAttribute3()
+					+ "</ATTRIBUTE3>" + "<ATTRIBUTE4>" + object.getAttribute4() + "</ATTRIBUTE4>" + "<ATTRIBUTE5>"
+					+ object.getAttribute5() + "</ATTRIBUTE5>" + "<COUPON_FLAG>" + object.getCouponFlag()
+					+ "</COUPON_FLAG>" + "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>" + "</TABLE>";
 			break;
 		}
 		case ORDERGOODSINF: {

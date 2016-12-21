@@ -454,6 +454,12 @@ public class SettlementServiceImpl implements ISettlementService {
 		subOrder.setOrderTime(mainOrder.getOrderTime());
 		subOrder.setRemark(mainOrder.getRemark());
 		subOrder.setAllTotalPay(mainOrder.getTotalPrice());
+		subOrder.setUpstairsType(mainOrder.getUpstairsType());
+		subOrder.setFloor(mainOrder.getFloor());
+		subOrder.setUpstairsFee(mainOrder.getUpstairsFee());
+		subOrder.setUpstairsBalancePayed(mainOrder.getUpstairsBalancePayed());
+		subOrder.setUpstairsOtherPayed(mainOrder.getUpstairsOtherPayed());
+		subOrder.setUpstairsLeftFee(subOrder.getUpstairsLeftFee());
 
 		// 设置销顾信息
 		subOrder.setSellerId(mainOrder.getSellerId());
@@ -796,6 +802,85 @@ public class SettlementServiceImpl implements ISettlementService {
 					}
 				}
 			}
+		}
+		
+		// 2016-12-17:完成分单预存款的扣减之后，扣减支付上楼费的预存款
+		Double upstairsBalancePayed = mainOrder.getUpstairsBalancePayed();
+		Double unCashBalance = realUser.getUnCashBalance();
+		Double cashBalance = realUser.getCashBalance();
+		if (upstairsBalancePayed > 0) {
+			if (unCashBalance >= upstairsBalancePayed) {
+				realUser.setUnCashBalance(realUser.getUnCashBalance() - upstairsBalancePayed);
+				TdBalanceLog balanceLog = new TdBalanceLog();
+				balanceLog.setUserId(mainOrder.getRealUserId());
+				balanceLog.setUsername(mainOrder.getUsername());
+				balanceLog.setMoney(upstairsBalancePayed);
+				balanceLog.setType(3L);
+				balanceLog.setCreateTime(new Date());
+				balanceLog.setFinishTime(new Date());
+				balanceLog.setIsSuccess(true);
+				balanceLog.setReason("订单上楼费支付使用");
+				// 设置变更后的余额
+				balanceLog.setBalance(realUser.getUnCashBalance());
+				balanceLog.setBalanceType(2L);
+				balanceLog.setOperator(mainOrder.getUsername());
+				balanceLog.setOrderNumber(mainOrder.getOrderNumber());
+				balanceLog.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
+				balanceLog.setDiySiteId(realUser.getUpperDiySiteId());
+				balanceLog.setCityId(realUser.getCityId());
+				balanceLog.setCashLeft(realUser.getCashBalance());
+				balanceLog.setUnCashLeft(realUser.getUnCashBalance());
+				balanceLog.setAllLeft(realUser.getBalance());
+				tdBalanceLogService.save(balanceLog);
+			} else {
+				if (unCashBalance > 0) {
+					realUser.setUnCashBalance(0d);
+					TdBalanceLog balanceLog = new TdBalanceLog();
+					balanceLog.setUserId(mainOrder.getRealUserId());
+					balanceLog.setUsername(mainOrder.getUsername());
+					balanceLog.setMoney(unCashBalance);
+					balanceLog.setType(3L);
+					balanceLog.setCreateTime(new Date());
+					balanceLog.setFinishTime(new Date());
+					balanceLog.setIsSuccess(true);
+					balanceLog.setReason("订单上楼费支付使用");
+					// 设置变更后的余额
+					balanceLog.setBalance(realUser.getUnCashBalance());
+					balanceLog.setBalanceType(2L);
+					balanceLog.setOperator(mainOrder.getUsername());
+					balanceLog.setOrderNumber(mainOrder.getOrderNumber());
+					balanceLog.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
+					balanceLog.setDiySiteId(realUser.getUpperDiySiteId());
+					balanceLog.setCityId(realUser.getCityId());
+					balanceLog.setCashLeft(realUser.getCashBalance());
+					balanceLog.setUnCashLeft(realUser.getUnCashBalance());
+					balanceLog.setAllLeft(realUser.getBalance());
+					tdBalanceLogService.save(balanceLog);
+				}
+				realUser.setCashBalance(cashBalance + unCashBalance - upstairsBalancePayed);
+				TdBalanceLog balanceLog = new TdBalanceLog();
+				balanceLog.setUserId(mainOrder.getRealUserId());
+				balanceLog.setUsername(mainOrder.getUsername());
+				balanceLog.setMoney(upstairsBalancePayed - unCashBalance);
+				balanceLog.setType(3L);
+				balanceLog.setCreateTime(new Date());
+				balanceLog.setFinishTime(new Date());
+				balanceLog.setIsSuccess(true);
+				balanceLog.setReason("订单上楼费支付使用");
+				// 设置变更后的余额
+				balanceLog.setBalance(realUser.getUnCashBalance());
+				balanceLog.setBalanceType(1L);
+				balanceLog.setOperator(mainOrder.getUsername());
+				balanceLog.setOrderNumber(mainOrder.getOrderNumber());
+				balanceLog.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
+				balanceLog.setDiySiteId(realUser.getUpperDiySiteId());
+				balanceLog.setCityId(realUser.getCityId());
+				balanceLog.setCashLeft(realUser.getCashBalance());
+				balanceLog.setUnCashLeft(realUser.getUnCashBalance());
+				balanceLog.setAllLeft(realUser.getBalance());
+				tdBalanceLogService.save(balanceLog);
+			}
+			tdUserService.save(realUser);
 		}
 	}
 

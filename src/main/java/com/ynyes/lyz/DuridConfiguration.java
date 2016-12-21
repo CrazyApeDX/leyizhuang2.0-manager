@@ -1,5 +1,7 @@
 package com.ynyes.lyz;
 
+import java.sql.SQLException;
+
 import javax.sql.DataSource;
 
 import org.springframework.boot.bind.RelaxedPropertyResolver;
@@ -38,7 +40,7 @@ public class DuridConfiguration implements EnvironmentAware {
 	}
 
 	@Bean(destroyMethod = "close", initMethod = "init")
-	public DataSource writeDataSource() {
+	public DataSource writeDataSource() throws SQLException {
 		DruidDataSource datasource = new DruidDataSource();
 		datasource.setUrl(propertyResolver.getProperty("url"));
 		datasource.setDriverClassName(propertyResolver.getProperty("driver--name"));
@@ -48,6 +50,14 @@ public class DuridConfiguration implements EnvironmentAware {
 		datasource.setMinIdle(Integer.valueOf(propertyResolver.getProperty("minIdle")));
 		datasource.setMaxWait(Long.valueOf(propertyResolver.getProperty("maxWait")));
 		datasource.setMaxActive(Integer.valueOf(propertyResolver.getProperty("maxActive")));
+		datasource.setTimeBetweenEvictionRunsMillis(Integer.valueOf(propertyResolver.getProperty("timeBetweenEvictionRunsMillis")));
+		datasource.setValidationQuery(propertyResolver.getProperty("validationQuery"));
+		datasource.setTestWhileIdle(Boolean.valueOf(propertyResolver.getProperty("testWhileIdle")));
+		datasource.setTestOnBorrow(Boolean.valueOf(propertyResolver.getProperty("testOnBorrow")));
+		datasource.setTestOnReturn(Boolean.valueOf(propertyResolver.getProperty("testOnReturn")));
+		datasource.setPoolPreparedStatements(Boolean.valueOf(propertyResolver.getProperty("poolPreparedStatements")));
+		datasource.setFilters(propertyResolver.getProperty("filters"));
+		datasource.setConnectionProperties(propertyResolver.getProperty("connectionProperties"));
 		return datasource;
 	}
 

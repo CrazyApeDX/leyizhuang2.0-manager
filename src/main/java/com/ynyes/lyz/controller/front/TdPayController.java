@@ -55,7 +55,7 @@ public class TdPayController {
 
 	@Autowired
 	private TdPriceCountService tdPriceCountService;
-	
+
 	@Autowired
 	private TdDiySiteInventoryService tdDiySiteInventoryService;
 
@@ -81,7 +81,7 @@ public class TdPayController {
 			fee = recharge.getTotalPrice();
 		} else {
 			TdOrder order = tdOrderService.findByOrderNumber(number);
-			fee = order.getTotalPrice();
+			fee = order.getTotalPrice() + order.getUpstairsLeftFee();
 		}
 
 		BigDecimal bd = new BigDecimal(fee);
@@ -111,7 +111,7 @@ public class TdPayController {
 		sParaTemp.put("return_url", return_url);
 		sParaTemp.put("seller_id", AlipayConfig.seller_id);
 		sParaTemp.put("service", "alipay.wap.create.direct.pay.by.user");
-		sParaTemp.put("show_url", "http://120.77.58.157:8080/");
+		sParaTemp.put("show_url", "www.leyizhuang.com.cn");
 		sParaTemp.put("subject", subject);
 		sParaTemp.put("total_fee", fee + "");
 
@@ -223,6 +223,8 @@ public class TdPayController {
 						order.setOtherPay(Double.parseDouble(total_fee));
 						Long id = order.getRealUserId();
 						TdUser realUser = tdUserService.findOne(id);
+						order.setUpstairsOtherPayed(
+								order.getUpstairsOtherPayed() + Double.parseDouble(total_fee) - order.getTotalPrice());
 						if (null != order) {
 							req.getSession().setAttribute("order_temp", order);
 							try {
@@ -343,6 +345,8 @@ public class TdPayController {
 					TdOrder order = tdOrderService.findByOrderNumber(out_trade_no);
 					if (2L == order.getStatusId().longValue()) {
 						order.setOtherPay(Double.parseDouble(total_fee));
+						order.setUpstairsOtherPayed(
+								order.getUpstairsOtherPayed() + Double.parseDouble(total_fee) - order.getTotalPrice());
 						Long id = order.getRealUserId();
 						TdUser realUser = tdUserService.findOne(id);
 						if (null != order) {
@@ -407,7 +411,7 @@ public class TdPayController {
 			newNumber = recharge.getNumber();
 		} else {
 			TdOrder order = tdOrderService.findByOrderNumber(number);
-			fee = order.getTotalPrice();
+			fee = order.getTotalPrice() + order.getUpstairsLeftFee();
 			order.setOrderNumber(head + orderNum);
 			tdOrderService.save(order);
 			newNumber = order.getOrderNumber();
@@ -518,6 +522,7 @@ public class TdPayController {
 							order.setOtherPay(PAYMENT);
 							Long id = order.getRealUserId();
 							TdUser realUser = tdUserService.findOne(id);
+							order.setUpstairsOtherPayed(order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
 							try {
 								settlementService.mainOrderDataAction(order, realUser);
 							} catch (Exception e1) {
@@ -674,6 +679,7 @@ public class TdPayController {
 							order.setOtherPay(PAYMENT);
 							Long id = order.getRealUserId();
 							TdUser realUser = tdUserService.findOne(id);
+							order.setUpstairsOtherPayed(order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
 							settlementService.mainOrderDataAction(order, realUser);
 							if (out_trade_no.contains("XN")) {
 								if (!"门店自提".equals(order.getDeliverTypeTitle())) {

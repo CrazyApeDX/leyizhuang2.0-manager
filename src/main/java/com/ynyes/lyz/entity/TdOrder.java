@@ -1,5 +1,6 @@
 package com.ynyes.lyz.entity;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -403,9 +404,17 @@ public class TdOrder {
 	@Column(length = 10, scale = 2)
 	private Double upstairsFee = 0d;
 	
-	// 已收上楼费
+	// 已收上楼费（预存款）
 	@Column(length = 10, scale = 2)
-	private Double upstairsPayed = 0d;
+	private Double upstairsBalancePayed = 0d;
+	
+	// 已收上楼费（第三方）
+	@Column(length = 10, scale = 2)
+	private Double upstairsOtherPayed = 0d;
+	
+	// 剩余上楼费
+	@Column(length = 10, scale = 2)
+	private Double upstairsLeftFee = 0d;
 
 	public Double getRefund() {
 		return refund;
@@ -1138,11 +1147,30 @@ public class TdOrder {
 		this.upstairsFee = upstairsFee;
 	}
 
-	public Double getUpstairsPayed() {
-		return upstairsPayed;
+	public Double getUpstairsBalancePayed() {
+		return upstairsBalancePayed;
 	}
 
-	public void setUpstairsPayed(Double upstairsPayed) {
-		this.upstairsPayed = upstairsPayed;
+	public void setUpstairsBalancePayed(Double upstairsBalancePayed) {
+		this.upstairsBalancePayed = upstairsBalancePayed;
 	}
+
+	public Double getUpstairsOtherPayed() {
+		return upstairsOtherPayed;
+	}
+
+	public void setUpstairsOtherPayed(Double upstairsOtherPayed) {
+		this.upstairsOtherPayed = upstairsOtherPayed;
+	}
+
+	public Double getUpstairsLeftFee() {
+		this.upstairsLeftFee = this.upstairsFee - this.upstairsBalancePayed - this.upstairsOtherPayed;
+		this.upstairsLeftFee = new BigDecimal(this.upstairsLeftFee).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		return upstairsLeftFee;
+	}
+
+	public void setUpstairsLeftFee(Double upstairsLeftFee) {
+		this.upstairsLeftFee = upstairsLeftFee;
+	}
+	
 }

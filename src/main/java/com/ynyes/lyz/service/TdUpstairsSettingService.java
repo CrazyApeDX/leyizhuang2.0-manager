@@ -22,7 +22,7 @@ public class TdUpstairsSettingService {
 
 	@Autowired
 	private TdUpstairsSettingRepo repository;
-	
+
 	@Autowired
 	private TdCityService tdCityService;
 
@@ -39,7 +39,7 @@ public class TdUpstairsSettingService {
 		setting = this.save(setting);
 		return setting;
 	}
-	
+
 	public TdUpstairsSetting findBySobIdCity(Long sobIdCity) {
 		if (null == sobIdCity) {
 			return null;
@@ -52,22 +52,24 @@ public class TdUpstairsSettingService {
 	public Double countUpstairsFee(TdOrder order) {
 		Double panelUpstairsFee = 0d;
 		Double keelUpstairsFee = 0d;
-		
+
 		// 获取订单的sobIdCity
 		Long sobIdCity = tdCityService.findByCityName(order.getCity()).getSobIdCity();
-		
+
 		TdUpstairsSetting setting = this.findBySobIdCity(sobIdCity);
 		Map<String, Long> result = this.countPanelNumber(order, setting);
-	
 
 		if ("送货上门".equals(order.getDeliverTypeTitle())) {
-			if ("电梯".equals(order.getUpstairsType())) {
+			Long group = result.get("keel") / setting.getKeelUnitNumber();
+			if ("电梯楼电梯上楼".equals(order.getUpstairsType())) {
 				panelUpstairsFee = setting.getPanelEleUnit() * result.get("panel");
-				keelUpstairsFee = setting.getKeelEleUnit() * result.get("keel") / setting.getKeelUnitNumber();
-			} else if ("步梯".equals(order.getUpstairsType())) {
-				panelUpstairsFee = setting.getPanelStepUnit() * result.get("panel") * (order.getFloor() - 1l);
-				keelUpstairsFee = setting.getKeelStepUnit() * result.get("keel") / setting.getKeelUnitNumber()
-						* order.getFloor();
+				keelUpstairsFee = setting.getKeelEleUnit() * group;
+			} else if ("步梯楼步梯上楼".equals(order.getUpstairsType())) {
+				panelUpstairsFee = setting.getPanelStepUnit() * result.get("panel") * (order.getFloor());
+				keelUpstairsFee = setting.getKeelStepUnit() * group * (order.getFloor());
+			} else if ("电梯楼步梯上楼".equals(order.getUpstairsType())) {
+				panelUpstairsFee = setting.getPanelStepUnit() * result.get("panel") * (order.getFloor() + 1l);
+				keelUpstairsFee = setting.getKeelStepUnit() * group * (order.getFloor() + 1l);
 			} else {
 				// do nothing!
 			}
@@ -96,9 +98,9 @@ public class TdUpstairsSettingService {
 			for (TdOrderGoods orderGoods : orderGoodsList) {
 				String sku = orderGoods.getSku();
 				if (ArrayUtils.contains(panelSkus, sku)) {
-					result.put("panel", result.get("panel") + 1l);
+					result.put("panel", result.get("panel") + orderGoods.getQuantity());
 				} else if (ArrayUtils.contains(keelSkus, sku)) {
-					result.put("keel", result.get("keel") + 1l);
+					result.put("keel", result.get("keel") + orderGoods.getQuantity());
 				} else {
 					// do nothing!
 				}

@@ -189,10 +189,10 @@ public class TdCommonService {
 
 	@Autowired
 	private TdPriceCountService tdPriceCountService;
-	
+
 	@Autowired
 	private ISettlementService settlementService;
-	
+
 	@Autowired
 	private TdUpstairsSettingService tdUpstairsSettingService;
 
@@ -1078,7 +1078,7 @@ public class TdCommonService {
 	 * 根据已选生成虚拟订单
 	 * 
 	 * @author dengxiao
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public TdOrder createVirtual(HttpServletRequest req, Long realUserId) throws Exception {
 		// 获取登陆用户的信息
@@ -1304,18 +1304,19 @@ public class TdCommonService {
 		}
 		virtual = this.getPresent(req, virtual);
 		virtual = this.getGift(req, virtual);
-		
+
 		// 获取运费
 		Double fee = 0.00;
-//		TdSubdistrict subdistrict = tdSubdistrictService.findOne(defaultAddress.getSubdistrictId());
-//		if (null == subdistrict) {
-//			subdistrict = new TdSubdistrict();
-//		}
-//		fee = subdistrict.getDeliveryFee();
-//		if (null == fee) {
-//			fee = 0.00;
-//		}
-		fee =settlementService.countOrderDeliveryFee(user, virtual);
+		// TdSubdistrict subdistrict =
+		// tdSubdistrictService.findOne(defaultAddress.getSubdistrictId());
+		// if (null == subdistrict) {
+		// subdistrict = new TdSubdistrict();
+		// }
+		// fee = subdistrict.getDeliveryFee();
+		// if (null == fee) {
+		// fee = 0.00;
+		// }
+		fee = settlementService.countOrderDeliveryFee(user, virtual);
 		virtual.setDeliverFee(fee);
 
 		// 券订单不能使用线下支付的方式
@@ -1329,7 +1330,7 @@ public class TdCommonService {
 		// 计算上楼费
 		virtual.setUpstairsFee(tdUpstairsSettingService.countUpstairsFee(virtual));
 		tdOrderService.save(virtual);
-		
+
 		return virtual;
 	}
 
@@ -2222,6 +2223,7 @@ public class TdCommonService {
 		if (mainOrderNumber == null || mainOrderNumber.equalsIgnoreCase("")) {
 			return;
 		}
+
 		TdRequisition requisition = SaveRequisiton(orderList, mainOrderNumber);
 
 		Object[] objects = null;
@@ -2388,6 +2390,8 @@ public class TdCommonService {
 			requisition.setRemarkInfo(order.getRemark());
 			requisition.setDiySiteTel(order.getDiySitePhone());
 			requisition.setOrderTime(order.getOrderTime());
+			requisition.setUpstairsAll(order.getUpstairsFee());
+			requisition.setUpstairsLeft(order.getUpstairsLeftFee());
 
 			// add by Shawn
 			if (null == order.getAllTotalPay()) {
@@ -2543,7 +2547,9 @@ public class TdCommonService {
 					+ requisition.getSubdistrict() + "</subdistrict>" + "<order_time>" + requisition.getOrderTime()
 					+ "</order_time>" + "<sub_order_number>" + requisition.getLeftPrice() + "</sub_order_number>"
 					+ "<seller_tel>" + requisition.getSellerTel() + "</seller_tel>" + "<goods_quantity>"
-					+ requisition.getGoodsQuantity() + "</goods_quantity>" + "</TABLE>" + "</ERP>";
+					+ requisition.getGoodsQuantity() + "</goods_quantity>" + "<upstairs_all>"
+					+ requisition.getUpstairsAll() + "</upstairs_all>" + "<upstairs_left>"
+					+ requisition.getUpstairsLeft() + "</upstairs_left>" + "</TABLE>" + "</ERP>";
 			xmlStr = xmlStr.replace("null", "");
 
 			byte[] bs = xmlStr.getBytes();
@@ -3486,7 +3492,7 @@ public class TdCommonService {
 		}
 
 		// 获取用户的门店
-//		TdDiySite diySite = this.getDiySite(req);
+		// TdDiySite diySite = this.getDiySite(req);
 		Long diySiteId = order.getDiySiteId();
 		TdDiySite diySite = tdDiySiteService.findOne(diySiteId);
 		// 获取用户门店所能参加的活动

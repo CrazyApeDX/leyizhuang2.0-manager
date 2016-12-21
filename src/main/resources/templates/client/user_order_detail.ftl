@@ -184,6 +184,10 @@
                     </style>
                     <li class="li5">配送人：<#if opUser??>${opUser.realName!''}</#if><#if opUser??&&opUser.username??>(<a href="tel:${opUser.username!''}">${opUser.username!''}</a>)</#if></li>
                		<li class="li5">配送仓库：<#if tdWareHouse??>${tdWareHouse.whName!''}</#if></li>
+               		<li class="li5">上楼费总额：<#if order.upstairsFee??>${order.upstairsFee?string("0.00")}<#else>0.00</#if></li>
+               		<li class="li5">预存款支付上楼费：<#if order.upstairsBalancePayed??>${order.upstairsBalancePayed?string("0.00")}<#else>0.00</#if></li>
+               		<li class="li5">第三方支付上楼费：<#if order.upstairsOtherPayed??>${order.upstairsOtherPayed?string("0.00")}<#else>0.00</#if></li>
+               		<li class="li5">剩余上楼费：<#if order.upstairsLeftFee??>${order.upstairsLeftFee?string("0.00")}<#else>0.00</#if></li>
                 </ol>   
             </article>
             <article class="order-list">

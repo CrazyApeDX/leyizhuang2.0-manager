@@ -1046,7 +1046,32 @@
                             订单总金额
                         </th>
                         <td>
-                            ${order.totalPrice?string("0.00")}元</td>
+                            ${order.totalPrice?string("0.00")}元
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>送货上楼方式</th>
+                        <td>${order.upstairsType!''}</td>
+                    </tr>
+                    <tr>
+                        <th>楼层</th>
+                        <td>${order.floor!'1'}</td>
+                    </tr>
+                    <tr>
+                        <th>上楼费总额</th>
+                        <td>${order.upstairsFee?string("0.00")}元</td>
+                    </tr>
+                    <tr>
+                        <th>预存款支付上楼费</th>
+                        <td>${order.upstairsBalancePayed?string("0.00")}元</td>
+                    </tr>
+                    <tr>
+                        <th>第三方支付上楼费</th>
+                        <td>${order.upstairsOtherPayed?string("0.00")}元</td>
+                    </tr>
+                    <tr>
+                        <th>剩余上楼费</th>
+                        <td>${order.upstairsLeftFee?string("0.00")}元</td>
                     </tr>
                 </tbody>
                 </table>

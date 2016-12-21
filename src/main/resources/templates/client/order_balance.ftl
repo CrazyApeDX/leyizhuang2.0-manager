@@ -85,7 +85,12 @@
 			</li>
 			<li class="li02">
 				<label>当前使用</label>
-				<input placeholder="预存款使用额" type="text" id="used_balance" value="<#if order??&&order.actualPay??>${order.actualPay?string("0.00")}<#else></#if>" />
+				<#if order??&&order.actualPay??&&order??&&order.upstairsBalancePayed??>
+					<#assign used=(order.actualPay + order.upstairsBalancePayed)>
+				<#else>
+					<#assign used=0>
+				</#if>
+				<input placeholder="预存款使用额" type="text" id="used_balance" value="${used?string("0.00")}" />
 			</li>
 		</ul>
 		<input type="button" class="button_by_dx" value="确定" onclick="orderBalance.confirm();">	

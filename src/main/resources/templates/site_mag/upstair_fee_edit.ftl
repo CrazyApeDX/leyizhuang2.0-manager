@@ -42,7 +42,7 @@ $(function () {
 <form name="form1" method="post" action="/Verwalter/upstair/fee/save" id="form1">
 <!--导航栏-->
 <div class="location">
-  <a href="/Verwalter/coupon/list" class="back"><i></i><span>返回列表页</span></a>
+  <a href="/Verwalter/setting/city/list" class="back"><i></i><span>返回列表页</span></a>
   <a href="/Verwalter/center" class="home"><i></i><span>首页</span></a>
   <i class="arrow"></i>
   <a href="/Verwalter/coupon/list"><span>城市列表</span></a>
@@ -81,14 +81,14 @@ $(function () {
   <dl>
     <dt>板材上楼费单位价（步梯）</dt>
     <dd>
-      <input name="keelStepUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelStepUnit??>${tdUpstairsSetting.panelStepUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
+      <input name="panelStepUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.panelStepUnit??>${tdUpstairsSetting.panelStepUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
       <span class="Validform_checktip">*板材上楼费单位价（步梯）</span>
     </dd>
   </dl> 
   <dl>
     <dt>龙骨上楼费单位价（步梯）</dt>
     <dd>
-      <input name="panelStepUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.panelStepUnit??>${tdUpstairsSetting.panelStepUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
+      <input name="keelStepUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelStepUnit??>${tdUpstairsSetting.keelStepUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
       <span class="Validform_checktip">*龙骨上楼费单位价（步梯）</span>
     </dd>
   </dl>
@@ -117,7 +117,7 @@ $(function () {
 </div>
 <div>
 	<input type="hidden" name="sobIdCity" id="sobIdCity" value="${sobId?c}">
-	<input type="hidden" name="id" id="id" value="${tdUpstairsSetting.id?c}">
+	<input type="hidden" name="id" id="id" value="<#if tdUpstairsSetting.id??>${tdUpstairsSetting.id?c}</#if>">
 </div>
 <!--工具栏-->
 <div class="page-footer">
