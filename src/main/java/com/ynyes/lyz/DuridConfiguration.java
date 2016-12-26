@@ -43,7 +43,7 @@ public class DuridConfiguration implements EnvironmentAware {
 	public DataSource writeDataSource() throws SQLException {
 		DruidDataSource datasource = new DruidDataSource();
 		datasource.setUrl(propertyResolver.getProperty("url"));
-		datasource.setDriverClassName(propertyResolver.getProperty("driver--name"));
+		datasource.setDriverClassName(propertyResolver.getProperty("driverClassName"));
 		datasource.setUsername(propertyResolver.getProperty("username"));
 		datasource.setPassword(propertyResolver.getProperty("password"));
 		datasource.setInitialSize(Integer.valueOf(propertyResolver.getProperty("initialSize")));

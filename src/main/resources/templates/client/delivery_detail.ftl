@@ -359,8 +359,6 @@ function payedChange(){
 		        	</#list>
 		        </#if>
 		        <div class="mesg">支付方式：${sub_order.payTypeTitle!''}</div>
-		        <div class="mesg">上楼费总额：${sub_order.upstairsFee?string('0.00')}</div>
-		        <div class="mesg">剩余上楼费：${sub_order.upstairsLeftFee?string('0.00')}</div>
 		        <#--
 		        <div class="mesg">已交款：${sub_order.actualPay!'0'}元</div>
         		<div class="mesg">欠款：<#if sub_order.totalPrice?? && sub_order.actualPay??>${sub_order.totalPrice-sub_order.actualPay}<#else>0</#if>元</div>
@@ -378,6 +376,8 @@ function payedChange(){
         <div class="mesg">需代收金额：<#if ownrecord?? && ownrecord.isEnable?? && ownrecord.isEnable == true && ownrecord.ispassed == true><#if ownrecord.owned??>${ownrecord.owned?c}<#else>0.00</#if><#else><#if td_order.allTotalPay?? && td_order.allActualPay??>${td_order.allTotalPay-td_order.allActualPay}<#else>0</#if></#if>元</div>
         <div class="mesg">实代收金额：<#if ownrecord?? && ownrecord.isEnable?? && ownrecord.isEnable == true && ownrecord.ispassed == true><#if ownrecord.payed??>${ownrecord.payed?c}<#else>0.00</#if><#else><#if td_order.allActualPay??>${td_order.allActualPay?c}<#else>0.00</#if></#if>元</div>
         -->
+        <div class="mesg">上楼费总额：<#if td_order??&&td_order.upstairsFee??>${td_order.upstairsFee?string('0.00')}<#else>0.00</#if></div>
+        <div class="mesg">剩余上楼费：<#if td_order??&&td_order.upstairsLeftFee??>${td_order.upstairsLeftFee?string('0.00')}<#else>0.00</#if></div>
         <div class="mesg">订单总金额：<#if allMoney??>${allMoney?string('0.00')}<#else>0.00</#if>元</div>
         <div class="mesg">需代收金额：<span id="agencyFund"><#if allMoney?? && isOnlinePay?? && isOnlinePay==false>${allMoney?c}<#else>0</#if></span>元</div>
         <div class="mesg">实代收金额：<#if (ownrecord?? && ownrecord.isEnable?? && ownrecord.isEnable == true && ownrecord.ispassed == true) || (ownrecord?? && ownrecord.isOwn?? && ownrecord.isOwn==false)><#if ownrecord.payed??>${ownrecord.payed?c}<#else>	0.00</#if><#else>0.00</#if>元</div>

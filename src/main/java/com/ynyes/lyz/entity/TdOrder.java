@@ -393,7 +393,7 @@ public class TdOrder {
 	private Double point;
 
 	// 上楼方式
-	@Column(length = 5)
+	@Column(length = 10)
 	private String upstairsType = "不上楼";
 
 	// 楼层

@@ -1,4 +1,4 @@
-package com.ynyes.lyz;
+package com.ynyes;
 
 import javax.servlet.MultipartConfigElement;
 

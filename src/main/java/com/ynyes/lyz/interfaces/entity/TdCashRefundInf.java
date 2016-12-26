@@ -12,93 +12,92 @@ import org.springframework.data.neo4j.annotation.Indexed;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-public class TdCashRefundInf extends TdInfBaseEntity
-{
-	//分公司id
+public class TdCashRefundInf extends TdInfBaseEntity {
+	// 分公司id
 	@Column
 	private Long sobId;
-	
-	//APP的唯一ID
+
+	// APP的唯一ID
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long refundId;
-	
-	//退款编号
+
+	// 退款编号
 	@Column
 	private String refundNumber;
-	
-	//app会员ID（APP是唯一）
+
+	// app会员ID（APP是唯一）
 	@Column
 	private Long userid;
-	
-	//app会员名称（会员姓名）
+
+	// app会员名称（会员姓名）
 	@Column
 	private String username;
-	
-	//app会员电话
+
+	// app会员电话
 	@Column
 	private String userphone;
-	
-	//门店编码 
+
+	// 门店编码
 	@Column
 	private String diySiteCode;
-	
-	//订单,电子券,预收款
+
+	// 订单,电子券,预收款
 	@Column
 	private String refundClass;
-	
-	//销售单头ID (代收款对应拆分后的订单ID)
+
+	// 销售单头ID (代收款对应拆分后的订单ID)
 	@Column
 	private Long rtHeaderId;
-	
-	//销售订单号
+
+	// 销售订单号
 	@Column
 	private String returnNumber;
-	
-	//原销售订单头ID
+
+	// 原销售订单头ID
 	@Column
 	@Indexed
 	private Long orderHeaderId;
-	
-	//1.电子券类型,订单产品类型 HR华润,LYZ乐易装,YR莹润,
-	//2.PREPAY预收款
+
+	// 1.电子券类型,订单产品类型 HR华润,LYZ乐易装,YR莹润,
+	// 2.PREPAY预收款
 	@Column
 	private String productType;
-	
-	//退款类型（支付宝,微信,银联,门店现金,门店POS，配送现金,配送POS）
+
+	// 退款类型（支付宝,微信,银联,门店现金,门店POS，配送现金,配送POS）
 	@Column
 	private String refundType;
-	
-	//退款日期
+
+	// 退款日期
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date refundDate;
-	
-	//退款金额
+
+	// 退款金额
 	@Column
 	private Double amount;
-	
-	//订单退款，电子券退款，订单收款冲销
+
+	// 订单退款，电子券退款，订单收款冲销
 	@Column
 	private String description;
-	
-	//预留字段1
+
+	// 预留字段1
 	@Column
 	private String attribute1;
-	
-	//预留字段2
+
+	// 预留字段2
 	@Column
 	private String attribute2;
-	
-	//预留字段3
+
+	// 预留字段3
 	@Column
 	private String attribute3;
-	
-	//预留字段4
+
+	// 预留字段4
 	@Column
 	private String attribute4;
-	
-	//预留字段5
+
+	// 预留字段5
 	@Column
 	private String attribute5;
 
@@ -280,5 +279,5 @@ public class TdCashRefundInf extends TdInfBaseEntity
 				+ ", attribute1=" + attribute1 + ", attribute2=" + attribute2 + ", attribute3=" + attribute3
 				+ ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + "]";
 	}
-	
+
 }

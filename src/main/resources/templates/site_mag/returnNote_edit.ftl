@@ -21,11 +21,17 @@
 
         // 确认退款
         function OrderReceive() {
+        	var receiveCount = 0;
             var dialog = $.dialog.confirm('该步骤将确认退款，确认要继续吗？', function () {
+            	receiveCount ++;
+            	console.log(receiveCount);
                 var returnNumber = $.trim($("#returnNumber").text());
                 var postData = { "returnNumber": returnNumber, "type": "refund" };
                 //发送AJAX请求
-                sendAjaxUrl(dialog, postData, "/Verwalter/returnNote/param/edit");
+                if (1 === receiveCount) {
+                	console.log(receiveCount);
+                	sendAjaxUrl(dialog, postData, "/Verwalter/returnNote/param/edit");
+                }
                 return false;
             });
         }

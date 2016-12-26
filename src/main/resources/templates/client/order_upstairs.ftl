@@ -79,7 +79,7 @@
 				<li class="li01">
 					<label>上楼方式</label>
 					<span>
-						<select id="type" name="type" style="height:30px;line-height:30px;font-size:0.9em;margin-right:150px;">
+						<select id="type" name="type" style="height:30px;line-height:30px;font-size:0.9em;margin-right:100px;">
 							<option value="不上楼" <#if order.upstairsType=="不上楼">selected="true"</#if>>不上楼</option>
 							<option value="步梯楼步梯上楼" <#if order.upstairsType=="步梯楼步梯上楼">selected="true"</#if>>步梯楼步梯上楼</option>
 							<option value="电梯楼电梯上楼" <#if order.upstairsType=="电梯楼电梯上楼">selected="true"</#if>>电梯楼电梯上楼</option>
