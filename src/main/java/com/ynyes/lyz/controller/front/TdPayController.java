@@ -124,8 +124,8 @@ public class TdPayController {
 	public String alipayReturn(HttpServletRequest req) {
 		// String username = (String) req.getSession().getAttribute("username");
 		Map<String, String> params = new HashMap<String, String>();
-		Map requestParams = req.getParameterMap();
-		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+		Map<?, ?> requestParams = req.getParameterMap();
+		for (Iterator<?> iter = requestParams.keySet().iterator(); iter.hasNext();) {
 			String name = (String) iter.next();
 			String[] values = (String[]) requestParams.get(name);
 			String valueStr = "";
@@ -264,8 +264,8 @@ public class TdPayController {
 		// String username = (String) req.getSession().getAttribute("username");
 
 		Map<String, String> params = new HashMap<String, String>();
-		Map requestParams = req.getParameterMap();
-		for (Iterator iter = requestParams.keySet().iterator(); iter.hasNext();) {
+		Map<?, ?> requestParams = req.getParameterMap();
+		for (Iterator<?> iter = requestParams.keySet().iterator(); iter.hasNext();) {
 			String name = (String) iter.next();
 			String[] values = (String[]) requestParams.get(name);
 			String valueStr = "";

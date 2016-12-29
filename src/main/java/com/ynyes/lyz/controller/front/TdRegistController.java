@@ -73,9 +73,9 @@ public class TdRegistController {
 				city.setCityName(cityInfo);
 				city = tdCityService.save(city);
 			}
-			
+
 			// 获取门店名称
-			TdDiySite diySite = tdDiySiteService.findByRegionIdAndStatusAndIsEnableTrue(city.getSobIdCity(),2L).get(0);
+			TdDiySite diySite = tdDiySiteService.findByRegionIdAndStatusAndIsEnableTrue(city.getSobIdCity(), 2L).get(0);
 			res.put("message", diySite.getTitle());
 			return res;
 		}
@@ -101,13 +101,11 @@ public class TdRegistController {
 			res.put("message", "该手机号码已注册");
 			return res;
 		}
-		if (null == smsCode || smsMobile == null)
-		{
+		if (null == smsCode || smsMobile == null) {
 			res.put("message", "验证码错误");
 			return res;
 		}
-		if (!smsCode.equals(code) || !smsMobile.equalsIgnoreCase(phone)) 
-		{
+		if (!smsCode.equals(code) || !smsMobile.equalsIgnoreCase(phone)) {
 			res.put("message", "验证码错误");
 			return res;
 		}
@@ -123,27 +121,29 @@ public class TdRegistController {
 		// 根据城市的名称获取指定城市的信息
 		TdCity city = tdCityService.findByCityName(cityInfo);
 		if (null == city) {
-			city = new TdCity();
-			city.setCityName(cityInfo);
-			city = tdCityService.save(city);
+			// city = new TdCity();
+			// city.setCityName(cityInfo);
+			// city = tdCityService.save(city);
+			res.put("message", "该城市（" + cityInfo + "）未开通服务");
+			return res;
 		}
-		
+
 		// 获取门店名称
-		TdDiySite diySite = tdDiySiteService.findByRegionIdAndStatusAndIsEnableTrue(city.getSobIdCity(),2L).get(0);
+		TdDiySite diySite = tdDiySiteService.findByRegionIdAndStatusAndIsEnableTrue(city.getSobIdCity(), 2L).get(0);
 		TdUser new_user = new TdUser();
 		new_user.setUsername(phone);
 		new_user.setPassword(MD5.md5(password, 32));
 		new_user.setReferPhone(referPhone);
 		new_user.setBalance(0.00);
-//		new_user.setNickname(phone);
+		// new_user.setNickname(phone);
 		new_user.setRegisterTime(new Date());
-//		new_user.setAllPayed(0.00);
+		// new_user.setAllPayed(0.00);
 		new_user.setUserType(0L);
 		new_user.setCityName(cityInfo);
 		new_user.setCityId(city.getSobIdCity());
-//		new_user.setFirstOrder(true);
+		// new_user.setFirstOrder(true);
 		new_user.setRealName(name);
-//		new_user.setIsOld(false);
+		// new_user.setIsOld(false);
 		new_user.setLastLoginTime(new Date());
 		new_user.setDiyName(cityInfo + "默认门店");
 		new_user.setUpperDiySiteId(diySite.getId());
@@ -161,8 +161,7 @@ public class TdRegistController {
 		new_user.setIdentityType(identityType);
 
 		TdUser refer_user = tdUserService.findByUsernameAndCityNameAndIsEnableTrue(referPhone, cityInfo);
-		if (null != refer_user) 
-		{
+		if (null != refer_user) {
 			new_user.setUpperDiySiteId(refer_user.getUpperDiySiteId());
 			new_user.setDiyName(refer_user.getDiyName());
 			new_user.setCityId(refer_user.getCityId());
@@ -170,10 +169,16 @@ public class TdRegistController {
 			new_user.setSellerId(refer_user.getId());
 			new_user.setSellerName(refer_user.getRealName());
 			new_user.setCustomerId(refer_user.getCustomerId());
-			TdDiySite refer_diySite = tdDiySiteService.findByRegionIdAndCustomerId(refer_user.getCityId(), refer_user.getCustomerId());
-			if (refer_diySite != null)
-			{
+			TdDiySite refer_diySite = tdDiySiteService.findByRegionIdAndCustomerId(refer_user.getCityId(),
+					refer_user.getCustomerId());
+			if (refer_diySite != null) {
 				new_user.setCustomerId(refer_diySite.getCustomerId());
+			}
+			
+			if (cityInfo.equalsIgnoreCase("成都市")) {
+				new_user.setIsCashOnDelivery(true);
+			} else if (cityInfo.equalsIgnoreCase("郑州市")) {
+				new_user.setIsCashOnDelivery(false);
 			}
 		}
 

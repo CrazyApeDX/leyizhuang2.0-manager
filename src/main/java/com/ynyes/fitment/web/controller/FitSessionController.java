@@ -14,7 +14,7 @@ import com.ynyes.fitment.core.exception.ApplicationException;
 import com.ynyes.fitment.foundation.service.FitEmployeeService;
 
 @RestController
-@RequestMapping(value = "/fit/session")
+@RequestMapping(value = "/fit/session", produces = "application/json;charset=utf-8")
 public class FitSessionController {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(FitSessionController.class);

@@ -11,9 +11,10 @@
 		    document.getElementsByTagName('html')[0].style.fontSize = window.screen.width/10+'px';
 		</script>
 	</head>
-	<body ng-controller="mainController">
+	<body>
 		
-		<div id="container">
+		<div ng-router>
+			
 		</div>
 		
 		<script src="//cdn.bootcss.com/angular.js/1.4.8/angular.min.js"></script>
@@ -21,7 +22,12 @@
 		<script src="//cdn.bootcss.com/angular-local-storage/0.5.0/angular-local-storage.min.js"></script>
 		<script type="text/javascript">
 			var app = angular.module('app', []);
-			app.controller('mainController', ['$scope', function($scope) {
+			app.config(['$routeProvider', function($routeProvider) {
+				<#--
+				$routeProvider.when('', {
+					
+				});
+				-->
 			}]);
 		</script>
 	</body>

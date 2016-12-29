@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
-@RequestMapping("/fit")
+@RequestMapping(value = "/fit", produces = "text/html;charset=utf-8")
 public class FitViewController {
 
 	@RequestMapping(method = RequestMethod.GET)

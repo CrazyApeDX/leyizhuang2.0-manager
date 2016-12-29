@@ -515,7 +515,7 @@ public class TdOrderController {
 		TdDiySite diySite = tdDiySiteService.findOne(diySiteId);
 
 		// 判断能否更改门店或销顾（如果当前订单的haveSeller为true，则不能修改）
-		if (null != order && null != order.getHaveSeller() && order.getHaveSeller()) {
+		if (null != order && null != order.getIsSellerOrder() && order.getIsSellerOrder()) {
 			map.addAttribute("canChangeSeller", false);
 		}
 

@@ -67,15 +67,22 @@ $(function () {
   <dl>
     <dt>板材类商品SKU</dt>
     <dd>
-      <input name="panelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.panelSkus??>${tdUpstairsSetting.panelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,255}$/" sucmsg="通过验证">
+      <input name="panelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.panelSkus??>${tdUpstairsSetting.panelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,1000}$/" sucmsg="通过验证">
       <span class="Validform_checktip">*板材类商品SKU，多个以英文逗号隔开</span>
     </dd>
   </dl>
   <dl>
-    <dt>龙骨类商品SKU</dt>
+    <dt>木龙类商品SKU</dt>
     <dd>
-      <input name="keelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelSkus??>${tdUpstairsSetting.keelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,255}$/" sucmsg="通过验证" >
-      <span class="Validform_checktip">*龙骨类商品SKU，多个以英文逗号隔开</span>
+      <input name="keelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelSkus??>${tdUpstairsSetting.keelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,1000}$/" sucmsg="通过验证" >
+      <span class="Validform_checktip">*木龙类商品SKU，多个以英文逗号隔开</span>
+    </dd>
+  </dl>
+  <dl>
+    <dt>轻钢类商品SKU</dt>
+    <dd>
+      <input name="metalSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.metalSkus??>${tdUpstairsSetting.metalSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,1000}$/" sucmsg="通过验证" >
+      <span class="Validform_checktip">*轻钢类商品SKU，多个以英文逗号隔开</span>
     </dd>
   </dl>
   <dl>
@@ -86,10 +93,17 @@ $(function () {
     </dd>
   </dl> 
   <dl>
-    <dt>龙骨上楼费单位价（步梯）</dt>
+    <dt>木龙上楼费单位价（步梯）</dt>
     <dd>
       <input name="keelStepUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelStepUnit??>${tdUpstairsSetting.keelStepUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
-      <span class="Validform_checktip">*龙骨上楼费单位价（步梯）</span>
+      <span class="Validform_checktip">*木龙上楼费单位价（步梯）</span>
+    </dd>
+  </dl>
+  <dl>
+    <dt>轻钢上楼费单位价（步梯）</dt>
+    <dd>
+      <input name="metalStepUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.metalStepUnit??>${tdUpstairsSetting.metalStepUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
+      <span class="Validform_checktip">*轻钢上楼费单位价（步梯）</span>
     </dd>
   </dl>
   <dl>
@@ -100,17 +114,31 @@ $(function () {
     </dd>
   </dl>
   <dl>
-    <dt>龙骨上楼费单位价（电梯）</dt>
+    <dt>木龙上楼费单位价（电梯）</dt>
     <dd>
       <input name="keelEleUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelEleUnit??>${tdUpstairsSetting.keelEleUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
-      <span class="Validform_checktip">*龙骨上楼费单位价（电梯）</span>
+      <span class="Validform_checktip">*木龙上楼费单位价（电梯）</span>
     </dd>
   </dl>
   <dl>
-    <dt>龙骨单位数量</dt>
+    <dt>轻钢上楼费单位价（电梯）</dt>
+    <dd>
+      <input name="metalEleUnit" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.metalEleUnit??>${tdUpstairsSetting.metalEleUnit?string("0.00")}<#else>0.00</#if>" class="input txt100" datatype="/^\d{0,8}\.{0,1}(\d{1,2})+$/" sucmsg=" " >
+      <span class="Validform_checktip">*轻钢上楼费单位价（电梯）</span>
+    </dd>
+  </dl>
+  <dl>
+    <dt>木龙单位数量</dt>
     <dd>
       <input name="keelUnitNumber" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelUnitNumber??>${tdUpstairsSetting.keelUnitNumber}</#if>" class="input small" datatype="n" sucmsg=" " >
-      <span class="Validform_checktip">*龙骨单位数量</span>
+      <span class="Validform_checktip">*木龙单位数量</span>
+    </dd>
+  </dl>
+  <dl>
+    <dt>轻钢单位数量</dt>
+    <dd>
+      <input name="metalUnitNumber" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.metalUnitNumber??>${tdUpstairsSetting.metalUnitNumber}</#if>" class="input small" datatype="n" sucmsg=" " >
+      <span class="Validform_checktip">*轻钢单位数量</span>
     </dd>
   </dl>
 </div>

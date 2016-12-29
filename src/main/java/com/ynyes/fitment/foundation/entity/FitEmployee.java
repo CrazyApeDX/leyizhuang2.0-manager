@@ -12,11 +12,19 @@ import org.springframework.format.annotation.DateTimeFormat;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity;
 import com.ynyes.lyz.util.MD5;
 
+/**
+ * 装饰公司员工实体模型，分为主账号二级账号
+ * 二级账号只能选择商品，生成订单
+ * 主账号审核二级账号的订单使得订单生效
+ * @author dengxiao
+ */
 @Entity
 @Table(name = "FIT_EMPLOYEE")
 public class FitEmployee extends TableEntity {
 
-	private static final long serialVersionUID = 1L;
+	// 装饰公司id
+	@Column(nullable = false)
+	private Long companyId;
 
 	// 员工账号，不可编辑，即系统自生成的UUID
 	@Column(length = 32, nullable = false, updatable = false, unique = true)
@@ -33,6 +41,10 @@ public class FitEmployee extends TableEntity {
 	// 员工姓名
 	@Column(length = 5, nullable = false)
 	private String name = "员工";
+	
+	// 城市名
+	@Column(length = 10, nullable = false)
+	private String cityTitle;
 
 	// 账号注册时间
 	@Column(nullable = false, updatable = false)
@@ -60,6 +72,14 @@ public class FitEmployee extends TableEntity {
 	// 是否是主账号，实际上与mainId字段意义重复
 	@Column(nullable = false)
 	private Boolean isMain = true;
+
+	public Long getCompanyId() {
+		return companyId;
+	}
+
+	public void setCompanyId(Long companyId) {
+		this.companyId = companyId;
+	}
 
 	public String getAccount() {
 		return account;
@@ -92,6 +112,14 @@ public class FitEmployee extends TableEntity {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getCityTitle() {
+		return cityTitle;
+	}
+
+	public void setCityTitle(String cityTitle) {
+		this.cityTitle = cityTitle;
 	}
 
 	public Date getRegisterTime() {
@@ -140,9 +168,5 @@ public class FitEmployee extends TableEntity {
 
 	public void setIsMain(Boolean isMain) {
 		this.isMain = isMain;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 }

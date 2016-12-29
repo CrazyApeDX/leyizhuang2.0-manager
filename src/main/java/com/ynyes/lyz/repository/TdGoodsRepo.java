@@ -352,6 +352,10 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	List<TdGoods> findByCategoryIdAndIsOnSaleTrueAndIsCouponFalseOrCategoryIdAndIsOnSaleTrueAndIsCouponIsNullOrderBySortIdAsc(
 			Long categoryId1, Long categoryId2);
 
+	@Query("select g from TdGoods g where g.categoryId = :categoryId and g.isOnSale = true and (g.isCoupon = false or g.isCoupon is null) order by g.sortId asc")
+	List<TdGoods> findByUnCouponGoodsByCategoryIdOrderBySortIdAsc(@Param("categoryId") Long categoryId)
+			throws Exception;
+
 	// 更新商品类别信息，查找该类别所有。 zhangji
 	List<TdGoods> findByCategoryIdOrderBySortIdAsc(Long categoryId);
 
@@ -361,15 +365,15 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	 * @author dengxiao
 	 */
 	TdGoods findByCode(String code);
-	
-	
+
 	/**
 	 * 根据sku查找有效商品
+	 * 
 	 * @param code
 	 * @param status
 	 * @return
 	 */
-	TdGoods findByCodeAndInventoryItemStatus(String code ,Long status);
+	TdGoods findByCodeAndInventoryItemStatus(String code, Long status);
 
 	/**
 	 * 根据关键词模糊查询商品，其涉及到商品的名称，商品的标题，商品的副标题，商品的sku，商品的分类名称，最后按照sortId（排序号）正序排序
@@ -379,11 +383,11 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	 */
 	@Query("select g from TdGoods g where " + "g.name like %?1 and ifnull(g.isCoupon,0)=0 or "
 			+ "g.title like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.subTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 "
-			+ "order by g.sortId asc")
+			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 " + "order by g.sortId asc")
 	List<TdGoods> findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySortIdAsc(
-			String keywords1,String keywords2);
+			String keywords1, String keywords2);
 
 	/**
 	 * 根据关键词模糊查询商品，其涉及到商品的名称，商品的标题，商品的副标题，商品的sku，商品的分类名称，最后按照sortId（排序号）倒序排序
@@ -393,11 +397,11 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	 */
 	@Query("select g from TdGoods g where " + "g.name like %?1 and ifnull(g.isCoupon,0)=0 or "
 			+ "g.title like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.subTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 "
-			+ "order by g.sortId desc")
+			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 " + "order by g.sortId desc")
 	List<TdGoods> findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySortIdDesc(
-			String keywords1,String keywords2);
+			String keywords1, String keywords2);
 
 	/**
 	 * 根据关键词模糊查找商品，按照价格正序排序 增加商品isCoupon=false
@@ -412,7 +416,7 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			+ "c.title like %?1 and g.categoryId = c.id and g.id = p.goodsId and p.priceListId = ?2 and ifnull(g.isCoupon,0)=0 or "
 			+ "g.categoryIdTree like %?3% and g.categoryId = c.id and g.id = p.goodsId and p.priceListId = ?2 and ifnull(g.isCoupon,0)=0 "
 			+ "order by p.salePrice asc")
-	List<TdGoods> searchGoodsOrderBySalePriceAsc(String keywords, Long priceListId,String keywords2);
+	List<TdGoods> searchGoodsOrderBySalePriceAsc(String keywords, Long priceListId, String keywords2);
 
 	/**
 	 * 根据关键词模糊查询商品，按照价格反序排序 增加商品isCoupon=false
@@ -427,7 +431,7 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			+ "c.title like %?1 and g.categoryId = c.id and g.id = p.goodsId and p.priceListId = ?2 and ifnull(g.isCoupon,0)=0 or "
 			+ "g.categoryIdTree like %?3% and g.categoryId = c.id and g.id = p.goodsId and p.priceListId = ?2 and ifnull(g.isCoupon,0)=0 "
 			+ "order by p.salePrice desc")
-	List<TdGoods> searchGoodsOrderBySalePriceDesc(String keywords, Long priceListId,String keywords2);
+	List<TdGoods> searchGoodsOrderBySalePriceDesc(String keywords, Long priceListId, String keywords2);
 
 	/**
 	 * 根据关键词模糊查询商品，按照销量正序排序 增加商品isCoupon=false
@@ -436,11 +440,11 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	 */
 	@Query("select g from TdGoods g where " + "g.name like %?1 and ifnull(g.isCoupon,0)=0 or "
 			+ "g.title like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.subTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 "
-			+ "order by g.soldNumber asc")
+			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 " + "order by g.soldNumber asc")
 	List<TdGoods> findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySoldNumberAsc(
-			String keywords1,String keywords2);
+			String keywords1, String keywords2);
 
 	/**
 	 * 根据关键词模糊查询商品，按照销量反序排序 增加商品isCoupon=false
@@ -449,11 +453,11 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	 */
 	@Query("select g from TdGoods g where " + "g.name like %?1 and ifnull(g.isCoupon,0)=0 or "
 			+ "g.title like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.subTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or " + "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
-			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 "
-			+ "order by g.soldNumber desc")
+			+ "g.code like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryTitle like %?1 and ifnull(g.isCoupon,0)=0 or "
+			+ "g.categoryIdTree like %?2% and ifnull(g.isCoupon,0)=0 " + "order by g.soldNumber desc")
 	List<TdGoods> findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySoldNumberDesc(
-			String keywords1,String keywords2);
+			String keywords1, String keywords2);
 
 	// Max
 	List<TdGoods> findByTitleContainingOrSubTitleContainingOrCodeContainingOrderBySortIdDesc(String keywords1,
@@ -486,30 +490,31 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	 */
 	@Query("select g.categoryId from TdGoods g where g.id in ?1 group by g.categoryId")
 	List<Long> findCategoryIdByIds(List<Long> ids);
-	
-	
-	
-	@Query("select g from TdGoods g , " +
-			"TdPriceListItem pi, " +
-			"TdPriceList pl " +
-			"where (( pi.endDateActive > SYSDATE() AND pi.startDateActive < SYSDATE()) " +
-			"OR (pi.endDateActive is null AND pi.startDateActive < SYSDATE()) ) and " +
-			"(( pl.endDateActive > SYSDATE() AND pl.startDateActive < SYSDATE()) "+
-			"OR (pl.endDateActive is null AND pl.startDateActive < SYSDATE()) ) and g.code = pi.itemNum and pi.priceListId=pl.listHeaderId and pl.cityId= ?1 ") 
+
+	@Query("select g from TdGoods g , " + "TdPriceListItem pi, " + "TdPriceList pl "
+			+ "where (( pi.endDateActive > SYSDATE() AND pi.startDateActive < SYSDATE()) "
+			+ "OR (pi.endDateActive is null AND pi.startDateActive < SYSDATE()) ) and "
+			+ "(( pl.endDateActive > SYSDATE() AND pl.startDateActive < SYSDATE()) "
+			+ "OR (pl.endDateActive is null AND pl.startDateActive < SYSDATE()) ) and g.code = pi.itemNum and pi.priceListId=pl.listHeaderId and pl.cityId= ?1 ")
 	List<TdGoods> findBySobId(Long sobId);
-	
+
 	@Query("select g from TdGoods g,TdPriceListItem pli where "
 			+ "g.categoryId in ?2 and g.inventoryItemId=pli.goodsId and pli.priceListId in ?1 and "
 			+ "(g.title like %?3% or g.subTitle like %?3% or g.detail like %?3% or g.code like %?3% ) "
 			+ "and pli.startDateActive<=SYSDATE() and (pli.endDateActive>=SYSDATE() "
 			+ "or pli.endDateActive is null ) and g.isOnSale =1 and (g.isCoupon=0 or g.isCoupon is null)")
-	Page<TdGoods> queryAllOrderBySortIdAsc(List<Long> priceListIdList,List<Long> categoryIdList,String keywords,Pageable page);
-	
+	Page<TdGoods> queryAllOrderBySortIdAsc(List<Long> priceListIdList, List<Long> categoryIdList, String keywords,
+			Pageable page);
+
 	/**
 	 * 优惠卷商品查询
-	 * @param cityId 城市id
-	 * @param brandId 品牌id
-	 * @param keywords 关键字
+	 * 
+	 * @param cityId
+	 *            城市id
+	 * @param brandId
+	 *            品牌id
+	 * @param keywords
+	 *            关键字
 	 * @author zp
 	 */
 	@Query("select g from TdGoods g,TdPriceListItem pli,TdPriceList pl where "
@@ -517,12 +522,15 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			+ "and (g.title like %?3% or g.subTitle like %?3% or g.detail like %?3% or g.code like %?3% ) "
 			+ "and pli.startDateActive<=SYSDATE() and (pli.endDateActive>=SYSDATE() "
 			+ "or pli.endDateActive is null ) and g.isOnSale =1 and (g.isCoupon=0 or g.isCoupon is null)")
-	List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId,Long brandId,String keywords);
-	
+	List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId, Long brandId, String keywords);
+
 	/**
 	 * 优惠卷模板商品查询
-	 * @param cityId 城市id
-	 * @param keywords 关键字
+	 * 
+	 * @param cityId
+	 *            城市id
+	 * @param keywords
+	 *            关键字
 	 * @author zp
 	 */
 	@Query("select g from TdGoods g,TdPriceListItem pli,TdPriceList pl where "
@@ -530,16 +538,15 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			+ "and (g.title like %?2% or g.subTitle like %?2% or g.detail like %?2% or g.code like %?2% ) "
 			+ "and pli.startDateActive<=SYSDATE() and (pli.endDateActive>=SYSDATE() "
 			+ "or pli.endDateActive is null ) and g.isOnSale =1 and (g.isCoupon=0 or g.isCoupon is null)")
-	List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId,String keywords);
-	
+	List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId, String keywords);
+
 	Page<TdGoods> findByCodeContainingOrTitleContainingOrSubTitleContaining(String keywords1, String keywords2,
 			String keywords3, Pageable page);
-	
+
 	@Query("select goods from TdGoods goods where goods.categoryId = :categoryId and goods.id not in "
 			+ "(select un.goodsId from TdUnableSale un where un.diySiteId = :diySiteId) order by sortId asc")
 	List<TdGoods> findGoodsByCategoryIdWithoutUnSale(@Param("categoryId") Long categoryId,
 			@Param("diySiteId") Long diySiteId);
-	
-	
+
 	List<TdGoods> findByCodeContaining(String keywords);
 }

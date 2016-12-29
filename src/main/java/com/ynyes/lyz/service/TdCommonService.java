@@ -1230,7 +1230,7 @@ public class TdCommonService {
 
 		// Add by Shawn
 		virtual.setProvince(defaultAddress.getProvince());
-		virtual.setCity(defaultAddress.getCity());
+		virtual.setCity(null == defaultAddress.getCity() ? user.getCityName() : defaultAddress.getCity());
 		virtual.setDisctrict(defaultAddress.getDisctrict());
 		virtual.setSubdistrict(defaultAddress.getSubdistrict());
 		virtual.setDetailAddress(defaultAddress.getDetailAddress());
