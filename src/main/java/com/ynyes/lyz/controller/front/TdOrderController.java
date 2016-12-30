@@ -1812,7 +1812,7 @@ public class TdOrderController {
 	 * @author dengxiao
 	 */
 	@RequestMapping(value = "/pay")
-	public String orderPay(HttpServletRequest req) {
+	public String orderPay(HttpServletRequest req, ModelMap map) {
 		String username = (String) req.getSession().getAttribute("username");
 		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
 		if (null == user) {
@@ -1829,6 +1829,7 @@ public class TdOrderController {
 			order.setCashBalanceUsed(0d);
 			order.setUnCashBalanceUsed(0d);
 			tdOrderService.save(order);
+			map.addAttribute("message", "预存款不足，下单失败");
 			return "/client/pay_failure";
 		} else {
 			order.setStatusId(3L);

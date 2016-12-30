@@ -1,7 +1,5 @@
 package com.ynyes.fitment.foundation.entity.client;
 
-import java.math.BigDecimal;
-
 import com.ynyes.fitment.core.entity.client.ClientEntity;
 import com.ynyes.fitment.foundation.entity.FitCompanyGoods;
 import com.ynyes.fitment.foundation.entity.FitPriceLine;
@@ -15,9 +13,9 @@ public class ClientCompanyGoods extends ClientEntity {
 
 	private String imageUri;
 
-	private BigDecimal price;
+	private Double price;
 	
-	private BigDecimal realPrice;
+	private Double realPrice;
 
 	private Long inventory;
 
@@ -45,19 +43,19 @@ public class ClientCompanyGoods extends ClientEntity {
 		this.imageUri = imageUri;
 	}
 
-	public BigDecimal getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(BigDecimal price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
-	public BigDecimal getRealPrice() {
+	public Double getRealPrice() {
 		return realPrice;
 	}
 
-	public void setRealPrice(BigDecimal realPrice) {
+	public void setRealPrice(Double realPrice) {
 		this.realPrice = realPrice;
 	}
 

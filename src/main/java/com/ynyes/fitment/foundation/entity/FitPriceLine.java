@@ -1,6 +1,5 @@
 package com.ynyes.fitment.foundation.entity;
 
-import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -21,11 +20,11 @@ public class FitPriceLine extends TableEntity {
 	@Column(nullable = false)
 	private Long goodsId;
 	
-	@Column(precision = 10, scale = 2, nullable = false)
-	private BigDecimal price = new BigDecimal(1);
+	@Column(scale = 2, nullable = false)
+	private Double price = 1d;
 	
-	@Column(precision = 10, scale = 2, nullable = false)
-	private BigDecimal realPrice = new BigDecimal(1);
+	@Column(scale = 2, nullable = false)
+	private Double realPrice = 1d;
 	
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -57,19 +56,19 @@ public class FitPriceLine extends TableEntity {
 		this.goodsId = goodsId;
 	}
 
-	public BigDecimal getPrice() {
+	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(BigDecimal price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}
 
-	public BigDecimal getRealPrice() {
+	public Double getRealPrice() {
 		return realPrice;
 	}
 
-	public void setRealPrice(BigDecimal realPrice) {
+	public void setRealPrice(Double realPrice) {
 		this.realPrice = realPrice;
 	}
 

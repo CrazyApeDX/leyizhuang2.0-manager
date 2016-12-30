@@ -19,7 +19,7 @@ public class FitCompanyGoods extends TableEntity {
 	@Column(length = 30, nullable = false)
 	private String goodsTitle;
 	
-	@Column(length = 15, nullable = false)
+	@Column(length = 30, nullable = false)
 	private String goodsSku;
 	
 	@Column(length = 80, nullable = false)
@@ -29,7 +29,7 @@ public class FitCompanyGoods extends TableEntity {
 	private Long categoryId;
 	
 	@Column(nullable = false)
-	private Double goodsSortId;
+	private Double goodsSortId = 99.9d;
 
 	public Long getCompanyId() {
 		return companyId;

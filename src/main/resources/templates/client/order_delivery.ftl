@@ -107,7 +107,7 @@
                 <li>
                     <div class="div11">
                         <label id="diyLabel">服务导购</label>
-                        <a class="target" id="seller_info" style="height:100%;width:70%;" <#if !(canChangeSeller??&&canChangeSeller==false)>href="javascript:getInfo(1);"</#if>>${seller!'暂无'}</a>
+                        <a class="target" id="seller_info" style="height:100%;width:70%;" href="javascript:getInfo(1);">${seller!'暂无'}</a>
                     </div> 
                 </li>
             </ol>

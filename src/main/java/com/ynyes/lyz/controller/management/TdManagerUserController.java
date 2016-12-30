@@ -376,7 +376,7 @@ public class TdManagerUserController {
 
 	@RequestMapping(value = "/save")
 	public String orderEdit(TdUser tdUser,Double obalance,Double ocashBalance,Double ounCashBalance, String oldPassword,
-			String __VIEWSTATE, ModelMap map, String birthdate, HttpServletRequest req,String userDesc) {
+			String __VIEWSTATE, ModelMap map, String birthdate, HttpServletRequest req,String userDesc,Boolean isEnable) {
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
@@ -527,6 +527,7 @@ public class TdManagerUserController {
 		{
 			tdManagerLogService.addLog("edit", "修改用户", req);
 		}
+		tdUser.setIsEnable(isEnable);
 		tdUserService.save(tdUser);
 
 		return "redirect:/Verwalter/user/list/";
