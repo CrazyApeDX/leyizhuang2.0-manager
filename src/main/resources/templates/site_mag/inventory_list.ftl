@@ -140,7 +140,7 @@ var theForm = document.forms['form1'];
     <div class="l-list">
         <ul class="icon-list">
           <li><a class="all" href="javascript:;" onclick="checkAll(this);"><i></i><span>全选</span></a></li>
-          <li><a id="btnSave" class="save" href="javascript:__doPostBack('btnInventory','')"><i></i><span>保存</span></a></li>
+          <#--<li><a id="btnSave" class="save" href="javascript:__doPostBack('btnInventory','')"><i></i><span>保存</span></a></li>-->
         </ul>
         <div class="menu-list">
         <#if !is_diy_site_bool??>
