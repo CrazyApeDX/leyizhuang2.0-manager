@@ -67,21 +67,21 @@ $(function () {
   <dl>
     <dt>板材类商品SKU</dt>
     <dd>
-      <input name="panelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.panelSkus??>${tdUpstairsSetting.panelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,1000}$/" sucmsg="通过验证">
+      <input name="panelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.panelSkus??>${tdUpstairsSetting.panelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-.]{0,1000}$/" sucmsg="通过验证">
       <span class="Validform_checktip">*板材类商品SKU，多个以英文逗号隔开</span>
     </dd>
   </dl>
   <dl>
     <dt>木龙类商品SKU</dt>
     <dd>
-      <input name="keelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelSkus??>${tdUpstairsSetting.keelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,1000}$/" sucmsg="通过验证" >
+      <input name="keelSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.keelSkus??>${tdUpstairsSetting.keelSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-.]{0,1000}$/" sucmsg="通过验证" >
       <span class="Validform_checktip">*木龙类商品SKU，多个以英文逗号隔开</span>
     </dd>
   </dl>
   <dl>
     <dt>轻钢类商品SKU</dt>
     <dd>
-      <input name="metalSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.metalSkus??>${tdUpstairsSetting.metalSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-]{0,1000}$/" sucmsg="通过验证" >
+      <input name="metalSkus" type="text" value="<#if tdUpstairsSetting??&&tdUpstairsSetting.metalSkus??>${tdUpstairsSetting.metalSkus}</#if>" class="input normal" datatype="/^[A-Za-z0-9#,-.]{0,1000}$/" sucmsg="通过验证" >
       <span class="Validform_checktip">*轻钢类商品SKU，多个以英文逗号隔开</span>
     </dd>
   </dl>
