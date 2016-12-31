@@ -1004,6 +1004,10 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 			{
 				diyCode = tdManager.getDiyCode();
 			}
+			if (tdManagerRole.getTitle().equalsIgnoreCase("郑州门店")) 
+			{
+				diyCode = tdManager.getDiyCode();
+			}
 		}
 		if (null != __EVENTTARGET) {
 			if (__EVENTTARGET.equalsIgnoreCase("btnDelete")) {
@@ -1118,6 +1122,10 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 				return "redirect:/Verwalter/login";
 			}
 			if (tdManagerRole.getTitle().equalsIgnoreCase("门店")) 
+			{
+				diyCode = tdManager.getDiyCode();
+			}
+			if (tdManagerRole.getTitle().equalsIgnoreCase("郑州门店")) 
 			{
 				diyCode = tdManager.getDiyCode();
 			}
