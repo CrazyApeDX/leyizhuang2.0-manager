@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.ynyes.fitment.core.constant.LoginSign;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.service.TdManagerLogService;
 import com.ynyes.lyz.service.TdManagerService;
@@ -73,6 +74,7 @@ public class TdManagerLoginController {
                     tdManagerService.save(manager);
                     
                     request.getSession().setAttribute("manager", username);
+                    request.getSession().setAttribute(LoginSign.MANAGER_SIGN.toString(), username);
                     tdManagerLogService.addLog("login", "用户登录", request);
                     return "redirect:/Verwalter";
                 }

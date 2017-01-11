@@ -641,6 +641,9 @@ public class TdOrder {
 	}
 
 	public Double getTotalPrice() {
+		BigDecimal bg = new BigDecimal(totalPrice);
+		totalPrice = bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+		bg = null;
 		return totalPrice;
 	}
 

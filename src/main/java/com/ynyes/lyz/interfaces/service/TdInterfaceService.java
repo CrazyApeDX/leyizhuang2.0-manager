@@ -923,13 +923,14 @@ public class TdInterfaceService {
 		returnOrderInf.setUsername(tdOrderInf.getUsername());
 		returnOrderInf.setUserphone(tdOrderInf.getUserphone());
 		returnOrderInf.setOrderTypeId(tdOrderInf.getOrderTypeId());
+		returnOrderInf.setDeliverTypeTitle(tdOrderInf.getDeliverTypeTitle());
 
 		Map<String, Object> map = tdPriceCountService.getBalanceAndCouponWithReturnNoteAndOrder(order, returnNote);
 		Double returnBalance = (Double) map.get(INFConstants.kBalance);
 
 		@SuppressWarnings("unchecked")
 		List<TdCoupon> coupons = (List<TdCoupon>) map.get(INFConstants.kCouponList);
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings({ "unchecked", "unused" })
 		Map<String, Double> priceDifference = (Map<String, Double>) map.get(INFConstants.kPrcieDif);
 
 		returnOrderInf.setPrepayAmt(returnBalance);
@@ -1007,17 +1008,18 @@ public class TdInterfaceService {
 				returnCouponInf.setAttribute1(tdCoupon.getSign());
 				tdReturnCouponInfService.save(returnCouponInf);
 			}
-			if (priceDifference != null && priceDifference.size() > 0) {
-				for (Map.Entry<String, Double> entry : priceDifference.entrySet()) {
-					TdReturnCouponInf returnCouponInf = new TdReturnCouponInf();
-					returnCouponInf.setRtHeaderId(returnOrderInf.getRtHeaderId());
-					returnCouponInf.setCouponTypeId(2);
-					returnCouponInf.setSku(entry.getKey());
-					returnCouponInf.setPrice(entry.getValue());
-					returnCouponInf.setQuantity(1L);
-					tdReturnCouponInfService.save(returnCouponInf);
-				}
-			}
+			// 2017-1-9: 双元要求不再传差价券给ebs
+//			if (priceDifference != null && priceDifference.size() > 0) {
+//				for (Map.Entry<String, Double> entry : priceDifference.entrySet()) {
+//					TdReturnCouponInf returnCouponInf = new TdReturnCouponInf();
+//					returnCouponInf.setRtHeaderId(returnOrderInf.getRtHeaderId());
+//					returnCouponInf.setCouponTypeId(2);
+//					returnCouponInf.setSku(entry.getKey());
+//					returnCouponInf.setPrice(entry.getValue());
+//					returnCouponInf.setQuantity(1L);
+//					tdReturnCouponInfService.save(returnCouponInf);
+//				}
+//			}
 		}
 	}
 
@@ -1394,7 +1396,9 @@ public class TdInterfaceService {
 					+ object.getAttribute4() + "</ATTRIBUTE4>" + "<ATTRIBUTE5>" + object.getAttribute5()
 					+ "</ATTRIBUTE5>" + "<USERID>" + object.getUserid() + "</USERID>" + "<USERNAME>"
 					+ object.getUsername() + "</USERNAME>" + "<USERPHONE>" + object.getUserphone() + "</USERPHONE>"
-					+ "<ORDER_TYPE_ID> " + object.getOrderTypeId() + "</ORDER_TYPE_ID></TABLE>";
+					+ "<ORDER_TYPE_ID> " + object.getOrderTypeId() + "</ORDER_TYPE_ID>" + "<DELIVER_TYPE_TITLE>"
+					+ object.getDeliverTypeTitle() + "</DELIVER_TYPE_TITLE>" + "<COUPON_FLAG>" + object.getCouponFlag()
+					+ "</COUPON_FLAG></TABLE>";
 			break;
 		}
 		case RETURNGOODSINF: {

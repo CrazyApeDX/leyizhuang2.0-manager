@@ -11,106 +11,108 @@ import javax.persistence.Id;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
-public class TdReturnOrderInf extends TdInfBaseEntity 
-{
-	//分公司ID
+public class TdReturnOrderInf extends TdInfBaseEntity {
+	// 分公司ID
 	@Column
 	private Long sobId;
-	
-	//销退头ID (APP唯一)
+
+	// 销退头ID (APP唯一)
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long rtHeaderId;
-	
-	//销退订单号（T）
+
+	// 销退订单号（T）
 	@Column
 	private String returnNumber;
-	
-	//退单日期
+
+	// 退单日期
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date returnDate;
-	
-	//退单标识（“Y” 整单退，“N” 部分退）
+
+	// 退单标识（“Y” 整单退，“N” 部分退）
 	@Column(length = 2)
 	private String rtFullFlag;
-	
-	//原订单头ID
+
+	// 原订单头ID
 	@Column
 	private Long orderHeaderId;
-	
-	//原销售单号（分单）
+
+	// 原销售单号（分单）
 	@Column
 	private String orderNumber;
-	
-	//APP单据产品类型 HR华润,LYZ乐易装,YR莹润
+
+	// APP单据产品类型 HR华润,LYZ乐易装,YR莹润
 	@Column(length = 20)
 	private String prodectType;
-	
-	//门店编码 
+
+	// 门店编码
 	@Column(length = 50)
 	private String diySiteCode;
-	
-	//退款类型（支付宝,微信,银联,现金）
+
+	// 退款类型（支付宝,微信,银联,现金）
 	@Column(length = 50)
 	private String refundType;
-	
-	//审核日期 确认日期
+
+	// 审核日期 确认日期
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date auditDate;
-	
-	//退款金额
+
+	// 退款金额
 	@Column
 	private Double refundAmount;
-	
-	//通用预存款使用退回账户金额
+
+	// 通用预存款使用退回账户金额
 	@Column
 	private Double prepayAmt;
-	
+
 	@Column
 	private String status;
-	
+
 	// 用户id
 	@Column(length = 15)
 	private Long userid;
-	
+
 	// 用户名
 	@Column(length = 50)
 	private String username;
-	
+
 	// 用户手机号
 	@Column(length = 50)
 	private String userphone;
-	
+
 	// 订单类型
 	@Column(length = 10)
 	private Integer orderTypeId;
-	
-	//预留字段1
+
+	@Column(length = 10)
+	private String deliverTypeTitle;
+
+	// 预留字段1
 	@Column
 	private String attribute1;
-	
-	//预留字段2
+
+	// 预留字段2
 	@Column
 	private String attribute2;
-	
-	//预留字段3
+
+	// 预留字段3
 	@Column
 	private String attribute3;
-	
-	//预留字段4
+
+	// 预留字段4
 	@Column
 	private String attribute4;
-	
-	//预留字段5
+
+	// 预留字段5
 	@Column
 	private String attribute5;
 
 	// 是否退券
 	@Column
 	private Character couponFlag;
-	
+
 	public Long getSobId() {
 		return sobId;
 	}
@@ -294,13 +296,21 @@ public class TdReturnOrderInf extends TdInfBaseEntity
 	public void setOrderTypeId(Integer orderTypeId) {
 		this.orderTypeId = orderTypeId;
 	}
-	
+
 	public Character getCouponFlag() {
 		return couponFlag;
 	}
 
 	public void setCouponFlag(Character couponFlag) {
 		this.couponFlag = couponFlag;
+	}
+
+	public String getDeliverTypeTitle() {
+		return deliverTypeTitle;
+	}
+
+	public void setDeliverTypeTitle(String deliverTypeTitle) {
+		this.deliverTypeTitle = deliverTypeTitle;
 	}
 
 	@Override
@@ -310,9 +320,8 @@ public class TdReturnOrderInf extends TdInfBaseEntity
 				+ ", orderNumber=" + orderNumber + ", prodectType=" + prodectType + ", diySiteCode=" + diySiteCode
 				+ ", refundType=" + refundType + ", auditDate=" + auditDate + ", refundAmount=" + refundAmount
 				+ ", prepayAmt=" + prepayAmt + ", status=" + status + ", userid=" + userid + ", username=" + username
-				+ ", userphone=" + userphone + ", orderTypeId=" + orderTypeId + ", attribute1=" + attribute1
-				+ ", attribute2=" + attribute2 + ", attribute3=" + attribute3 + ", attribute4=" + attribute4
-				+ ", attribute5=" + attribute5 + "]";
+				+ ", userphone=" + userphone + ", orderTypeId=" + orderTypeId + ", deliverTypeTitle=" + deliverTypeTitle
+				+ ", attribute1=" + attribute1 + ", attribute2=" + attribute2 + ", attribute3=" + attribute3
+				+ ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + ", couponFlag=" + couponFlag + "]";
 	}
-
 }

@@ -8,6 +8,6 @@ public abstract class Global {
 
 	public static final String defaultPassword = "12345678910";
 	
-	public static final Integer deafultPage = 1;
-	public static final Integer defaultSize = 10;
+	public static final Integer deafultPage = 0;
+	public static final Integer defaultSize = 20;
 }

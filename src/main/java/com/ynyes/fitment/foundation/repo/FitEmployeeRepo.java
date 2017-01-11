@@ -9,4 +9,6 @@ import com.ynyes.fitment.foundation.entity.FitEmployee;
 public interface FitEmployeeRepo extends ApplicationRepo<FitEmployee> {
 
 	FitEmployee findByMobileAndPassword(String mobile, String password) throws Exception;
+	
+	Long countByMobileAndIdNot(String mobile, Long id) throws Exception;
 }

@@ -48,7 +48,7 @@ public abstract class ApplicationEntity implements Serializable {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				buffer.append(name).append(" : ").append(null == value ? "NULL" : value.toString()).append(";");
+				buffer.append(name).append(":").append(null == value ? "NULL" : value.toString()).append(";");
 			}
 		}
 		return buffer.toString();

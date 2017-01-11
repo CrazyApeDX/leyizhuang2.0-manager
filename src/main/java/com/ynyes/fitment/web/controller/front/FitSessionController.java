@@ -1,4 +1,4 @@
-package com.ynyes.fitment.web.controller;
+package com.ynyes.fitment.web.controller.front;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +12,7 @@ import com.ynyes.fitment.core.entity.client.result.ClientResult;
 import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.core.exception.ApplicationException;
 import com.ynyes.fitment.foundation.service.FitEmployeeService;
+import com.ynyes.lyz.util.MD5;
 
 @RestController
 @RequestMapping(value = "/fit/session", produces = "application/json;charset=utf-8")
@@ -39,7 +40,7 @@ public class FitSessionController {
 					LOGGER.info("参数验证成功，开始查询匹配手机号码和密码的员工信息");
 				}
 				
-				ClientResult clientResult = this.fitEmployeeService.login(mobile, password);
+				ClientResult clientResult = this.fitEmployeeService.login(mobile, MD5.md5(password, 32));
 				
 				if (LOGGER.isInfoEnabled()) {
 					LOGGER.info("查询完成，结果为：result = {}", clientResult.toString());

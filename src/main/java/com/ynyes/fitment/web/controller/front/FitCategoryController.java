@@ -1,4 +1,4 @@
-package com.ynyes.fitment.web.controller;
+package com.ynyes.fitment.web.controller.front;
 
 import java.util.List;
 
