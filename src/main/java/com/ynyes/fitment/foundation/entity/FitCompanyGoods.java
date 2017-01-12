@@ -16,7 +16,7 @@ public class FitCompanyGoods extends TableEntity {
 	@Column(nullable = false)
 	private Long goodsId;
 	
-	@Column(length = 30, nullable = false)
+	@Column(length = 80, nullable = false)
 	private String goodsTitle;
 	
 	@Column(length = 30, nullable = false)

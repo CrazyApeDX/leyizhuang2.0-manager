@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="/mag/style/idialog.css" rel="stylesheet" id="lhgdialoglink">
-<title>装饰公司列表</title>
+<title>价目表项列表</title>
 <script type="text/javascript" src="/mag/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="/mag/js/lhgdialog.js"></script>
 <script type="text/javascript" src="/mag/js/layout.js"></script>
@@ -11,7 +11,7 @@
 </head>
 
 <body class="mainbody">
-	<form name="form1" method="post" action="/Verwalter/fitment/company/list" id="form1">
+	<form name="form1" method="post" action="/Verwalter/fitment/price/line/list/${headerId}" id="form1">
 		<div>
 			<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}">
 			<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}">
@@ -43,7 +43,7 @@
 			<i class="arrow"></i>
 			<span>对外合作</span>
 			<i class="arrow"></i>
-			<span>装饰公司</span>  
+			<span>价目表项列表</span>  
 		</div>
 		<!--/导航栏-->
 
@@ -52,12 +52,14 @@
 			<div id="floatHead" class="toolbar" style="position: static; top: 42px;">
 				<div class="l-list">
 					<ul class="icon-list">
+						<#--
 						<li>
 							<a class="add" href="/Verwalter/fitment/company/edit/0">
 								<i></i>
 								<span>添加</span>
 							</a>
 						</li>
+						-->
 						<#--
 						<li>
 							<a class="all" href="javascript:;" onclick="checkAll(this);">
@@ -85,16 +87,16 @@
   			<tbody>
 				<tr class="odd_bg">
 					<th  width="10%">选择</th>
-					<th align="left" width="17%">名称</th>
-					<th align="left" width="17%">编码</th>
-					<th align="left" width="17%">信用额度</th>
-					<th align="left" width="14%">冻结</th>
-					<th align="center" width="10%">操作</th>
-					<th align="center" width="15%">配置</th>
+					<th align="left" width="15%">商品SKU</th>
+					<th align="left" width="15%">零售价</th>
+					<th align="left" width="15%">会员价</th>
+					<th align="left" width="20%">开始时间</th>
+					<th align="left" width="20%">结束时间</th>
+					<th align="center" width="10%">是否有效</th>
 				</tr>
 
-    			<#if companyPage??>
-        			<#list companyPage.content as item>
+    			<#if linePage??>
+        			<#list linePage.content as item>
 			            <tr>
 			                <td align="center">
 			                    <span class="checkall" style="vertical-align:middle;">
@@ -105,33 +107,25 @@
 			                <td align="left">
 			                	<a href="/Verwalter/fitment/company/edit/${item.id?c}">${item.name!""}</a>
 		                	</td>
-			                <td align="left">${item.code!""}</td>
+			                <td align="left">${item.goodsSku!""}</td>
 			                <td align="left">
-			                	<#if item.credit??>${item.credit?string("0.00")}<#else>0.00</#if>
+			                	<#if item.price??>${item.price?string("0.00")}</#if>
 			                </td>
 			                <td align="left">
-			                	<#if item.frozen==true>
-			                		<font color="red">是</font>
+			                	<#if item.realPrice??>${item.realPrice?string("0.00")}</#if>
+			                </td>
+			                <td align="left">
+			                	<#if item.startTime??>${item.startTime?string("yyyy-MM-dd HH:mm:ss")}<#else>0.00</#if>
+			                </td>
+			                <td align="left">
+			                	<#if item.endTime??>${item.endTime?string("yyyy-MM-dd HH:mm:ss")}<#else>0.00</#if>
+			                </td>
+			                <td align="center">
+			                	<#if item.isEnable==true>
+			                		<font color="green">有效</font>
 			                	<#else>
-			                		<font color="green">否</font>
+			                		<font color="red">失效</font>
 			                	</#if>
-			                </td>
-			                <td align="center">
-			                	<a href="/Verwalter/fitment/company/edit/${item.id?c}">修改</a>|
-			                	<a href="javascript:confirmDelete(${item.id?c});">删除</a>
-			                	<script type="text/javascript">
-			                		var confirmDelete = function(id) {
-			                			$.dialog.prompt("请输入DELETE以确定删除", function(text) {
-				                			if ("DELETE" === text) {
-				                				window.location.href = "/Verwalter/fitment/company/delete/" + id;
-				                			}
-			                			});
-			                		}
-			                	</script>
-			                </td>
-			                <td align="center">
-			                	<a href="/Verwalter/fitment/category/edit/${item.id?c}">分类限购</a>|
-			                	<a href="/Verwalter/fitment/goods/list/${item.id?c}">可售商品</a>
 			                </td>
 			            </tr>
         			</#list>
@@ -141,8 +135,8 @@
 		<!--/列表-->
 
 		<!--内容底部-->
-		<#if companyPage??>
-			<#assign PAGE_DATA=companyPage />
+		<#if linePage??>
+			<#assign PAGE_DATA=linePage />
 			<#include "/fitment/management/list_footer.ftl" />
 		</#if>
 		<!--/内容底部-->

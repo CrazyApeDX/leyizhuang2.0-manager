@@ -22,7 +22,7 @@ import com.ynyes.lyz.util.MD5;
 
 @Controller
 @RequestMapping(value = "/Verwalter/fitment/employee")
-public class FitManagerEmployeeController {
+public class FitManagementEmployeeController {
 
 	@Autowired
 	private FitEmployeeService fitEmployeeService;
@@ -33,8 +33,8 @@ public class FitManagerEmployeeController {
 	@RequestMapping(value = "/list", produces = "text/html;charset=utf-8")
 	public String employeeList(ModelMap map, Integer page, Integer size) {
 		Page<FitEmployee> employeePage = null;
-		page = null == page ? Global.deafultPage : page;
-		size = null == size ? Global.defaultSize : size;
+		page = null == page ? Global.DEFAULT_PAGE : page;
+		size = null == size ? Global.DEFAULT_SIZE : size;
 		try {
 			employeePage = this.fitEmployeeService.findAll(page, size);
 		} catch (Exception e) {
@@ -66,7 +66,7 @@ public class FitManagerEmployeeController {
 		try {
 			if (null == employee.getId()) {
 				employee.setPassword(
-						null == oldPassword ? MD5.md5(Global.defaultPassword, 32) : MD5.md5(oldPassword, 32));
+						null == oldPassword ? MD5.md5(Global.DEFAULT_PASSWORD, 32) : MD5.md5(oldPassword, 32));
 			} else {
 				employee.setPassword(null == oldPassword ? null : MD5.md5(oldPassword, 32));
 			}

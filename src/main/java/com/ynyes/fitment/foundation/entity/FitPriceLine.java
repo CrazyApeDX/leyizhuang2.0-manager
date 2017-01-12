@@ -20,6 +20,9 @@ public class FitPriceLine extends TableEntity {
 	@Column(nullable = false)
 	private Long goodsId;
 	
+	@Column(length = 30, nullable = false)
+	private String goodsSku;
+	
 	@Column(scale = 2, nullable = false)
 	private Double price = 1d;
 	
@@ -46,6 +49,14 @@ public class FitPriceLine extends TableEntity {
 
 	public void setHeaderId(Long headerId) {
 		this.headerId = headerId;
+	}
+
+	public String getGoodsSku() {
+		return goodsSku;
+	}
+
+	public void setGoodsSku(String goodsSku) {
+		this.goodsSku = goodsSku;
 	}
 
 	public Long getGoodsId() {

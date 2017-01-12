@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 import com.ynyes.fitment.core.constant.LoginSign;
 import com.ynyes.fitment.core.entity.session.SessionContent;
 
-public class FitManagerBasicController {
+public class FitManagementBasicController {
 
 	protected String getLoginManager(HttpServletRequest request) {
 		HttpSession session = request.getSession();
