@@ -1,8 +1,11 @@
 package com.ynyes.lyz.controller.management;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +41,7 @@ import com.ynyes.lyz.entity.TdReserveOrder;
 import com.ynyes.lyz.entity.TdReturnReport;
 import com.ynyes.lyz.entity.TdSales;
 import com.ynyes.lyz.entity.TdSalesDetail;
+import com.ynyes.lyz.entity.TdSalesForContinuousBuy;
 import com.ynyes.lyz.entity.TdSubOwn;
 import com.ynyes.lyz.entity.TdWareHouse;
 import com.ynyes.lyz.service.TdActiveUserService;
@@ -57,6 +61,7 @@ import com.ynyes.lyz.service.TdReserveOrderService;
 import com.ynyes.lyz.service.TdReturnReportService;
 import com.ynyes.lyz.service.TdSalesDetailService;
 import com.ynyes.lyz.service.TdSalesForActiveUserService;
+import com.ynyes.lyz.service.TdSalesForContinuousBuyService;
 import com.ynyes.lyz.service.TdSalesService;
 import com.ynyes.lyz.service.TdSubOwnService;
 import com.ynyes.lyz.service.TdUserService;
@@ -111,13 +116,16 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	@Autowired
 	TdGarmentFranchisorReportService tdGarmentFranchisorReportService;
 	
+	@Autowired
+	TdSalesForContinuousBuyService tdSalesForContinuousBuyService;
+	
 	
     /*
 	 * 报表下载
 	 */
 	@RequestMapping(value = "/downdata",method = RequestMethod.GET)
 	@ResponseBody
-	public String dowmDataGoodsInOut(HttpServletRequest req,ModelMap map,String begindata,String enddata,HttpServletResponse response,String diyCode,String cityName,Long statusId)
+	public String dowmDataGoodsInOut(HttpServletRequest req,ModelMap map,String begindata,String enddata,HttpServletResponse response,String diyCode,String cityName,Long statusId) throws ParseException
 	{
 		//检查登录
 		String username = (String) req.getSession().getAttribute("manager");
@@ -154,7 +162,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}
 		
 		//门店管理员只能查询归属门店
-		if (tdManagerRole.getTitle().equalsIgnoreCase("门店") || tdManagerRole.getTitle().equalsIgnoreCase("郑州门店")) 
+		if (tdManagerRole.getTitle().equalsIgnoreCase("门店")) 
 			{
 	        	diyCode=tdManager.getDiyCode();
 	        	cityName=null;
@@ -382,7 +390,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 * @param end 结算时间
 	 * @param username 当前用户
 	 */
-	public void callProcedure(Long statusId,String __EVENTTARGET,Date begin,Date end,String username){
+	private void callProcedure(Long statusId,String __EVENTTARGET,Date begin,Date end,String username){
 		try {//调用存储过程 报错
 			if(null != __EVENTTARGET && __EVENTTARGET.equalsIgnoreCase("btnPage")){
 				return;
@@ -417,7 +425,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 * @param size
 	 * @param page
 	 */
-	public void addOrderListToMap(ModelMap map,Long statusId,String keywords,Date begin,Date end,String diySiteCode,String cityName,String username,
+	private void addOrderListToMap(ModelMap map,Long statusId,String keywords,Date begin,Date end,String diySiteCode,String cityName,String username,
 			int size,int page,List<String> roleDiyIds){
 		if(statusId==0){//出退货报表
 //			map.addAttribute("order_page",tdGoodsInOutService.searchList(keywords,begin, end, diySiteCode, cityName,username, size, page,roleDiyIds));
@@ -465,6 +473,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="配送考核报表";
 		}else if(statusId==12){
 			fileName="加盟商对账报表";
+		}else if(statusId==13){
+			fileName="会员连续购买记录";
 		}
 		return fileName;
 	}
@@ -477,8 +487,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 * @param cityName 城市名称
 	 * @param username 当前用户
 	 * @return
+	 * @throws ParseException 
 	 */
-	private HSSFWorkbook acquireHSSWorkBook(Long statusId,Date begin,Date end,String diyCode,String cityName,String username,List<String> roleDiyIds){
+	private HSSFWorkbook acquireHSSWorkBook(Long statusId,Date begin,Date end,String diyCode,String cityName,String username,List<String> roleDiyIds) throws ParseException{
 		HSSFWorkbook wb= new HSSFWorkbook();  
 		if(statusId==0){//出退货明细报表
 			wb=goodsInOutWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
@@ -504,6 +515,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=deliveryCheckBook(begin, end, diyCode, cityName, username, roleDiyIds);
 		}else if(statusId==12){//加盟商对账报表
 			wb=garmentFranchisor(begin, end, diyCode, cityName, username, roleDiyIds);
+		}else if(statusId==13){//会员连续月份购买报表
+			wb=continuousBuyBook(begin,end,diyCode,cityName,username,roleDiyIds);
 		}
 		return wb;
 	}
@@ -2272,12 +2285,225 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	}
 	
 	
-	private String objToString(Object obj){
-		if(obj==null){
+	/**
+	 * @param begin 开始时间
+	 * @param end 结束时间
+	 * @param diyCode 门店编码
+	 * @param cityName	城市名称
+	 * @param username	管理员用户名
+	 * @param roleDiyIds  授权管理门店的id
+	 * @return
+	 * @throws ParseException 
+	 */
+	private HSSFWorkbook continuousBuyBook(Date begin, Date end, String diyCode, String cityName, String username,
+			List<String> roleDiyIds) throws ParseException {
+
+		// 创建工作簿
+		HSSFWorkbook wb = new HSSFWorkbook();
+
+		String beginStr = null;
+		String endStr = null;
+		// 判断空值
+		if (begin == null) {
+			beginStr = "201609";
+		} else {
+			beginStr = dateToString(begin);
+		}
+		if (end == null) {
+			endStr = dateToString(new Date());
+		} else {
+			endStr = dateToString(end);
+		}
+		// 查询要写入excel的行记录
+		List<TdSalesForContinuousBuy> buyList = tdSalesForContinuousBuyService.queryDownList(beginStr, endStr, cityName,
+				diyCode, roleDiyIds);
+
+		int maxRowNum = 60000;
+		int maxSize = 0;
+		if (buyList != null) {
+			maxSize = buyList.size();
+		}
+		int indicator = 0;
+		int sheets = maxSize / maxRowNum + 1;
+
+		// 写入excel文件数据信息
+		for (int i = 0; i < sheets; i++) {
+
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+			HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
+			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+			// 列宽
+			int[] widths = { 18, 18, 18, 18, 20, 18, 20, 18, 30, 30, 25, 25, 18, 18, 18, 18, 18, 18 };
+			sheetColumnWidth(sheet, widths);
+
+			// 第四步，创建单元格，并设置值表头 设置表头居中
+			HSSFCellStyle style = wb.createCellStyle();
+			style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+			style.setWrapText(true);
+
+			// 设置标题
+			HSSFRow row = sheet.createRow((int) 0);
+
+			// 月份数组
+			List<String> listStr = getMonth(beginStr, endStr);
+
+			// 拼接标题栏
+			String[] cellVal01 = { "城市", "门店名称", "销顾编号", "销顾名称", "会员名称", "会员编号", "会员电话" };
+			String[] cellVal02 = (String[]) listStr.toArray(new String[listStr.size()]);
+			String[] cellValues = concat(cellVal01, cellVal02);
+
+			cellDates(cellValues, style, row);
+
+			for (int j = 0; j < maxRowNum; j++) {
+				if (j + i * maxRowNum >= maxSize) {
+					break;
+				}
+				TdSalesForContinuousBuy continuousBuy = buyList.get(j + i * maxRowNum);
+				row = sheet.createRow((int) j + 1);
+
+				// 城市
+				if (null != continuousBuy.getCityName()) {
+					row.createCell(0).setCellValue(objToString(continuousBuy.getCityName()));
+				} else {
+					row.createCell(0).setCellValue(" ");
+				}
+
+				// 门店名称
+
+				if (null != continuousBuy.getDiySiteName()) {
+					row.createCell(1).setCellValue(objToString(continuousBuy.getDiySiteName()));
+				} else {
+					row.createCell(1).setCellValue(" ");
+				}
+
+				// 销顾编号
+
+				if (null != continuousBuy.getSellerUsername()) {
+					row.createCell(2).setCellValue(objToString(continuousBuy.getSellerUsername()));
+				} else {
+					row.createCell(2).setCellValue(" ");
+				}
+
+				// 销顾名称
+				if (null != continuousBuy.getSellerRealName()) {
+					row.createCell(3).setCellValue(objToString(continuousBuy.getSellerRealName()));
+				} else {
+					row.createCell(3).setCellValue(" ");
+				}
+				// 会员名称
+				if (null != continuousBuy.getRealName()) {
+					row.createCell(4).setCellValue(objToString(continuousBuy.getRealName()));
+				} else {
+					row.createCell(4).setCellValue(" ");
+				}
+				// 会员编号
+				if (null != continuousBuy.getUsername()) {
+					row.createCell(5).setCellValue(objToString(continuousBuy.getUsername()));
+				} else {
+					row.createCell(5).setCellValue(" ");
+				}
+
+				// 会员电话
+				if (null != continuousBuy.getUsername()) {
+					row.createCell(6).setCellValue(objToString(continuousBuy.getUsername()));
+				} else {
+					row.createCell(6).setCellValue(" ");
+				}
+
+				String beginStrSplit = beginStr.substring(0, 4) + "-" + beginStr.substring(4, 6);
+				String endStrSplit = endStr.substring(0, 4) + "-" + endStr.substring(4, 6);
+				Date d1 = new SimpleDateFormat("yyyy-MM").parse(beginStrSplit);// 定义起始日期
+
+				Date d2 = new SimpleDateFormat("yyyy-MM").parse(endStrSplit);// 定义结束日期
+
+				Calendar dd = Calendar.getInstance();// 定义日期实例
+
+				dd.setTime(d1);// 设置日期起始时间
+				int tempFlag = 7;
+
+				while (!dd.getTime().after(d2)) {// 判断是否到结束日期
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+					String monthStr = sdf.format(dd.getTime());
+					Integer tempSale = tdSalesForContinuousBuyService.retriveSale(continuousBuy.getDiySiteName(),
+							continuousBuy.getUsername(), continuousBuy.getSellerUsername(), monthStr);
+					if(null !=tempSale ){
+						row.createCell(tempFlag).setCellValue(objToString(tempSale.intValue()));
+					}else{
+						row.createCell(tempFlag).setCellValue(objToString(0));
+					}
+					
+					tempFlag++;
+					dd.add(Calendar.MONTH, 1);// 进行当前日期月份加1
+				}
+
+			indicator++;
+			System.out.println(indicator);
+			}
+		}
+
+		return wb;
+	}
+	
+	private String objToString(Object obj) {
+		if (obj == null) {
 			return "";
 		}
 		return obj.toString();
 	}
+
+	public static <T> T[] concat(T[] first, T[] second) {
+		T[] result = Arrays.copyOf(first, first.length + second.length);
+		System.arraycopy(second, 0, result, first.length, second.length);
+		return result;
+	}
+
+	/**
+	 * 日期转字符串
+	 */
+	public static String dateToString(Date date) {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		return sdf.format(date).substring(0, 6);
+
+	}
 	
+	
+	/**
+	 * 获取月份数组
+	 * @param begin
+	 * @param end
+	 * @return
+	 * @throws ParseException
+	 */
+	public static List<String> getMonth(String begin,String end) throws ParseException{
+		
+		 List<String> listStr = new ArrayList<String>();
+		 String beginStr = begin.substring(0,4)+"-"+begin.substring(4,6);
+		 String endStr = end.substring(0,4)+"-"+end.substring(4,6);
+		  Date d1 = new SimpleDateFormat("yyyy-MM").parse(beginStr);//定义起始日期
+
+		  Date d2 = new SimpleDateFormat("yyyy-MM").parse(endStr);//定义结束日期
+
+		  Calendar dd = Calendar.getInstance();//定义日期实例
+
+		  dd.setTime(d1);//设置日期起始时间
+
+		  while(!dd.getTime().after(d2)){//判断是否到结束日期
+
+		  SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+
+		  String str = sdf.format(dd.getTime());
+
+		  System.out.println(str);//输出日期结果
+		  listStr.add(str);
+
+		  dd.add(Calendar.MONTH, 1);//进行当前日期月份加1
+
+		  }
+	        
+		System.out.println(listStr);
+		return listStr;
+		
+	}
 	
 }

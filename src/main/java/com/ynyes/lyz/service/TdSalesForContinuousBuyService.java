@@ -41,7 +41,7 @@ public class TdSalesForContinuousBuyService {
 
 	}
 
-	public int retriveSale(String diySiteName, String username, String sellerUsername,
+	public Integer retriveSale(String diySiteName, String username, String sellerUsername,
 			String monthStr) {
 		return repository.retriveSale(diySiteName,username,sellerUsername,monthStr);
 	}

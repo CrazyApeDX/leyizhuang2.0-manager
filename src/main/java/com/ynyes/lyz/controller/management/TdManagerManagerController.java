@@ -65,7 +65,7 @@ public class TdManagerManagerController {
 	public String managerList(Integer page, Integer size, String __EVENTTARGET,
 			String __EVENTARGUMENT, String __VIEWSTATE, Long[] listId,
 			Integer[] listChkId, Double[] listSortId, ModelMap map,
-			HttpServletRequest req) {
+			HttpServletRequest req,String keywords) {
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
@@ -83,9 +83,12 @@ public class TdManagerManagerController {
 				if (null != __EVENTARGUMENT) {
 					page = Integer.parseInt(__EVENTARGUMENT);
 				}
+			}else if(__EVENTTARGET.equalsIgnoreCase("btnSearch")){
+				page=0;
 			}
+			
 		}
-
+		
 		if (null == page || page < 0) {
 			page = 0;
 		}
@@ -100,10 +103,16 @@ public class TdManagerManagerController {
 		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
 		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		if(null != keywords){
+			map.addAttribute("manager_page",
+					tdManagerService.searchAndOrderByIdDesc(keywords,page, size));
+		}else{
+			map.addAttribute("manager_page",
+					tdManagerService.findAllOrderBySortIdAsc(page, size));
 
-		map.addAttribute("manager_page",
-				tdManagerService.findAllOrderBySortIdAsc(page, size));
-
+		}
+		map.addAttribute("keywords",keywords);
+		
 		return "/site_mag/manager_list";
 	}
 

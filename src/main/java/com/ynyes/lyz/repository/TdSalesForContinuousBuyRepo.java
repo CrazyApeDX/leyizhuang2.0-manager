@@ -20,10 +20,11 @@ public interface TdSalesForContinuousBuyRepo extends
 	
 	@Query(value=" SELECT * "
 			+" FROM "
-			+" 	td_sales_for_continuous_buy sb "
+			+" 	td_sales_for_continuous_buy sb left join td_user u on u.username = sb.username "
 			+" LEFT JOIN td_diy_site diy ON sb.diy_site_name = diy.title "
 			+" WHERE "
 			+" 	sb.month_str >=?1 "
+			+" AND u.identity_type is false "
 			+" AND sb.month_str <=?2 "
 			+" AND sb.city_name LIKE ?3 "
 			+" AND diy.store_code LIKE ?4 "
@@ -71,7 +72,7 @@ public interface TdSalesForContinuousBuyRepo extends
 	int retriveSale(String diySiteName, String username, String sellerUsername, String monthStr);*/
 	
 	@Query(value=" SELECT "
-			+" sum(sb.sales_summary) "
+			+" sum(IFNULL(sb.sales_summary,0)) "
 			+" FROM "
 			+" 	td_sales_for_continuous_buy sb "
 			+" WHERE "
@@ -81,7 +82,7 @@ public interface TdSalesForContinuousBuyRepo extends
 			+" AND sb.month_str = ?4 "
 			+" GROUP BY "
 			+" sb.username ",nativeQuery=true)
-	int retriveSale(String diySiteName, String username, String sellerUsername, String monthStr);
+	Integer retriveSale(String diySiteName, String username, String sellerUsername, String monthStr);
 
 	
 	

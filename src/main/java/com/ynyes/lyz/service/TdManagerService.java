@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.lyz.entity.TdManager;
+import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.repository.TdManagerRepo;
 
 
@@ -121,6 +122,12 @@ public class TdManagerService {
         
         return repository.findAll(pageRequest);
     }
+    
+    public Page<TdManager> searchAndOrderByIdDesc(String keywords, Integer page, Integer size) {
+		PageRequest pageRequest = new PageRequest(page, size);
+
+		return repository.findByUsernameContainingOrRealNameContainingOrderByIdDesc(keywords, keywords, pageRequest);
+	}
     
     public List<TdManager> findAllOrderBySortIdAsc()
     {
