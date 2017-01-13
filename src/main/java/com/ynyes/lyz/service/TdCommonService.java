@@ -542,6 +542,7 @@ public class TdCommonService {
 	 * 
 	 * @author dengxiao
 	 */
+	@Deprecated
 	public void getCategory(HttpServletRequest req, ModelMap map) {
 		// 查找到所有的一级分类
 		List<TdProductCategory> level_one_categories = tdProductCategoryService.findByParentIdIsNullOrderBySortIdAsc();
@@ -585,6 +586,7 @@ public class TdCommonService {
 	 * 
 	 * @author dengxiao
 	 */
+	@Deprecated
 	public void getCategoryTemp(HttpServletRequest req, ModelMap map) {
 		// 查找到所有的一级分类
 		List<TdProductCategory> level_one_categories = tdProductCategoryService.findByParentIdIsNullOrderBySortIdAsc();

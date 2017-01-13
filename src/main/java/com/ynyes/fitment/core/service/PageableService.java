@@ -15,8 +15,8 @@ import com.ynyes.fitment.core.constant.Global;
  */
 public abstract class PageableService {
 
-	private Integer defaultPage = Global.deafultPage;
-	private Integer defaultSize = Global.defaultSize;
+	private Integer defaultPage = Global.DEFAULT_PAGE;
+	private Integer defaultSize = Global.DEFAULT_SIZE;
 
 	protected PageableService() {
 		super();
@@ -24,8 +24,8 @@ public abstract class PageableService {
 
 	protected PageableService(Integer defaultPage, Integer defaultSize) {
 		super();
-		this.defaultPage = (null != defaultPage && defaultPage >= 1) ? defaultPage : Global.deafultPage;
-		this.defaultSize = (null != defaultSize && defaultSize >= 1) ? defaultSize : Global.defaultSize;
+		this.defaultPage = (null != defaultPage && defaultPage >= 0) ? defaultPage : Global.DEFAULT_PAGE;
+		this.defaultSize = (null != defaultSize && defaultSize >= 1) ? defaultSize : Global.DEFAULT_SIZE;
 	}
 
 	protected Pageable initPage() {
@@ -33,7 +33,7 @@ public abstract class PageableService {
 	}
 
 	protected Pageable initPage(Integer page, Integer size) {
-		if (null == page || page < 1) {
+		if (null == page || page < 0) {
 			page = this.defaultPage;
 		}
 		if (null == size || size < 1) {
@@ -43,7 +43,7 @@ public abstract class PageableService {
 	}
 	
 	protected Pageable initPage(Integer page, Integer size, Sort sort) {
-		if (null == page || page < 1) {
+		if (null == page || page < 0) {
 			page = this.defaultPage;
 		}
 		if (null == size || size < 1) {
@@ -53,7 +53,7 @@ public abstract class PageableService {
 	}
 	
 	protected Pageable initPage(Integer page, Integer size, Direction direction, String properties) {
-		if (null == page || page < 1) {
+		if (null == page || page < 0) {
 			page = this.defaultPage;
 		}
 		if (null == size || size < 1) {

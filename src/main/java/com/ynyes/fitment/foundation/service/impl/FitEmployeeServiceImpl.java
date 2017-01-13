@@ -3,6 +3,7 @@ package com.ynyes.fitment.foundation.service.impl;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -10,11 +11,14 @@ import com.ynyes.fitment.core.entity.client.result.ClientResult;
 import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity.OriginType;
 import com.ynyes.fitment.core.service.PageableService;
+import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.client.ClientEmployee;
 import com.ynyes.fitment.foundation.repo.FitEmployeeRepo;
+import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitEmployeeService;
-import com.ynyes.lyz.util.MD5;
+import com.ynyes.lyz.entity.TdCity;
+import com.ynyes.lyz.service.TdCityService;
 
 @Service
 @Transactional
@@ -22,33 +26,52 @@ public class FitEmployeeServiceImpl extends PageableService implements FitEmploy
 
 	@Autowired
 	private FitEmployeeRepo fitEmployeeRepo;
+	
+	@Autowired
+	private TdCityService tdCityService;
+	
+	@Autowired
+	private FitCompanyService fitCompanyService;
 
 	@Override
-	public FitEmployee addMainEmployee(Long managerId, String password, String mobile, String name, Boolean frozen,
-			Date frozenEndTime) throws Exception {
-		FitEmployee employee = new FitEmployee();
-		employee.setCreateId(managerId);
-		employee.setCreateOrigin(OriginType.ADD);
-		employee.setPassword(MD5.md5(password, 32));
-		employee.setMobile(mobile);
-		employee.setName(name);
-		employee.setFrozen(frozen);
-		employee.setFrozenEndTime(frozenEndTime);
-		employee = fitEmployeeRepo.save(employee);
-		return employee;
+	public FitEmployee managerSaveEmployee(FitEmployee employee) throws Exception {
+		if (null == employee) {
+			return null;
+		} else {
+			if (null != employee.getId()) {
+				employee.setAccount(null);
+			} else {
+				employee.setCreateOrigin(OriginType.ADD);
+			}
+			FitCompany company = this.fitCompanyService.findOne(employee.getCompanyId());
+			employee.setCompanyTitle(company.getName());
+			TdCity city = this.tdCityService.findBySobIdCity(company.getSobId());
+			employee.setCityTitle(city.getCityName());
+			return this.fitEmployeeRepo.save(employee);
+		}
+	}
+	
+	@Override
+	public void delete(Long id) throws Exception {
+		if (null != id) {
+			this.fitEmployeeRepo.delete(id);
+		}
 	}
 
 	@Override
-	public FitEmployee addSubEmployee(Long mainId, String mobile, String password, String name) throws Exception {
-		FitEmployee employee = new FitEmployee();
-		employee.setCreateId(mainId);
-		employee.setPassword(password);
-		employee.setMobile(mobile);
-		employee.setName(name);
-		employee.setMainId(mainId);
-		employee.setIsMain(false);
-		employee = fitEmployeeRepo.save(employee);
-		return employee;
+	public FitEmployee findOne(Long id) throws Exception {
+		return this.fitEmployeeRepo.findOne(id);
+	}
+
+	@Override
+	public Page<FitEmployee> findAll(Integer page, Integer size) throws Exception {
+		return this.fitEmployeeRepo.findAll(this.initPage(page, size));
+	}
+	
+	@Override
+	public Boolean validateRepeatEmployeeByMobile(String mobile, Long id) throws Exception {
+		Long count = this.fitEmployeeRepo.countByMobileAndIdNot(mobile, id);
+		return (count > 0);
 	}
 
 	@Override

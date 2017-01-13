@@ -25,9 +25,13 @@ public class FitEmployee extends TableEntity {
 	// 装饰公司id
 	@Column(nullable = false)
 	private Long companyId;
+	
+	// 装饰公司名
+	@Column(length = 15, nullable = false)
+	private String companyTitle;
 
 	// 员工账号，不可编辑，即系统自生成的UUID
-	@Column(length = 32, nullable = false, updatable = false, unique = true)
+	@Column(length = 36, nullable = false, updatable = false, unique = true)
 	private String account = UUID.randomUUID().toString();
 
 	// 员工密码
@@ -65,10 +69,6 @@ public class FitEmployee extends TableEntity {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date frozenEndTime = new Date();
 
-	// 主账号id，默认情况下都是主账号，主账号ID为0
-	@Column(nullable = false)
-	private Long mainId = 0l;
-
 	// 是否是主账号，实际上与mainId字段意义重复
 	@Column(nullable = false)
 	private Boolean isMain = true;
@@ -79,6 +79,14 @@ public class FitEmployee extends TableEntity {
 
 	public void setCompanyId(Long companyId) {
 		this.companyId = companyId;
+	}
+
+	public String getCompanyTitle() {
+		return companyTitle;
+	}
+
+	public void setCompanyTitle(String companyTitle) {
+		this.companyTitle = companyTitle;
 	}
 
 	public String getAccount() {
@@ -94,7 +102,6 @@ public class FitEmployee extends TableEntity {
 	}
 
 	public void setPassword(String password) {
-
 		this.password = MD5.md5(password, 32);
 	}
 
@@ -152,14 +159,6 @@ public class FitEmployee extends TableEntity {
 
 	public void setFrozenEndTime(Date frozenEndTime) {
 		this.frozenEndTime = frozenEndTime;
-	}
-
-	public Long getMainId() {
-		return mainId;
-	}
-
-	public void setMainId(Long mainId) {
-		this.mainId = mainId;
 	}
 
 	public Boolean getIsMain() {

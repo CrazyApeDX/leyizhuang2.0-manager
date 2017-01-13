@@ -31,15 +31,12 @@ public abstract class TableEntity extends PersistentEntity{
 	 * @author dengxiao
 	 */
 	public enum OriginType {
-		DEVELOP, BUSINESS, ADD, RECEIVE
+		DEVELOP, BUSINESS, ADD, RECEIVE, QRCODE
 	}
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
-	@Column(nullable = false, updatable = false)
-	private Long createId = 0l;
 	
 	@Enumerated(EnumType.STRING)
 	private OriginType createOrigin = OriginType.BUSINESS;
@@ -54,14 +51,6 @@ public abstract class TableEntity extends PersistentEntity{
 
 	public void setId(Long id) {
 		this.id = id;
-	}
-
-	public Long getCreateId() {
-		return createId;
-	}
-
-	public void setCreateId(Long createId) {
-		this.createId = createId;
 	}
 
 	public OriginType getCreateOrigin() {
