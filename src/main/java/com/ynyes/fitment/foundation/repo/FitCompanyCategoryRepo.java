@@ -21,4 +21,5 @@ public interface FitCompanyCategoryRepo extends ApplicationRepo<FitCompanyCatego
 
 	List<FitCompanyCategory> findByCompanyIdAndCategoryParentIdOrderByIdAsc(Long companyId, Long caategoryParentId)
 			throws Exception;
+	
 }

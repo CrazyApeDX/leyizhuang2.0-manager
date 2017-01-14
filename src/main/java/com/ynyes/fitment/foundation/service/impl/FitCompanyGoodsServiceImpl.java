@@ -1,5 +1,7 @@
 package com.ynyes.fitment.foundation.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -66,6 +68,15 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 		if (null != id) {
 			this.fitCompanyGoodsRepo.delete(id);
 		}
+	}
+
+	@Override
+	public List<FitCompanyGoods> findByCompanyIdAndCategoryIdOrderByGoodsSortIdAsc(Long companyId, Long categoryId)
+			throws Exception {
+		if(null == companyId || null == categoryId){
+			return null;
+		}
+		return this.fitCompanyGoodsRepo.findByCompanyIdAndCategoryIdOrderByGoodsSortIdAsc(companyId, categoryId);
 	}
 
 }

@@ -11,4 +11,6 @@ public interface FitCompanyCategoryService {
 	List<FitCompanyCategory> findByCompanyIdOrderByCategorySortIdAsc(Long companyId) throws Exception;
 
 	void deleteByCompanyId(Long companyId) throws Exception;
+	
+	List<FitCompanyCategory> findByCompanyIdAndCategoryParentIdOrderByIdAsc(Long companyId,Long categoryParentId) throws Exception;
 }

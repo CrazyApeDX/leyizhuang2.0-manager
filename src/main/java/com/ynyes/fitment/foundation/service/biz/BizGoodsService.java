@@ -9,5 +9,5 @@ public interface BizGoodsService {
 
 	List<ClientCategory> getCategoryTree(Long companyId) throws Exception;
 	
-	List<ClientGoods> getGoodsByCategoryId(Long categoryId) throws Exception;
+	List<ClientGoods> getGoodsByCategoryId(Long categoryId,Long companyId) throws Exception;
 }

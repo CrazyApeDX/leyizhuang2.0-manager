@@ -42,4 +42,11 @@ public class FitCompanyCategoryServiceImpl implements FitCompanyCategoryService 
 			this.fitCompanyCategoryRepo.deleteByCompanyId(companyId);
 		}
 	}
+	
+	public List<FitCompanyCategory> findByCompanyIdAndCategoryParentIdOrderByIdAsc(Long companyId,Long categoryParentId) throws Exception{
+		if(null == companyId || null == categoryParentId ){
+			return null;
+		}
+		return this.fitCompanyCategoryRepo.findByCompanyIdAndCategoryParentIdOrderByIdAsc(companyId,categoryParentId);
+	}
 }

@@ -1,5 +1,7 @@
 package com.ynyes.fitment.foundation.service;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 
 import com.ynyes.fitment.foundation.entity.FitCompanyGoods;
@@ -16,4 +18,7 @@ public interface FitCompanyGoodsService {
 	Boolean validateRepeatByCompanyIdAndGoodsId(Long companyId, Long goodsId) throws Exception;
 	
 	void delete(Long id) throws Exception;
+	
+	List<FitCompanyGoods> findByCompanyIdAndCategoryIdOrderByGoodsSortIdAsc(Long companyId, Long categoryId)
+			throws Exception;
 }
