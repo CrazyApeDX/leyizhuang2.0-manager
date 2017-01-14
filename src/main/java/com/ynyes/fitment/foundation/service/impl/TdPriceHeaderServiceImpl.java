@@ -21,6 +21,14 @@ public class TdPriceHeaderServiceImpl extends PageableService implements FitPric
 	private FitPriceHeaderRepo fitPriceHeaderRepo;
 	
 	@Override
+	public FitPriceHeader findOne(Long id) throws Exception {
+		if (null == id) {
+			return null;
+		}
+		return this.fitPriceHeaderRepo.findOne(id);
+	}
+
+	@Override
 	public List<FitPriceHeader> findActivePriceHeaderByProductType(String productType) throws Exception {
 		return this.fitPriceHeaderRepo.findActivePriceHeaderByPriceType(productType, new Date());
 	}

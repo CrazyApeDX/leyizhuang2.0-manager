@@ -7,4 +7,6 @@ import com.ynyes.fitment.foundation.entity.FitPriceLine;
 public interface FitPriceLineService {
 
 	Page<FitPriceLine> findByHeaderId(Long headerId, Integer page, Integer size) throws Exception;
+	
+	FitPriceLine findByHeaderIdAndGoodsId(Long headerId, Long goodsId) throws Exception;
 }

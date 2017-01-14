@@ -19,7 +19,18 @@ public class FitPriceLineServiceImpl extends PageableService implements FitPrice
 	
 	@Override
 	public Page<FitPriceLine> findByHeaderId(Long headerId, Integer page, Integer size) throws Exception {
+		if (null == headerId) {
+			return null;
+		}
 		return this.fitPriceLineRepo.findByHeaderId(headerId, this.initPage(page, size));
+	}
+
+	@Override
+	public FitPriceLine findByHeaderIdAndGoodsId(Long headerId, Long goodsId) throws Exception {
+		if (null == headerId || null == goodsId) {
+			return null;
+		}
+		return this.fitPriceLineRepo.findByHeaderIdAndGoodsId(headerId, goodsId);
 	}
 
 }
