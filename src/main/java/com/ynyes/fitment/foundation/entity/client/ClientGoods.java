@@ -1,17 +1,18 @@
 package com.ynyes.fitment.foundation.entity.client;
 
 import com.ynyes.fitment.core.entity.client.ClientEntity;
+import com.ynyes.fitment.foundation.entity.FitCompanyGoods;
 
 public class ClientGoods extends ClientEntity {
 
 	private Long id;
-	
+
 	private String title;
-	
+
 	private String sku;
-	
+
 	private Double price;
-	
+
 	private Long inventory;
 
 	public Long getId() {
@@ -57,5 +58,10 @@ public class ClientGoods extends ClientEntity {
 	public ClientGoods setInventory(Long inventory) {
 		this.inventory = inventory;
 		return this;
+	}
+
+	public ClientGoods init(FitCompanyGoods goods, Double price, Long inventory) {
+		return this.setId(goods.getGoodsId()).setTitle(goods.getGoodsTitle()).setSku(goods.getGoodsSku())
+				.setPrice(price).setInventory(inventory);
 	}
 }

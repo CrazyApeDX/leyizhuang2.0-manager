@@ -24,10 +24,10 @@ public class FitPriceLine extends TableEntity {
 	private String goodsSku;
 	
 	@Column(scale = 2, nullable = false)
-	private Double price = 1d;
+	private Double price = 0d;
 	
 	@Column(scale = 2, nullable = false)
-	private Double realPrice = 1d;
+	private Double realPrice = 0d;
 	
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
