@@ -11,6 +11,7 @@ import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity.OriginType;
 import com.ynyes.fitment.foundation.entity.FitCartGoods;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
+import com.ynyes.fitment.foundation.entity.FitPriceLine;
 import com.ynyes.fitment.foundation.service.FitCartGoodsService;
 import com.ynyes.fitment.foundation.service.biz.BizCartGoodsService;
 import com.ynyes.fitment.foundation.service.biz.BizInventoryService;
@@ -43,24 +44,26 @@ public class BizCartGoodsServiceImpl implements BizCartGoodsService {
 			Long goodsId = Long.valueOf(goodsId_quantity[0]);
 			Long quantity = Long.valueOf(goodsId_quantity[1]);
 			TdGoods goods = this.tdGoodsService.findOne(goodsId);
+			FitPriceLine priceLine = bizPriceService.getFitPriceLineByCompanyIdAndGoodsId(employee.getCompanyId(),
+					goodsId);
 			FitCartGoods cartGoods = this.fitCartGoodsService.findByEmployeeIdAndGoodsId(employee.getId(), goodsId);
 			if (null == cartGoods) {
 				cartGoods = new FitCartGoods().setEmployeeId(employee.getId()).setGoodsId(goodsId)
 						.setGoodsTitle(goods.getTitle()).setGoodsSku(goods.getCode())
-						.setImageUri(goods.getCoverImageUri())
-						.setPrice(bizPriceService.getPriceByCompanyIdAndGoodsId(employee.getCompanyId(), goodsId))
-						.setQuantity(quantity);
+						.setImageUri(goods.getCoverImageUri()).setPrice(priceLine.getPrice()).setQuantity(quantity)
+						.setRealPrice(priceLine.getRealPrice());
 				cartGoods.setCreateOrigin(OriginType.BUSINESS);
 			} else {
 				Long inventory = this.bizInventoryService.getCityInventoryByGoodsId(employee.getCompanyId(), goodsId);
 
 				cartGoods = cartGoods.setEmployeeId(employee.getId()).setGoodsTitle(goods.getTitle())
 						.setGoodsId(goodsId).setGoodsSku(goods.getCode()).setImageUri(goods.getCoverImageUri())
-						.setPrice(bizPriceService.getPriceByCompanyIdAndGoodsId(employee.getCompanyId(), goodsId))
+						.setPrice(priceLine.getPrice()).setRealPrice(priceLine.getRealPrice())
 						.setQuantity(cartGoods.getQuantity() + quantity > inventory ? inventory
 								: cartGoods.getQuantity() + quantity);
 			}
 			cartGoods.getTotalPrice();
+			cartGoods.getRealTotalPrice();
 			this.fitCartGoodsService.save(cartGoods);
 		}
 	}
@@ -92,7 +95,7 @@ public class BizCartGoodsServiceImpl implements BizCartGoodsService {
 				cart.setQuantity(cart.getQuantity() + 1L);
 			}
 			break;
-		case "delete":
+		case "del":
 			if (selected.equals(1L)) {
 				// do nothing!
 			} else {

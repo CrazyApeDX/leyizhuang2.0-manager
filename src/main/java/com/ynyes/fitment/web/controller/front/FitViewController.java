@@ -85,6 +85,16 @@ public class FitViewController extends FitBasicController {
 		}
 	}
 
+	@RequestMapping(value = "/address")
+	public String address(HttpServletRequest request, ModelMap map) {
+		try {
+			return "/fitment/address_base";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "fitment/500";
+		}
+	}
+
 	@ModelAttribute
 	public void modelAttrubute(HttpServletRequest request, ModelMap map) {
 		FitEmployee employee = this.getLoginEmployee(request);

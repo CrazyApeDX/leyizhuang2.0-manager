@@ -20,7 +20,7 @@
                             </#if>
                             <!-- 数量选择 -->
                             <div class="numbers">
-                                <a class="less" href="javascript:operate('delete',0,${goods.goodsId?c});">-</a>
+                                <a class="less" href="javascript:operate('del',0,${goods.goodsId?c});">-</a>
                                 <!-- 可以手动修改数量 -->
                                 <input type="text" onkeyup="keyup(this)" onafterpaste="afterpaste(this)" onchange="javascript:operate('key',0,${goods.goodsId?c});" id="goods${goods.goodsId?c}" value="${goods.quantity?c}" >
                                 <a class="add" href="javascript:operate('add',0,${goods.goodsId?c});">+</a>

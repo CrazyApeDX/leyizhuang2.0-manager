@@ -1,0 +1,27 @@
+package com.ynyes.fitment.foundation.repo;
+
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+
+import com.ynyes.fitment.core.constant.AuditStatus;
+import com.ynyes.fitment.core.repo.ApplicationRepo;
+import com.ynyes.fitment.foundation.entity.FitOrder;
+
+@Repository
+public interface FitOrderRepo extends ApplicationRepo<FitOrder> {
+
+	List<FitOrder> findByCompanyId(Long companyId) throws Exception;
+
+	Page<FitOrder> findByCompanyId(Long companyId, Pageable page) throws Exception;
+
+	List<FitOrder> findByCompanyIdAndStatus(Long companyId, AuditStatus status) throws Exception;
+
+	Page<FitOrder> findByCompanyIdAndStatus(Long companyId, AuditStatus status, Pageable page) throws Exception;
+
+	List<FitOrder> findByEmployeeId(Long employeeId) throws Exception;
+	
+	Page<FitOrder> findByEmployeeId(Long employeeId, Pageable page) throws Exception;
+}

@@ -44,7 +44,7 @@
 						warning("亲，请先选择商品");
 						return;
 					} else {
-						window.location.href = '/fit/order/address';
+						window.location.href = '/fit/address';
 					}
             	}
             </script>
