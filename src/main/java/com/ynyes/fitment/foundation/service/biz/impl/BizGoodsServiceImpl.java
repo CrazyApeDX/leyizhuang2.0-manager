@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.fitment.foundation.entity.FitCompanyCategory;
@@ -16,6 +17,7 @@ import com.ynyes.fitment.foundation.service.biz.BizGoodsService;
 import com.ynyes.fitment.foundation.service.biz.BizInventoryService;
 import com.ynyes.fitment.foundation.service.biz.BizPriceService;
 
+@Service
 @Transactional
 public class BizGoodsServiceImpl implements BizGoodsService {
 

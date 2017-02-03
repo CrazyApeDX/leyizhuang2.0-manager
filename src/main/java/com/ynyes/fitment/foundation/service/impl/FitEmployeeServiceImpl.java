@@ -1,19 +1,14 @@
 package com.ynyes.fitment.foundation.service.impl;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ynyes.fitment.core.entity.client.result.ClientResult;
-import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity.OriginType;
 import com.ynyes.fitment.core.service.PageableService;
 import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
-import com.ynyes.fitment.foundation.entity.client.ClientEmployee;
 import com.ynyes.fitment.foundation.repo.FitEmployeeRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitEmployeeService;
@@ -75,18 +70,18 @@ public class FitEmployeeServiceImpl extends PageableService implements FitEmploy
 	}
 
 	@Override
-	public ClientResult login(String mobile, String password) throws Exception {
-		FitEmployee employee = this.fitEmployeeRepo.findByMobileAndPassword(mobile, password);
+	public FitEmployee login(String mobile, String password) throws Exception {
+		return this.fitEmployeeRepo.findByMobileAndPassword(mobile, password);
+	}
+
+	@Override
+	public FitEmployee update(FitEmployee employee) throws Exception {
 		if (null == employee) {
-			return new ClientResult(ActionCode.FAILURE, "手机号码和密码不匹配");
+			throw new IllegalArgumentException("修改员工信息时，员工信息为null");
+		} else if (null == employee.getId()) {
+			throw new IllegalArgumentException("修改员工信息时，员工ID为null");
 		} else {
-			if (employee.getFrozen() && employee.getFrozenEndTime().getTime() > new Date().getTime()) {
-				return new ClientResult(ActionCode.FAILURE, "您的账号已经被冻结，请联系管理员");
-			} else {
-				employee.setLastLoginTime(new Date());
-				this.fitEmployeeRepo.save(employee);
-				return new ClientResult(ActionCode.SUCCESS, new ClientEmployee().init(employee));
-			}
+			return this.fitEmployeeRepo.save(employee);
 		}
 	}
 }

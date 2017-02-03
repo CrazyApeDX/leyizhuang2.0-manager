@@ -10,7 +10,6 @@ import javax.persistence.Table;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity;
-import com.ynyes.lyz.util.MD5;
 
 /**
  * 装饰公司员工实体模型，分为主账号二级账号
@@ -102,7 +101,7 @@ public class FitEmployee extends TableEntity {
 	}
 
 	public void setPassword(String password) {
-		this.password = MD5.md5(password, 32);
+		this.password = password;
 	}
 
 	public String getMobile() {

@@ -68,7 +68,11 @@ public class FitManagementEmployeeController {
 				employee.setPassword(
 						null == oldPassword ? MD5.md5(Global.DEFAULT_PASSWORD, 32) : MD5.md5(oldPassword, 32));
 			} else {
-				employee.setPassword(null == oldPassword ? null : MD5.md5(oldPassword, 32));
+				if (null == oldPassword) {
+					employee.setPassword(null);
+				} else {
+					employee.setPassword(MD5.md5(oldPassword, 32));
+				}
 			}
 			this.fitEmployeeService.managerSaveEmployee(employee);
 		} catch (Exception e) {

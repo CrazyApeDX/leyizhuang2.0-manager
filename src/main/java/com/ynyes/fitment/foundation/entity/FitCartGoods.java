@@ -16,6 +16,9 @@ public class FitCartGoods extends TableEntity {
 	@Column(nullable = false)
 	private Long goodsId;
 	
+	@Column(nullable = false)
+	private String goodsTitle;
+	
 	@Column(length = 30, nullable = false)
 	private String goodsSku;
 	
@@ -35,48 +38,54 @@ public class FitCartGoods extends TableEntity {
 		return employeeId;
 	}
 
-	public void setEmployeeId(Long employeeId) {
+	public FitCartGoods setEmployeeId(Long employeeId) {
 		this.employeeId = employeeId;
+		return this;
 	}
 
 	public Long getGoodsId() {
 		return goodsId;
 	}
 
-	public void setGoodsId(Long goodsId) {
+	public FitCartGoods setGoodsId(Long goodsId) {
 		this.goodsId = goodsId;
+		return this;
 	}
 
 	public String getGoodsSku() {
 		return goodsSku;
 	}
 
-	public void setGoodsSku(String goodsSku) {
+	public FitCartGoods setGoodsSku(String goodsSku) {
 		this.goodsSku = goodsSku;
+		return this;
 	}
 
 	public String getImageUri() {
 		return imageUri;
 	}
 
-	public void setImageUri(String imageUri) {
+	public FitCartGoods setImageUri(String imageUri) {
 		this.imageUri = imageUri;
+		return this;
 	}
 
 	public Long getQuantity() {
 		return quantity;
 	}
 
-	public void setQuantity(Long quantity) {
+	public FitCartGoods setQuantity(Long quantity) {
 		this.quantity = quantity;
+		return this;
 	}
 
 	public Double getPrice() {
 		return price;
 	}
 
-	public void setPrice(Double price) {
+	public FitCartGoods setPrice(Double price) {
 		this.price = price;
+		return this;
 	}
 
 	public Double getTotalPrice() {
@@ -84,7 +93,17 @@ public class FitCartGoods extends TableEntity {
 		return totalPrice;
 	}
 
-	public void setTotalPrice(Double totalPrice) {
+	public FitCartGoods setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+		return this;
+	}
+
+	public String getGoodsTitle() {
+		return goodsTitle;
+	}
+
+	public FitCartGoods setGoodsTitle(String goodsTitle) {
+		this.goodsTitle = goodsTitle;
+		return this;
 	}
 }

@@ -1733,6 +1733,10 @@ public class TdOrderController {
 		Long realUserId = order_temp.getRealUserId();
 		TdUser realUser = tdUserService.findOne(realUserId);
 
+		// 修复double类型数据精度不够的问题
+		BigDecimal bg = new BigDecimal(order_temp.getTotalPrice());
+		order_temp.setTotalPrice(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
+		
 		if (isOnline) {
 			// 判断是否还有未支付的金额
 			if ((order_temp.getTotalPrice() + order_temp.getUpstairsLeftFee()) > 0) {

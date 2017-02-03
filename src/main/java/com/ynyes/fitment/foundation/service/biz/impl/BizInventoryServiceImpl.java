@@ -39,7 +39,7 @@ public class BizInventoryServiceImpl implements BizInventoryService {
 			return null;
 		}
 		TdDiySiteInventory inventory = this.tdDiySiteInventoryService
-				.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(), company.getId());
+				.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(), company.getSobId());
 		return null == inventory ? null : inventory.getInventory();
 	}
 }
