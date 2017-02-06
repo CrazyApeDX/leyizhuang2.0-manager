@@ -12,7 +12,7 @@ public class FilterConfig {
 	@Bean
 	public FilterRegistrationBean fitFrontFilter() {
 		FilterRegistrationBean bean = new FilterRegistrationBean(new FitmentFrontFilter());
-		bean.addUrlPatterns("/fit/home", "/fit/cart", "/fit/address");
+		bean.addUrlPatterns("/fit/home", "/fit/cart", "/fit/address", "/fit/audit");
 		return bean;
 	}
 }

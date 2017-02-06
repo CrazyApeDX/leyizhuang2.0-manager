@@ -27,13 +27,21 @@ public class FitOrderServiceImpl extends PageableService implements FitOrderServ
 		}
 		return this.fitOrderRepo.save(order);
 	}
+	
+	@Override
+	public FitOrder findOne(Long id) throws Exception {
+		if (null == id) {
+			return null;
+		}
+		return this.fitOrderRepo.findOne(id);
+	}
 
 	@Override
 	public List<FitOrder> findByCompanyId(Long companyId) throws Exception {
 		if (null == companyId) {
 			return null;
 		}
-		return this.fitOrderRepo.findByCompanyId(companyId);
+		return this.fitOrderRepo.findByCompanyIdAndIsDeleteFalseOrderByOrderTimeDesc(companyId);
 	}
 
 	@Override
@@ -41,7 +49,7 @@ public class FitOrderServiceImpl extends PageableService implements FitOrderServ
 		if (null == companyId) {
 			return null;
 		}
-		return this.fitOrderRepo.findByCompanyId(companyId, this.initPage(page, size));
+		return this.fitOrderRepo.findByCompanyIdAndIsDeleteFalseOrderByOrderTimeDesc(companyId, this.initPage(page, size));
 	}
 
 	@Override
@@ -66,7 +74,7 @@ public class FitOrderServiceImpl extends PageableService implements FitOrderServ
 		if (null == employeeId) {
 			return null;
 		}
-		return this.fitOrderRepo.findByEmployeeId(employeeId);
+		return this.fitOrderRepo.findByEmployeeIdOrderByOrderTimeDesc(employeeId);
 	}
 
 	@Override
@@ -74,7 +82,7 @@ public class FitOrderServiceImpl extends PageableService implements FitOrderServ
 		if (null == employeeId) {
 			return null;
 		}
-		return this.fitOrderRepo.findByEmployeeId(employeeId, this.initPage(page, size));
+		return this.fitOrderRepo.findByEmployeeIdOrderByOrderTimeDesc(employeeId, this.initPage(page, size));
 	}
 
 }

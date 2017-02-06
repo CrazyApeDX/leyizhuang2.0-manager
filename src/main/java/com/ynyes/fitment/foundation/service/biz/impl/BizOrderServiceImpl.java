@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 				this.bizCartGoodsService.clearCartWithId(cartGoods.getId());
 			}
 		}
-		
+
 		FitOrder order = new FitOrder();
 		order.setCompanyId(employee.getCompanyId());
 		order.setEmployeeId(employee.getId());
@@ -60,13 +61,46 @@ public class BizOrderServiceImpl implements BizOrderService {
 		order.setReceiveName(receiver);
 		order.setReceivePhone(receiverMobile);
 		order.setReceiveAddress(baseAddress + detailAddress);
-		
-		return this.fitOrderService.save(order.initPrice());
+
+		return this.fitOrderService.save(order.initOrderNumber().initPrice());
 	}
 
 	@Override
-	public FitOrder auditOrder(Long orderId, String action) {
-		return null;
+	public FitOrder auditOrder(Long orderId, String action) throws Exception {
+		FitOrder order = this.findOne(orderId);
+		if (null != order) {
+			switch (action) {
+			case "AGREE":
+				order.setStatus(AuditStatus.AUDIT_SUCCESS);
+				order.setAuditTime(new Date());
+				break;
+			case "REJECT":
+				order.setStatus(AuditStatus.AUDIT_FAILURE);
+				order.setAuditTime(new Date());
+				break;
+			case "DELETE":
+				if (order.getStatus().equals(AuditStatus.AUDIT_FAILURE)) {
+					order.setIsDelete(true);
+				}
+				break;
+			}
+		}
+		return this.fitOrderService.save(order);
+	}
+
+	@Override
+	public FitOrder findOne(Long id) throws Exception {
+		return this.fitOrderService.findOne(id);
+	}
+
+	@Override
+	public Page<FitOrder> loadOrderByEmployeeId(Long employeeId, Integer page, Integer size) throws Exception {
+		return this.fitOrderService.findByEmployeeId(employeeId, page, size);
+	}
+
+	@Override
+	public Page<FitOrder> loadOrderByCompanyId(Long companyId, Integer page, Integer size) throws Exception {
+		return this.fitOrderService.findByCompanyId(companyId, page, size);
 	}
 
 }

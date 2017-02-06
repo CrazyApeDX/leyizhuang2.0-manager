@@ -13,15 +13,15 @@ import com.ynyes.fitment.foundation.entity.FitOrder;
 @Repository
 public interface FitOrderRepo extends ApplicationRepo<FitOrder> {
 
-	List<FitOrder> findByCompanyId(Long companyId) throws Exception;
+	List<FitOrder> findByCompanyIdAndIsDeleteFalseOrderByOrderTimeDesc(Long companyId) throws Exception;
 
-	Page<FitOrder> findByCompanyId(Long companyId, Pageable page) throws Exception;
+	Page<FitOrder> findByCompanyIdAndIsDeleteFalseOrderByOrderTimeDesc(Long companyId, Pageable page) throws Exception;
 
 	List<FitOrder> findByCompanyIdAndStatus(Long companyId, AuditStatus status) throws Exception;
 
 	Page<FitOrder> findByCompanyIdAndStatus(Long companyId, AuditStatus status, Pageable page) throws Exception;
 
-	List<FitOrder> findByEmployeeId(Long employeeId) throws Exception;
+	List<FitOrder> findByEmployeeIdOrderByOrderTimeDesc(Long employeeId) throws Exception;
 	
-	Page<FitOrder> findByEmployeeId(Long employeeId, Pageable page) throws Exception;
+	Page<FitOrder> findByEmployeeIdOrderByOrderTimeDesc(Long employeeId, Pageable page) throws Exception;
 }

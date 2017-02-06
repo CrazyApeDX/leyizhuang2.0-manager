@@ -10,7 +10,7 @@
                 </a>
             </li>
             <li>
-                <a id="go_out" onclick="win_out();">
+                <a id="go_out" href="/fit/audit">
                     <div></div>
                     <span>审核</span>
                 </a>

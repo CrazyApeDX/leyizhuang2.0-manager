@@ -1,5 +1,6 @@
 package com.ynyes.fitment.foundation.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -22,10 +23,12 @@ import com.ynyes.lyz.entity.TdOrder;
 @Table(name = "FIT_ORDER")
 public class FitOrder extends TableEntity {
 
+	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss");
+
 	// 公司id
 	@Column(length = 20, nullable = false, updatable = false)
 	private Long companyId;
-	
+
 	// 下单人id
 	@Column(length = 20, nullable = false, updatable = false)
 	private Long employeeId;
@@ -52,10 +55,19 @@ public class FitOrder extends TableEntity {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date auditTime;
 
+	// 订单号
+	@Column(length = 30, nullable = false, unique = true)
+	private String orderNumber;
+
 	// 订单商品
 	@OneToMany
 	@JoinColumn(name = "FIT_ORDER_ID")
 	private List<FitOrderGoods> orderGoodsList;
+	
+	// 下单时间
+	@Column(nullable = false, updatable = false)
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date orderTime = new Date();
 
 	// 收货人姓名
 	@Column(length = 50, nullable = false, updatable = false)
@@ -97,6 +109,10 @@ public class FitOrder extends TableEntity {
 	@Column(nullable = false, scale = 2)
 	private Double deliveryFee = 0d;
 
+	// 订单实际价值
+	@Column(nullable = false, scale = 2)
+	private Double allTotalGoodsPrice = 0d;
+
 	// 订单共计应付金额
 	@Column(nullable = false, scale = 2)
 	private Double allTotalPrice = 0d;
@@ -120,6 +136,14 @@ public class FitOrder extends TableEntity {
 	// 剩余上楼费
 	@Column(length = 10, scale = 2, nullable = false)
 	private Double upstairsLeftFee = 0d;
+	
+	// 是否被删除
+	@Column(nullable = false)
+	private Boolean isDelete = false;
+	
+	// 是否完成
+	@Column(nullable = false)
+	private Boolean isFinish = false;
 
 	public Long getCompanyId() {
 		return companyId;
@@ -281,6 +305,16 @@ public class FitOrder extends TableEntity {
 		this.deliveryFee = deliveryFee;
 	}
 
+	public Double getAllTotalGoodsPrice() {
+		// 订单实际应支付金额 = 优惠后的商品金额 + 上楼费 + 运费
+		this.allTotalGoodsPrice = this.totalGoodsPrice + this.upstairsFee + this.deliveryFee;
+		return allTotalGoodsPrice;
+	}
+
+	public void setAllTotalGoodsPrice(Double allTotalGoodsPrice) {
+		this.allTotalGoodsPrice = allTotalGoodsPrice;
+	}
+
 	public Double getAllTotalPrice() {
 		// 订单实际应支付金额 = 优惠后的商品金额 + 上楼费 + 运费
 		this.allTotalPrice = this.totalPrice + this.upstairsFee + this.deliveryFee;
@@ -335,7 +369,46 @@ public class FitOrder extends TableEntity {
 	public void setUpstairsLeftFee(Double upstairsLeftFee) {
 		this.upstairsLeftFee = upstairsLeftFee;
 	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public FitOrder setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+		return this;
+	}
 	
+	public Boolean getIsDelete() {
+		return isDelete;
+	}
+
+	public void setIsDelete(Boolean isDelete) {
+		this.isDelete = isDelete;
+	}
+
+	public Boolean getIsFinish() {
+		return isFinish;
+	}
+
+	public void setIsFinish(Boolean isFinish) {
+		this.isFinish = isFinish;
+	}
+
+	public Date getOrderTime() {
+		return orderTime;
+	}
+
+	public void setOrderTime(Date orderTime) {
+		this.orderTime = orderTime;
+	}
+
+	public FitOrder initOrderNumber() {
+		StringBuffer buffer = new StringBuffer("FIT").append(FORMATTER.format(new Date()))
+				.append((int) (Math.random() * 900) + 100);
+		return this.setOrderNumber(buffer.toString());
+	}
+
 	public FitOrder initPrice() {
 		this.getTotalGoodsPrice();
 		this.getTotalPrice();
@@ -343,7 +416,7 @@ public class FitOrder extends TableEntity {
 		this.getUpstairsLeftFee();
 		return this;
 	}
-	
+
 	public TdOrder transformer() {
 		return null;
 	}

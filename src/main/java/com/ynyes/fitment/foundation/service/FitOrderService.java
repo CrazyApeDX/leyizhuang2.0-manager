@@ -11,6 +11,8 @@ public interface FitOrderService {
 
 	FitOrder save(FitOrder order) throws Exception;
 	
+	FitOrder findOne(Long id) throws Exception;
+	
 	List<FitOrder> findByCompanyId(Long companyId) throws Exception;
 
 	Page<FitOrder> findByCompanyId(Long companyId, Integer page, Integer size) throws Exception;

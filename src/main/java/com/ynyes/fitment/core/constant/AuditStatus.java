@@ -6,5 +6,5 @@ package com.ynyes.fitment.core.constant;
  */
 public enum AuditStatus {
 
-	WAIT_AUDIT, AUDIT_FAILTRE, AUDIT_SUCCESS
+	WAIT_AUDIT, AUDIT_FAILURE, AUDIT_SUCCESS
 }

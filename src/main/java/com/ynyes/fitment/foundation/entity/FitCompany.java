@@ -26,9 +26,17 @@ public class FitCompany extends TableEntity {
 	@Column(length = 10, nullable = false)
 	private Long sobId;
 	
+	// 额度
+	@Column(scale = 2, nullable = false)
+	private Double creditLimit = 0d;
+	
 	// 信用金
 	@Column(scale = 2, nullable = false)
 	private Double credit = 0d;
+	
+	// 还款日
+	@Column(length = 2, nullable = false)
+	private Integer day = 1;
 	
 	// 冻结下单
 	@Column(nullable = false)
@@ -107,5 +115,21 @@ public class FitCompany extends TableEntity {
 
 	public void setLyzPriceHeaderId(Long lyzPriceHeaderId) {
 		this.lyzPriceHeaderId = lyzPriceHeaderId;
+	}
+
+	public Double getCreditLimit() {
+		return creditLimit;
+	}
+
+	public void setCreditLimit(Double creditLimit) {
+		this.creditLimit = creditLimit;
+	}
+
+	public Integer getDay() {
+		return day;
+	}
+
+	public void setDay(Integer day) {
+		this.day = day;
 	}
 }

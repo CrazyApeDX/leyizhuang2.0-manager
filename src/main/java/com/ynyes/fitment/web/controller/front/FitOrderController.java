@@ -5,12 +5,14 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ynyes.fitment.core.constant.Global;
 import com.ynyes.fitment.core.entity.client.result.ClientResult;
 import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
@@ -58,6 +60,25 @@ public class FitOrderController extends FitBasicController {
 		}
 	}
 
+	@RequestMapping(value = "/load", method = RequestMethod.POST)
+	public String auditLoad(HttpServletRequest request, ModelMap map, Integer page) {
+		try {
+			FitEmployee employee = this.getLoginEmployee(request);
+			Page<FitOrder> orderPage = null;
+			if (employee.getIsMain()) {
+				orderPage = this.bizOrderService.loadOrderByCompanyId(employee.getCompanyId(), page + 1,
+						Global.DEFAULT_SIZE);
+			} else {
+				orderPage = this.bizOrderService.loadOrderByEmployeeId(employee.getId(), page + 1, Global.DEFAULT_SIZE);
+			}
+			map.addAttribute("orderPage", orderPage);
+			map.addAttribute("employee", this.getLoginEmployee(request));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return "/fitment/order_audit_data";
+	}
+
 	@RequestMapping(value = "/address/district", method = RequestMethod.POST)
 	public String addressDistrict(HttpServletRequest request, ModelMap map) {
 		FitEmployee employee = this.getLoginEmployee(request);
@@ -74,5 +95,17 @@ public class FitOrderController extends FitBasicController {
 		map.addAttribute("region_list", region_list);
 		map.addAttribute("status", 2);
 		return "/fitment/address_detail";
+	}
+	
+	@RequestMapping(value = "/audit")
+	@ResponseBody
+	public ClientResult orderAudit(HttpServletRequest request, String action, Long id) {
+		try {
+			this.bizOrderService.auditOrder(id, action);
+			return new ClientResult(ActionCode.SUCCESS, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
 	}
 }

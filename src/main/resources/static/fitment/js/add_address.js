@@ -174,6 +174,7 @@ function saveAddress() {
 					window.location.href = "/fit/audit";
 				}
 			} else {
+				close(1);
 				warning(res.content);
 			}
 		}
