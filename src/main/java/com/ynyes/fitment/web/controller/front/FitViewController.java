@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ynyes.fitment.core.constant.Global;
+import com.ynyes.fitment.core.constant.LoginSign;
 import com.ynyes.fitment.foundation.entity.FitCartGoods;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
@@ -134,7 +135,43 @@ public class FitViewController extends FitBasicController {
 			return "/fitment/500";
 		}
 	}
+	
+	@RequestMapping(value = "/employee")
+	public String fitEmployee(HttpServletRequest request, ModelMap map) {
+		try {
+			return "/fitment/employee_center";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+	
+	@RequestMapping(value = "/employee/info")
+	public String fitEmployeeInfo(HttpServletRequest request, ModelMap map) {
+		try {
+			return "/fitment/employee_info";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+	
+	@RequestMapping(value = "/employee/password")
+	public String fitEmployeePassword(HttpServletRequest request, ModelMap map) {
+		try {
+			return "/fitment/employee_password";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
 
+	@RequestMapping(value = "/out")
+	public String fitOut(HttpServletRequest request) {
+		request.getSession().removeAttribute(LoginSign.EMPLOYEE_SIGN.toString());
+		return "redirect:/fit";
+	}
+	
 	@ModelAttribute
 	public void modelAttrubute(HttpServletRequest request, ModelMap map) {
 		FitEmployee employee = this.getLoginEmployee(request);

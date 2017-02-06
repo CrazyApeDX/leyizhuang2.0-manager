@@ -44,7 +44,7 @@
                         </span>
                     </div>
                 </div>
-                <a class="go-target">
+                <a class="go-target" style="background:none;">
                     <div class="div2">收货地址：<span>${order.receiveAddress!''}</span></div>
                 </a>
             </div>
@@ -60,20 +60,18 @@
                                     <div class="img"><img src="${item.goodsCoverImageUri!''}" alt="产品图片"></div>
                                 </#if>
                             </#list>
-                            <div class="total">共${totalGoods!''}件</div>
+                            <div class="total">共${order.orderGoodsList?size}件</div>
                         </a>
                     </section>
                 </#if>
                 <!-- 送货上门 -->
-                <#if !(order.isCoupon??&&order.isCoupon)>
-	                <section class="delivery">
-	                    <div class="div1">
-	                        <label>配送方式</label>
-	                        <a class="delivery-method" href="/order/delivery">${order.deliverTypeTitle!''}</a>
-	                    </div>
-	                    <div class="div2">${order.deliveryDate!''}  ${order.deliveryDetailId!''}:30-${(order.deliveryDetailId+1)?eval}:30</div>
-	                </section>
-                </#if>
+                <section class="delivery">
+                    <div class="div1">
+                        <label>配送方式</label>
+                        <a class="delivery-method" href="/order/delivery">送货上门</a>
+                    </div>
+                    <div class="div2">${order.deliveryDate!''}  ${order.deliveryDetailId!''}</div>
+                </section>
                 <!-- 送货上楼 -->
                 <#if order.deliverTypeTitle??&&order.deliverTypeTitle!='门店自提'>
 	                <section class="pay-method">
@@ -91,18 +89,7 @@
                     <label>支付方式</label>
                     <a class="target" href="/order/paytype">${order.payTypeTitle!''}</a>
                 </section>
-                <!-- 发票信息 -->
-                <section class="invoice-info">
-                    <label>门店信息</label>
-                    <div>${order.diySiteName!''}（${order.diySitePhone!''}）</div>
-                </section>
-                <!-- 发票信息 -->
-                <#if order.sellerRealName??>
-	                <section class="invoice-info">
-	                    <label>服务导购</label>
-	                   	<a class="target" href="/order/delivery">${order.sellerRealName!'暂无'}</a>
-	                </section>
-                </#if>
+                
                 <!-- 留言 -->
                 <section class="leave-message" <#--暂时隐藏 <#if user??&&user.userType==1>style="height: 80px;" </#if> --> >
                     <input id="remark" onblur="userRemark('${order.remark!''}');" type="text" maxlength="200" value="${order.remark!''}" placeholder="给商家留言">
@@ -114,46 +101,6 @@
                 </section>
                 <!-- 优惠劵 -->
                 <section class="coupon">
-                    <div class="div1">
-                        <label>产品劵</label>
-                        <a class="target" <#if (product_coupon_list??&&product_coupon_list?size gt 0&&!(order??&&order.isCoupon??&&order.isCoupon))>href="/order/coupon/1"</#if>>
-                            <#if order??&&order.isCoupon??&&order.isCoupon>
-                                                                                禁止使用
-                            <#else>
-                                <#if product_coupon_list??&&product_coupon_list?size gt 0>
-                                    <#if product_used??>
-                                        ${product_used}张
-                                    <#else>
-                                                                                               未使用
-                                    </#if>
-                                <#else>
-                                                                                    无可用
-                                </#if>
-                            </#if>
-                        </a>
-                    </div>
-                    <div class="div1">
-                        <label>现金劵</label>
-                        <a class="target" <#if (no_product_coupon_list??&&no_product_coupon_list?size gt 0)>href="/order/coupon/0"</#if>>
-                        	<#--
-                            <#if order??&&order.isCoupon??&&order.isCoupon>
-                                                                                禁止使用
-                            <#else>
-                            -->
-                                <#if no_product_coupon_list??&&no_product_coupon_list?size gt 0>
-                                    <#if no_product_used??>
-                                        ${no_product_used}张
-                                    <#else>
-                                                                                               未使用
-                                    </#if>
-                                <#else>
-                                                                                    无可用
-                                </#if>
-                            <#--
-                            </#if>
-                            -->
-                        </a>
-                    </div>
                     <div class="div1">
                         <label>预存款</label>
                         <#if !(max??)>
