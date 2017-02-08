@@ -49,6 +49,8 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 			companyGoods.setCategoryId(goods.getCategoryId());
 			companyGoods.setGoodsSortId(null == goods.getSortId() ? 99.9d : goods.getSortId());
 			companyGoods.setCreateOrigin(OriginType.ADD);
+			companyGoods.setBrandId(goods.getBrandId());
+			companyGoods.setBrandTitle(goods.getBrandTitle());
 			return this.fitCompanyGoodsRepo.save(companyGoods);
 		}
 	}

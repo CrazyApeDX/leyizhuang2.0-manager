@@ -5,6 +5,8 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,17 +15,12 @@ import com.ynyes.fitment.core.constant.CreditChangeType;
 import com.ynyes.fitment.core.constant.CreditOperator;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity;
 
-
-/**
- * 装饰公司信用金变更记录
- * @author dengxiao
- */
 @Entity
 @Table(name = "FIT_CREDIT_CHANGE_LOG")
 public class FitCreditChangeLog extends TableEntity {
 
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss");
-	
+
 	// 变更前余额
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double beforeChange;
@@ -34,23 +31,25 @@ public class FitCreditChangeLog extends TableEntity {
 
 	// 变更额度
 	@Column(scale = 2, nullable = false, updatable = false)
-	private Double change;
+	private Double money;
 
 	// 变更时间
 	@Column(nullable = false, updatable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date changeTime;
-
+	
 	// 涉及单号
 	@Column(length = 30, updatable = false, nullable = false)
 	private String referenceNumber;
 
 	// 变更类型
 	@Column(length = 10, nullable = false, updatable = false)
+	@Enumerated(EnumType.STRING)
 	private CreditChangeType type;
 
 	// 操作人类型
 	@Column(length = 10, nullable = false, updatable = false)
+	@Enumerated(EnumType.STRING)
 	private CreditOperator operatorType;
 
 	// 操作人id
@@ -61,13 +60,13 @@ public class FitCreditChangeLog extends TableEntity {
 	@Column(length = 255, updatable = false, nullable = false)
 	private String remark = "";
 
-	// 相关装饰公司Id
-	@Column(nullable = false, updatable = false)
-	private Long companyId;
-
 	// 相关装饰公司名
 	@Column(nullable = false, updatable = false)
 	private String companyTitle;
+
+	// 相关装饰公司ID
+	@Column(nullable = false, updatable = false)
+	private Long companyId;
 
 	public Double getBeforeChange() {
 		return beforeChange;
@@ -87,12 +86,12 @@ public class FitCreditChangeLog extends TableEntity {
 		return this;
 	}
 
-	public Double getChange() {
-		return change;
+	public Double getMoney() {
+		return money;
 	}
 
-	public FitCreditChangeLog setChange(Double change) {
-		this.change = change;
+	public FitCreditChangeLog setMoney(Double money) {
+		this.money = money;
 		return this;
 	}
 
@@ -150,6 +149,15 @@ public class FitCreditChangeLog extends TableEntity {
 		return this;
 	}
 
+	public String getCompanyTitle() {
+		return companyTitle;
+	}
+
+	public FitCreditChangeLog setCompanyTitle(String companyTitle) {
+		this.companyTitle = companyTitle;
+		return this;
+	}
+
 	public Long getCompanyId() {
 		return companyId;
 	}
@@ -159,15 +167,6 @@ public class FitCreditChangeLog extends TableEntity {
 		return this;
 	}
 
-	public String getCompanyTitle() {
-		return companyTitle;
-	}
-
-	public FitCreditChangeLog setCompanyTitle(String companyTitle) {
-		this.companyTitle = companyTitle;
-		return this;
-	}
-	
 	public String initManagerOperateNumber() {
 		StringBuffer buffer = new StringBuffer("MO").append(FORMATTER.format(new Date()))
 				.append((int) (Math.random() * 900) + 100);

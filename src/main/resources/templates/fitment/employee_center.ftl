@@ -97,7 +97,7 @@
 					
 					<ul>
 						<li>
-							<a href="/user/fortune">
+							<a href="/fit/credit">
 								<p>信用金</p>							
 								<img src="/client/images/index_guide_right.png" />
 								<span></span>
@@ -106,7 +106,7 @@
 					</ul>
 				</div>
 			</section>
-			<#include "/client/common_footer.ftl">
+			<#include "/fitment/common_footer.ftl">
         </div>      
 	</body>
 </html>

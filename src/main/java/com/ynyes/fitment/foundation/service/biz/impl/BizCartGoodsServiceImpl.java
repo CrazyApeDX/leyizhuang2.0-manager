@@ -51,7 +51,8 @@ public class BizCartGoodsServiceImpl implements BizCartGoodsService {
 				cartGoods = new FitCartGoods().setEmployeeId(employee.getId()).setGoodsId(goodsId)
 						.setGoodsTitle(goods.getTitle()).setGoodsSku(goods.getCode())
 						.setImageUri(goods.getCoverImageUri()).setPrice(priceLine.getPrice()).setQuantity(quantity)
-						.setRealPrice(priceLine.getRealPrice());
+						.setRealPrice(priceLine.getRealPrice()).setBrandId(goods.getBrandId())
+						.setBrandTitle(goods.getBrandTitle());
 				cartGoods.setCreateOrigin(OriginType.BUSINESS);
 			} else {
 				Long inventory = this.bizInventoryService.getCityInventoryByGoodsId(employee.getCompanyId(), goodsId);
@@ -60,7 +61,8 @@ public class BizCartGoodsServiceImpl implements BizCartGoodsService {
 						.setGoodsId(goodsId).setGoodsSku(goods.getCode()).setImageUri(goods.getCoverImageUri())
 						.setPrice(priceLine.getPrice()).setRealPrice(priceLine.getRealPrice())
 						.setQuantity(cartGoods.getQuantity() + quantity > inventory ? inventory
-								: cartGoods.getQuantity() + quantity);
+								: cartGoods.getQuantity() + quantity)
+						.setBrandId(goods.getBrandId()).setBrandTitle(goods.getBrandTitle());
 			}
 			cartGoods.getTotalPrice();
 			cartGoods.getRealTotalPrice();

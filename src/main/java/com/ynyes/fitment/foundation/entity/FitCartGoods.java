@@ -39,6 +39,12 @@ public class FitCartGoods extends TableEntity {
 
 	@Column(scale = 2, nullable = false)
 	private Double realTotalPrice;
+	
+	@Column(length = 3, nullable = false)
+	private Long brandId;
+	
+	@Column(length = 10, nullable = false)
+	private String brandTitle;
 
 	public Long getEmployeeId() {
 		return employeeId;
@@ -129,6 +135,24 @@ public class FitCartGoods extends TableEntity {
 
 	public FitCartGoods setRealTotalPrice(Double realTotalPrice) {
 		this.realTotalPrice = realTotalPrice;
+		return this;
+	}
+
+	public Long getBrandId() {
+		return brandId;
+	}
+
+	public FitCartGoods setBrandId(Long brandId) {
+		this.brandId = brandId;
+		return this;
+	}
+
+	public String getBrandTitle() {
+		return brandTitle;
+	}
+
+	public FitCartGoods setBrandTitle(String brandTitle) {
+		this.brandTitle = brandTitle;
 		return this;
 	}
 }

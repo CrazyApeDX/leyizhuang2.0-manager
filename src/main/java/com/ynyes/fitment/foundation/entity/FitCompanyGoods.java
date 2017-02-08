@@ -30,6 +30,12 @@ public class FitCompanyGoods extends TableEntity {
 	
 	@Column(nullable = false)
 	private Double goodsSortId = 99.9d;
+	
+	@Column(length = 3, nullable = false)
+	private Long brandId;
+	
+	@Column(length = 10, nullable = false)
+	private String brandTitle;
 
 	public Long getCompanyId() {
 		return companyId;
@@ -85,5 +91,21 @@ public class FitCompanyGoods extends TableEntity {
 
 	public void setCategoryId(Long categoryId) {
 		this.categoryId = categoryId;
+	}
+
+	public Long getBrandId() {
+		return brandId;
+	}
+
+	public void setBrandId(Long brandId) {
+		this.brandId = brandId;
+	}
+
+	public String getBrandTitle() {
+		return brandTitle;
+	}
+
+	public void setBrandTitle(String brandTitle) {
+		this.brandTitle = brandTitle;
 	}
 }

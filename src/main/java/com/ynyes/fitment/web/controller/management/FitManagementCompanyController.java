@@ -16,13 +16,19 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.fitment.core.constant.Global;
+import com.ynyes.fitment.core.constant.LoginSign;
+import com.ynyes.fitment.core.entity.client.result.ClientResult;
+import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity.OriginType;
 import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.entity.FitPriceHeader;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitPriceHeaderService;
+import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
 import com.ynyes.lyz.entity.TdCity;
+import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.service.TdCityService;
+import com.ynyes.lyz.service.TdManagerService;
 
 @Controller
 @RequestMapping(value = "/Verwalter/fitment/company")
@@ -33,9 +39,15 @@ public class FitManagementCompanyController {
 
 	@Autowired
 	private FitPriceHeaderService fitPriceHeaderService;
-	
+
 	@Autowired
 	private TdCityService tdCityService;
+
+	@Autowired
+	private BizCreditChangeLogService bizCreditChangeLogService;
+
+	@Autowired
+	private TdManagerService tdManagerService;
 
 	@RequestMapping(value = "/list", produces = "text/html;charset=utf-8")
 	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size) {
@@ -90,7 +102,7 @@ public class FitManagementCompanyController {
 		}
 		return "redirect:/Verwalter/fitment/company/list";
 	}
-	
+
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public String companyDelete(@PathVariable Long id) {
 		try {
@@ -137,5 +149,20 @@ public class FitManagementCompanyController {
 			e.printStackTrace();
 		}
 		return res;
+	}
+
+	@RequestMapping(value = "/credit", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public ClientResult companyCredit(HttpServletRequest request, Long id, Double credit) {
+		try {
+			String manageUsername = (String) request.getSession().getAttribute(LoginSign.MANAGER_SIGN.toString());
+			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
+			FitCompany company = this.fitCompanyService.findOne(id);
+			this.bizCreditChangeLogService.manageLog(manager, company, credit, "");
+			return new ClientResult(ActionCode.SUCCESS, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请稍后重试或联系管理员");
+		}
 	}
 }

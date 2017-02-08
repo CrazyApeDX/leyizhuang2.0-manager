@@ -12,7 +12,8 @@ public class FilterConfig {
 	@Bean
 	public FilterRegistrationBean fitFrontFilter() {
 		FilterRegistrationBean bean = new FilterRegistrationBean(new FitmentFrontFilter());
-		bean.addUrlPatterns("/fit/home", "/fit/cart", "/fit/address", "/fit/audit", "/fit/pay/*", "/fit/employee/*");
+		bean.addUrlPatterns("/fit/home", "/fit/cart", "/fit/address", "/fit/audit", "/fit/pay/*", "/fit/employee/*",
+				"/fit/credit");
 		return bean;
 	}
 }

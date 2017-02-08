@@ -25,7 +25,7 @@
         <#include "/client/common_wait.ftl"> 
         <!-- 头部 -->
         <header>
-            <a class="back" href="/fit"></a>
+            <a class="back" href="/fit/audit"></a>
             <p>填写订单</p>
         </header>
         <!-- 头部 END -->
@@ -53,7 +53,7 @@
                 <!-- 商品清单 -->
                 <#if order??&&order.orderGoodsList??>
                     <section class="pro-list">
-                        <a class="div1" href="#">
+                        <a class="div1" href="/fit/pay/goods/${order.id?c}">
                             <#list order.orderGoodsList as item>
                                 <#-- 此处实际只能放入3个已选的图片 -->
                                 <#if item_index lt 3>
@@ -67,10 +67,10 @@
                 <!-- 送货上门 -->
                 <section class="delivery">
                     <div class="div1">
-                        <label>配送方式</label>
-                        <a class="delivery-method" href="/order/delivery">送货上门</a>
+                        <label>配送信息</label>
+                        <a class="delivery-method" href="/fit/pay/delivery/${order.id?c}">送货上门（${order.floor!"1"}楼）</a>
                     </div>
-                    <div class="div2">${order.deliveryDate!''}  ${order.deliveryDetailId!''}</div>
+                    <div class="div2">${order.deliveryDate!''} ${order.deliveryTime}:30-${order.deliveryTime + 1}:30</div>
                 </section>
                 <!-- 送货上楼 -->
                 <#if order.deliverTypeTitle??&&order.deliverTypeTitle!='门店自提'>
@@ -84,43 +84,16 @@
 	                    </a>
 	                </section>
                 </#if>
-                <!-- 支付方式 -->
-                <section class="pay-method">
-                    <label>支付方式</label>
-                    <a class="target" href="/order/paytype">${order.payTypeTitle!''}</a>
-                </section>
                 
                 <!-- 留言 -->
+                <input type="hidden" id="_order_dev" value="${order.id?c}">
                 <section class="leave-message" <#--暂时隐藏 <#if user??&&user.userType==1>style="height: 80px;" </#if> --> >
                     <input id="remark" onblur="userRemark('${order.remark!''}');" type="text" maxlength="200" value="${order.remark!''}" placeholder="给商家留言">
-					<#-- 暂时隐藏
-					<#if user??&&user.userType==1>
-						 <input id="otherIncome" onblur="sellerOtherIncome('${order.otherIncome!''}');" type="text" value="${order.otherIncome!'' }" placeholder="其他收入">
-					</#if>                    
-					-->
                 </section>
                 <!-- 优惠劵 -->
                 <section class="coupon">
                     <div class="div1">
-                        <label>预存款</label>
-                        <#if !(max??)>
-                            <#assign max=0.00>
-                        </#if>
-                        <a class="target" <#if !(isCoupon??&&isCoupon==false)>href="/order/user/balance?max=${max?string("0.00")}"</#if>>
-                        	<#--
-                            <#if isCoupon??&&isCoupon==false>
-                                                                                禁止使用
-                            <#else>
-                            -->
-                                <#if order??&&order.actualPay??&&order??&&order.upstairsBalancePayed??>
-                                	${(order.actualPay + order.upstairsBalancePayed)?string("0.00")}
-                            	<#else>
-                            		0.00
-                        		</#if>
-                            <#--
-                            </#if>
-                            -->
-                        </a>
+                        <label>当前可用信用金：${(credit!"0")?string("0.00")}</label>
                     </div>
                 </section>
                 <!-- 商品费用 -->
@@ -143,6 +116,10 @@
 	                        <div>￥<span><#if order??&&order.activitySubPrice??>-${order.activitySubPrice?string("0.00")}<#else>-0.00</#if><span></div>
 	                    </div>
                     </#if>
+                    <div class="div1">
+                        <label>协议减免</label>
+                        <div style="color:green;">￥-${(order.totalGoodsPrice - order.totalPrice)?string("0.00")}</div>
+                    </div>
                 </section>
             </article>
         </article>
