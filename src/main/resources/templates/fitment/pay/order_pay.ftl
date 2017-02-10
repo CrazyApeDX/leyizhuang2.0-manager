@@ -134,10 +134,27 @@
                 	${(order.totalPrice + order.upstairsLeftFee)?string("0.00")}
     			</span>
             </div>
-            <#--<a class="btn-clearing" id="buyNow" href="javascript:orderPay();">去支付</a>-->
-            <a class="btn-clearing" id="buyNow" href="javascript:confirmPay();">去支付</a>
+            <a class="btn-clearing" id="buyNow" href="javascript:finish(${order.id?c});">去支付</a>
         </footer>
-        <!-- 底部 END -->
-        <input type="hidden" id="flag" name="flag" value="${flag!''}" >
+        <script type="text/javascript">
+        	var finish = function(id) {
+        		wait();
+        		$.ajax({
+        			url: "/fit/order/finish",
+        			method: "POST",
+        			data: {
+        				id: id
+        			},
+        			success: function(res) {
+        				if ("SUCCESS" == res.actionCode) {
+        					window.location.href = "/fit/audit";
+        				} else {
+        					close(1);
+        					warning(res.content);
+        				}
+        			}
+        		})
+        	}
+        </script>
     </body>
 </html>

@@ -52,7 +52,7 @@
                         	<div class="details-list">
                                 <div class="div1">
                                     <div class="c666">
-                                    	<#switch type>
+                                    	<#switch item.type>
                                     		<#case "CONSUME">消费<#break>
                                     		<#case "CUT">削减<#break>
                                     		<#case "RECHARGE">充值<#break>
@@ -64,7 +64,7 @@
                                 <div class="div2">
                                     <div class="c999"><#if item.changeTime??>${item.changeTime?string("yyyy-MM-dd")}</#if></div>
                                     <!-- 字体颜色：提现为黄色yellow，充值为绿色green -->
-                                    <div class="<#if (item.change gt 0)>green<#else>yellow</#if>"><#if item.change??>${item.change?string("0.00")}<#else>0.00</#if></div>
+                                    <div class="<#if (item.money gt 0)>green<#else>yellow</#if>"><#if item.money??>${item.money?string("0.00")}<#else>0.00</#if></div>
                                 </div>
                             </div>
                         </#list>

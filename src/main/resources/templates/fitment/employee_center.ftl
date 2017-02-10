@@ -70,27 +70,27 @@
 					-->				
 				</div>
 				<div class="per_box">
-					<div class="per_order" onclick="window.location.href='/user/order/0'">
+					<div class="per_order" onclick="window.location.href='/fit/history/0'">
 						<p>我的订单</p>						
 						<img src="/client/images/index_guide_right.png" />
 						<span>查看全部订单</span>
 					</div>
 					<div class="per_icon">
-						<a href="/user/order/1">
+						<a href="/fit/history/2">
 							<span></span>
 							<p>待付款</p>
 						</a>
-						<a href="/user/order/2">
+						<a href="/fit/history/3">
+							<span></span>
+							<p>待发货</p>
+						</a>
+						<a href="/fit/history/4">
 							<span></span>
 							<p>待收货</p>
 						</a>
-						<a href="/user/order/3">
+						<a href="/fit/history/5">
 							<span></span>
-							<p>待评价</p>
-						</a>
-						<a href="user/return/list">
-							<span></span>
-							<p>退换货</p>
+							<p>已完成</p>
 						</a>
 					</div>
 					<div class="index_test_box"></div>

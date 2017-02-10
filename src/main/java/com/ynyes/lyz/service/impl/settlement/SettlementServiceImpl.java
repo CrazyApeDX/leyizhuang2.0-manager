@@ -75,7 +75,7 @@ public class SettlementServiceImpl implements ISettlementService {
 
 	@Autowired
 	private TdDeliveryFeeLineService tdDeliveryFeeLineService;
-	
+
 	@Autowired
 	private TdSettingService tdSettingService;
 
@@ -171,7 +171,7 @@ public class SettlementServiceImpl implements ISettlementService {
 	}
 
 	@Override
-	public void disminlate(HttpServletRequest req, TdOrder mainOrder) throws Exception {
+	public void disminlate(HttpServletRequest req, TdOrder mainOrder, Boolean isFitmentOrder) throws Exception {
 		// 创建一个Map集合存储所有的分单，键值对规则为K-V：【品牌ID】-【分单】
 		Map<Long, TdOrder> subOrderMap = new HashMap<>();
 		// 拆分商品和小辅料
@@ -517,7 +517,7 @@ public class SettlementServiceImpl implements ISettlementService {
 										subOrder.setCashCoupon(subOrder.getCashCoupon() + coupon.getRealPrice());
 										subOrder.setTotalPrice(subOrder.getTotalPrice() - coupon.getRealPrice());
 										subOrder = tdOrderService.save(subOrder);
-										
+
 										// 设置该优惠券为已使用
 										setCouponUsed(coupon, subOrder);
 									}
@@ -743,7 +743,7 @@ public class SettlementServiceImpl implements ISettlementService {
 						subOrder.setPoint(point);
 						String leftPrice = df.format(subOrder.getTotalPrice() - subOrder.getActualPay());
 						subOrder.setTotalPrice(Double.parseDouble(leftPrice));
-						
+
 						subOrder = tdOrderService.save(subOrder);
 
 						// 不可提现预存款
@@ -803,7 +803,7 @@ public class SettlementServiceImpl implements ISettlementService {
 				}
 			}
 		}
-		
+
 		// 2016-12-17:完成分单预存款的扣减之后，扣减支付上楼费的预存款
 		Double upstairsBalancePayed = mainOrder.getUpstairsBalancePayed();
 		Double unCashBalance = realUser.getUnCashBalance();
@@ -935,17 +935,17 @@ public class SettlementServiceImpl implements ISettlementService {
 					deliveryFee += fee;
 				}
 				TdSetting setting = tdSettingService.findTopBy();
-				
+
 				Double settingMinFee = null == setting.getMinDeliveryFee() ? 0d : setting.getMinDeliveryFee();
-				if (deliveryFee < settingMinFee) {
+				if (deliveryFee > 0 && deliveryFee < settingMinFee) {
 					deliveryFee = settingMinFee;
 				}
-				
+
 				Double settingMaxFee = null == setting.getMaxDeliveryFee() ? 0d : setting.getMaxDeliveryFee();
 				if (deliveryFee > settingMaxFee) {
 					deliveryFee = settingMaxFee;
 				}
-				
+
 				order.setDeliverFee(deliveryFee);
 				order.setReceivableFee(deliveryFee);
 				return deliveryFee;

@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import com.ynyes.lyz.entity.TdManager;
-import com.ynyes.lyz.entity.user.TdUser;
 
 /**
  * TdManager 实体数据库操作接口

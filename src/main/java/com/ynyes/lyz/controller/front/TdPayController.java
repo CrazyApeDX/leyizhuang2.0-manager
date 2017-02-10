@@ -240,7 +240,7 @@ public class TdPayController {
 									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
 								}
 								try {
-									settlementService.disminlate(req, order);
+									settlementService.disminlate(req, order, null);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -363,7 +363,7 @@ public class TdPayController {
 									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
 								}
 								try {
-									settlementService.disminlate(req, order);
+									settlementService.disminlate(req, order, null);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -534,7 +534,7 @@ public class TdPayController {
 									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
 								}
 								try {
-									settlementService.disminlate(req, order);
+									settlementService.disminlate(req, order, null);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
@@ -687,7 +687,7 @@ public class TdPayController {
 									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
 								}
 								try {
-									settlementService.disminlate(req, order);
+									settlementService.disminlate(req, order, null);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}

@@ -390,6 +390,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 * @param end 结算时间
 	 * @param username 当前用户
 	 */
+	@SuppressWarnings("unused")
 	private void callProcedure(Long statusId,String __EVENTTARGET,Date begin,Date end,String username){
 		try {//调用存储过程 报错
 			if(null != __EVENTTARGET && __EVENTTARGET.equalsIgnoreCase("btnPage")){
@@ -425,6 +426,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 * @param size
 	 * @param page
 	 */
+	@SuppressWarnings("unused")
 	private void addOrderListToMap(ModelMap map,Long statusId,String keywords,Date begin,Date end,String diySiteCode,String cityName,String username,
 			int size,int page,List<String> roleDiyIds){
 		if(statusId==0){//出退货报表

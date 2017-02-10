@@ -28,6 +28,8 @@ import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizGoodsService;
 import com.ynyes.fitment.foundation.service.biz.BizInventoryService;
 import com.ynyes.fitment.foundation.service.biz.BizOrderService;
+import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.service.TdOrderService;
 
 @Controller
 @RequestMapping(value = "/fit", method = RequestMethod.GET, produces = "text/html;charset=utf-8")
@@ -50,6 +52,9 @@ public class FitViewController extends FitBasicController {
 
 	@Autowired
 	private FitCompanyService fitCompanyService;
+
+	@Autowired
+	private TdOrderService tdOrderService;
 
 	@RequestMapping
 	public String fitIndex(HttpServletRequest request) {
@@ -147,7 +152,7 @@ public class FitViewController extends FitBasicController {
 			return "/fitment/500";
 		}
 	}
-	
+
 	@RequestMapping(value = "/pay/delivery/{id}")
 	public String fitPayDelivery(HttpServletRequest request, ModelMap map, @PathVariable("id") Long id) {
 		try {
@@ -159,7 +164,7 @@ public class FitViewController extends FitBasicController {
 			return "/fitment/500";
 		}
 	}
-	
+
 	@RequestMapping(value = "/pay/goods/{id}")
 	public String fitPayGoods(HttpServletRequest request, ModelMap map, @PathVariable("id") Long id) {
 		try {
@@ -222,6 +227,23 @@ public class FitViewController extends FitBasicController {
 	public String fitOut(HttpServletRequest request) {
 		request.getSession().removeAttribute(LoginSign.EMPLOYEE_SIGN.toString());
 		return "redirect:/fit";
+	}
+
+	@RequestMapping(value = "/history/{status}")
+	public String fitHistory(HttpServletRequest request, ModelMap map, @PathVariable("status") Long status)
+			throws Exception {
+		FitEmployee employee = this.getLoginEmployee(request);
+		Page<TdOrder> orderPage = null;
+		if (employee.getIsMain()) {
+			orderPage = tdOrderService.findBySellerUsernameOrderByOrderTimeDesc("FIT" + employee.getMobile(), status,
+					Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+		} else {
+			orderPage = tdOrderService.findByRealUserUsernameOrderByOrderTimeDesc("FIT" + employee.getMobile(), status,
+					Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+		}
+		map.addAttribute("status", status);
+		map.addAttribute("orderPage", orderPage);
+		return "/fitment/user_order_list";
 	}
 
 	@ModelAttribute

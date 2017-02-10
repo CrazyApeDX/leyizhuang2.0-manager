@@ -46,7 +46,7 @@ public class FitOrderController extends FitBasicController {
 
 	@Autowired
 	private BizCartGoodsService bizCartGoodsService;
-
+	
 	@RequestMapping(value = "/init", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
 	public ClientResult fitOrderPost(HttpServletRequest request, String receiver, String receiverMobile,
@@ -127,6 +127,25 @@ public class FitOrderController extends FitBasicController {
 			FitOrder order = bizOrderService.findOne(id);
 			this.bizOrderService.saveRemark(order, remark);
 			return new ClientResult(ActionCode.SUCCESS, order.getRemark());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
+	}
+	
+	@RequestMapping(value = "/finish")
+	@ResponseBody
+	public ClientResult orderFinish(HttpServletRequest request, Long id) {
+		try {
+			FitOrder order = this.bizOrderService.findOne(id);
+			Boolean validate = this.bizOrderService.validateEnoughCredit(order);
+			if (validate) {
+				this.bizOrderService.finishOrder(order);
+				return new ClientResult(ActionCode.SUCCESS, null);
+			} else {
+				return new ClientResult(ActionCode.FAILURE, "信用金不足，无法完成订单");
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");

@@ -54,7 +54,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		FitCreditChangeLog log = new FitCreditChangeLog();
 		log.setCreateOrigin(OriginType.ADD);
 		log.setCreateTime(new Date());
-		log.setBeforeChange(company.getCredit()).setAfterChange(company.getCredit() + inputCredit)
+		log.setBeforeChange(company.getCredit() - inputCredit).setAfterChange(company.getCredit())
 				.setMoney(inputCredit).setChangeTime(new Date()).setReferenceNumber(log.initManagerOperateNumber())
 				.setType(inputCredit < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
 				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)

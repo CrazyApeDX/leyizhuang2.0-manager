@@ -29,4 +29,8 @@ public interface BizOrderService {
 	FitOrder saveDelivery(FitOrder order, String deliveryDate, Long deliveryTime, Long floor) throws Exception;
 
 	TdOrder transformer(FitOrder order) throws Exception;
+	
+	Boolean validateEnoughCredit(FitOrder order) throws Exception;
+	
+	void finishOrder(FitOrder order) throws Exception;
 }
