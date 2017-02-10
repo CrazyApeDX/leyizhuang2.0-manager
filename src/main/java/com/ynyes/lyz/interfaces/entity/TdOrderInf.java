@@ -150,6 +150,10 @@ public class TdOrderInf extends TdInfBaseEntity {
 	// 新增字段：运费
 	@Column(scale = 2)
 	private Double deliveryFee;
+	
+	// 新增字段：信用金
+	@Column(scale = 2, nullable = false)
+	private Double creditAmt = 0d;
 
 	public Long getSobId() {
 		return sobId;
@@ -413,6 +417,14 @@ public class TdOrderInf extends TdInfBaseEntity {
 
 	public void setDeliveryFee(Double deliveryFee) {
 		this.deliveryFee = deliveryFee;
+	}
+
+	public Double getCreditAmt() {
+		return creditAmt;
+	}
+
+	public void setCreditAmt(Double creditAmt) {
+		this.creditAmt = creditAmt;
 	}
 
 	@Override

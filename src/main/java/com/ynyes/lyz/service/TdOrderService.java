@@ -531,15 +531,14 @@ public class TdOrderService {
 	}
 
 	/**
-	 * 订单条件查询 分页 
-	 * ======== 2016-12-07 ======= yanle ======= 增加‘配送方式’查询条件 ========
+	 * 订单条件查询 分页 ======== 2016-12-07 ======= yanle ======= 增加‘配送方式’查询条件 ========
 	 * 
 	 * @return
 	 */
-	public Page<TdOrder> findAllAddConditionDeliveryType(String keywords, String orderStartTime, String orderEndTime, List<String> usernameList,
-			String sellerRealName, String shippingAddress, String shippingPhone, String deliveryTime, String userPhone,
-			String shippingName, String sendTime, Long statusId, String diyCode, String city,String deliverTypeTitle,List<String> roleCitys,
-			List<String> roleDiys, int size, int page) {
+	public Page<TdOrder> findAllAddConditionDeliveryType(String keywords, String orderStartTime, String orderEndTime,
+			List<String> usernameList, String sellerRealName, String shippingAddress, String shippingPhone,
+			String deliveryTime, String userPhone, String shippingName, String sendTime, Long statusId, String diyCode,
+			String city, String deliverTypeTitle, List<String> roleCitys, List<String> roleDiys, int size, int page) {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdOrder> c = new Criteria<TdOrder>();
 		if (null != keywords && !keywords.equalsIgnoreCase("")) {
@@ -594,13 +593,13 @@ public class TdOrderService {
 		if (null != roleDiys && roleDiys.size() > 0) {
 			c.add(Restrictions.in("diySiteCode", roleDiys, true));
 		}
-		if(null != deliverTypeTitle && !"".equals(deliverTypeTitle)){
+		if (null != deliverTypeTitle && !"".equals(deliverTypeTitle)) {
 			c.add(Restrictions.eq("deliverTypeTitle", deliverTypeTitle, true));
 		}
 		c.setOrderByDesc("orderTime");
 		return repository.findAll(c, pageRequest);
 	}
-	
+
 	/**
 	 * 订单条件查询 分页 修改城市查询
 	 * 
@@ -608,7 +607,7 @@ public class TdOrderService {
 	 */
 	public Page<TdOrder> findAll(String keywords, String orderStartTime, String orderEndTime, List<String> usernameList,
 			String sellerRealName, String shippingAddress, String shippingPhone, String deliveryTime, String userPhone,
-			String shippingName, String sendTime, Long statusId, String diyCode, String city,List<String> roleCitys,
+			String shippingName, String sendTime, Long statusId, String diyCode, String city, List<String> roleCitys,
 			List<String> roleDiys, int size, int page) {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdOrder> c = new Criteria<TdOrder>();
@@ -667,7 +666,6 @@ public class TdOrderService {
 		c.setOrderByDesc("orderTime");
 		return repository.findAll(c, pageRequest);
 	}
-
 
 	/**
 	 * 字符串转换时间默认格式yyyy-MM-dd HH:mm:ss
@@ -894,5 +892,33 @@ public class TdOrderService {
 			return null;
 		}
 		return repository.findByRealUserUsernameOrderByIdDesc(username);
+	}
+
+	public Page<TdOrder> findBySellerUsernameOrderByOrderTimeDesc(String sellerUsername, Long status, Integer page,
+			Integer size) {
+		if (null == sellerUsername) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		if (status.equals(0L)) {
+			return this.repository.findBySellerUsernameOrderByOrderTimeDesc(sellerUsername, pageRequest);
+		} else {
+			return this.repository.findBySellerUsernameAndStatusIdOrderByOrderTimeDesc(sellerUsername, status,
+					pageRequest);
+		}
+	}
+
+	public Page<TdOrder> findByRealUserUsernameOrderByOrderTimeDesc(String sellerUsername, Long status, Integer page,
+			Integer size) {
+		if (null == sellerUsername) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		if (status.equals(0L)) {
+			return this.repository.findByRealUserUsernameOrderByOrderTimeDesc(sellerUsername, pageRequest);
+		} else {
+			return this.repository.findByRealUserUsernameAndStatusIdOrderByOrderTimeDesc(sellerUsername, status,
+					pageRequest);
+		}
 	}
 }

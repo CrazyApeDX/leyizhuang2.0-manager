@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ynyes.fitment.core.constant.Global;
 import com.ynyes.fitment.core.entity.client.result.ClientResult;
 import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
+import com.ynyes.fitment.foundation.entity.FitCartGoods;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
+import com.ynyes.fitment.foundation.service.biz.BizCartGoodsService;
 import com.ynyes.fitment.foundation.service.biz.BizOrderService;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDistrict;
@@ -41,14 +44,21 @@ public class FitOrderController extends FitBasicController {
 	@Autowired
 	private BizOrderService bizOrderService;
 
+	@Autowired
+	private BizCartGoodsService bizCartGoodsService;
+	
 	@RequestMapping(value = "/init", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
 	public ClientResult fitOrderPost(HttpServletRequest request, String receiver, String receiverMobile,
 			String baseAddress, String detailAddress) {
 		FitEmployee employee = this.getLoginEmployee(request);
 		try {
-			FitOrder order = this.bizOrderService.initOrder(receiver, receiverMobile, baseAddress, detailAddress,
-					employee);
+			List<FitCartGoods> cartGoodsList = this.bizCartGoodsService.loadEmployeeCart(employee.getId());
+			if (CollectionUtils.isEmpty(cartGoodsList)) {
+				return new ClientResult(ActionCode.FAILURE, "当前购物车中无商品，请返回并点击\"审核\"查看订单是否已经生成");
+			}
+			FitOrder order = this.bizOrderService.initOrder(cartGoodsList, receiver, receiverMobile, baseAddress,
+					detailAddress, employee);
 			if (employee.getIsMain()) {
 				return new ClientResult(ActionCode.SUCCESS, order.getId());
 			} else {
@@ -96,12 +106,58 @@ public class FitOrderController extends FitBasicController {
 		map.addAttribute("status", 2);
 		return "/fitment/address_detail";
 	}
-	
+
 	@RequestMapping(value = "/audit")
 	@ResponseBody
 	public ClientResult orderAudit(HttpServletRequest request, String action, Long id) {
 		try {
-			this.bizOrderService.auditOrder(id, action);
+			FitEmployee employee = this.getLoginEmployee(request);
+			this.bizOrderService.auditOrder(id, employee, action);
+			return new ClientResult(ActionCode.SUCCESS, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
+	}
+
+	@RequestMapping(value = "/remark")
+	@ResponseBody
+	public ClientResult orderRemark(Long id, String remark) {
+		try {
+			FitOrder order = bizOrderService.findOne(id);
+			this.bizOrderService.saveRemark(order, remark);
+			return new ClientResult(ActionCode.SUCCESS, order.getRemark());
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
+	}
+	
+	@RequestMapping(value = "/finish")
+	@ResponseBody
+	public ClientResult orderFinish(HttpServletRequest request, Long id) {
+		try {
+			FitOrder order = this.bizOrderService.findOne(id);
+			Boolean validate = this.bizOrderService.validateEnoughCredit(order);
+			if (validate) {
+				this.bizOrderService.finishOrder(order);
+				return new ClientResult(ActionCode.SUCCESS, null);
+			} else {
+				return new ClientResult(ActionCode.FAILURE, "信用金不足，无法完成订单");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
+	}
+
+	@RequestMapping(value = "/delivery")
+	@ResponseBody
+	public ClientResult orderDelivery(String deliveryDate, Long deliveryTime, Long floor, Long id) {
+		try {
+			FitOrder order = this.bizOrderService.findOne(id);
+			this.bizOrderService.saveDelivery(order, deliveryDate, deliveryTime, floor);
 			return new ClientResult(ActionCode.SUCCESS, null);
 		} catch (Exception e) {
 			e.printStackTrace();

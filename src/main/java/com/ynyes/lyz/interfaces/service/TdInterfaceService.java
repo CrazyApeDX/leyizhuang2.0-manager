@@ -26,6 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.lyz.entity.TdCashReturnNote;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdDiySite;
@@ -123,6 +125,9 @@ public class TdInterfaceService {
 
 	@Autowired
 	private TdPriceListItemService tdPriceListItemService;
+
+	@Autowired
+	private FitCompanyService fitCompanyService;
 
 	private Call call;
 
@@ -279,10 +284,22 @@ public class TdInterfaceService {
 			return null;
 		}
 		orderInf = new TdOrderInf();
-		TdDiySite diySite = tdDiySiteService.findOne(tdOrder.getDiySiteId());
 		Long SobId = 0L;
-		if (diySite != null) {
-			SobId = diySite.getRegionId();
+		if (!tdOrder.getOrderNumber().contains("FIT")) {
+			TdDiySite diySite = tdDiySiteService.findOne(tdOrder.getDiySiteId());
+			if (diySite != null) {
+				SobId = diySite.getRegionId();
+			}
+		} else {
+			try {
+				FitCompany company = fitCompanyService.findOne(tdOrder.getDiySiteId());
+				if (null != company) {
+					SobId = company.getSobId();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		// orderInf.setHeaderId(tdOrder.getId());
@@ -310,7 +327,12 @@ public class TdInterfaceService {
 		orderInf.setPayType(("微信支付".equalsIgnoreCase(payTypeTitle) ? "微信" : payTypeTitle));
 		orderInf.setPayDate(tdOrder.getPayTime());
 		orderInf.setPayAmt(booleanByStr(orderInf.getIsonlinepay()) ? tdOrder.getTotalPrice() : 0);
-		orderInf.setPrepayAmt(tdOrder.getCashBalanceUsed() + tdOrder.getUnCashBalanceUsed());
+		if (tdOrder.getOrderNumber().contains("FIT")) {
+			orderInf.setCreditAmt(tdOrder.getCashBalanceUsed() + tdOrder.getUnCashBalanceUsed());
+			orderInf.setPrepayAmt(0d);
+		} else {
+			orderInf.setPrepayAmt(tdOrder.getCashBalanceUsed() + tdOrder.getUnCashBalanceUsed());
+		}
 		if ("支付宝".equalsIgnoreCase(payTypeTitle) || "银行卡".equalsIgnoreCase(payTypeTitle)
 				|| "微信支付".equalsIgnoreCase(payTypeTitle)) {
 			orderInf.setRecAmt(0.0);
@@ -1014,17 +1036,18 @@ public class TdInterfaceService {
 				tdReturnCouponInfService.save(returnCouponInf);
 			}
 			// 2017-1-9: 双元要求不再传差价券给ebs
-//			if (priceDifference != null && priceDifference.size() > 0) {
-//				for (Map.Entry<String, Double> entry : priceDifference.entrySet()) {
-//					TdReturnCouponInf returnCouponInf = new TdReturnCouponInf();
-//					returnCouponInf.setRtHeaderId(returnOrderInf.getRtHeaderId());
-//					returnCouponInf.setCouponTypeId(2);
-//					returnCouponInf.setSku(entry.getKey());
-//					returnCouponInf.setPrice(entry.getValue());
-//					returnCouponInf.setQuantity(1L);
-//					tdReturnCouponInfService.save(returnCouponInf);
-//				}
-//			}
+			// if (priceDifference != null && priceDifference.size() > 0) {
+			// for (Map.Entry<String, Double> entry :
+			// priceDifference.entrySet()) {
+			// TdReturnCouponInf returnCouponInf = new TdReturnCouponInf();
+			// returnCouponInf.setRtHeaderId(returnOrderInf.getRtHeaderId());
+			// returnCouponInf.setCouponTypeId(2);
+			// returnCouponInf.setSku(entry.getKey());
+			// returnCouponInf.setPrice(entry.getValue());
+			// returnCouponInf.setQuantity(1L);
+			// tdReturnCouponInfService.save(returnCouponInf);
+			// }
+			// }
 		}
 	}
 
@@ -1339,7 +1362,8 @@ public class TdInterfaceService {
 					+ object.getAttribute2() + "</ATTRIBUTE2>" + "<ATTRIBUTE3>" + object.getAttribute3()
 					+ "</ATTRIBUTE3>" + "<ATTRIBUTE4>" + object.getAttribute4() + "</ATTRIBUTE4>" + "<ATTRIBUTE5>"
 					+ object.getAttribute5() + "</ATTRIBUTE5>" + "<COUPON_FLAG>" + object.getCouponFlag()
-					+ "</COUPON_FLAG>" + "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>" + "</TABLE>";
+					+ "</COUPON_FLAG>" + "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>" + "<CREDIT_AMT>"
+					+ object.getCreditAmt() + "</CREDIT_AMT>" + "</TABLE>";
 			break;
 		}
 		case ORDERGOODSINF: {

@@ -135,6 +135,11 @@ function saveAddress() {
 		warning("请输入正确的手机号码");
 		return;
 	}
+	
+	if (baseAddress.length <= 3) {
+		warning("请点击\"" + baseAddress +"\"选择详细的行政区划和行政街道");
+		return;
+	}
 
 	if (!isAllLegal(receiverName)) {
 		warning("收货人信息不能输入除-()#,外的特殊字符");

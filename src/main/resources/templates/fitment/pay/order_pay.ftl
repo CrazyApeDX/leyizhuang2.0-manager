@@ -25,7 +25,7 @@
         <#include "/client/common_wait.ftl"> 
         <!-- 头部 -->
         <header>
-            <a class="back" href="/fit"></a>
+            <a class="back" href="/fit/audit"></a>
             <p>填写订单</p>
         </header>
         <!-- 头部 END -->
@@ -44,7 +44,7 @@
                         </span>
                     </div>
                 </div>
-                <a class="go-target">
+                <a class="go-target" style="background:none;">
                     <div class="div2">收货地址：<span>${order.receiveAddress!''}</span></div>
                 </a>
             </div>
@@ -53,27 +53,25 @@
                 <!-- 商品清单 -->
                 <#if order??&&order.orderGoodsList??>
                     <section class="pro-list">
-                        <a class="div1" href="#">
+                        <a class="div1" href="/fit/pay/goods/${order.id?c}">
                             <#list order.orderGoodsList as item>
                                 <#-- 此处实际只能放入3个已选的图片 -->
                                 <#if item_index lt 3>
                                     <div class="img"><img src="${item.goodsCoverImageUri!''}" alt="产品图片"></div>
                                 </#if>
                             </#list>
-                            <div class="total">共${totalGoods!''}件</div>
+                            <div class="total">共${order.orderGoodsList?size}件</div>
                         </a>
                     </section>
                 </#if>
                 <!-- 送货上门 -->
-                <#if !(order.isCoupon??&&order.isCoupon)>
-	                <section class="delivery">
-	                    <div class="div1">
-	                        <label>配送方式</label>
-	                        <a class="delivery-method" href="/order/delivery">${order.deliverTypeTitle!''}</a>
-	                    </div>
-	                    <div class="div2">${order.deliveryDate!''}  ${order.deliveryDetailId!''}:30-${(order.deliveryDetailId+1)?eval}:30</div>
-	                </section>
-                </#if>
+                <section class="delivery">
+                    <div class="div1">
+                        <label>配送信息</label>
+                        <a class="delivery-method" href="/fit/pay/delivery/${order.id?c}">送货上门（${order.floor!"1"}楼）</a>
+                    </div>
+                    <div class="div2">${order.deliveryDate!''} ${order.deliveryTime}:30-${order.deliveryTime + 1}:30</div>
+                </section>
                 <!-- 送货上楼 -->
                 <#if order.deliverTypeTitle??&&order.deliverTypeTitle!='门店自提'>
 	                <section class="pay-method">
@@ -86,94 +84,16 @@
 	                    </a>
 	                </section>
                 </#if>
-                <!-- 支付方式 -->
-                <section class="pay-method">
-                    <label>支付方式</label>
-                    <a class="target" href="/order/paytype">${order.payTypeTitle!''}</a>
-                </section>
-                <!-- 发票信息 -->
-                <section class="invoice-info">
-                    <label>门店信息</label>
-                    <div>${order.diySiteName!''}（${order.diySitePhone!''}）</div>
-                </section>
-                <!-- 发票信息 -->
-                <#if order.sellerRealName??>
-	                <section class="invoice-info">
-	                    <label>服务导购</label>
-	                   	<a class="target" href="/order/delivery">${order.sellerRealName!'暂无'}</a>
-	                </section>
-                </#if>
+                
                 <!-- 留言 -->
+                <input type="hidden" id="_order_dev" value="${order.id?c}">
                 <section class="leave-message" <#--暂时隐藏 <#if user??&&user.userType==1>style="height: 80px;" </#if> --> >
                     <input id="remark" onblur="userRemark('${order.remark!''}');" type="text" maxlength="200" value="${order.remark!''}" placeholder="给商家留言">
-					<#-- 暂时隐藏
-					<#if user??&&user.userType==1>
-						 <input id="otherIncome" onblur="sellerOtherIncome('${order.otherIncome!''}');" type="text" value="${order.otherIncome!'' }" placeholder="其他收入">
-					</#if>                    
-					-->
                 </section>
                 <!-- 优惠劵 -->
                 <section class="coupon">
                     <div class="div1">
-                        <label>产品劵</label>
-                        <a class="target" <#if (product_coupon_list??&&product_coupon_list?size gt 0&&!(order??&&order.isCoupon??&&order.isCoupon))>href="/order/coupon/1"</#if>>
-                            <#if order??&&order.isCoupon??&&order.isCoupon>
-                                                                                禁止使用
-                            <#else>
-                                <#if product_coupon_list??&&product_coupon_list?size gt 0>
-                                    <#if product_used??>
-                                        ${product_used}张
-                                    <#else>
-                                                                                               未使用
-                                    </#if>
-                                <#else>
-                                                                                    无可用
-                                </#if>
-                            </#if>
-                        </a>
-                    </div>
-                    <div class="div1">
-                        <label>现金劵</label>
-                        <a class="target" <#if (no_product_coupon_list??&&no_product_coupon_list?size gt 0)>href="/order/coupon/0"</#if>>
-                        	<#--
-                            <#if order??&&order.isCoupon??&&order.isCoupon>
-                                                                                禁止使用
-                            <#else>
-                            -->
-                                <#if no_product_coupon_list??&&no_product_coupon_list?size gt 0>
-                                    <#if no_product_used??>
-                                        ${no_product_used}张
-                                    <#else>
-                                                                                               未使用
-                                    </#if>
-                                <#else>
-                                                                                    无可用
-                                </#if>
-                            <#--
-                            </#if>
-                            -->
-                        </a>
-                    </div>
-                    <div class="div1">
-                        <label>预存款</label>
-                        <#if !(max??)>
-                            <#assign max=0.00>
-                        </#if>
-                        <a class="target" <#if !(isCoupon??&&isCoupon==false)>href="/order/user/balance?max=${max?string("0.00")}"</#if>>
-                        	<#--
-                            <#if isCoupon??&&isCoupon==false>
-                                                                                禁止使用
-                            <#else>
-                            -->
-                                <#if order??&&order.actualPay??&&order??&&order.upstairsBalancePayed??>
-                                	${(order.actualPay + order.upstairsBalancePayed)?string("0.00")}
-                            	<#else>
-                            		0.00
-                        		</#if>
-                            <#--
-                            </#if>
-                            -->
-                        </a>
+                        <label>当前可用信用金：${(credit!"0")?string("0.00")}</label>
                     </div>
                 </section>
                 <!-- 商品费用 -->
@@ -196,6 +116,10 @@
 	                        <div>￥<span><#if order??&&order.activitySubPrice??>-${order.activitySubPrice?string("0.00")}<#else>-0.00</#if><span></div>
 	                    </div>
                     </#if>
+                    <div class="div1">
+                        <label>协议减免</label>
+                        <div style="color:green;">￥-${(order.totalGoodsPrice - order.totalPrice)?string("0.00")}</div>
+                    </div>
                 </section>
             </article>
         </article>
@@ -210,10 +134,27 @@
                 	${(order.totalPrice + order.upstairsLeftFee)?string("0.00")}
     			</span>
             </div>
-            <#--<a class="btn-clearing" id="buyNow" href="javascript:orderPay();">去支付</a>-->
-            <a class="btn-clearing" id="buyNow" href="javascript:confirmPay();">去支付</a>
+            <a class="btn-clearing" id="buyNow" href="javascript:finish(${order.id?c});">去支付</a>
         </footer>
-        <!-- 底部 END -->
-        <input type="hidden" id="flag" name="flag" value="${flag!''}" >
+        <script type="text/javascript">
+        	var finish = function(id) {
+        		wait();
+        		$.ajax({
+        			url: "/fit/order/finish",
+        			method: "POST",
+        			data: {
+        				id: id
+        			},
+        			success: function(res) {
+        				if ("SUCCESS" == res.actionCode) {
+        					window.location.href = "/fit/audit";
+        				} else {
+        					close(1);
+        					warning(res.content);
+        				}
+        			}
+        		})
+        	}
+        </script>
     </body>
 </html>

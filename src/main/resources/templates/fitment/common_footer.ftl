@@ -27,7 +27,7 @@
                 </a>
             </li>
             <li>
-                <a href="/user">
+                <a href="/fit/employee">
                     <div></div>
                     <span>我的</span>
                 </a>

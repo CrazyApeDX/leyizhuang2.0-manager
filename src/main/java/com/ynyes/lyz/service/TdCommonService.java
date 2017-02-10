@@ -1165,8 +1165,8 @@ public class TdCommonService {
 
 		Long tempHour = hour + delay;
 		if (24 <= tempHour) {
-			limitDate = new Date(now1.getTime() + (1000 * 60 * 60 * 24));
-			tempHour -= 24;
+//			limitDate = new Date(now1.getTime() + (1000 * 60 * 60 * 24));
+//			tempHour -= 24;
 			limitDate = new Date(now1.getTime() + (1000 * 60 * 60 * 24));
 			tempHour = 9L;
 		}

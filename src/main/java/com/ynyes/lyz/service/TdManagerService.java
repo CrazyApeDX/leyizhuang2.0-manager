@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.lyz.entity.TdManager;
-import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.repository.TdManagerRepo;
 
 

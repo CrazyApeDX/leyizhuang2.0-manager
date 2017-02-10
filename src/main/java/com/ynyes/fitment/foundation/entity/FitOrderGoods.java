@@ -13,7 +13,7 @@ public class FitOrderGoods extends TableEntity {
 	@Column(length = 20, nullable = false, updatable = false)
 	private Long goodsId;
 
-	@Column(length = 80, nullable  = false, updatable = false)
+	@Column(length = 80, nullable = false, updatable = false)
 	private String goodsTitle;
 
 	@Column(length = 50, nullable = false, updatable = false)
@@ -36,6 +36,12 @@ public class FitOrderGoods extends TableEntity {
 
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double realTotalPrice;
+
+	@Column(length = 3, nullable = false)
+	private Long brandId;
+
+	@Column(length = 10, nullable = false)
+	private String brandTitle;
 
 	public Long getGoodsId() {
 		return goodsId;
@@ -120,11 +126,30 @@ public class FitOrderGoods extends TableEntity {
 		return this;
 	}
 
+	public Long getBrandId() {
+		return brandId;
+	}
+
+	public FitOrderGoods setBrandId(Long brandId) {
+		this.brandId = brandId;
+		return this;
+	}
+
+	public String getBrandTitle() {
+		return brandTitle;
+	}
+
+	public FitOrderGoods setBrandTitle(String brandTitle) {
+		this.brandTitle = brandTitle;
+		return this;
+	}
+
 	public FitOrderGoods init(FitCartGoods cartGoods) {
 		this.setGoodsId(cartGoods.getGoodsId()).setGoodsTitle(cartGoods.getGoodsTitle())
 				.setGoodsSku(cartGoods.getGoodsSku()).setGoodsCoverImageUri(cartGoods.getImageUri())
 				.setPrice(cartGoods.getPrice()).setQuantity(cartGoods.getQuantity())
-				.setRealPrice(cartGoods.getRealPrice());
+				.setRealPrice(cartGoods.getRealPrice()).setBrandId(cartGoods.getBrandId())
+				.setBrandTitle(cartGoods.getBrandTitle());
 		this.getTotalPrice();
 		this.getRealTotalPrice();
 		return this;

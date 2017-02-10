@@ -60,8 +60,8 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			List<String> orderNumbers2);
 
 	@Query("select o from TdOrder o where o.statusId= ?1 and o.sendTime Between ?2 and ?3 and o.orderNumber in ?4 group by o.mainOrderNumber order by o.id desc")
-	List<TdOrder> findDistinctMainOrderNumberByStatusIdAndDeliveryTimeBetweenAndOrderNumberInOrderByIdDesc(Long statusId,
-			Date start, Date end, List<String> orderNumbers);
+	List<TdOrder> findDistinctMainOrderNumberByStatusIdAndDeliveryTimeBetweenAndOrderNumberInOrderByIdDesc(
+			Long statusId, Date start, Date end, List<String> orderNumbers);
 
 	@Query("select o from TdOrder o where o.statusId= ?1 and o.sendTime Between ?2 and ?3 and o.orderNumber in ?4 or o.statusId= ?5 and o.sendTime Between ?6 and ?7 and o.orderNumber in ?8 group by o.mainOrderNumber order by o.id desc")
 	List<TdOrder> findDistinctMainOrderNumberByStatusIdAndDeliveryTimeBetweenAndOrderNumberInOrStatusIdAndOrderTimeBetweenAndOrderNumberInOrderByIdDesc(
@@ -116,7 +116,8 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 
 	Page<TdOrder> findByUsernameAndStatusIdOrderByIdDesc(String username, Long statusId, Pageable page);
 
-	List<TdOrder> findByUsernameAndStatusIdOrRealUserUsernameAndStatusIdOrderByIdDesc(String username, Long statusId,String username1, Long statusId1);
+	List<TdOrder> findByUsernameAndStatusIdOrRealUserUsernameAndStatusIdOrderByIdDesc(String username, Long statusId,
+			String username1, Long statusId1);
 
 	Page<TdOrder> findByUsernameAndIsCancelTrue(String username, Pageable page); // 取消订单
 																					// zhangji
@@ -156,7 +157,8 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 	List<TdOrder> findByUsernameAndStatusIdNotOrderByOrderTimeDesc(String username, Long status);
 
 	// 查找用户所有非删除的订单
-	Page<TdOrder> findByUsernameAndStatusIdNotOrRealUserUsernameAndStatusIdNotOrderByOrderTimeDesc(String username, Long status,String username1, Long status1, Pageable page);
+	Page<TdOrder> findByUsernameAndStatusIdNotOrRealUserUsernameAndStatusIdNotOrderByOrderTimeDesc(String username,
+			Long status, String username1, Long status1, Pageable page);
 
 	// 根据订单号查找订单
 	List<TdOrder> findByOrderNumberContaining(String orderNumber);
@@ -217,49 +219,59 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 	/**
 	 * 用户模糊查找订单，参与参数：username，orderNumber
 	 * 
-	 * @author DengXiao
-	 *   OrContainingAndUsername
+	 * @author DengXiao OrContainingAndUsername
 	 */
-	List<TdOrder> findByUsernameContainingAndUsernameOrOrderNumberContainingAndUsernameOrSellerUsernameContainingAndUsernameOrShippingNameContainingAndUsernameOrShippingAddressContainingAndUsernameOrderByOrderTimeDesc(String keywords1, String username1, String keywords2, String username2, String keywords3, String username3, String keywords4, String username4, String keywords5, String username5);
+	List<TdOrder> findByUsernameContainingAndUsernameOrOrderNumberContainingAndUsernameOrSellerUsernameContainingAndUsernameOrShippingNameContainingAndUsernameOrShippingAddressContainingAndUsernameOrderByOrderTimeDesc(
+			String keywords1, String username1, String keywords2, String username2, String keywords3, String username3,
+			String keywords4, String username4, String keywords5, String username5);
 
 	/**
 	 * 销顾模糊查询订单，参与参数：username，orderNumber
 	 * 
 	 * @author DengXiao
 	 * 
-	 *  OrContainingAndSellerId
+	 *         OrContainingAndSellerId
 	 */
-	List<TdOrder> findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrShippingNameContainingAndSellerIdOrShippingAddressContainingAndSellerIdOrderByOrderTimeDesc(String keywords1, Long sellerId1, String keywords2, Long sellerId2, String keywords3, Long sellerId3, String keywords4, Long sellerId4);
-	
+	List<TdOrder> findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrShippingNameContainingAndSellerIdOrShippingAddressContainingAndSellerIdOrderByOrderTimeDesc(
+			String keywords1, Long sellerId1, String keywords2, Long sellerId2, String keywords3, Long sellerId3,
+			String keywords4, Long sellerId4);
+
 	/**
 	 * 销顾模糊查询订单，参与参数：username，orderNumber
 	 * 
 	 * @author DengXiao
 	 * 
-	 *  OrContainingAndSellerId
+	 *         OrContainingAndSellerId
 	 */
-	List<TdOrder> findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrShippingNameContainingAndSellerIdOrShippingAddressContainingAndSellerIdOrRealUserRealNameContainingAndSellerIdOrRealUserUsernameContainingAndSellerIdOrderByOrderTimeDesc(String keywords1, Long sellerId1, String keywords2, Long sellerId2, String keywords3, Long sellerId3, String keywords4, Long sellerId4, String keywords5, Long sellerId5, String keywords6, Long sellerId6);
-	
+	List<TdOrder> findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrShippingNameContainingAndSellerIdOrShippingAddressContainingAndSellerIdOrRealUserRealNameContainingAndSellerIdOrRealUserUsernameContainingAndSellerIdOrderByOrderTimeDesc(
+			String keywords1, Long sellerId1, String keywords2, Long sellerId2, String keywords3, Long sellerId3,
+			String keywords4, Long sellerId4, String keywords5, Long sellerId5, String keywords6, Long sellerId6);
 
 	/**
 	 * 店长模糊查询订单，参与参数：username,orderNumber
 	 * 
 	 * @author DengXiao
 	 */
-	List<TdOrder> findByUsernameContainingAndDiySiteIdOrOrderNumberContainingAndDiySiteIdOrShippingNameContainingAndDiySiteIdOrShippingAddressContainingAndDiySiteIdOrderByOrderTimeDesc(String keywords1, Long diySiteId1, String keywords2, Long diySiteId2, String keywords3, Long diySiteId3, String keywords4, Long diySiteId4);
+	List<TdOrder> findByUsernameContainingAndDiySiteIdOrOrderNumberContainingAndDiySiteIdOrShippingNameContainingAndDiySiteIdOrShippingAddressContainingAndDiySiteIdOrderByOrderTimeDesc(
+			String keywords1, Long diySiteId1, String keywords2, Long diySiteId2, String keywords3, Long diySiteId3,
+			String keywords4, Long diySiteId4);
 
 	/**
 	 * 根据城市名称和订单时间查询订单
+	 * 
 	 * @return
 	 */
-	List<TdOrder> findByCityAndOrderTimeAfterAndOrderTimeBeforeOrderByOrderTimeDesc(String city,
-			Date begin, Date end);
-	
+	List<TdOrder> findByCityAndOrderTimeAfterAndOrderTimeBeforeOrderByOrderTimeDesc(String city, Date begin, Date end);
+
 	/**
 	 * 配送员搜索查询
-	 * @param statusIds 订单状态
-	 * @param keyword 关键字 (订单号,收货人,收货人电话,收货人地址)
-	 * @param opUser 配送员编号
+	 * 
+	 * @param statusIds
+	 *            订单状态
+	 * @param keyword
+	 *            关键字 (订单号,收货人,收货人电话,收货人地址)
+	 * @param opUser
+	 *            配送员编号
 	 * @return 查询结果
 	 * @author zp
 	 */
@@ -272,13 +284,17 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			+ "o.statusId in ?1 and d.driver = ?3 and d.orderNumber = o.mainOrderNumber and o.diySiteName like %?2% or "
 			+ "o.statusId in ?1 and d.driver = ?3 and d.orderNumber = o.mainOrderNumber and o.sellerRealName like %?2% "
 			+ "group by o.mainOrderNumber order by o.orderTime desc")
-	List<TdOrder> queryDeliverysearch(List<Long> statusIds,String keyword,String opUser);
-	
+	List<TdOrder> queryDeliverysearch(List<Long> statusIds, String keyword, String opUser);
+
 	/**
 	 * 配送员搜索查询
-	 * @param statusIds 订单状态
-	 * @param keyword 关键字 (订单号,收货人,收货人电话,收货人地址)
-	 * @param opUser 配送员编号
+	 * 
+	 * @param statusIds
+	 *            订单状态
+	 * @param keyword
+	 *            关键字 (订单号,收货人,收货人电话,收货人地址)
+	 * @param opUser
+	 *            配送员编号
 	 * @return 查询结果
 	 * @author zp
 	 */
@@ -289,9 +305,19 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			+ "o.statusId in ?1 and d.driver = ?3 and d.orderNumber = o.mainOrderNumber and o.shippingPhone like %?2% or "
 			+ "o.statusId in ?1 and d.driver = ?3 and d.orderNumber = o.mainOrderNumber and o.shippingAddress like %?2% "
 			+ "group by o.mainOrderNumber order by o.orderTime desc")
-	Integer queryCountDeliverysearch(List<Long> statusIds,String keyword,String opUser);
-	
-	//根据真实用户名查找所有的订单
+	Integer queryCountDeliverysearch(List<Long> statusIds, String keyword, String opUser);
+
+	// 根据真实用户名查找所有的订单
 	List<TdOrder> findByRealUserUsernameOrderByIdDesc(String username);
+
+	Page<TdOrder> findBySellerUsernameOrderByOrderTimeDesc(String sellerUsername, Pageable page);
+
+	Page<TdOrder> findBySellerUsernameAndStatusIdOrderByOrderTimeDesc(String sellerUsername, Long statusId,
+			Pageable page);
 	
+	Page<TdOrder> findByRealUserUsernameOrderByOrderTimeDesc(String sellerUsername, Pageable page);
+
+	Page<TdOrder> findByRealUserUsernameAndStatusIdOrderByOrderTimeDesc(String sellerUsername, Long statusId,
+			Pageable page);
+
 }

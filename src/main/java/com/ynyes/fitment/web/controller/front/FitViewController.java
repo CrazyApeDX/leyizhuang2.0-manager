@@ -15,14 +15,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.ynyes.fitment.core.constant.Global;
+import com.ynyes.fitment.core.constant.LoginSign;
 import com.ynyes.fitment.foundation.entity.FitCartGoods;
+import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
 import com.ynyes.fitment.foundation.entity.client.ClientCategory;
+import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.biz.BizCartGoodsService;
+import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizGoodsService;
 import com.ynyes.fitment.foundation.service.biz.BizInventoryService;
 import com.ynyes.fitment.foundation.service.biz.BizOrderService;
+import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.service.TdOrderService;
 
 @Controller
 @RequestMapping(value = "/fit", method = RequestMethod.GET, produces = "text/html;charset=utf-8")
@@ -39,6 +46,15 @@ public class FitViewController extends FitBasicController {
 
 	@Autowired
 	private BizOrderService bizOrderService;
+
+	@Autowired
+	private BizCreditChangeLogService bizCreditChangeLogService;
+
+	@Autowired
+	private FitCompanyService fitCompanyService;
+
+	@Autowired
+	private TdOrderService tdOrderService;
 
 	@RequestMapping
 	public String fitIndex(HttpServletRequest request) {
@@ -127,12 +143,107 @@ public class FitViewController extends FitBasicController {
 	public String fitPay(HttpServletRequest request, ModelMap map, @PathVariable("id") Long id) {
 		try {
 			FitOrder order = this.bizOrderService.findOne(id);
+			FitCompany company = this.fitCompanyService.findOne(order.getCompanyId());
+			map.addAttribute("credit", company.getCredit());
 			map.addAttribute("order", order);
 			return "/fitment/pay/order_pay";
 		} catch (Exception e) {
 			e.printStackTrace();
 			return "/fitment/500";
 		}
+	}
+
+	@RequestMapping(value = "/pay/delivery/{id}")
+	public String fitPayDelivery(HttpServletRequest request, ModelMap map, @PathVariable("id") Long id) {
+		try {
+			FitOrder order = this.bizOrderService.findOne(id);
+			map.addAttribute("order", order);
+			return "/fitment/pay/order_pay_delivery";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+
+	@RequestMapping(value = "/pay/goods/{id}")
+	public String fitPayGoods(HttpServletRequest request, ModelMap map, @PathVariable("id") Long id) {
+		try {
+			FitOrder order = this.bizOrderService.findOne(id);
+			map.addAttribute("order", order);
+			return "/fitment/pay/order_pay_goods";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+
+	@RequestMapping(value = "/employee")
+	public String fitEmployee(HttpServletRequest request, ModelMap map) {
+		try {
+			return "/fitment/employee_center";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+
+	@RequestMapping(value = "/employee/info")
+	public String fitEmployeeInfo(HttpServletRequest request, ModelMap map) {
+		try {
+			return "/fitment/employee_info";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+
+	@RequestMapping(value = "/employee/password")
+	public String fitEmployeePassword(HttpServletRequest request, ModelMap map) {
+		try {
+			return "/fitment/employee_password";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+
+	@RequestMapping(value = "/credit")
+	public String fitCredit(HttpServletRequest request, ModelMap map) {
+		try {
+			FitEmployee employee = this.getLoginEmployee(request);
+			FitCompany company = fitCompanyService.findOne(employee.getCompanyId());
+			map.addAttribute("credit", company.getCredit());
+			Page<FitCreditChangeLog> logPage = this.bizCreditChangeLogService.employeeGetLog(employee,
+					Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+			map.addAttribute("logPage", logPage);
+			return "/fitment/credit";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
+	}
+
+	@RequestMapping(value = "/out")
+	public String fitOut(HttpServletRequest request) {
+		request.getSession().removeAttribute(LoginSign.EMPLOYEE_SIGN.toString());
+		return "redirect:/fit";
+	}
+
+	@RequestMapping(value = "/history/{status}")
+	public String fitHistory(HttpServletRequest request, ModelMap map, @PathVariable("status") Long status)
+			throws Exception {
+		FitEmployee employee = this.getLoginEmployee(request);
+		Page<TdOrder> orderPage = null;
+		if (employee.getIsMain()) {
+			orderPage = tdOrderService.findBySellerUsernameOrderByOrderTimeDesc("FIT" + employee.getMobile(), status,
+					Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+		} else {
+			orderPage = tdOrderService.findByRealUserUsernameOrderByOrderTimeDesc("FIT" + employee.getMobile(), status,
+					Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+		}
+		map.addAttribute("status", status);
+		map.addAttribute("orderPage", orderPage);
+		return "/fitment/user_order_list";
 	}
 
 	@ModelAttribute

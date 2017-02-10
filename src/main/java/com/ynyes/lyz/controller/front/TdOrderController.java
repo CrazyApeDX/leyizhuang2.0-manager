@@ -1847,7 +1847,7 @@ public class TdOrderController {
 
 					// tdCommonService.dismantleOrder(req);
 					try {
-						settlementService.disminlate(req, order);
+						settlementService.disminlate(req, order, null);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

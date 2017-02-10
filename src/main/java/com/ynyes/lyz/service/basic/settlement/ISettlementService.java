@@ -55,11 +55,12 @@ public interface ISettlementService {
 	 * @author 作者：CrazyDX
 	 * @version 版本：2016年10月17日上午10:13:39
 	 */
-	void disminlate(HttpServletRequest req, TdOrder mainOrder) throws Exception;
+	void disminlate(HttpServletRequest req, TdOrder mainOrder, Boolean isFitmentOrder) throws Exception;
 	
 	Double countOrderDeliveryFee(TdUser user, TdOrder order) throws Exception;
 	
 	Map<Long, TdOrderGoods> countOrderGoodsNumber(TdOrder order) throws Exception;
 	
 	Double countOrderGoodsDeliveryFee(TdUser user, TdOrderGoods orderGoods) throws Exception;
+	
 }
