@@ -208,6 +208,26 @@ $(function () {
 
 <!--账户信息-->
 <div class="tab-content">
+	
+	<dl>
+    <dt>变更类型</dt>
+    <dd>
+        <select name="changeType" id="changeType" datatype="n">
+            <option value="">请选择变更类型</option>
+            <option value="1">公司刷POS充值</option>
+            <option value="2">网银转账充值</option>
+            <option value="3">交现金充值</option>
+            <option value="4">线上支付宝充值失败</option>
+            <option value="5">线上微信充值失败</option>
+            <option value="6">线上银联充值失败</option>
+            <option value="7">取消订单退支付宝第三方支付</option>
+            <option value="8">取消订单退微信第三方支付</option>
+            <option value="9">取消订单退银联第三方支付</option>
+            <option value="10">装饰公司信用额度充值</option>
+        </select>
+    </dd>
+  </dl>
+	
 	<dl>
 		<dt>用户名：</dt>
 		<dd>
@@ -223,6 +243,20 @@ $(function () {
 	<dt>不可提现余额</dt>
 	<dd><input name="unCashBalance" id="unCashBalance" type="number" value="0.00" class="input normal"></dd>
 </dl>
+<dl>
+    <dt>商户订单号</dt>
+    <dd><input name="userOrderNumber" type="text" value="${userOrderNumber!""}" class="input normal"></dd>
+</dl>
+
+<dl>
+    <dt>到账时间</dt>
+    <dd>
+      <div class="input-date">
+        <input name="transferTime" type="text" value="" class="input date" onfocus="WdatePicker({dateFmt:&#39;yyyy-MM-dd&#39;})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
+        <i>日期</i>
+      </div>
+    </dd>
+</dl>  
 <dl>
 	<dt>备注</dt>
 	<dd>
@@ -267,11 +301,20 @@ $(function () {
 		$("#btnSubmit").removeAttr("onclick");
 		var remark = $("#remark").val();
 		var password = $('#password').val();
+		var changeType = $('#changeType').val();
 		if (!password) {
+			$("#btnSubmit").attr("onclick","javascript:validate();");
 			alert('请输入管理员密码');
-		} else if (remark.length > 255) {
+			return;
+		}else if (remark.length > 255) {
+			$("#btnSubmit").attr("onclick","javascript:validate();");
 			alert('备注的长度不能超过255个字符');
-		} else {
+			return;
+		}else if(!changeType){
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			alert('请选择变更类型');
+			return;
+		}else {
 			$.ajax({
 				url : '/Verwalter/user/balance/change/manager/check',
 				type : 'POST',

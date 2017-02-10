@@ -3668,7 +3668,11 @@ public class TdCommonService {
 			cashRefundInf.setUsername(user.getUsername());
 			cashRefundInf.setUserphone(user.getUsername());
 			cashRefundInf.setDiySiteCode(user.getDiyCode());
-			cashRefundInf.setRefundClass("预收款");
+			if(desc.equals("信用额度")){
+				cashRefundInf.setRefundClass("信用额度");
+			}else{
+				cashRefundInf.setRefundClass("预收款");
+			}
 			cashRefundInf.setRtHeaderId(null);
 			cashRefundInf.setReturnNumber(null);
 			cashRefundInf.setOrderHeaderId(null);

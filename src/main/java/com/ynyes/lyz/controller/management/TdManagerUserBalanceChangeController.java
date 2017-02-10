@@ -286,7 +286,7 @@ public class TdManagerUserBalanceChangeController {
 	}
 	
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String userBalanceChangeSave(HttpServletRequest req, Double cashBalance, Double unCashBalance, String username, String remark) {
+	public String userBalanceChangeSave(HttpServletRequest req, Double cashBalance, Double unCashBalance, String username, String remark,Integer changeType,String userOrderNumber,String transferTime ) {
 		String managerUsername = (String) req.getSession().getAttribute("manager");
 		TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(managerUsername);
 		if (null == manager) {
@@ -294,6 +294,91 @@ public class TdManagerUserBalanceChangeController {
 		}
 		
 		TdUser user = tdUserService.findByUsername(username);
+		String description = null;
+		if(null !=changeType){
+			switch (changeType) {
+			case 1:
+				description="公司刷POS充值";
+				break;
+			case 2:
+				description="网银转账充值";
+				break;
+			case 3:
+				description="交现金充值";
+				break;
+			case 4:
+				description="线上支付宝充值失败";
+				break;
+			case 5:
+				description="线上微信充值失败";
+				break;
+			case 6:
+				description="线上银联充值失败";
+				break;
+			case 7:
+				description="取消订单退支付宝第三方支付";
+				break;
+			case 8:
+				description="取消订单退微信第三方支付";
+				break;
+			case 9:
+				description="取消订单退银联第三方支付";
+				break;
+			case 10:
+				description="装饰公司信用额度充值";
+				break;
+			default:
+				break;
+			}
+		}else{
+			description="NULL";
+		}
+		
+		String changeTypeTitle = null;
+		if(null != changeType){
+			switch (changeType) {
+			case 1:
+				changeTypeTitle="公司POS";
+				break;
+			case 2:
+				changeTypeTitle="网银转账";
+				break;
+			case 3:
+				changeTypeTitle="现金";
+				break;
+			case 4:
+				changeTypeTitle="线上支付宝";
+				break;
+			case 5:
+				changeTypeTitle="线上微信";
+				break;
+			case 6:
+				changeTypeTitle="线上银联";
+				break;
+			case 7:
+				changeTypeTitle="线上银联";
+				break;
+			case 8:
+				changeTypeTitle="订单微信";
+				break;
+			case 9:
+				changeTypeTitle="订单银联";
+				break;
+			case 10:
+				changeTypeTitle="信用额度";
+				break;
+			default:
+				break;
+			}
+		}
+		
+		String type = null;
+		if(changeTypeTitle.equals("信用额度")){
+			type = "CREDIT";
+		}else{
+			type ="PREPAY";
+		}
+		
 		if (null != user) {
 			Double userCashBalance = user.getCashBalance();
 			Double userUnCashBalance = user.getUnCashBalance();
@@ -321,10 +406,21 @@ public class TdManagerUserBalanceChangeController {
 				log.setCreateTime(new Date());
 				log.setFinishTime(log.getCreateTime());
 				log.setIsSuccess(true);
-				log.setReason("管理员修改调整");
+				log.setReason("管理员修改调整("+description+")");
+				log.setDetailReason(description);
 				log.setBalance(user.getCashBalance());
 				log.setBalanceType(1L);
 				log.setOperator(managerUsername);
+				if(null != userOrderNumber){
+					log.setUserOrderNumber(userOrderNumber);
+				}else{
+					log.setUserOrderNumber("NULL");
+				}
+				if(null != transferTime){
+					log.setTransferTime(transferTime);
+				}else{
+					log.setTransferTime("NULL");
+				}
 				try {
 					log.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
 				} catch (UnknownHostException e) {
@@ -348,10 +444,21 @@ public class TdManagerUserBalanceChangeController {
 				log.setCreateTime(new Date());
 				log.setFinishTime(log.getCreateTime());
 				log.setIsSuccess(true);
-				log.setReason("管理员修改调整");
+				log.setReason("管理员修改调整("+description+")");
+				log.setDetailReason(description);
 				log.setBalance(user.getUnCashBalance());
 				log.setBalanceType(2L);
 				log.setOperator(managerUsername);
+				if(null != userOrderNumber){
+					log.setUserOrderNumber(userOrderNumber);
+				}else{
+					log.setUserOrderNumber("NULL");
+				}
+				if(null != transferTime){
+					log.setTransferTime(transferTime);
+				}else{
+					log.setTransferTime("NULL");
+				}
 				try {
 					log.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
 				} catch (UnknownHostException e) {
@@ -403,7 +510,7 @@ public class TdManagerUserBalanceChangeController {
 			recharge.setNumber("CZ" + orderNum);
 			recharge.setTotalPrice(cashBalance);
 			recharge.setTypeId(-1L);
-			recharge.setTypeTitle("财务转账");
+			recharge.setTypeTitle(changeTypeTitle);
 			recharge.setCreateTime(new Date());
 			recharge.setFinishTime(recharge.getCreateTime());
 			recharge.setStatusId(2L);
@@ -424,7 +531,9 @@ public class TdManagerUserBalanceChangeController {
 			deposit.setAgreeTime(deposit.getCreateTime());
 			deposit.setRemitTime(deposit.getRemitTime());
 			deposit = tdDepositService.save(deposit);
-			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, "财务转账","PREPAY");
+			
+			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
+			
 			tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
 		}
 		
@@ -438,7 +547,7 @@ public class TdManagerUserBalanceChangeController {
 			recharge.setNumber("CZ" + orderNum);
 			recharge.setTotalPrice(unCashBalance);
 			recharge.setTypeId(-1L);
-			recharge.setTypeTitle("财务转账");
+			recharge.setTypeTitle(changeTypeTitle);
 			recharge.setCreateTime(new Date());
 			recharge.setFinishTime(recharge.getCreateTime());
 			recharge.setStatusId(2L);
@@ -458,7 +567,7 @@ public class TdManagerUserBalanceChangeController {
 			deposit.setAgreeTime(deposit.getCreateTime());
 			deposit.setRemitTime(deposit.getRemitTime());
 			deposit = tdDepositService.save(deposit);
-			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, "财务转账","PREPAY");
+			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,"PREPAY");
 			tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
 		}
 		

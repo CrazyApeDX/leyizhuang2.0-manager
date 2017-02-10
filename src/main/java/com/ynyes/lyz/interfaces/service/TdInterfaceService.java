@@ -680,8 +680,13 @@ public class TdInterfaceService {
 			cashReciptInf.setUserphone(tdUser.getUsername());
 			cashReciptInf.setReceiptNumber(StringTools.getUniqueNoWithHeader("RC"));
 			cashReciptInf.setDiySiteCode(storeCode);
-			cashReciptInf.setReceiptClass("预收款");
-			cashReciptInf.setProductType("PREPAY");
+			if(tdRecharge.getTypeTitle().equals("信用额度")){
+				cashReciptInf.setReceiptClass("信用额度");
+				cashReciptInf.setProductType("CREDIT");
+			}else{
+				cashReciptInf.setReceiptClass("预收款");
+				cashReciptInf.setProductType("PREPAY");
+			}
 			cashReciptInf.setReceiptType(tdRecharge.getTypeTitle());
 			cashReciptInf.setReceiptDate(new Date());
 			cashReciptInf.setAmount(tdRecharge.getTotalPrice());

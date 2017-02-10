@@ -101,6 +101,17 @@ public class TdBalanceLog {
 	@Column(scale = 2, nullable = true, length = 20)
 	private Double allLeft;
 	
+	//到账时间
+	@Column
+	private String transferTime;
+	
+	//商户订单号
+	@Column
+	private String userOrderNumber;
+	
+	@Column
+	private String detailReason;
+	
 	public Long getId() {
 		return id;
 	}
@@ -283,6 +294,34 @@ public class TdBalanceLog {
 	public void setBalanceTypeName(String balanceTypeName) {
 		this.balanceTypeName = balanceTypeName;
 	}
+
+	public String getTransferTime() {
+		return transferTime;
+	}
+
+	public void setTransferTime(String transferTime) {
+		this.transferTime = transferTime;
+	}
+
+	public String getUserOrderNumber() {
+		return userOrderNumber;
+	}
+
+	public void setUserOrderNumber(String userOrderNumber) {
+		this.userOrderNumber = userOrderNumber;
+	}
+
+	public String getDetailReason() {
+		return detailReason;
+	}
+
+	public void setDetailReason(String detailReason) {
+		this.detailReason = detailReason;
+	}
+	
+	
+	
+	
 	
 	
 }
