@@ -73,7 +73,10 @@ public class GarmentFranchisorReport {
 	
 	@Column
 	private Double cashCoupon;
-
+	
+	@Column
+	private Integer payTypeId;
+	
 	public String getId() {
 		return id;
 	}
@@ -218,6 +221,15 @@ public class GarmentFranchisorReport {
 
 	public void setCashCoupon(Double cashCoupon) {
 		this.cashCoupon = cashCoupon;
+	}
+	
+
+	public Integer getPayTypeId() {
+		return payTypeId;
+	}
+
+	public void setPayTypeId(Integer payTypeId) {
+		this.payTypeId = payTypeId;
 	}
 
 	@Override

@@ -327,6 +327,9 @@ public class TdManagerUserBalanceChangeController {
 			case 10:
 				description="装饰公司信用额度充值";
 				break;
+			case 11:
+				description="CRM积分转预存款";
+				break;
 			default:
 				break;
 			}
@@ -367,6 +370,9 @@ public class TdManagerUserBalanceChangeController {
 			case 10:
 				changeTypeTitle="信用额度";
 				break;
+			case 11:
+				changeTypeTitle="CRM积分";
+				break;
 			default:
 				break;
 			}
@@ -375,6 +381,8 @@ public class TdManagerUserBalanceChangeController {
 		String type = null;
 		if(changeTypeTitle.equals("信用额度")){
 			type = "CREDIT";
+		}else if(changeTypeTitle.equals("CRM积分")){
+			type = "CRM";  
 		}else{
 			type ="PREPAY";
 		}

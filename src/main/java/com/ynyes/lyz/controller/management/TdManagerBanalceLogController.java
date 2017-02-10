@@ -158,7 +158,7 @@ public class TdManagerBanalceLogController extends TdManagerBaseController {
 		HSSFSheet sheet = wb.createSheet("领用记录报表");
 		// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
 		// 列宽
-		int[] widths = { 13, 18, 13, 13, 13, 15, 13, 11, 19, 11, 15, 25, 13, 13, 13, 40, 40 };
+		int[] widths = { 13, 18, 13, 13, 13, 15, 13, 11, 19, 11, 20, 25, 40, 13, 13, 15, 15 };
 		sheetColumnWidth(sheet, widths);
 
 		// 第四步，创建单元格，并设置值表头 设置表头居中
@@ -169,7 +169,7 @@ public class TdManagerBanalceLogController extends TdManagerBaseController {
 		// 优惠券名称、金额、领卷时间、领用用户、是否使用、使用的时间、使用订单号
 		HSSFRow row = sheet.createRow((int) 0);
 
-		String[] cellValues = { "归属城市","归属门店","用户名", "用户姓名", "类型","金额类型", "金额变化", "变更后余额", "变更时间", "是否成功", 
+		String[] cellValues = { "归属城市","归属门店","用户名", "用户姓名", "类型","金额类型", "金额变化", "变更后余额", "变更时间","到账时间","商户订单号", "是否成功", 
 				"操作描述", "涉及单号", "变更后可提现余额", "变更后不可提现余额", "变更后余额总额"};
 		cellDates(cellValues, style, row);
 
@@ -221,23 +221,33 @@ public class TdManagerBanalceLogController extends TdManagerBaseController {
 			if (null != log.getCreateTime()) {// 变更时间
 				row.createCell(8).setCellValue(log.getCreateTime().toString());
 			}
+			if(null != log.getTransferTime()){//到账时间
+				row.createCell(9).setCellValue(log.getTransferTime().toString());
+			}else{
+				row.createCell(9).setCellValue("NULL");
+			}
+			if(null != log.getUserOrderNumber()){//商户订单号
+				row.createCell(10).setCellValue(log.getUserOrderNumber().toString());
+			}else{
+				row.createCell(10).setCellValue("NULL");
+			}
 			if (null != log.getIsSuccess()) {// 是否成功
-				row.createCell(9).setCellValue(log.getIsSuccess()?"是":"否");
+				row.createCell(11).setCellValue(log.getIsSuccess()?"是":"否");
 			}
 			if (null != log.getReason()) {// 操作描述
-				row.createCell(10).setCellValue(log.getReason());
+				row.createCell(12).setCellValue(log.getReason());
 			}
 			if (null != log.getOrderNumber()) {// 涉及单号
-				row.createCell(11).setCellValue(log.getOrderNumber());
+				row.createCell(13).setCellValue(log.getOrderNumber());
 			} 
 			if (null != log.getCashLeft()) {// 可提现余额剩余
-				row.createCell(12).setCellValue(log.getCashLeft());
+				row.createCell(14).setCellValue(log.getCashLeft());
 			}
 			if (null != log.getUnCashLeft()) {// 不可提现余额剩余
-				row.createCell(13).setCellValue(log.getUnCashLeft());
+				row.createCell(15).setCellValue(log.getUnCashLeft());
 			}
 			if (null != log.getAllLeft()) {// 总额剩余
-				row.createCell(14).setCellValue(log.getAllLeft());
+				row.createCell(16).setCellValue(log.getAllLeft());
 			}
 			i++;
 		}

@@ -2106,7 +2106,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		        HSSFRow row = sheet.createRow((int) 0); 
 		        
 		        String[] cellValues={"城市","门店名称","仓库名称","配送员名称","配送员电话","会员姓名","会员电话","导购姓名","主单号",
-		        		"分单号","订单时间","配送时间","订单状态","预存款","第三方支付","现金支付","现金券总额","总金额" };
+		        		"分单号","订单时间","配送时间","订单状态","预存款","第三方支付支付宝","第三方支付银联","现金支付","现金券总额","总金额" };
 				cellDates(cellValues, style, row);
 				
 				for(int j=0;j<maxRowNum;j++)
@@ -2253,32 +2253,36 @@ public class TdManagerStatementController extends TdManagerBaseController {
 						row.createCell(13).setCellValue(objToString("0"));
 					}
 		        	
-		        	//第三方支付
-		        	if (null != garmentFranchisorReport.getOtherPay()) {
+		        	//第三方支付支付宝及第三方支付银联
+		        	if(null != garmentFranchisorReport.getPayTypeId() && garmentFranchisorReport.getPayTypeId()==3){
 		        		row.createCell(14).setCellValue(objToString(garmentFranchisorReport.getOtherPay()));
-					}else{
-						garmentFranchisorReport.setOtherPay(0.0);
-						row.createCell(14).setCellValue(objToString("0"));
-					}
+		        		row.createCell(15).setCellValue("0");
+		        	}else if(null != garmentFranchisorReport.getPayTypeId() && garmentFranchisorReport.getPayTypeId()==5){
+		        		row.createCell(14).setCellValue("0");
+		        		row.createCell(15).setCellValue(objToString(garmentFranchisorReport.getOtherPay()));
+		        	}else{
+		        		row.createCell(14).setCellValue("0");
+		        		row.createCell(15).setCellValue("0");
+		        	}
 		        	
 		        	//现金支付
 		        	if (null != garmentFranchisorReport.getCashPay()) {
-		        		row.createCell(15).setCellValue(objToString(garmentFranchisorReport.getCashPay()));
+		        		row.createCell(16).setCellValue(objToString(garmentFranchisorReport.getCashPay()));
 					}else{
 						garmentFranchisorReport.setCashPay(0.0);
-						row.createCell(15).setCellValue(objToString("0"));
+						row.createCell(16).setCellValue(objToString("0"));
 					}
 		        	
 		        	//现金券总额
 		        	if (null != garmentFranchisorReport.getCashCoupon()) {
-		        		row.createCell(16).setCellValue(objToString(garmentFranchisorReport.getCashCoupon()));
+		        		row.createCell(17).setCellValue(objToString(garmentFranchisorReport.getCashCoupon()));
 					}else{
-						row.createCell(16).setCellValue(objToString("0"));
+						row.createCell(17).setCellValue(objToString("0"));
 					}
 		        	
 		         	
 		        	//总额
-		        	row.createCell(17).setCellValue(objToString(garmentFranchisorReport.getActualPay()+garmentFranchisorReport.getOtherPay()+garmentFranchisorReport.getCashCoupon()));
+		        	row.createCell(18).setCellValue(objToString(garmentFranchisorReport.getActualPay()+garmentFranchisorReport.getOtherPay()+garmentFranchisorReport.getCashCoupon()));
 				
 				}
 			}
