@@ -13,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.repository.TdUserRepo;
 import com.ynyes.lyz.util.Criteria;
@@ -31,11 +32,11 @@ public class TdUserService {
 		}
 		return repository.save(user);
 	}
-	
-//	public TdUser saveWithOutBalance(TdUser user)
-//	{
-//		return repository.saveWithOutBalance(user);
-//	}
+
+	// public TdUser saveWithOutBalance(TdUser user)
+	// {
+	// return repository.saveWithOutBalance(user);
+	// }
 
 	public void delete(Long id) {
 		if (null != id) {
@@ -169,8 +170,9 @@ public class TdUserService {
 		if (null == cityId || null == customerId) {
 			return null;
 		}
-		return repository.findByCityIdAndCustomerIdAndUserTypeAndIsEnableTrueOrCityIdAndCustomerIdAndUserTypeAndIsEnableTrue(cityId, customerId, 1L,
-				cityId, customerId, 2L);
+		return repository
+				.findByCityIdAndCustomerIdAndUserTypeAndIsEnableTrueOrCityIdAndCustomerIdAndUserTypeAndIsEnableTrue(
+						cityId, customerId, 1L, cityId, customerId, 2L);
 	}
 
 	/**
@@ -179,18 +181,20 @@ public class TdUserService {
 	 * @author DengXiao
 	 */
 	public List<TdUser> findByCityIdAndRealNameContainingAndUserTypeOrCityIdAndRealNameContainingAndUserType(
-			Long cityId, String keywords,Long customerId) {
+			Long cityId, String keywords, Long customerId) {
 		if (null == cityId || null == keywords) {
 			return null;
 		}
-		if(customerId==null){
-			return repository.findByCityIdAndRealNameContainingAndUserTypeAndIsEnableTrueOrCityIdAndRealNameContainingAndUserTypeAndIsEnableTrue(cityId,
-					keywords, 1L, cityId, keywords, 2L);
-		}else{
-			return repository.findByCityIdAndCustomerIdAndRealNameContainingAndUserTypeAndIsEnableTrueOrCityIdAndCustomerIdAndRealNameContainingAndUserTypeAndIsEnableTrue(cityId,
-					customerId,keywords, 1L, cityId,customerId, keywords, 2L);
+		if (customerId == null) {
+			return repository
+					.findByCityIdAndRealNameContainingAndUserTypeAndIsEnableTrueOrCityIdAndRealNameContainingAndUserTypeAndIsEnableTrue(
+							cityId, keywords, 1L, cityId, keywords, 2L);
+		} else {
+			return repository
+					.findByCityIdAndCustomerIdAndRealNameContainingAndUserTypeAndIsEnableTrueOrCityIdAndCustomerIdAndRealNameContainingAndUserTypeAndIsEnableTrue(
+							cityId, customerId, keywords, 1L, cityId, customerId, keywords, 2L);
 		}
-		
+
 	}
 
 	/**
@@ -307,96 +311,134 @@ public class TdUserService {
 						customerId, cityId, 1L, keywords, customerId, cityId, 1L, keywords, customerId, cityId, 2L,
 						keywords, customerId, cityId, 2L, keywords);
 	}
-	
+
 	/**
 	 * 根据导购id查询改导购下面的客户
+	 * 
 	 * @param sellerId
 	 * @return
 	 */
-	public List<TdUser> findBySellerIdAndUserType(Long sellerId,Long userType){
-		if (sellerId==null || userType==null) {
+	public List<TdUser> findBySellerIdAndUserType(Long sellerId, Long userType) {
+		if (sellerId == null || userType == null) {
 			return null;
 		}
 		return repository.findBySellerIdAndUserType(sellerId, userType);
 	}
+
 	/**
 	 * 根据用户类型获取类型名称
+	 * 
 	 * @param userType
 	 * @return
 	 */
-	public String getUserTypeName(Long userType){
-		if(userType!=null){
-			if(userType==0L){
+	public String getUserTypeName(Long userType) {
+		if (userType != null) {
+			if (userType == 0L) {
 				return "会员";
-			}else if(userType==1L){
+			} else if (userType == 1L) {
 				return "销售顾问";
-			}else if(userType==2L){
+			} else if (userType == 2L) {
 				return "店长";
-			}else if(userType==3L){
+			} else if (userType == 3L) {
 				return "店主";
-			}else if(userType==4L){
+			} else if (userType == 4L) {
 				return "区域经理";
-			}else if(userType==5L){
+			} else if (userType == 5L) {
 				return "配送员";
-			}else{
-				return ""+userType;
+			} else {
+				return "" + userType;
 			}
 		}
-		return ""+userType;
-		
+		return "" + userType;
+
 	}
-	
+
 	/**
 	 * 用户列表查询
+	 * 
 	 * @return
 	 * @author zp
 	 */
-	public Page<TdUser> searchList(String keywords,List<Long> roleDiyIds,Long userType,Long city,Long diyCode,int size,int page){
+	public Page<TdUser> searchList(String keywords, List<Long> roleDiyIds, Long userType, Long city, Long diyCode,
+			int size, int page) {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdUser> c = new Criteria<TdUser>();
-		//用户名
+		// 用户名
 		if (StringUtils.isNotBlank(keywords)) {
-			c.add(Restrictions.or(Restrictions.like("realName",keywords, true),Restrictions.like("username", keywords, true)));
+			c.add(Restrictions.or(Restrictions.like("realName", keywords, true),
+					Restrictions.like("username", keywords, true)));
 		}
-		if(roleDiyIds!=null && roleDiyIds.size()>0){
+		if (roleDiyIds != null && roleDiyIds.size() > 0) {
 			c.add(Restrictions.in("upperDiySiteId", roleDiyIds, true));
 		}
-		if (userType!=null) {
+		if (userType != null) {
 			c.add(Restrictions.eq("userType", userType, true));
 		}
-		if (city!=null) {
+		if (city != null) {
 			c.add(Restrictions.eq("cityId", city, true));
 		}
-		if (diyCode!=null) {
+		if (diyCode != null) {
 			c.add(Restrictions.eq("upperDiySiteId", diyCode, true));
 		}
-		
+
 		c.setOrderByDesc("registerTime");
-		return repository.findAll(c,pageRequest);
+		return repository.findAll(c, pageRequest);
 	}
-	
+
 	/**
 	 * 查询门店下面的所有会员
-	 * @param diyId 门店id
+	 * 
+	 * @param diyId
+	 *            门店id
 	 * @return
 	 */
-	public List<TdUser> findByUpperDiySiteId(Long diyId){
-		if(diyId==null){
+	public List<TdUser> findByUpperDiySiteId(Long diyId) {
+		if (diyId == null) {
 			return null;
 		}
 		return repository.findByUpperDiySiteId(diyId);
 	}
-	
+
 	/**
 	 * 查询城市下面的所有会员
-	 * @param cityId 城市编号
+	 * 
+	 * @param cityId
+	 *            城市编号
 	 * @return
 	 */
-	public List<TdUser> findByCityId(Long cityId){
-		if(cityId==null){
+	public List<TdUser> findByCityId(Long cityId) {
+		if (cityId == null) {
 			return null;
 		}
 		return repository.findByCityId(cityId);
 	}
 
+	public Boolean validateCredit(TdOrder order) {
+		TdUser seller = this.findOne(order.getSellerId());
+		return this.validateCredit(seller, order);
+	}
+
+	public Boolean validateCredit(TdUser seller, TdOrder order) {
+		return seller.getCredit() >= order.getTotalPrice();
+	}
+
+	public void useCredit(TdOrder order) {
+		TdUser seller = this.findOne(order.getSellerId());
+		this.useCredit(seller, order);
+	}
+
+	public void useCredit(TdUser seller, TdOrder order) {
+		seller.setCredit(seller.getCredit() - order.getTotalPrice());
+		this.save(seller);
+	}
+
+	public void repayCredit(TdUser seller, TdOrder order) {
+		seller.setCredit(seller.getCredit() + order.getTotalPrice());
+		this.save(seller);
+	}
+
+	public void repayCredit(TdUser seller, Double amount) {
+		seller.setCredit(seller.getCredit() + amount);
+		this.save(seller);
+	}
 }

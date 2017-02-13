@@ -916,6 +916,9 @@ public class TdDeliveryIndexController {
 			rec.setSortId(99L);
 			rec = tdOwnMoneyRecordService.save(rec);
 
+			TdUser seller = tdUserService.findOne(order.getSellerId());
+			tdUserService.repayCredit(seller, payed);
+			
 			// 全额收款
 			if (rec.getIsOwn() == false) {
 				// 修改订单收款金额

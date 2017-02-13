@@ -172,6 +172,8 @@ public class SettlementServiceImpl implements ISettlementService {
 
 	@Override
 	public void disminlate(HttpServletRequest req, TdOrder mainOrder, Boolean isFitmentOrder) throws Exception {
+		// 使用信用金
+		this.costCredit(mainOrder);
 		// 创建一个Map集合存储所有的分单，键值对规则为K-V：【品牌ID】-【分单】
 		Map<Long, TdOrder> subOrderMap = new HashMap<>();
 		// 拆分商品和小辅料
@@ -1029,6 +1031,10 @@ public class SettlementServiceImpl implements ISettlementService {
 				return quantity * unit;
 			}
 		}
+	}
+	
+	private void costCredit(TdOrder order) {
+		this.tdUserService.useCredit(order);
 	}
 
 }

@@ -651,7 +651,8 @@ public class TdManagerOrderController {
 			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE, Long[] listId, Integer[] listChkId,
 			ModelMap map, HttpServletRequest req, String orderStartTime, String orderEndTime, String realName,
 			String sellerRealName, String shippingAddress, String shippingPhone, String deliveryTime, String userPhone,
-			Long orderStatusId, String shippingName, String sendTime, String diyCode, String city,String deliveryType) {
+			Long orderStatusId, String shippingName, String sendTime, String diyCode, String city,
+			String deliveryType) {
 		String username = (String) req.getSession().getAttribute("manager");
 
 		if (null == username) {
@@ -761,12 +762,12 @@ public class TdManagerOrderController {
 						cityDiyCodes.add("null");
 					}
 				}
-				
 
 				map.addAttribute("order_page",
-						tdOrderService.findAllAddConditionDeliveryType(keywords, orderStartTime, orderEndTime, usernameList, sellerRealName,
-								shippingAddress, shippingPhone, deliveryTime, userPhone, shippingName, sendTime,
-								statusId, diyCode, city,deliveryType, cityDiyCodes, roleDiyCodes, size, page));
+						tdOrderService.findAllAddConditionDeliveryType(keywords, orderStartTime, orderEndTime,
+								usernameList, sellerRealName, shippingAddress, shippingPhone, deliveryTime, userPhone,
+								shippingName, sendTime, statusId, diyCode, city, deliveryType, cityDiyCodes,
+								roleDiyCodes, size, page));
 			}
 		}
 
@@ -1285,6 +1286,12 @@ public class TdManagerOrderController {
 
 		// 修改订单收款金额
 		tdOrderService.modifyOrderPay(money, pos, other, own.getOrderNumber());
+
+		// 2017-02-13：增加信用额度
+		String mainOrderNumber = own.getOrderNumber();
+		TdOrder subOrder = tdOrderService.findByMainOrderNumberIgnoreCase(mainOrderNumber).get(0);
+		TdUser seller = this.tdUserService.findOne(subOrder.getSellerId());
+		this.tdUserService.repayCredit(seller, (money + pos + other));
 		// 收款发ebs
 		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(own, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
 
@@ -1385,6 +1392,10 @@ public class TdManagerOrderController {
 		order.setBackOtherPay(other);
 		tdOrderService.save(order);
 
+		// 2017-02-13：增加信用额度
+		TdUser seller = this.tdUserService.findOne(order.getSellerId());
+		this.tdUserService.repayCredit(seller, (money + pos + other));
+
 		// 记录收款并发ebs
 		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
 
@@ -1397,7 +1408,7 @@ public class TdManagerOrderController {
 	@ResponseBody
 	public Map<String, Object> deliveryFeeChange(Long id, Double fee) {
 		Map<String, Object> res = new HashMap<>();
-		
+
 		TdOrder order = tdOrderService.findOne(id);
 		order.setIsFixedDeliveryFee(true);
 		order.setDeliverFee(fee);
@@ -1408,7 +1419,7 @@ public class TdManagerOrderController {
 		res.put("status", 0);
 		return res;
 	}
-	
+
 	/**
 	 * 根据问题跟踪表-20160120第55号（序号），一个分单取消的时候，与其相关联的所有分单也取消掉 req 记录库存用
 	 * 

@@ -1761,6 +1761,13 @@ public class TdOrderController {
 				// 设置支付方式为其他
 				order_temp.setPayTypeId(0L);
 				order_temp.setPayTypeTitle("其它");
+			} else {
+				Boolean result = tdUserService.validateCredit(order_temp);
+				if (!result) {
+					res.put("status", -1);
+					res.put("message", "导购的信用额度不足，该单不能够线下支付");
+					return res;
+				}
 			}
 			if (null != order_temp.getIsSellerOrder() && order_temp.getIsSellerOrder()) {
 				order_temp.setUserId(order_temp.getRealUserId());

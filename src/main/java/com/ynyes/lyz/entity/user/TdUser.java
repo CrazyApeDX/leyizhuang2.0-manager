@@ -19,50 +19,6 @@ import com.ynyes.lyz.entity.TdShippingAddress;
 @Entity
 @Table(name = "td_user")
 public class TdUser {
-	
-	public TdUser() {
-		super();
-	}
-	
-	public TdUser(Long id, List<TdShippingAddress> shippingAddressList, Double balance, String cityName, String diyName,
-			String headImageUri, Boolean isEnable, Date lastLoginTime, String password, String realName,
-			String referPhone, Date registerTime, String sex, Long upperDiySiteId, Long userType, String username,
-			Double cashBalance, Double unCashBalance, Long cityId, Double sortId, Date birthday, Long customerId,
-			String opUser, Boolean isLogin, Date lastVisitTime, String loginSession, Long sellerId, String sellerName,
-			String diyCode, Boolean isCashOnDelivery, Integer identityType) {
-		super();
-		this.id = id;
-		this.shippingAddressList = shippingAddressList;
-		this.balance = balance;
-		this.cityName = cityName;
-		this.diyName = diyName;
-		this.headImageUri = headImageUri;
-		this.isEnable = isEnable;
-		this.lastLoginTime = lastLoginTime;
-		this.password = password;
-		this.realName = realName;
-		this.referPhone = referPhone;
-		this.registerTime = registerTime;
-		this.sex = sex;
-		this.upperDiySiteId = upperDiySiteId;
-		this.userType = userType;
-		this.username = username;
-		this.cashBalance = cashBalance;
-		this.unCashBalance = unCashBalance;
-		this.cityId = cityId;
-		this.sortId = sortId;
-		this.birthday = birthday;
-		this.customerId = customerId;
-		this.opUser = opUser;
-		this.isLogin = isLogin;
-		this.lastVisitTime = lastVisitTime;
-		this.loginSession = loginSession;
-		this.sellerId = sellerId;
-		this.sellerName = sellerName;
-		this.diyCode = diyCode;
-		this.isCashOnDelivery = isCashOnDelivery;
-		this.identityType = identityType;
-	}
 
 	// 自增主键
 	@Id
@@ -193,6 +149,10 @@ public class TdUser {
 	// 身份类型：0、会员；1、非会员；默认是会员
 	@Column(length = 1, nullable = false)
 	private Integer identityType;
+	
+	// 导购欠款额度
+	@Column(scale = 2, nullable = false)
+	private Double credit = 100000d;
 
 	public Long getId() {
 		return id;
@@ -444,6 +404,14 @@ public class TdUser {
 		this.identityType = identityType;
 	}
 
+	public Double getCredit() {
+		return credit;
+	}
+
+	public void setCredit(Double credit) {
+		this.credit = credit;
+	}
+
 	@Override
 	public String toString() {
 		return "TdUser [id=" + id + ", shippingAddressList=" + shippingAddressList + ", balance=" + balance
@@ -455,6 +423,6 @@ public class TdUser {
 				+ birthday + ", customerId=" + customerId + ", opUser=" + opUser + ", isLogin=" + isLogin
 				+ ", lastVisitTime=" + lastVisitTime + ", loginSession=" + loginSession + ", sellerId=" + sellerId
 				+ ", sellerName=" + sellerName + ", diyCode=" + diyCode + ", isCashOnDelivery=" + isCashOnDelivery
-				+ ", identityType=" + identityType + "]";
+				+ ", identityType=" + identityType + ", credit=" + credit + "]";
 	}
 }
