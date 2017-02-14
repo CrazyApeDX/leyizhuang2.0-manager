@@ -34,6 +34,7 @@ public class TdDiySiteInventoryLog {
 	public static final String CHANGETYPE_CITY_YC_ADD			= "城市报溢";
 	public static final String CHANGETYPE_CITY_BS_SUB			= "城市报损";
 	public static final String CHANGETYPE_CITY_CG_SUB			= "城市采购退货";
+	public static final String CHANGETYPE_TURN_ZERO				= "整转零";
 	
 
 	@Id
