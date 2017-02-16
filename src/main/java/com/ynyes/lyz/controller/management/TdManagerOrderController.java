@@ -44,6 +44,7 @@ import com.ynyes.lyz.entity.TdPriceList;
 import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.entity.TdShippingAddress;
 import com.ynyes.lyz.entity.TdWareHouse;
+import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
@@ -1291,7 +1292,7 @@ public class TdManagerOrderController {
 		String mainOrderNumber = own.getOrderNumber();
 		TdOrder subOrder = tdOrderService.findByMainOrderNumberIgnoreCase(mainOrderNumber).get(0);
 		TdUser seller = this.tdUserService.findOne(subOrder.getSellerId());
-		this.tdUserService.repayCredit(seller, (money + pos + other));
+		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other), mainOrderNumber);
 		// 收款发ebs
 		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(own, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
 
@@ -1394,7 +1395,8 @@ public class TdManagerOrderController {
 
 		// 2017-02-13：增加信用额度
 		TdUser seller = this.tdUserService.findOne(order.getSellerId());
-		this.tdUserService.repayCredit(seller, (money + pos + other));
+		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
+				order.getMainOrderNumber());
 
 		// 记录收款并发ebs
 		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);

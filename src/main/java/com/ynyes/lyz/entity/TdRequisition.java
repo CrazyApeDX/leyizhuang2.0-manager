@@ -13,128 +13,130 @@ import javax.persistence.OneToMany;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-
-
 //要货单
 
 @Entity
 public class TdRequisition {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	// 门店名称
 	@Column
 	private String diySiteTitle;
-	
+
 	// 门店编码
 	@Column
 	private Long diySiteId;
-	
+
 	// 客户姓名(用户名)
 	@Column
 	private String customerName;
-	
+
 	// 客户编码(用户id)
 	@Column
 	private Long customerId;
-	
+
 	// 原单号（主订单号）
 	@Column
 	private String orderNumber;
-	
+
 	// 总金额
 	@Column
 	private Double totalPrice;
-	
+
 	// 代收金额
 	@Column
 	private Double leftPrice;
-	
+
 	// 送货时间
 	@Column
-    private String deliveryTime;
-	
+	private String deliveryTime;
+
 	// 收货人(姓名)
 	@Column
 	private String receiveName;
-	
+
 	// 收货人地址
 	@Column
 	private String receiveAddress;
-	
+
 	// 拆分的收货地址分为：城市 + 区 + 街道 + 详细地址
 	// 省
 	@Column
 	private String province;
-		
+
 	// 城市
 	@Column
 	private String city;
-	
+
 	// 区
 	@Column
 	private String disctrict;
-	
+
 	// 街道
 	@Column
 	private String subdistrict;
-	
+
 	// 详细地址
 	@Column
 	private String detailAddress;
-	
+
 	// 收货人电话
 	@Column
 	private String receivePhone;
-	
-    // 订单商品
-    @OneToMany
-    @JoinColumn(name="TdRequisitionId")
-    private List<TdRequisitionGoods> requisiteGoodsList;
-    
-    // 下单时间
-    @Column
-    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private Date orderTime;
 
-    // 要货单类型 1： 要货单  2：要货单退单 3： 要货单订单
-    @Column
-    private Long typeId;
-    
-    // 订单备注
-    @Column
-    private String remarkInfo;
-    
-    // 门店电话
-    @Column
-    private String diySiteTel;
-    
-    // 门店编码
-    @Column
-    private String diyCode;
-    
-    // 销售顾问名字
-    @Column
-    private String sellerRealName;
-    
-    // 销顾电话
-    @Column(length = 20)
-    private String sellerTel;
-    
-    // 商品总数
-    @Column
-    private Integer goodsQuantity;
-    
-    // 上楼费总额
-    @Column
-    private Double upstairsAll = 0d;
-    
-    // 剩余上楼费
-    @Column
-    private Double upstairsLeft = 0d;
-    
+	// 订单商品
+	@OneToMany
+	@JoinColumn(name = "TdRequisitionId")
+	private List<TdRequisitionGoods> requisiteGoodsList;
+
+	// 下单时间
+	@Column
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date orderTime;
+
+	// 要货单类型 1： 要货单 2：要货单退单 3： 要货单订单
+	@Column
+	private Long typeId;
+
+	// 订单备注
+	@Column
+	private String remarkInfo;
+
+	// 门店电话
+	@Column
+	private String diySiteTel;
+
+	// 门店编码
+	@Column
+	private String diyCode;
+
+	// 销售顾问名字
+	@Column
+	private String sellerRealName;
+
+	// 销顾电话
+	@Column(length = 20)
+	private String sellerTel;
+
+	// 商品总数
+	@Column
+	private Integer goodsQuantity;
+
+	// 上楼费总额
+	@Column
+	private Double upstairsAll = 0d;
+
+	// 剩余上楼费
+	@Column
+	private Double upstairsLeft = 0d;
+
+	// 运费总额
+	@Column(scale = 2, nullable = false)
+	private Double deliveryFee = 0d;
+
 	public String getSellerRealName() {
 		return sellerRealName;
 	}
@@ -359,6 +361,14 @@ public class TdRequisition {
 		this.upstairsLeft = upstairsLeft;
 	}
 
+	public Double getDeliveryFee() {
+		return deliveryFee;
+	}
+
+	public void setDeliveryFee(Double deliveryFee) {
+		this.deliveryFee = deliveryFee;
+	}
+
 	@Override
 	public String toString() {
 		return "TdRequisition [id=" + id + ", diySiteTitle=" + diySiteTitle + ", diySiteId=" + diySiteId
@@ -370,6 +380,7 @@ public class TdRequisition {
 				+ ", orderTime=" + orderTime + ", typeId=" + typeId + ", remarkInfo=" + remarkInfo + ", diySiteTel="
 				+ diySiteTel + ", diyCode=" + diyCode + ", sellerRealName=" + sellerRealName + ", sellerTel="
 				+ sellerTel + ", goodsQuantity=" + goodsQuantity + ", upstairsAll=" + upstairsAll + ", upstairsLeft="
-				+ upstairsLeft + "]";
+				+ upstairsLeft + ", deliveryFee=" + deliveryFee + "]";
 	}
+
 }

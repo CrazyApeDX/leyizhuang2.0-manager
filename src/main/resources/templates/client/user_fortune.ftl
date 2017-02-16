@@ -49,16 +49,24 @@
                 </div>
             </section>
             
-            <section class="coupon">
-                <a href="/user/coupon/1">
-                    <div class="div1">我的产品劵</div>
-                    <div class="div2"><#if totalNumber??>${totalNumber!'0'}</#if>张</div>
-                </a>
-            </section>
+            <#if user.userType==1||user.userType==2>
+	            <section class="coupon">
+	                <a href="/user/credit">
+	                    <div class="div1" style="background-image: url(/client/images/x_icon_credit_cert.png)">我的信用金</div>
+	                    <div class="div2"><#if user.credit??>${user.credit?string("0.00")}<#else>0</#if></div>
+	                </a>
+	            </section>
+            </#if>
             <section class="coupon cash-coupon">
                 <a href="/user/coupon/0">
                     <div class="div1">我的现金劵</div>
                     <div class="div2">￥<#if no_product_total??>${no_product_total?string("0.00")}<#else>0</#if></div>
+                </a>
+            </section>
+            <section class="coupon">
+                <a href="/user/coupon/1">
+                    <div class="div1">我的产品劵</div>
+                    <div class="div2"><#if totalNumber??>${totalNumber!'0'}</#if>张</div>
                 </a>
             </section>
         </article>

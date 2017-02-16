@@ -150,10 +150,14 @@ public class TdUser {
 	@Column(length = 1, nullable = false)
 	private Integer identityType;
 	
-	// 导购欠款额度
+	// 现有导购欠款额度
 	@Column(scale = 2, nullable = false)
-	private Double credit = 100000d;
+	private Double credit = 0d;
 
+	// 导购欠款额度限制
+	@Column(scale = 2, nullable = false)
+	private Double creditLimit = 0d;
+	
 	public Long getId() {
 		return id;
 	}
@@ -412,6 +416,14 @@ public class TdUser {
 		this.credit = credit;
 	}
 
+	public Double getCreditLimit() {
+		return creditLimit;
+	}
+
+	public void setCreditLimit(Double creditLimit) {
+		this.creditLimit = creditLimit;
+	}
+
 	@Override
 	public String toString() {
 		return "TdUser [id=" + id + ", shippingAddressList=" + shippingAddressList + ", balance=" + balance
@@ -423,6 +435,6 @@ public class TdUser {
 				+ birthday + ", customerId=" + customerId + ", opUser=" + opUser + ", isLogin=" + isLogin
 				+ ", lastVisitTime=" + lastVisitTime + ", loginSession=" + loginSession + ", sellerId=" + sellerId
 				+ ", sellerName=" + sellerName + ", diyCode=" + diyCode + ", isCashOnDelivery=" + isCashOnDelivery
-				+ ", identityType=" + identityType + ", credit=" + credit + "]";
+				+ ", identityType=" + identityType + ", credit=" + credit + ", creditLimit=" + creditLimit + "]";
 	}
 }
