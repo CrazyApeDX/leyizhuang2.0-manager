@@ -415,6 +415,10 @@ public class TdOrder {
 	// 剩余上楼费
 	@Column(length = 10, scale = 2)
 	private Double upstairsLeftFee = 0d;
+	
+	// 公司承担的运费
+	@Column(length = 10, scale = 2)
+	private Double companyDeliveryFee = 0d;
 
 	public Double getRefund() {
 		return refund;
@@ -1175,5 +1179,15 @@ public class TdOrder {
 	public void setUpstairsLeftFee(Double upstairsLeftFee) {
 		this.upstairsLeftFee = upstairsLeftFee;
 	}
+
+	public Double getCompanyDeliveryFee() {
+		return companyDeliveryFee;
+	}
+
+	public void setCompanyDeliveryFee(Double companyDeliveryFee) {
+		this.companyDeliveryFee = companyDeliveryFee;
+	}
+	
+	
 	
 }

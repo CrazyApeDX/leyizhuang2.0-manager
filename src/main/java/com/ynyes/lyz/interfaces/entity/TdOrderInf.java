@@ -154,6 +154,10 @@ public class TdOrderInf extends TdInfBaseEntity {
 	// 新增字段：信用金
 	@Column(scale = 2, nullable = false)
 	private Double creditAmt = 0d;
+	
+	// 新增字段： 华润公司承担运费
+	@Column(scale = 2, nullable = false)
+	private Double companyDeliveryFee = 0d;
 
 	public Long getSobId() {
 		return sobId;
@@ -426,6 +430,16 @@ public class TdOrderInf extends TdInfBaseEntity {
 	public void setCreditAmt(Double creditAmt) {
 		this.creditAmt = creditAmt;
 	}
+	
+	
+
+	public Double getCompanyDeliveryFee() {
+		return companyDeliveryFee;
+	}
+
+	public void setCompanyDeliveryFee(Double companyDeliveryFee) {
+		this.companyDeliveryFee = companyDeliveryFee;
+	}
 
 	@Override
 	public String toString() {
@@ -439,6 +453,9 @@ public class TdOrderInf extends TdInfBaseEntity {
 				+ ", payDate=" + payDate + ", payAmt=" + payAmt + ", prepayAmt=" + prepayAmt + ", recAmt=" + recAmt
 				+ ", attribute1=" + attribute1 + ", attribute2=" + attribute2 + ", attribute3=" + attribute3
 				+ ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + ", couponFlag=" + couponFlag
-				+ ", deliveryFee=" + deliveryFee + "]";
+				+ ", deliveryFee=" + deliveryFee + ", creditAmt=" + creditAmt + ", companyDeliveryFee="
+				+ companyDeliveryFee + "]";
 	}
+
+	
 }

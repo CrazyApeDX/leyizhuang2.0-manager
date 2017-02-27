@@ -98,8 +98,10 @@ function downloaddate(type)
                     <span>配送考核报表</span>
                 <#elseif 12==statusId>
                     <span>加盟商对账报表</span>    
+                <#elseif 14==statusId>
+                    <span>乐易装华润运费报表</span>    
                 </#if>
-            </#if>
+            </#if> 
     </div>
     <!--/导航栏-->
     <!--工具栏-->

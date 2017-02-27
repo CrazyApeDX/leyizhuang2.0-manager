@@ -355,7 +355,12 @@ public class TdInterfaceService {
 		} else {
 			orderInf.setDeliveryFee(0d);
 		}
-
+		Double companyDeliveryFee = tdOrder.getCompanyDeliveryFee();
+		if (null != companyDeliveryFee && companyDeliveryFee > 0d) {
+			orderInf.setCompanyDeliveryFee(companyDeliveryFee);
+		} else {
+			orderInf.setCompanyDeliveryFee(0d);
+		}
 		tdOrderInfService.save(orderInf);
 
 		// 商品TdOrderGoodsInf
