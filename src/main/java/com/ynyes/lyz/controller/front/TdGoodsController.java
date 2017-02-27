@@ -387,6 +387,7 @@ public class TdGoodsController {
 					Long.parseLong(goodsId_quantity[1]));
 			cartGoods.setGoodsTitle(goods.getTitle());
 			cartGoods.setGoodsCoverImageUri(goods.getCoverImageUri());
+			cartGoods.setIsWallAccessory(goods.getIsWallAccessory());
 			if (null != priceListItem) {
 				cartGoods.setPrice(priceListItem.getSalePrice());
 				cartGoods.setRealPrice(priceListItem.getRealSalePrice());
@@ -837,6 +838,7 @@ public class TdGoodsController {
 							cart.setGoodsCoverImageUri(orderGoods.getGoodsCoverImageUri());
 							cart.setQuantity(orderGoods.getQuantity());
 							cart.setSku(orderGoods.getSku());
+							cart.setIsWallAccessory(orderGoods.getIsWallAccessory());
 							// 设置实时价格
 
 							if (null != isCoupon && isCoupon) {

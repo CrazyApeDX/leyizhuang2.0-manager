@@ -1306,6 +1306,7 @@ public class TdCommonService {
 			goods.setCashNumber(0L);
 			goods.setIsCoupon(cart.getIsCoupon());
 			goods.setOwnerGoodsSku(cart.getOwnerGoodsSku());
+			goods.setIsWallAccessory(cart.getIsWallAccessory());
 			if (null != goods.getIsCoupon() && goods.getIsCoupon()) {
 				virtual.setIsCoupon(true);
 			}
@@ -1318,7 +1319,7 @@ public class TdCommonService {
 		virtual = this.getGift(req, virtual);
 
 		// 获取运费
-		Double fee = 0.00;
+		//Double fee = 0.00;
 		// TdSubdistrict subdistrict =
 		// tdSubdistrictService.findOne(defaultAddress.getSubdistrictId());
 		// if (null == subdistrict) {
@@ -1328,8 +1329,13 @@ public class TdCommonService {
 		// if (null == fee) {
 		// fee = 0.00;
 		// }
-		fee = settlementService.countOrderDeliveryFee(user, virtual);
-		virtual.setDeliverFee(fee);
+		
+		//fee = settlementService.countOrderDeliveryFee(user, virtual);
+		Map<String, Double> depiveryFeeMap = new HashMap<>();
+		depiveryFeeMap = settlementService.countOrderDeliveryFee(user, virtual);
+		
+		virtual.setDeliverFee(depiveryFeeMap.get("user_delivery_fee"));
+		virtual.setCompanyDeliveryFee(depiveryFeeMap.get("company_delivery_fee"));
 
 		// 券订单不能使用线下支付的方式
 		if (null != virtual.getIsCoupon() && virtual.getIsCoupon()) {

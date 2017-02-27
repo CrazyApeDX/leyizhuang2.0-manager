@@ -113,7 +113,11 @@ public class TdCartGoods {
 	//调色包归属商品SKU zp
 	@Column
 	private String ownerGoodsSku;
-
+	
+	//是否墙面辅料产品
+	@Column(nullable=false)
+	private Boolean isWallAccessory;
+	
 	public Long getId() {
 		return id;
 	}
@@ -289,5 +293,15 @@ public class TdCartGoods {
 	public void setOwnerGoodsSku(String ownerGoodsSku) {
 		this.ownerGoodsSku = ownerGoodsSku;
 	}
+
+	public Boolean getIsWallAccessory() {
+		return isWallAccessory;
+	}
+
+	public void setIsWallAccessory(Boolean isWallAccessory) {
+		this.isWallAccessory = isWallAccessory;
+	}
+	
+	
 	
 }

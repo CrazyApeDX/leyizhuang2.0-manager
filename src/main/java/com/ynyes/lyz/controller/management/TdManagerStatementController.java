@@ -35,6 +35,7 @@ import com.ynyes.lyz.entity.TdGoodsInOut;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
+import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOwn;
 import com.ynyes.lyz.entity.TdReceipt;
 import com.ynyes.lyz.entity.TdReserveOrder;
@@ -44,6 +45,7 @@ import com.ynyes.lyz.entity.TdSalesDetail;
 import com.ynyes.lyz.entity.TdSalesForContinuousBuy;
 import com.ynyes.lyz.entity.TdSubOwn;
 import com.ynyes.lyz.entity.TdWareHouse;
+import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
 import com.ynyes.lyz.service.TdActiveUserService;
 import com.ynyes.lyz.service.TdAgencyFundService;
 import com.ynyes.lyz.service.TdCityService;
@@ -55,6 +57,7 @@ import com.ynyes.lyz.service.TdGatheringService;
 import com.ynyes.lyz.service.TdGoodsInOutService;
 import com.ynyes.lyz.service.TdManagerRoleService;
 import com.ynyes.lyz.service.TdManagerService;
+import com.ynyes.lyz.service.TdOrderDeliveryFeeDetailService;
 import com.ynyes.lyz.service.TdOwnService;
 import com.ynyes.lyz.service.TdReceiptService;
 import com.ynyes.lyz.service.TdReserveOrderService;
@@ -118,6 +121,10 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	
 	@Autowired
 	TdSalesForContinuousBuyService tdSalesForContinuousBuyService;
+	
+	@Autowired
+	TdOrderDeliveryFeeDetailService tdOrderDeliveryFeeDetailService;
+	
 	
 	
     /*
@@ -477,6 +484,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="加盟商对账报表";
 		}else if(statusId==13){
 			fileName="会员连续购买记录";
+		}else if(statusId==14){
+			fileName="乐易装运费报表";
 		}
 		return fileName;
 	}
@@ -519,17 +528,13 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=garmentFranchisor(begin, end, diyCode, cityName, username, roleDiyIds);
 		}else if(statusId==13){//会员连续月份购买报表
 			wb=continuousBuyBook(begin,end,diyCode,cityName,username,roleDiyIds);
+		}else if(statusId==14){//乐易装华润运费报表
+			wb=LyzHrDeliveryFeeBook(begin,end,diyCode,cityName,username,roleDiyIds);
 		}
 		return wb;
 	}
 	
-
 	
-
-	
-
-	
-
 	/**
 	 * 出退货明细报表
 	 * 查询条件增加管理员管辖门店
@@ -612,7 +617,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//客户名称
 				row.createCell(7).setCellValue(objToString(goodsInOut.getRealName()));
 				//客户电话
-				row.createCell(8).setCellValue(objToString(goodsInOut.getUsername()));
+				row.createCell(8).setCellValue(objToString(replacePhoneNumberWithStar(goodsInOut.getUsername())));
 				//产品编号
 				row.createCell(9).setCellValue(objToString(goodsInOut.getSku()));
 				//产品名称
@@ -734,7 +739,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//客户名称
 				row.createCell(5).setCellValue(objToString(agencyFund.getRealUserRealName()));
 				//客户电话
-				row.createCell(6).setCellValue(objToString(agencyFund.getRealUserUsername()));
+				row.createCell(6).setCellValue(objToString(replacePhoneNumberWithStar(agencyFund.getRealUserUsername())));
 				//需代收金额
 				if (null != agencyFund.getPayPrice() && !"".equals(agencyFund.getPayPrice())) {
 					row.createCell(7).setCellValue(objToString(agencyFund.getPayPrice()));
@@ -879,7 +884,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	    		}
 	        	if (null != receipt.getUsername()) {
 	        		//会员电话
-	        		row.createCell(4).setCellValue(receipt.getUsername());
+	        		row.createCell(4).setCellValue(replacePhoneNumberWithStar(receipt.getUsername()));
 				}
 	        	if (null != receipt.getSellerRealName())
 	        	{//导购
@@ -1017,7 +1022,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//客户名称
 				row.createCell(6).setCellValue(objToString(salesDetail.getRealName()));
 				//客户电话
-				row.createCell(7).setCellValue(objToString(salesDetail.getUsername()));
+				row.createCell(7).setCellValue(objToString(replacePhoneNumberWithStar(salesDetail.getUsername())));
 				//产品编号
 				row.createCell(8).setCellValue(objToString(salesDetail.getSku()));
 				//产品名称
@@ -1136,7 +1141,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				{//原订单号
 					row.createCell(1).setCellValue(returnReport.getOrderNumber());
 					row.createCell(9).setCellValue(returnReport.getRealName());//客户名称 
-					row.createCell(10).setCellValue(returnReport.getUsername());// 客户电话
+					row.createCell(10).setCellValue(replacePhoneNumberWithStar(returnReport.getUsername()));// 客户电话
 					row.createCell(6).setCellValue(returnReport.getSellerRealName());//导购
 					//					        	row.createCell(16).setCellValue(returnReport.getCashCoupon());//退现金卷金额
 					//					            row.createCell(17).setCellValue(returnReport.getProductCoupon());//退产品卷金额
@@ -1303,7 +1308,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//客户名称
 				row.createCell(7).setCellValue(objToString(goodsInOut.getRealName()));
 				//客户电话
-				row.createCell(8).setCellValue(objToString(goodsInOut.getUsername()));
+				row.createCell(8).setCellValue(objToString(replacePhoneNumberWithStar(goodsInOut.getUsername())));
 				//产品编号
 				row.createCell(9).setCellValue(objToString(goodsInOut.getSku()));
 				//产品名称
@@ -1440,7 +1445,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        	row.createCell(6).setCellValue(objToString(sales.getOrderTime()));
 	        	
 	        	//会员编号
-				row.createCell(7).setCellValue(objToString(sales.getUsername()));
+				row.createCell(7).setCellValue(objToString(replacePhoneNumberWithStar(sales.getUsername())));
 				
 				//会员名称
 				row.createCell(8).setCellValue(objToString(sales.getRealName()));
@@ -1631,7 +1636,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		        	row.createCell(4).setCellValue(objToString(own.getSellerUsername()));
 		        	
 		        	//客户电话
-		        	row.createCell(5).setCellValue(objToString(own.getUsername()));
+		        	row.createCell(5).setCellValue(objToString(replacePhoneNumberWithStar(own.getUsername())));
 		        	
 		        	//客户姓名
 					row.createCell(6).setCellValue(objToString(own.getRealUserRealName()));
@@ -1786,7 +1791,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		        	row.createCell(5).setCellValue(objToString(tdReserveOrder.getRealUserRealName()));
 		        	
 		        	//会员电话
-		        	row.createCell(6).setCellValue(objToString(tdReserveOrder.getUsername()));
+		        	row.createCell(6).setCellValue(objToString(replacePhoneNumberWithStar(tdReserveOrder.getUsername())));
 		        	
 		        	//销顾姓名
 					row.createCell(7).setCellValue(objToString(tdReserveOrder.getSellerRealName()));
@@ -2078,215 +2083,213 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		//查询要写入excel的行记录
 		List<GarmentFranchisorReport> garmengFranchisorList = tdGarmentFranchisorReportService.queryDownList(begin, end, cityName, diyCode, roleDiyIds);
 		
-		 int maxRowNum = 60000;
-	        int maxSize=0;
-	        if(garmengFranchisorList!=null){
-	        	maxSize=garmengFranchisorList.size();
-	        }
-	        int sheets = maxSize/maxRowNum+1;
-		
-	        
-			//写入excel文件数据信息
-			for(int i=0;i<sheets;i++){
-				
-				// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet  
-		        HSSFSheet sheet = wb.createSheet("第"+(i+1)+"页");  
-		        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short  
-		        //列宽
-		        int[] widths={18,18,18,18,20,18,20,18,30,30,
-		        		25,25,18,18,18,18,18,18};
-		        sheetColumnWidth(sheet,widths);
-		        
-		        // 第四步，创建单元格，并设置值表头 设置表头居中  
-		        HSSFCellStyle style = wb.createCellStyle();  
-		        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
-		        style.setWrapText(true);
+		int maxRowNum = 60000;
+		int maxSize = 0;
+		if (garmengFranchisorList != null) {
+			maxSize = garmengFranchisorList.size();
+		}
+		int sheets = maxSize / maxRowNum + 1;
 
-		       	//设置标题
-		        HSSFRow row = sheet.createRow((int) 0); 
-		        
-		        String[] cellValues={"城市","门店名称","仓库名称","配送员名称","配送员电话","会员姓名","会员电话","导购姓名","主单号",
-		        		"分单号","订单时间","配送时间","订单状态","预存款","第三方支付支付宝","第三方支付银联","现金支付","现金券总额","总金额" };
-				cellDates(cellValues, style, row);
-				
-				for(int j=0;j<maxRowNum;j++)
-		        {
-					if(j+i*maxRowNum>=maxSize){
+		// 写入excel文件数据信息
+		for (int i = 0; i < sheets; i++) {
+
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+			HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
+			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+			// 列宽
+			int[] widths = { 18, 18, 18, 18, 20, 18, 20, 18, 30, 30, 25, 25, 18, 18, 18, 18, 18, 18 };
+			sheetColumnWidth(sheet, widths);
+
+			// 第四步，创建单元格，并设置值表头 设置表头居中
+			HSSFCellStyle style = wb.createCellStyle();
+			style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+			style.setWrapText(true);
+
+			// 设置标题
+			HSSFRow row = sheet.createRow((int) 0);
+
+			String[] cellValues = { "城市", "门店名称", "仓库名称", "配送员名称", "配送员电话", "会员姓名", "会员电话", "导购姓名", "主单号", "分单号",
+					"订单时间", "配送时间", "订单状态", "预存款", "第三方支付支付宝", "第三方支付银联", "现金支付", "现金券总额", "总金额" };
+			cellDates(cellValues, style, row);
+
+			for (int j = 0; j < maxRowNum; j++) {
+				if (j + i * maxRowNum >= maxSize) {
+					break;
+				}
+				GarmentFranchisorReport garmentFranchisorReport = garmengFranchisorList.get(j + i * maxRowNum);
+				row = sheet.createRow((int) j + 1);
+
+				// 城市名称
+
+				if (null != garmentFranchisorReport.getCityName()) {
+					row.createCell(0).setCellValue(objToString(garmentFranchisorReport.getCityName()));
+				} else {
+					row.createCell(0).setCellValue(" ");
+				}
+
+				// 门店名称
+
+				if (null != garmentFranchisorReport.getDiySiteName()) {
+					row.createCell(1).setCellValue(objToString(garmentFranchisorReport.getDiySiteName()));
+				} else {
+					row.createCell(1).setCellValue(" ");
+				}
+
+				// 仓库名称
+				if (null != garmentFranchisorReport.getWhName()) {
+					row.createCell(2).setCellValue(objToString(garmentFranchisorReport.getWhName()));
+				} else {
+					row.createCell(2).setCellValue(objToString(" "));
+				}
+
+				// 配送员姓名
+				if (null != garmentFranchisorReport.getDeliveryName()) {
+					row.createCell(3).setCellValue(objToString(garmentFranchisorReport.getDeliveryName()));
+				} else {
+					row.createCell(3).setCellValue(objToString(" "));
+				}
+
+				// 配送员电话
+				if (null != garmentFranchisorReport.getDeliveryPhone()) {
+					row.createCell(4).setCellValue(objToString(garmentFranchisorReport.getDeliveryPhone()));
+				} else {
+					row.createCell(4).setCellValue(objToString(" "));
+				}
+
+				// 会员姓名
+				if (null != garmentFranchisorReport.getRealUserRealName()) {
+					row.createCell(5).setCellValue(objToString(garmentFranchisorReport.getRealUserRealName()));
+				} else {
+					row.createCell(5).setCellValue(objToString(" "));
+				}
+
+				// 会员电话
+				if (null != garmentFranchisorReport.getRealUserUsername()) {
+					row.createCell(6).setCellValue(
+							objToString(replacePhoneNumberWithStar(garmentFranchisorReport.getRealUserUsername())));
+				} else {
+					row.createCell(6).setCellValue(objToString(" "));
+				}
+
+				// 导购姓名
+				if (null != garmentFranchisorReport.getSellerRealName()) {
+					row.createCell(7).setCellValue(objToString(garmentFranchisorReport.getSellerRealName()));
+				} else {
+					row.createCell(7).setCellValue(objToString(" "));
+				}
+
+				// 主单号
+				if (null != garmentFranchisorReport.getMainOrderNumber()) {
+					row.createCell(8).setCellValue(objToString(garmentFranchisorReport.getMainOrderNumber()));
+				} else {
+					row.createCell(8).setCellValue(objToString(" "));
+				}
+
+				// 分单号
+				if (null != garmentFranchisorReport.getOrderNumber()) {
+					row.createCell(9).setCellValue(objToString(garmentFranchisorReport.getOrderNumber()));
+				} else {
+					row.createCell(9).setCellValue(objToString(" "));
+				}
+
+				// 订单时间
+				if (null != garmentFranchisorReport.getOrderTime()) {
+					row.createCell(10).setCellValue(objToString(garmentFranchisorReport.getOrderTime()));
+				} else {
+					row.createCell(10).setCellValue(objToString(" "));
+				}
+
+				// 配送时间
+				if (null != garmentFranchisorReport.getDeliveryTime()) {
+					row.createCell(11).setCellValue(objToString(garmentFranchisorReport.getDeliveryTime()));
+				} else {
+					row.createCell(11).setCellValue(objToString(" "));
+				}
+
+				// 订单状态
+				if (null != garmentFranchisorReport.getStatusId()) {
+					switch (garmentFranchisorReport.getStatusId()) {
+					case 4:
+						row.createCell(12).setCellValue("待签收");
+						break;
+					case 5:
+						if (garmentFranchisorReport.getOrderNumber().contains("T")) {
+							row.createCell(12).setCellValue("退货已完成");
+						} else {
+							row.createCell(12).setCellValue("待评价");
+						}
+						break;
+					case 6:
+						row.createCell(12).setCellValue("已完成");
+						break;
+					case 7:
+						row.createCell(12).setCellValue("已取消");
+						break;
+					case 8:
+						row.createCell(12).setCellValue("已删除");
+						break;
+					case 9:
+						row.createCell(12).setCellValue("退货中");
+						break;
+					case 10:
+						row.createCell(12).setCellValue("退货确认");
+						break;
+					case 11:
+						row.createCell(12).setCellValue("退货取消");
+						break;
+					case 12:
+						row.createCell(12).setCellValue("退货完成");
+						break;
+					default:
 						break;
 					}
-					GarmentFranchisorReport garmentFranchisorReport= garmengFranchisorList.get(j+i*maxRowNum);
-		        	row = sheet.createRow((int) j + 1);
-		        	
-		        	//城市名称
-		        	
-		        	if(null != garmentFranchisorReport.getCityName()){
-		        		row.createCell(0).setCellValue(objToString(garmentFranchisorReport.getCityName()));
-		        	}else{
-		        		row.createCell(0).setCellValue(" ");
-		        	}
-		        	
-		        	//门店名称
-		        	
-		        	if(null != garmentFranchisorReport.getDiySiteName()){
-		        		row.createCell(1).setCellValue(objToString(garmentFranchisorReport.getDiySiteName()));
-		        	}else{
-		        		row.createCell(1).setCellValue(" ");
-		        	}
-		        	
-		        	//仓库名称
-		        	if (null != garmentFranchisorReport.getWhName()) {
-		        		row.createCell(2).setCellValue(objToString(garmentFranchisorReport.getWhName()));
-					}else{
-						row.createCell(2).setCellValue(objToString(" "));
-					}
-		        	
-		        	//配送员姓名
-		        	if (null != garmentFranchisorReport.getDeliveryName()) {
-		        		row.createCell(3).setCellValue(objToString(garmentFranchisorReport.getDeliveryName()));
-					}else{
-						row.createCell(3).setCellValue(objToString(" "));
-					}
-					
-		        	//配送员电话
-		        	if (null != garmentFranchisorReport.getDeliveryPhone()) {
-		        		row.createCell(4).setCellValue(objToString(garmentFranchisorReport.getDeliveryPhone()));
-					}else{
-						row.createCell(4).setCellValue(objToString(" "));
-					}
-		        	
-		        	//会员姓名
-		        	if (null != garmentFranchisorReport.getRealUserRealName()) {
-		        		row.createCell(5).setCellValue(objToString(garmentFranchisorReport.getRealUserRealName()));
-					}else{
-						row.createCell(5).setCellValue(objToString(" "));
-					}
-		        	
-		        	//会员电话
-		        	if (null != garmentFranchisorReport.getRealUserUsername()) {
-		        		row.createCell(6).setCellValue(objToString(garmentFranchisorReport.getRealUserUsername()));
-					}else{
-						row.createCell(6).setCellValue(objToString(" "));
-					}
-		        	
-		        	//导购姓名
-		        	if (null != garmentFranchisorReport.getSellerRealName()) {
-		        		row.createCell(7).setCellValue(objToString(garmentFranchisorReport.getSellerRealName()));
-					}else{
-						row.createCell(7).setCellValue(objToString(" "));
-					}
-		        	
-		        	//主单号
-		        	if (null != garmentFranchisorReport.getMainOrderNumber()) {
-		        		row.createCell(8).setCellValue(objToString(garmentFranchisorReport.getMainOrderNumber()));
-					}else{
-						row.createCell(8).setCellValue(objToString(" "));
-					}
-		        	
-		        	//分单号
-		        	if (null != garmentFranchisorReport.getOrderNumber()) {
-		        		row.createCell(9).setCellValue(objToString(garmentFranchisorReport.getOrderNumber()));
-					}else{
-						row.createCell(9).setCellValue(objToString(" "));
-					}
-		        	
-		        	//订单时间
-		        	if (null != garmentFranchisorReport.getOrderTime()) {
-		        		row.createCell(10).setCellValue(objToString(garmentFranchisorReport.getOrderTime()));
-					}else{
-						row.createCell(10).setCellValue(objToString(" "));
-					}
-		        	
-		        	//配送时间
-		        	if (null != garmentFranchisorReport.getDeliveryTime()) {
-		        		row.createCell(11).setCellValue(objToString(garmentFranchisorReport.getDeliveryTime()));
-					}else{
-						row.createCell(11).setCellValue(objToString(" "));
-					}
-		        	
-		        	
-		        	//订单状态
-		        	if (null != garmentFranchisorReport.getStatusId()) {
-		        		switch (garmentFranchisorReport.getStatusId()) {
-						case 4:
-							row.createCell(12).setCellValue("待签收");
-							break;
-						case 5:
-							if(garmentFranchisorReport.getOrderNumber().contains("T")){
-								row.createCell(12).setCellValue("退货已完成");
-							}else{
-								row.createCell(12).setCellValue("待评价");
-							}
-							break;
-						case 6:
-							row.createCell(12).setCellValue("已完成");
-							break;
-						case 7:
-							row.createCell(12).setCellValue("已取消");
-							break;
-						case 8:
-							row.createCell(12).setCellValue("已删除");
-							break;
-						case 9:
-							row.createCell(12).setCellValue("退货中");
-							break;
-						case 10:
-							row.createCell(12).setCellValue("退货确认");
-							break;
-						case 11:
-							row.createCell(12).setCellValue("退货取消");
-							break;
-						case 12:
-							row.createCell(12).setCellValue("退货完成");
-							break;
-						default:
-							break;
-						}
-					}else{
-						row.createCell(12).setCellValue(objToString(" "));
-					}
-		        	
-		        	//预存款
-		        	if (null != garmentFranchisorReport.getActualPay()) {
-		        		row.createCell(13).setCellValue(objToString(garmentFranchisorReport.getActualPay()));
-					}else{
-						garmentFranchisorReport.setActualPay(0.0);
-						row.createCell(13).setCellValue(objToString("0"));
-					}
-		        	
-		        	//第三方支付支付宝及第三方支付银联
-		        	if(null != garmentFranchisorReport.getPayTypeId() && garmentFranchisorReport.getPayTypeId()==3){
-		        		row.createCell(14).setCellValue(objToString(garmentFranchisorReport.getOtherPay()));
-		        		row.createCell(15).setCellValue("0");
-		        	}else if(null != garmentFranchisorReport.getPayTypeId() && garmentFranchisorReport.getPayTypeId()==5){
-		        		row.createCell(14).setCellValue("0");
-		        		row.createCell(15).setCellValue(objToString(garmentFranchisorReport.getOtherPay()));
-		        	}else{
-		        		row.createCell(14).setCellValue("0");
-		        		row.createCell(15).setCellValue("0");
-		        	}
-		        	
-		        	//现金支付
-		        	if (null != garmentFranchisorReport.getCashPay()) {
-		        		row.createCell(16).setCellValue(objToString(garmentFranchisorReport.getCashPay()));
-					}else{
-						garmentFranchisorReport.setCashPay(0.0);
-						row.createCell(16).setCellValue(objToString("0"));
-					}
-		        	
-		        	//现金券总额
-		        	if (null != garmentFranchisorReport.getCashCoupon()) {
-		        		row.createCell(17).setCellValue(objToString(garmentFranchisorReport.getCashCoupon()));
-					}else{
-						row.createCell(17).setCellValue(objToString("0"));
-					}
-		        	
-		         	
-		        	//总额
-		        	row.createCell(18).setCellValue(objToString(garmentFranchisorReport.getActualPay()+garmentFranchisorReport.getOtherPay()+garmentFranchisorReport.getCashCoupon()));
-				
+				} else {
+					row.createCell(12).setCellValue(objToString(" "));
 				}
+
+				// 预存款
+				if (null != garmentFranchisorReport.getActualPay()) {
+					row.createCell(13).setCellValue(objToString(garmentFranchisorReport.getActualPay()));
+				} else {
+					garmentFranchisorReport.setActualPay(0.0);
+					row.createCell(13).setCellValue(objToString("0"));
+				}
+
+				// 第三方支付支付宝及第三方支付银联
+				if (null != garmentFranchisorReport.getPayTypeId() && garmentFranchisorReport.getPayTypeId() == 3) {
+					row.createCell(14).setCellValue(objToString(garmentFranchisorReport.getOtherPay()));
+					row.createCell(15).setCellValue("0");
+				} else if (null != garmentFranchisorReport.getPayTypeId()
+						&& garmentFranchisorReport.getPayTypeId() == 5) {
+					row.createCell(14).setCellValue("0");
+					row.createCell(15).setCellValue(objToString(garmentFranchisorReport.getOtherPay()));
+				} else {
+					row.createCell(14).setCellValue("0");
+					row.createCell(15).setCellValue("0");
+				}
+
+				// 现金支付
+				if (null != garmentFranchisorReport.getCashPay()) {
+					row.createCell(16).setCellValue(objToString(garmentFranchisorReport.getCashPay()));
+				} else {
+					garmentFranchisorReport.setCashPay(0.0);
+					row.createCell(16).setCellValue(objToString("0"));
+				}
+
+				// 现金券总额
+				if (null != garmentFranchisorReport.getCashCoupon()) {
+					row.createCell(17).setCellValue(objToString(garmentFranchisorReport.getCashCoupon()));
+				} else {
+					row.createCell(17).setCellValue(objToString("0"));
+				}
+
+				// 总额
+				row.createCell(18).setCellValue(objToString(garmentFranchisorReport.getActualPay()
+						+ garmentFranchisorReport.getOtherPay() + garmentFranchisorReport.getCashCoupon()));
+
 			}
-	        
+		}
+
 		return wb;
 	}
 	
@@ -2404,14 +2407,14 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				}
 				// 会员编号
 				if (null != continuousBuy.getUsername()) {
-					row.createCell(5).setCellValue(objToString(continuousBuy.getUsername()));
+					row.createCell(5).setCellValue(objToString(replacePhoneNumberWithStar(continuousBuy.getUsername())));
 				} else {
 					row.createCell(5).setCellValue(" ");
 				}
 
 				// 会员电话
 				if (null != continuousBuy.getUsername()) {
-					row.createCell(6).setCellValue(objToString(continuousBuy.getUsername()));
+					row.createCell(6).setCellValue(objToString(replacePhoneNumberWithStar(continuousBuy.getUsername())));
 				} else {
 					row.createCell(6).setCellValue(" ");
 				}
@@ -2449,6 +2452,233 @@ public class TdManagerStatementController extends TdManagerBaseController {
 
 		return wb;
 	}
+	
+	private HSSFWorkbook LyzHrDeliveryFeeBook(Date begin, Date end, String diyCode, String cityName, String username,
+			List<String> roleDiyIds) {
+		// 创建工作簿
+		HSSFWorkbook wb = new HSSFWorkbook();
+
+		List<TdOrderDeliveryFeeDetail> detailList = tdOrderDeliveryFeeDetailService.queryDownList(begin, end, cityName,
+				diyCode, roleDiyIds);
+		int maxRowNum = 60000;
+		int maxSize = 0;
+		if (detailList != null) {
+			maxSize = detailList.size();
+		}
+		int sheets = maxSize / maxRowNum + 1;
+
+		// 写入excel文件数据信息
+		for (int i = 0; i < sheets; i++) {
+
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+			HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
+			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+			// 列宽
+			int[] widths = { 20, 30, 20, 20, 15, 15, 20, 18, 18, 18, 25, 25, 18, 18, 18, 18, 18, 18, 18, 18, 18 };
+			sheetColumnWidth(sheet, widths);
+
+			// 第四步，创建单元格，并设置值表头 设置表头居中
+			HSSFCellStyle style = wb.createCellStyle();
+			style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+			style.setWrapText(true);
+
+			// 设置标题
+			HSSFRow row = sheet.createRow((int) 0);
+
+			String[] cellValues = { "门店名称", "主单号", "下单日期", "封车日期", "订单状态", "导购", "客户名称", "客户电话", "大桶漆配送费", "硝基漆10L配送费",
+					"小桶漆/木器漆配送费", "4kg以下漆类配送费", "墙面辅料费", "客户应承担运费", "打折减免客户运费", "购辅料减免客户运费", "客户实际运费", "商户应承担运费",
+					"打折减免商户运费", "购辅料减免商户运费", "商户实际运费" };
+			cellDates(cellValues, style, row);
+
+			for (int j = 0; j < maxRowNum; j++) {
+				if (j + i * maxRowNum >= maxSize) {
+					break;
+				}
+				TdOrderDeliveryFeeDetail detail = detailList.get(j + i * maxRowNum);
+				row = sheet.createRow((int) j + 1);
+
+				// 门店名称
+				if (null != detail.getDiySiteName()) {
+					row.createCell(0).setCellValue(objToString(detail.getDiySiteName()));
+				} else {
+					row.createCell(0).setCellValue(" ");
+				}
+
+				// 主单号
+
+				if (null != detail.getMainOrderNumber()) {
+					row.createCell(1).setCellValue(objToString(detail.getMainOrderNumber()));
+				} else {
+					row.createCell(1).setCellValue(" ");
+				}
+
+				// 下单日期
+				if (null != detail.getOrderTime()) {
+					row.createCell(2).setCellValue(objToString(detail.getOrderTime()));
+				} else {
+					row.createCell(2).setCellValue(objToString(" "));
+				}
+
+				// 封车日期
+				if (null != detail.getSendTime()) {
+					row.createCell(3).setCellValue(objToString(detail.getSendTime()));
+				} else {
+					row.createCell(3).setCellValue(objToString(" "));
+				}
+
+				// 订单状态
+				if (null != detail.getStatusId()) {
+					switch (detail.getStatusId()) {
+					case 4:
+						row.createCell(4).setCellValue("待签收");
+						break;
+					case 5:
+						row.createCell(4).setCellValue("待评价");
+						break;
+					case 6:
+						row.createCell(4).setCellValue("已完成");
+						break;
+					case 7:
+						row.createCell(4).setCellValue("已取消");
+						break;
+					case 8:
+						row.createCell(4).setCellValue("已删除");
+						break;
+					case 9:
+						row.createCell(4).setCellValue("退货中");
+						break;
+					case 10:
+						row.createCell(4).setCellValue("退货确认");
+						break;
+					case 11:
+						row.createCell(4).setCellValue("退货取消");
+						break;
+					case 12:
+						row.createCell(4).setCellValue("退货完成");
+						break;
+					default:
+						break;
+					}
+				} else {
+					row.createCell(4).setCellValue(objToString(" "));
+				}
+
+				// 导购
+				if (null != detail.getSellerRealName()) {
+					row.createCell(5).setCellValue(objToString(detail.getSellerRealName()));
+				} else {
+					row.createCell(5).setCellValue(objToString(" "));
+				}
+
+				// 客户名称
+				if (null != detail.getUserRealName()) {
+					row.createCell(6).setCellValue(objToString(detail.getUserRealName()));
+				} else {
+					row.createCell(6).setCellValue(objToString(" "));
+				}
+
+				// 客户电话
+				if (null != detail.getUsername()) {
+					row.createCell(7).setCellValue(objToString(replacePhoneNumberWithStar(detail.getUsername())));
+				} else {
+					row.createCell(7).setCellValue(objToString(" "));
+				}
+
+				// 大桶漆配送费
+				if (null != detail.getBucketsOfPaintFee()) {
+					row.createCell(8).setCellValue(objToString(detail.getBucketsOfPaintFee()));
+				} else {
+					row.createCell(8).setCellValue(objToString("0.00 "));
+				}
+
+				// 硝基漆10L配送费
+				if (null != detail.getNitrolacquerFee()) {
+					row.createCell(9).setCellValue(objToString(detail.getNitrolacquerFee()));
+				} else {
+					row.createCell(9).setCellValue(objToString("0.00 "));
+				}
+
+				// 小桶漆/木器漆配送费
+				if (null != detail.getCarpentryPaintFee()) {
+					row.createCell(10).setCellValue(objToString(detail.getCarpentryPaintFee()));
+				} else {
+					row.createCell(10).setCellValue(objToString("0.00"));
+				}
+
+				// 4kg以下漆类配送费
+				if (null != detail.getBelowFourKiloFee()) {
+					row.createCell(11).setCellValue(objToString(detail.getBelowFourKiloFee()));
+				} else {
+					row.createCell(11).setCellValue(objToString("0.00"));
+				}
+
+				// 墙面辅料金额
+				if (null != detail.getWallAccessories()) {
+					row.createCell(12).setCellValue(objToString(detail.getWallAccessories()));
+				} else {
+					row.createCell(12).setCellValue(objToString("0.00"));
+				}
+
+				// 客户应承担运费
+				if (null != detail.getConsumerDeliveryFee()) {
+					row.createCell(13).setCellValue(objToString(detail.getConsumerDeliveryFee()));
+				} else {
+
+					row.createCell(13).setCellValue(objToString("0.00"));
+				}
+
+				// 打折减免运费
+				if (null != detail.getConsumerDeliveryFeeDiscount()) {
+					row.createCell(14).setCellValue(objToString(detail.getConsumerDeliveryFeeDiscount()));
+				} else {
+					row.createCell(14).setCellValue("0.00");
+				}
+
+				// 购辅料减免运费
+				if (null != detail.getConsumerDeliveryFeeReduce()) {
+					row.createCell(15).setCellValue(objToString(detail.getConsumerDeliveryFeeReduce()));
+				} else {
+					row.createCell(15).setCellValue(objToString("0.00"));
+				}
+
+				// 客户实际运费
+				if (null != detail.getConsumerDeliveryFeeFinal()) {
+					row.createCell(16).setCellValue(objToString(detail.getConsumerDeliveryFeeFinal()));
+				} else {
+					row.createCell(16).setCellValue(objToString("0.00"));
+				}
+
+				// 公司应承担运费
+				if (null != detail.getCompanyDeliveryFee()) {
+					row.createCell(17).setCellValue(objToString(detail.getCompanyDeliveryFee()));
+				} else {
+					row.createCell(17).setCellValue(objToString("0.00"));
+				}
+
+				// 打折减免公司运费
+				if (null != detail.getCompanyDeliveryFeeDiscount()) {
+					row.createCell(18).setCellValue(objToString(detail.getCompanyDeliveryFeeDiscount()));
+				} else {
+					row.createCell(18).setCellValue(objToString("0.00"));
+				}
+				// 购辅料减免运费
+				if (null != detail.getCompanyDeliveryFeeReduce()) {
+					row.createCell(19).setCellValue(objToString(detail.getCompanyDeliveryFeeReduce()));
+				} else {
+					row.createCell(19).setCellValue(objToString("0.00"));
+				}
+				// 公司实际运费
+				if (null != detail.getCompanyDeliveryFeeFinal()) {
+					row.createCell(20).setCellValue(objToString(detail.getCompanyDeliveryFeeFinal()));
+				} else {
+					row.createCell(20).setCellValue(objToString("0.00"));
+				}
+
+			}
+		}
+		return wb;
+	}
+
 	
 	private String objToString(Object obj) {
 		if (obj == null) {
@@ -2510,6 +2740,13 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		System.out.println(listStr);
 		return listStr;
 		
+	}
+	
+	public String replacePhoneNumberWithStar(String phoneNumber){
+		if(null != phoneNumber && !"".equals(phoneNumber)){
+			return phoneNumber.substring(0,3)+"****"+phoneNumber.substring(7);
+		}
+		return "";
 	}
 	
 }

@@ -135,7 +135,7 @@ public class TdManagerDeliveryFeeController {
 
 	@RequestMapping(value = "/head/save", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> deliveryFeeHeadSave(Long sobId, Long goodsId) {
+	public Map<String, Object> deliveryFeeHeadSave(Long sobId, Long goodsId,Integer goodsTypeId,Integer assumedObjectId) {
 		Map<String, Object> res = new HashMap<>();
 
 		Integer count = tdDeliveryFeeHeadService.countBySobIdAndGoodsId(sobId, goodsId);
@@ -150,6 +150,39 @@ public class TdManagerDeliveryFeeController {
 			head.setGoodsId(goods.getId());
 			head.setGoodsTitle(goods.getTitle());
 			head.setGoodsSku(goods.getCode());
+			head.setGoodsTypeId(goodsTypeId);
+			switch (goodsTypeId) {
+			case 1:
+				head.setGoodsType("大桶内外墙漆");
+				break;
+			case 2:
+				head.setGoodsType("硝基漆10L");
+				break;
+			case 3:
+				head.setGoodsType("小桶内外墙漆");
+				break;
+			case 4:
+				head.setGoodsType("4kg以下漆类");
+				break;
+			case 5:
+				head.setGoodsType("默认分类");
+				break;
+
+			default:
+				break;
+			}
+			head.setAssumedObjectId(assumedObjectId);
+			switch (assumedObjectId) {
+			case 1:
+				head.setAssumedObject("客户");
+				break;
+			case 2:
+				head.setAssumedObject("公司");
+				break;
+			default:
+				break;
+			}
+			
 			tdDeliveryFeeHeadService.save(head);
 
 			res.put("status", 0);

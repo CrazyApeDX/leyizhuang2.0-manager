@@ -59,6 +59,33 @@
 			<input type="hidden" id="sobId" value="${(sobId!'0')?c}">
 		</dd>
 	</dl>
+	<dl>
+        <dt>商品运费分类</dt>
+        <dd>
+            <div class="rule-single-select">
+                <select name="goodsTypeId" id="goodsTypeId" datatype="n">
+        			<option value="">请选择运费类型</option>
+           			<option value="1">大桶内外墙漆</option>
+           			<option value="2">硝基漆10L</option>
+            		<option value="3">小桶内外墙漆/5kg-9kg木器漆</option>
+            		<option value="4">4kg以下漆类</option>
+           			<option value="5">默认分类</option>
+       			</select>
+          </div>
+        </dd>
+    </dl>
+    <dl>
+        <dt>运费承担对象</dt>
+        <dd>
+            <div class="rule-single-select">
+                <select name="assumedObjectId" id="assumedObjectId" datatype="n">
+        			<option value="">请选择承担对象</option>
+           			<option value="1">客户</option>
+           			<option value="2">公司</option>
+       			</select>
+          </div>
+        </dd>
+    </dl>
 	<dl id="search">
 		<dt>商品关键字：</dt>
 		<dd>
@@ -66,6 +93,7 @@
 			<span class="Validform_checktip"></span>
 		</dd>
 	</dl>
+  	
 	<div id="container" >
 		<#include "/site_mag/delivery_fee_head_goods.ftl">
 	</div>
@@ -89,6 +117,8 @@
   		var addHead = function() {
   			var sobId = $('#sobId').val();
   			var goodsId = $("input[name='goodsId']:checked").val();
+  			var goodsTypeId =  $('#goodsTypeId').val();
+  			var assumedObjectId =  $('#assumedObjectId').val();
 
 			if (sobId && goodsId) {
 				$.ajax({
@@ -96,7 +126,9 @@
 					method: 'POST',
 					data: {
 						sobId: sobId,
-						goodsId: goodsId
+						goodsId: goodsId,
+						goodsTypeId: goodsTypeId,
+						assumedObjectId: assumedObjectId
 					},
 					success: function(result) {
 						if (0 === Number(result.status)) {

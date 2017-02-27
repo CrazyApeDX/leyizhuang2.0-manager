@@ -27,6 +27,7 @@ import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOwnMoneyRecord;
 import com.ynyes.lyz.entity.TdPayType;
 import com.ynyes.lyz.entity.TdWareHouse;
+import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.service.TdArticleService;
 import com.ynyes.lyz.service.TdCityService;
@@ -39,6 +40,7 @@ import com.ynyes.lyz.service.TdGoodsService;
 import com.ynyes.lyz.service.TdManagerLogService;
 import com.ynyes.lyz.service.TdManagerRoleService;
 import com.ynyes.lyz.service.TdManagerService;
+import com.ynyes.lyz.service.TdOrderDeliveryFeeDetailService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdOwnMoneyRecordService;
 import com.ynyes.lyz.service.TdPayTypeService;
@@ -113,6 +115,9 @@ public class TdManagerDeliveryFeeChangeController {
 	
 	@Autowired
 	private TdDeliveryFeeChangeLogService tdDeliveryFeeChangeLogService;
+	
+	@Autowired
+	private TdOrderDeliveryFeeDetailService tdOrderDeliveryFeeDetailService;
 
 	@RequestMapping(value = "/list")
 	public String goodsListDialog(String keywords, Integer page, Integer size, String __EVENTTARGET,
@@ -356,6 +361,12 @@ public class TdManagerDeliveryFeeChangeController {
 		String username = order.getUsername();
 		TdUser user = tdUserService.findByUsername(username);
 		tdPriceCountService.countPrice(order, user);
+		TdOrderDeliveryFeeDetail  detail = tdOrderDeliveryFeeDetailService.findByMainOrderNumber(order.getOrderNumber());
+		if(null != detail){
+			detail.setIsCustomerDeliveryFeeModified(true);
+			detail.setConsumerDeliveryFeeFinal(fee);;
+			tdOrderDeliveryFeeDetailService.save(detail);
+		}
 		
 		TdDeliveryFeeChangeLog log = new TdDeliveryFeeChangeLog();
 		log.setManager(manager);

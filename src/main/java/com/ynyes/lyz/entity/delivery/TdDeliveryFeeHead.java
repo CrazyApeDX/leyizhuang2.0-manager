@@ -14,18 +14,34 @@ public class TdDeliveryFeeHead {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-	
+
 	@Column(length = 10, nullable = false)
 	private Long sobId;
-	
+
 	@Column(length = 20, nullable = false)
 	private Long goodsId;
-	
+
 	@Column(length = 40, nullable = false)
 	private String goodsTitle;
 	
 	@Column(length = 20, nullable = false)
 	private String goodsSku;
+
+	// 商品大分类名称
+	@Column(length = 100, nullable = false)
+	private String goodsType;
+
+	// 商品大分类ID(1：大桶内外墙漆 2：硝基漆 3：小桶/木器漆 4：4kg以下漆类)
+	@Column(length = 10, nullable = false)
+	private Integer goodsTypeId;
+
+	// 运费承担对象
+	@Column(length = 100, nullable = false)
+	private String assumedObject;
+
+	// 运费承担对象ID (1、客户    2、公司)
+	@Column(length = 10, nullable = false)
+	private Integer assumedObjectId;
 
 	public Long getId() {
 		return id;
@@ -67,9 +83,47 @@ public class TdDeliveryFeeHead {
 		this.goodsSku = goodsSku;
 	}
 
+	public String getGoodsType() {
+		return goodsType;
+	}
+
+	public void setGoodsType(String goodsType) {
+		this.goodsType = goodsType;
+	}
+
+	public Integer getGoodsTypeId() {
+		return goodsTypeId;
+	}
+
+	public void setGoodsTypeId(Integer goodsTypeId) {
+		this.goodsTypeId = goodsTypeId;
+	}
+	
+	
+
+	public String getAssumedObject() {
+		return assumedObject;
+	}
+
+	public void setAssumedObject(String assumedObject) {
+		this.assumedObject = assumedObject;
+	}
+
+	public Integer getAssumedObjectId() {
+		return assumedObjectId;
+	}
+
+	public void setAssumedObjectId(Integer assumedObjectId) {
+		this.assumedObjectId = assumedObjectId;
+	}
+
 	@Override
 	public String toString() {
-		return "TdDeliveryFeeHeader [id=" + id + ", sobId=" + sobId + ", goodsId=" + goodsId + ", goodsTitle="
-				+ goodsTitle + ", goodsSku=" + goodsSku + "]";
+		return "TdDeliveryFeeHead [id=" + id + ", sobId=" + sobId + ", goodsId=" + goodsId + ", goodsTitle="
+				+ goodsTitle + ", goodsSku=" + goodsSku + ", goodsType=" + goodsType + ", goodsTypeId=" + goodsTypeId
+				+ ", assumedObject=" + assumedObject + ", assumedObjectId=" + assumedObjectId + "]";
 	}
+
+	
+	
 }

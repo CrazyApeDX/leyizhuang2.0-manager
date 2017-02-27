@@ -57,7 +57,7 @@ public interface ISettlementService {
 	 */
 	void disminlate(HttpServletRequest req, TdOrder mainOrder, Boolean isFitmentOrder) throws Exception;
 	
-	Double countOrderDeliveryFee(TdUser user, TdOrder order) throws Exception;
+	Map<String,Double> countOrderDeliveryFee(TdUser user, TdOrder order) throws Exception;
 	
 	Map<Long, TdOrderGoods> countOrderGoodsNumber(TdOrder order) throws Exception;
 	

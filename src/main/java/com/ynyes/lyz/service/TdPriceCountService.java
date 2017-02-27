@@ -169,13 +169,16 @@ public class TdPriceCountService {
 //			}
 //		}
 		
-		Double fee = 0d;
+		//Double fee = 0d;
 		try {
-			fee = settlementService.countOrderDeliveryFee(user, order);
+			Map<String, Double> depiveryFeeMap = new HashMap<>();
+			depiveryFeeMap = settlementService.countOrderDeliveryFee(user, order);
+			order.setDeliverFee(depiveryFeeMap.get("user_delivery_fee"));
+			order.setCompanyDeliveryFee(depiveryFeeMap.get("company_delivery_fee"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		order.setDeliverFee(fee);
+		
 
 		// 如果订单的配送方式是到店支付，则不计算运费（新增：电子券订单也不计算运费 —— @Date 2016年4月27日）
 		String title = order.getDeliverTypeTitle();

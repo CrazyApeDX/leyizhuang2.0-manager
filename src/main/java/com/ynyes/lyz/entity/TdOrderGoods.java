@@ -155,7 +155,11 @@ public class TdOrderGoods {
 	// 满减分摊金额
 	@Column(scale = 2)
 	private Double shareUnit;
-
+	
+	//是否墙面辅料
+	@Column(nullable=false)
+	private Boolean isWallAccessory ;
+	
 	public String getSubOrderNumber() {
 		return subOrderNumber;
 	}
@@ -435,4 +439,14 @@ public class TdOrderGoods {
 	public void setShareUnit(Double shareUnit) {
 		this.shareUnit = shareUnit;
 	}
+
+	public Boolean getIsWallAccessory() {
+		return isWallAccessory;
+	}
+
+	public void setIsWallAccessory(Boolean isWallAccessory) {
+		this.isWallAccessory = isWallAccessory;
+	}
+	
+	
 }

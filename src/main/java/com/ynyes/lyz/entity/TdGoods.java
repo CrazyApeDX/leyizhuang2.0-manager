@@ -436,6 +436,11 @@ public class TdGoods {
 	// 是否是券
 	@Column
 	private Boolean isCoupon;
+	
+	@Column(nullable=false)
+	private Boolean isWallAccessory;
+	
+	
 
 	public List<TdDiySiteInventory> getInventoryList() {
 		return inventoryList;
@@ -1220,4 +1225,14 @@ public class TdGoods {
 	public void setIsCoupon(Boolean isCoupon) {
 		this.isCoupon = isCoupon;
 	}
+
+	public Boolean getIsWallAccessory() {
+		return isWallAccessory;
+	}
+
+	public void setIsWallAccessory(Boolean isWallAccessory) {
+		this.isWallAccessory = isWallAccessory;
+	}
+	
+	
 }
