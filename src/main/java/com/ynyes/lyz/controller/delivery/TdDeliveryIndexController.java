@@ -37,6 +37,7 @@ import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdOwnMoneyRecord;
 import com.ynyes.lyz.entity.TdPayType;
 import com.ynyes.lyz.entity.TdReturnNote;
+import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
@@ -917,8 +918,8 @@ public class TdDeliveryIndexController {
 			rec = tdOwnMoneyRecordService.save(rec);
 
 			TdUser seller = tdUserService.findOne(order.getSellerId());
-			tdUserService.repayCredit(seller, payed);
-			
+			tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
+
 			// 全额收款
 			if (rec.getIsOwn() == false) {
 				// 修改订单收款金额

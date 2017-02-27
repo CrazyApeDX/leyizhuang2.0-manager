@@ -471,7 +471,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 		}
 
 		if (sendWMS) {
-			tdCommonService.sendWms(sendOrders, mainOrderNumber);
+			tdCommonService.sendWms(sendOrders, mainOrderNumber, 0d);
 		}
 		tdCommonService.sendEbs(sendOrders);
 	}

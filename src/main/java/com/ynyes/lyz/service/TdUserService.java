@@ -14,6 +14,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.repository.TdUserRepo;
 import com.ynyes.lyz.util.Criteria;
@@ -25,6 +26,9 @@ public class TdUserService {
 
 	@Autowired
 	private TdUserRepo repository;
+
+	@Autowired
+	private TdUserCreditLogService tdUserCreditService;
 
 	public TdUser save(TdUser user) {
 		if (null == user) {
@@ -422,23 +426,26 @@ public class TdUserService {
 		return seller.getCredit() >= order.getTotalPrice();
 	}
 
-	public void useCredit(TdOrder order) {
+	public void useCredit(CreditChangeType type, TdOrder order) {
 		TdUser seller = this.findOne(order.getSellerId());
-		this.useCredit(seller, order);
+		this.useCredit(type, seller, order);
 	}
 
-	public void useCredit(TdUser seller, TdOrder order) {
+	public void useCredit(CreditChangeType type, TdUser seller, TdOrder order) {
 		seller.setCredit(seller.getCredit() - order.getTotalPrice());
 		this.save(seller);
+		tdUserCreditService.createLogByCondition(type, seller, order);
 	}
 
-	public void repayCredit(TdUser seller, TdOrder order) {
+	public void repayCredit(CreditChangeType type, TdUser seller, TdOrder order) {
 		seller.setCredit(seller.getCredit() + order.getTotalPrice());
 		this.save(seller);
+		tdUserCreditService.createLogByCondition(CreditChangeType.CONSUME, seller, order);
 	}
 
-	public void repayCredit(TdUser seller, Double amount) {
+	public void repayCredit(CreditChangeType type, TdUser seller, Double amount, String orderNumber) {
 		seller.setCredit(seller.getCredit() + amount);
 		this.save(seller);
+		tdUserCreditService.createLogByCondition(CreditChangeType.CONSUME, seller, orderNumber, amount);
 	}
 }

@@ -1165,8 +1165,8 @@ public class TdCommonService {
 
 		Long tempHour = hour + delay;
 		if (24 <= tempHour) {
-//			limitDate = new Date(now1.getTime() + (1000 * 60 * 60 * 24));
-//			tempHour -= 24;
+			// limitDate = new Date(now1.getTime() + (1000 * 60 * 60 * 24));
+			// tempHour -= 24;
 			limitDate = new Date(now1.getTime() + (1000 * 60 * 60 * 24));
 			tempHour = 9L;
 		}
@@ -1485,6 +1485,8 @@ public class TdCommonService {
 
 		// 创建一个map用于存储拆单后的所有订单
 		Map<Long, TdOrder> order_map = new HashMap<>();
+
+		Double deliveryFee = order_temp.getDeliverFee();
 
 		// 获取所有的品牌
 		List<TdBrand> brand_list = tdBrandService.findAll();
@@ -1923,7 +1925,7 @@ public class TdCommonService {
 		// 子线程 抛单给WMS
 		if (isSend) {
 			SendRequisitionToWmsThread requsitThread = new SendRequisitionToWmsThread(orderList,
-					order_temp.getOrderNumber());
+					order_temp.getOrderNumber(), deliveryFee);
 			requsitThread.start();
 		}
 		sendEbsThread ebsThread = new sendEbsThread(ebsOrderList);
@@ -1935,8 +1937,9 @@ public class TdCommonService {
 		ebsThread.start();
 	}
 
-	public void sendWms(List<TdOrder> wmsOrderList, String mainOrderNumber) {
-		SendRequisitionToWmsThread requsitThread = new SendRequisitionToWmsThread(wmsOrderList, mainOrderNumber);
+	public void sendWms(List<TdOrder> wmsOrderList, String mainOrderNumber, Double deliveryFee) {
+		SendRequisitionToWmsThread requsitThread = new SendRequisitionToWmsThread(wmsOrderList, mainOrderNumber,
+				deliveryFee);
 		requsitThread.start();
 	}
 
@@ -2115,15 +2118,17 @@ public class TdCommonService {
 	class SendRequisitionToWmsThread extends Thread {
 		List<TdOrder> orderList;
 		String mainOrderNumber;
+		Double deliveryFee;
 
 		// 构造函数
-		SendRequisitionToWmsThread(List<TdOrder> orderList, String mainOrderNumber) {
+		SendRequisitionToWmsThread(List<TdOrder> orderList, String mainOrderNumber, Double deliveryFee) {
 			this.orderList = orderList;
 			this.mainOrderNumber = mainOrderNumber;
+			this.deliveryFee = deliveryFee;
 		}
 
 		public void run() {
-			sendMsgToWMS(orderList, mainOrderNumber);
+			sendMsgToWMS(orderList, mainOrderNumber, deliveryFee);
 		}
 	}
 
@@ -2220,30 +2225,27 @@ public class TdCommonService {
 	}
 
 	// TODO 要货单
-	private void sendMsgToWMS(List<TdOrder> orderList, String mainOrderNumber) {
+	private void sendMsgToWMS(List<TdOrder> orderList, String mainOrderNumber, Double deliveryFee) {
 
 		if (orderList.size() <= 0) {
 			return;
 		}
-
-		System.out.println("MDJWS:INTER:Order:" + orderList.get(0).getMainOrderNumber());
 
 		if (mainOrderNumber == null || mainOrderNumber.equalsIgnoreCase("")) {
 			return;
 		}
 
 		TdRequisition requisition = SaveRequisiton(orderList, mainOrderNumber);
+		requisition.setDeliveryFee(deliveryFee);
 
 		Object[] objects = null;
 		if (requisition != null && null != requisition.getRequisiteGoodsList()) {
 			for (TdRequisitionGoods requisitionGoods : requisition.getRequisiteGoodsList()) {
 				String xmlGoodsEncode = XMLMakeAndEncode(requisitionGoods, 2);
-				System.err.println("MDJWS:Detail:invoke" + mainOrderNumber);
 				try {
 					objects = WMSClient.invoke(WMSName, "td_requisition_goods", "1", xmlGoodsEncode);
 				} catch (Exception e) {
 					e.printStackTrace();
-					System.out.println("MDJWMS: " + mainOrderNumber + " 发送失败");
 					writeErrorLog(mainOrderNumber, requisitionGoods.getSubOrderNumber(), e.getMessage());
 				}
 				String result = "";
@@ -2259,7 +2261,6 @@ public class TdCommonService {
 				}
 			}
 			String xmlEncode = XMLMakeAndEncode(requisition, 1);
-			System.err.println("MDJWS:Main:invoke" + mainOrderNumber);
 			try {
 				objects = WMSClient.invoke(WMSName, "td_requisition", "1", xmlEncode);
 			} catch (Exception e) {
@@ -2557,7 +2558,8 @@ public class TdCommonService {
 					+ "<seller_tel>" + requisition.getSellerTel() + "</seller_tel>" + "<goods_quantity>"
 					+ requisition.getGoodsQuantity() + "</goods_quantity>" + "<upstairs_all>"
 					+ requisition.getUpstairsAll() + "</upstairs_all>" + "<upstairs_left>"
-					+ requisition.getUpstairsLeft() + "</upstairs_left>" + "</TABLE>" + "</ERP>";
+					+ requisition.getUpstairsLeft() + "</upstairs_left>" + "<DELIVERY_FEE>"
+					+ requisition.getDeliveryFee() + "</DELIVERY_FEE></TABLE>" + "</ERP>";
 			xmlStr = xmlStr.replace("null", "");
 
 			byte[] bs = xmlStr.getBytes();
@@ -3674,11 +3676,11 @@ public class TdCommonService {
 			cashRefundInf.setUsername(user.getUsername());
 			cashRefundInf.setUserphone(user.getUsername());
 			cashRefundInf.setDiySiteCode(user.getDiyCode());
-			if(desc.equals("信用额度")){
+			if (desc.equals("信用额度")) {
 				cashRefundInf.setRefundClass("信用额度");
-			}else if(desc.equals("CRM积分")){
+			} else if (desc.equals("CRM积分")) {
 				cashRefundInf.setRefundClass("CRM积分");
-			}else{
+			} else {
 				cashRefundInf.setRefundClass("预收款");
 			}
 			cashRefundInf.setRtHeaderId(null);

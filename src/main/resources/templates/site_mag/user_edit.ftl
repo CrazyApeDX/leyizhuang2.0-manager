@@ -418,10 +418,19 @@ $(function () {
     </dd>
   </dl> 
   <dl>
-    <dt>信用额度</dt>
+    <dt>基础信用额度</dt>
     <dd>
       <div class="input-date">
-        <input name="credit" type="text" value="<#if user?? && user.credit??>${user.credit?string("0.00")}</#if>" class="input date" datatype="/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/" errormsg="请选择正确的日期" sucmsg=" ">
+        <input name="creditLimit" type="text" value="<#if user?? && user.creditLimit??>${user.creditLimit?string("0.00")}</#if>" class="input date" datatype="/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/" errormsg="请输入正确的数字" sucmsg=" ">
+        <i>信用额度</i>
+      </div>
+    </dd>
+  </dl>  
+  <dl>
+    <dt>现有信用额度</dt>
+    <dd>
+      <div class="input-date">
+        <input name="credit" type="text" value="<#if user?? && user.credit??>${user.credit?string("0.00")}</#if>" class="input date" datatype="/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/" errormsg="请输入正确的数字" sucmsg=" ">
         <i>信用额度</i>
       </div>
     </dd>

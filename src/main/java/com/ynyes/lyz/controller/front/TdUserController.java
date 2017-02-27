@@ -57,7 +57,9 @@ import com.ynyes.lyz.entity.TdUserRecentVisit;
 import com.ynyes.lyz.entity.TdUserSuggestion;
 import com.ynyes.lyz.entity.TdUserSuggestionCategory;
 import com.ynyes.lyz.entity.TdWareHouse;
+import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.entity.user.TdUserCreditLog;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.service.TdActivityService;
@@ -87,6 +89,7 @@ import com.ynyes.lyz.service.TdSettingService;
 import com.ynyes.lyz.service.TdShippingAddressService;
 import com.ynyes.lyz.service.TdSubdistrictService;
 import com.ynyes.lyz.service.TdUserCollectService;
+import com.ynyes.lyz.service.TdUserCreditLogService;
 import com.ynyes.lyz.service.TdUserRecentVisitService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.TdUserSuggestionCategoryService;
@@ -195,9 +198,12 @@ public class TdUserController {
 
 	@Autowired
 	private TdReturnReasonService tdReturnReasonService;
-	
+
 	@Autowired
 	private TdOwnMoneyRecordService tdOwnMoneyRecordService;
+	
+	@Autowired
+	private TdUserCreditLogService tdUserCreditLogService;
 
 	/**
 	 * 跳转到个人中心的方法（后期会进行修改，根据不同的角色，跳转的页面不同）
@@ -225,9 +231,10 @@ public class TdUserController {
 		Long number = tdCartGoodsService.countByUserId(user.getId());
 		map.addAttribute("number", number);
 
-//		// 获取用户的等级
-//		TdUserLevel level = tdUserLevelService.findOne(user.getUserLevelId());
-//		map.addAttribute("level", level);
+		// // 获取用户的等级
+		// TdUserLevel level =
+		// tdUserLevelService.findOne(user.getUserLevelId());
+		// map.addAttribute("level", level);
 
 		// 获取客服电话
 		List<TdSetting> all = tdSettingService.findAll();
@@ -546,7 +553,7 @@ public class TdUserController {
 
 		Double total_price = 0.0;
 
-//		TdDiySite diySite = tdCommonService.getDiySite(req);
+		// TdDiySite diySite = tdCommonService.getDiySite(req);
 
 		// 获取所有已选的商品
 		List<TdCartGoods> all_selected = tdCartGoodsService.findByUserId(user.getId());
@@ -556,31 +563,37 @@ public class TdUserController {
 			if (null != cartGoods) {
 				TdGoods goods = tdGoodsService.findOne(cartGoods.getGoodsId());
 				if (null != goods) {
-//					// 查询商品单店库存
-//					TdDiySiteInventory diySiteInventory = tdDiySiteInventoryService
-//							.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(), diySite.getRegionId());
-//					Long inventoryNumber = 0L;
+					// // 查询商品单店库存
+					// TdDiySiteInventory diySiteInventory =
+					// tdDiySiteInventoryService
+					// .findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(),
+					// diySite.getRegionId());
+					// Long inventoryNumber = 0L;
 					// 设置单店库存
-//					if (diySiteInventory != null) {
-//						map.addAttribute("goods" + i, diySiteInventory.getInventory());
-//						inventoryNumber = diySiteInventory.getInventory();
-//					} else {
-//						map.addAttribute("goods" + i, 0);
-//					}
+					// if (diySiteInventory != null) {
+					// map.addAttribute("goods" + i,
+					// diySiteInventory.getInventory());
+					// inventoryNumber = diySiteInventory.getInventory();
+					// } else {
+					// map.addAttribute("goods" + i, 0);
+					// }
 
 					// 如果已选数量大于了最大库存，则消减已选数量
-//					if (null != cartGoods.getQuantity() && cartGoods.getQuantity() > inventoryNumber) {
-//						// 如果为负库存设置为0
-//						if (inventoryNumber < 0) {
-//							cartGoods.setQuantity(0L);
-//							cartGoods.setTotalPrice(cartGoods.getPrice() * cartGoods.getQuantity());
-//						} else {
-//							cartGoods.setQuantity(inventoryNumber);
-//							cartGoods.setTotalPrice(cartGoods.getPrice() * cartGoods.getQuantity());
-//						}
-//
-//						tdCartGoodsService.save(cartGoods);
-//					}
+					// if (null != cartGoods.getQuantity() &&
+					// cartGoods.getQuantity() > inventoryNumber) {
+					// // 如果为负库存设置为0
+					// if (inventoryNumber < 0) {
+					// cartGoods.setQuantity(0L);
+					// cartGoods.setTotalPrice(cartGoods.getPrice() *
+					// cartGoods.getQuantity());
+					// } else {
+					// cartGoods.setQuantity(inventoryNumber);
+					// cartGoods.setTotalPrice(cartGoods.getPrice() *
+					// cartGoods.getQuantity());
+					// }
+					//
+					// tdCartGoodsService.save(cartGoods);
+					// }
 					total_price += cartGoods.getTotalPrice();
 				}
 
@@ -655,10 +668,10 @@ public class TdUserController {
 					map.addAttribute("goods" + i, goodsInventory);
 					// 如果已选数量大于了最大库存，则消减已选数量
 					/*
-					if (null != cartGoods.getQuantity() && cartGoods.getQuantity() > goodsInventory) {
-						cartGoods.setQuantity(goodsInventory);
-					}
-					*/
+					 * if (null != cartGoods.getQuantity() &&
+					 * cartGoods.getQuantity() > goodsInventory) {
+					 * cartGoods.setQuantity(goodsInventory); }
+					 */
 					cartGoods.setTotalPrice(cartGoods.getQuantity() * cartGoods.getPrice());
 					cartGoods.setRealTotalPrice(cartGoods.getRealPrice() * cartGoods.getQuantity());
 					cartGoods = tdCartGoodsService.save(cartGoods);
@@ -873,7 +886,7 @@ public class TdUserController {
 	 */
 	@RequestMapping(value = "/address/{type}")
 	public String userAddressAdd(HttpServletRequest req, ModelMap map, @PathVariable Long type, Long id,
-			String receiver, String receiverMobile, String detailAddress, String returnPage,Long realUserId) {
+			String receiver, String receiverMobile, String detailAddress, String returnPage, Long realUserId) {
 		// 判断用户是否登陆
 		String username = (String) req.getSession().getAttribute("username");
 		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
@@ -885,8 +898,7 @@ public class TdUserController {
 		} else {
 			req.getSession().setAttribute("returnPage", "0");
 		}
-		if(realUserId != null)
-		{
+		if (realUserId != null) {
 			map.addAttribute("realUserId", realUserId);
 		}
 
@@ -979,7 +991,7 @@ public class TdUserController {
 	@RequestMapping(value = "/address/add/save")
 	@ResponseBody
 	public Map<String, Object> userAddressAddSave(HttpServletRequest req, String receiver, String receiverMobile,
-			String detailAddress, Long operation, Long addressId ,Long realUserId) {
+			String detailAddress, Long operation, Long addressId, Long realUserId) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 
@@ -990,11 +1002,10 @@ public class TdUserController {
 			res.put("status", -2);
 			return res;
 		}
-		if (realUserId != null)
-		{
+		if (realUserId != null) {
 			user = tdUserService.findOne(realUserId);
 		}
-		
+
 		if (null == user) {
 			res.put("status", -2);
 			return res;
@@ -1238,7 +1249,7 @@ public class TdUserController {
 		user.setDiyName(diySite.getTitle());
 		user.setCustomerId(diySite.getCustomerId());
 		tdUserService.save(user);
-		
+
 		// 清空用户的购物车
 		List<TdCartGoods> cartList = tdCartGoodsService.findByUsername(username);
 		if (null != cartList && cartList.size() > 0) {
@@ -1300,6 +1311,20 @@ public class TdUserController {
 		map.addAttribute("totalNumber", totalNummber);
 
 		return "/client/user_fortune";
+	}
+
+	@RequestMapping(value = "/credit")
+	public String userCredit(HttpServletRequest request, ModelMap map) {
+		String username = (String) request.getSession().getAttribute("username");
+		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
+		if (null == user) {
+			return "redirect:/login";
+		}
+		
+		Page<TdUserCreditLog> logPage = this.tdUserCreditLogService.findBySellerIdOrderByChangeTimeDesc(user.getSellerId(), 0, 20);
+		map.addAttribute("logPage", logPage);
+		map.addAttribute("user", user);
+		return "/client/user_credit";
 	}
 
 	/**
@@ -1450,12 +1475,12 @@ public class TdUserController {
 				res.put("message", "已收款的订单不能够取消");
 				return res;
 			}
-			
+
 			if (null != order.getPosPay() && order.getPosPay() != 0) {
 				res.put("message", "已收款的订单不能够取消");
 				return res;
 			}
-			
+
 			if (null != order.getCashPay() && order.getCashPay() != 0) {
 				res.put("message", "已收款的订单不能够取消");
 				return res;
@@ -1481,22 +1506,24 @@ public class TdUserController {
 
 		// 根据问题跟踪表-20160120第55号（序号），一个分单取消的时候，与其相关联的所有分单也取消掉
 		List<TdOrder> list = tdOrderService.findByOrderNumberContaining(newOrderNumber);
+		Double totalPrice = 0d;
 		// 进行遍历操作
 		if (null != list && list.size() > 0) {
 			for (TdOrder subOrder : list) {
 				if (null != subOrder) {
+					totalPrice += subOrder.getTotalPrice();
 					// 设置订单状态为取消状态，同时记录已退货属性
 					Long statusId = subOrder.getStatusId();
 					if (null != statusId && 3L == statusId.longValue()) {
 
 						// 修改2016-09-12：只有配送单才增加库存
 						// 增加库存
-						tdDiySiteInventoryService.changeGoodsInventory(subOrder, 1L, req, "退货", true );
+						tdDiySiteInventoryService.changeGoodsInventory(subOrder, 1L, req, "退货", true);
 
 						// 通知物流
 						TdReturnNote returnNote = tdCommonService.MakeReturnNote(subOrder, 0L, "");
 						tdCommonService.sendBackMsgToWMS(returnNote);
-						
+
 						// 在此进行资金和优惠券的退还
 						tdPriceCountService.cashAndCouponBack(subOrder, realUser, returnNote);
 					}
@@ -1529,6 +1556,11 @@ public class TdUserController {
 		order.setCancelTime(new Date());
 		order.setIsRefund(true);
 		tdOrderService.save(order);
+
+		TdUser seller = tdUserService.findOne(order.getSellerId());
+		// 2017-02-13 取消订单的时候增加信用额度
+		tdUserService.repayCredit(CreditChangeType.CANCEL, seller, totalPrice, order.getMainOrderNumber());
+
 		res.put("status", 0);
 		return res;
 
@@ -1561,18 +1593,19 @@ public class TdUserController {
 	public Map<String, Object> returnCheck(HttpServletRequest req, ModelMap map, Long id) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
-		
+
 		TdOrder order = tdOrderService.findOne(id);
 		String mainOrderNumber = order.getMainOrderNumber();
-		List<TdOwnMoneyRecord> ownList = tdOwnMoneyRecordService.findByOrderNumberAndIsOwnAndIsPayed(mainOrderNumber, true, false);
+		List<TdOwnMoneyRecord> ownList = tdOwnMoneyRecordService.findByOrderNumberAndIsOwnAndIsPayed(mainOrderNumber,
+				true, false);
 		if (null != ownList && ownList.size() > 0) {
 			return res;
 		}
-		
+
 		res.put("status", 0);
 		return res;
 	}
-	
+
 	/**
 	 * 跳转到订单详情的方法 增加退货单信息 计算实付款zp
 	 * 
@@ -2124,7 +2157,9 @@ public class TdUserController {
 											} else if (orderNumber.contains("LYZ")) {
 												orderNumber = orderNumber.replace("LYZ", "XN");
 											}
-											List<TdCoupon> coupons = tdCouponService.findByOrderNumberAndSkuAndIsUsedTrueAndIsBuyTrue(orderNumber, orderGoods.getSku());
+											List<TdCoupon> coupons = tdCouponService
+													.findByOrderNumberAndSkuAndIsUsedTrueAndIsBuyTrue(orderNumber,
+															orderGoods.getSku());
 											if (null != coupons && coupons.size() > 0) {
 												if (null == coupons.get(0).getBuyPrice()) {
 													unit = 0.00;
@@ -2167,10 +2202,10 @@ public class TdUserController {
 			returnNote.setReturnGoodsList(orderGoodsList);
 			order.setStatusId(9L);
 			order.setIsRefund(true);
-			
+
 			// 2016-07-20存储退钱退券明细信息
 			returnNote = this.getReturnDetail(orderId, infos, returnNote);
-			
+
 			tdOrderService.save(order);
 			tdReturnNoteService.save(returnNote);
 			tdInterfaceService.initReturnOrder(returnNote, INFConstants.INF_RETURN_ORDER_SUB_INT);
@@ -2731,7 +2766,7 @@ public class TdUserController {
 				posPay = 0.00;
 			}
 			if (null == backOtherPay) {
-				backOtherPay = 0.00; 
+				backOtherPay = 0.00;
 			}
 
 			Double all_off_line = posPay + cashPay + backOtherPay;
@@ -2854,7 +2889,7 @@ public class TdUserController {
 									cash__pro_coupon_condition.put(goodsId, coupon_list);
 								}
 
-//								total -= sub_coupon_price;
+								// total -= sub_coupon_price;
 								Double record = price_difference.get(goodsId);
 								if (null == record) {
 									record = 0.00;
@@ -3207,7 +3242,7 @@ public class TdUserController {
 									cash__pro_coupon_condition.put(goodsId, coupon_list);
 								}
 
-//								total -= sub_coupon_price;
+								// total -= sub_coupon_price;
 								Double record = price_difference.get(goodsId);
 								if (null == record) {
 									record = 0.00;
@@ -3372,13 +3407,13 @@ public class TdUserController {
 										// 如果还有没退还的金额，则退还其他方式的支付金额
 										if (total > 0) {
 											Double otherReturn = 0.00;
-											
+
 											if (total < backOtherPay) {
 												otherReturn = total;
 											} else {
 												otherReturn = backOtherPay;
 											}
-											
+
 											if (otherReturn > 0.00) {
 												all_cash_return += otherReturn;
 												// infos.add(posReturn +

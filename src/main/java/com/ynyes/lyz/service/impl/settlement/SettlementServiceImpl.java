@@ -26,6 +26,7 @@ import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeLine;
 import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
+import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.excp.AppErrorParamsExcp;
 import com.ynyes.lyz.service.TdBalanceLogService;
@@ -182,8 +183,7 @@ public class SettlementServiceImpl implements ISettlementService {
 
 	@Override
 	public void disminlate(HttpServletRequest req, TdOrder mainOrder, Boolean isFitmentOrder) throws Exception {
-		// 使用信用金
-		this.costCredit(mainOrder);
+		Double deliveryFee = mainOrder.getDeliverFee();
 		// 创建一个Map集合存储所有的分单，键值对规则为K-V：【品牌ID】-【分单】
 		Map<Long, TdOrder> subOrderMap = new HashMap<>();
 		// 拆分商品和小辅料
@@ -197,7 +197,7 @@ public class SettlementServiceImpl implements ISettlementService {
 		// 拆分预存款
 		disminlateBalance(subOrderMap, mainOrder);
 		// 存储及发送订单
-		saveAndSend(req, subOrderMap, mainOrder);
+		saveAndSend(req, subOrderMap, mainOrder, deliveryFee);
 	}
 
 	/**
@@ -812,6 +812,8 @@ public class SettlementServiceImpl implements ISettlementService {
 						}
 						realUser.getBalance();
 						tdUserService.save(realUser);
+						// 使用信用金
+						this.costCredit(subOrder);
 					}
 				}
 			}
@@ -897,7 +899,8 @@ public class SettlementServiceImpl implements ISettlementService {
 		}
 	}
 
-	private void saveAndSend(HttpServletRequest req, Map<Long, TdOrder> subOrderMap, TdOrder mainOrder) {
+	private void saveAndSend(HttpServletRequest req, Map<Long, TdOrder> subOrderMap, TdOrder mainOrder,
+			Double deliveryFee) {
 		String mainOrderNumber = mainOrder.getOrderNumber();
 		Boolean sendWMS = true;
 		List<TdOrder> sendOrders = new ArrayList<>();
@@ -917,7 +920,7 @@ public class SettlementServiceImpl implements ISettlementService {
 		clearMainOrder(req, mainOrder);
 
 		if (sendWMS) {
-			tdCommonService.sendWms(sendOrders, mainOrderNumber);
+			tdCommonService.sendWms(sendOrders, mainOrderNumber, deliveryFee);
 		}
 		tdCommonService.sendEbs(sendOrders);
 	}
@@ -1169,9 +1172,9 @@ public class SettlementServiceImpl implements ISettlementService {
 			}
 		}
 	}
-	
+
 	private void costCredit(TdOrder order) {
-		this.tdUserService.useCredit(order);
+		this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
 	}
 
 }
