@@ -1037,7 +1037,9 @@ public class SettlementServiceImpl implements ISettlementService {
 	}
 
 	private void costCredit(TdOrder order) {
-		this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
+		if (order.getIsSellerOrder()) {
+			this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
+		}
 	}
 
 }

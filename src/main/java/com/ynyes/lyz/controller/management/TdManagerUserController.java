@@ -398,6 +398,8 @@ public class TdManagerUserController {
 				tdUser.setCustomerId(site.getCustomerId());
 				tdUser.setCityId(site.getRegionId());
 				tdUser.setDiyName(site.getTitle());
+				// 2017-02-17 新增的导购和会员需要添加门店编码
+				tdUser.setDiyCode(site.getStoreCode());
 			}
 		}
 		//修改导购的时候修改导购电话和姓名

@@ -1,26 +1,26 @@
-$(function() {
-	$(".some_orders").css("display", "none");
-	$(".order-nav li").click(function() {
-		$(this).addClass("current").siblings().removeClass("current");
-		var li_id = $(this).attr("id");
-
-		if ("all" == li_id) {
-			$(".some_orders").css("display", "none");
-			$("#all_orders").css("display", "block");
-		}
-	});
-
-	var init_id = $("#typeId").val();
-	if (0 == init_id) {
-		$("#all").click();
-	} else if (1 == init_id) {
-		$("#unpayed").click();
-	} else if (2 == init_id) {
-		$("#unsignin").click();
-	} else if (3 == init_id) {
-		$("#uncommend").click();
-	}
-});
+//$(function() {
+//	$(".some_orders").css("display", "none");
+//	$(".order-nav li").click(function() {
+//		$(this).addClass("current").siblings().removeClass("current");
+//		var li_id = $(this).attr("id");
+//
+//		if ("all" == li_id) {
+//			$(".some_orders").css("display", "none");
+//			$("#all_orders").css("display", "block");
+//		}
+//	});
+//
+//	var init_id = $("#typeId").val();
+//	if (0 == init_id) {
+//		$("#all").click();
+//	} else if (1 == init_id) {
+//		$("#unpayed").click();
+//	} else if (2 == init_id) {
+//		$("#unsignin").click();
+//	} else if (3 == init_id) {
+//		$("#uncommend").click();
+//	}
+//});
 
 var page = 0;
 

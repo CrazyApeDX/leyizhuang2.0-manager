@@ -174,7 +174,7 @@
                     <#if orderPage??&&orderPage.content?size gt 0>
                         <div class="some_orders">
                             <#list orderPage.content as item>
-                                <ol class="order-list">
+                                <ol class="order-list" id="container${item.id?c}">
                                     <li class="li1">
                                         <label>订单号：<span>${item.orderNumber!''}</span></label>
                                         <div class="species">
@@ -214,8 +214,24 @@
                                                 <#case 3>
                                                 	<a href="javascript:win_yes('是否确定取消？','cancel(${item.id?c});');">取消订单</a>
                                                     <script type="text/javascript">
-                                                		var cancel = function(res) {
-                                                			
+                                                		var cancel = function(id) {
+                                                			win_no();
+                                                			wait();
+                                                			$.ajax({
+                                                				url: "/fit/order/cancel",
+                                                				method: "POST",
+                                                				data: {
+                                                					id: id
+                                                				},
+                                                				success: function(res) {
+                                                					close(1);
+                                                					if ("SUCCESS" === res.actionCode) {
+                                            							$("#container" + id).remove();
+                                                					} else {
+                                                						warning(res.content);
+                                                					}
+                                                				}
+                                                			})
                                                 		}
                                                     </script>
                                                     <a href="/fit/detail/${item.id?c}">订单详情</a>
@@ -225,6 +241,29 @@
                                                 <#break>
                                                 <#case 5>
                                                     <a href="/fit/detail/${item.id?c}">订单详情</a>
+                                                    <#if !(item.isRefund??&&item.isRefund==true)>
+                                                    	<a href="javascript:checkRefund(${item.id?c})">申请退货</a>
+                                                    </#if>
+                                                    <script type="text/javascript">
+                                                    	var checkRefund = function(id) {
+                                                    		wait();
+                                                    		$.ajax({
+                                                    			url: "/fit/my/refund/check",
+                                                    			method: "POST",
+                                                    			data: {
+                                                    				id: id
+                                                    			},
+                                                    			success: function(res) {
+                                                    				if ("SUCCESS" == res.actionCode) {
+                                                    					window.location.href = "/fit/refund/" + id
+                                                    				} else {
+                                                    					close(1);
+                                                    					warning(res.content);
+                                                    				}
+                                                    			}
+                                                    		})
+                                                    	}
+                                                    </script>
                                                 <#break>
                                             </#switch>
                                         </#if>

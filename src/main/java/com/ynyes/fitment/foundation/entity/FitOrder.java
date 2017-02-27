@@ -53,7 +53,7 @@ public class FitOrder extends TableEntity {
 	private String auditorName = "暂无";
 
 	// 审核人电话号码
-	@Column(length = 11, nullable = false, updatable = false)
+	@Column(length = 11, updatable = false)
 	private String auditorMobile;
 
 	// 单据状态：待审核、审核未通过、审核已通过

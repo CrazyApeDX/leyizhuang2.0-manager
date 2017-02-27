@@ -13,19 +13,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ynyes.fitment.core.constant.AuditStatus;
 import com.ynyes.fitment.core.constant.Global;
 import com.ynyes.fitment.core.entity.client.result.ClientResult;
 import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.foundation.entity.FitCartGoods;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
+import com.ynyes.fitment.foundation.service.FitOrderCancelService;
 import com.ynyes.fitment.foundation.service.biz.BizCartGoodsService;
+import com.ynyes.fitment.foundation.service.biz.BizOrderCancelService;
 import com.ynyes.fitment.foundation.service.biz.BizOrderService;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDistrict;
+import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdSubdistrict;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdDistrictService;
+import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdSubdistrictService;
 
 @Controller
@@ -42,11 +47,20 @@ public class FitOrderController extends FitBasicController {
 	private TdSubdistrictService tdSubdistrictService;
 
 	@Autowired
+	private FitOrderCancelService fitOrderCancelService;
+
+	@Autowired
 	private BizOrderService bizOrderService;
 
 	@Autowired
 	private BizCartGoodsService bizCartGoodsService;
-	
+
+	@Autowired
+	private TdOrderService tdOrderService;
+
+	@Autowired
+	private BizOrderCancelService bizOrderCancelService;
+
 	@RequestMapping(value = "/init", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
 	public ClientResult fitOrderPost(HttpServletRequest request, String receiver, String receiverMobile,
@@ -132,7 +146,7 @@ public class FitOrderController extends FitBasicController {
 			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
 		}
 	}
-	
+
 	@RequestMapping(value = "/finish")
 	@ResponseBody
 	public ClientResult orderFinish(HttpServletRequest request, Long id) {
@@ -145,7 +159,7 @@ public class FitOrderController extends FitBasicController {
 			} else {
 				return new ClientResult(ActionCode.FAILURE, "信用金不足，无法完成订单");
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
@@ -158,6 +172,37 @@ public class FitOrderController extends FitBasicController {
 		try {
 			FitOrder order = this.bizOrderService.findOne(id);
 			this.bizOrderService.saveDelivery(order, deliveryDate, deliveryTime, floor);
+			return new ClientResult(ActionCode.SUCCESS, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
+	}
+
+	@RequestMapping(value = "/cancel")
+	@ResponseBody
+	public ClientResult orderCancel(HttpServletRequest request, Long id) {
+		try {
+			TdOrder order = this.tdOrderService.findOne(id);
+			Long count = fitOrderCancelService.countByOrderNumberAndStatus(order.getMainOrderNumber(),
+					AuditStatus.WAIT_AUDIT);
+			if (count > 0) {
+				return new ClientResult(ActionCode.FAILURE, "您的申请正在等待审核，请勿重复提交");
+			} else {
+				FitEmployee loginEmployee = this.getLoginEmployee(request);
+				return bizOrderCancelService.init(loginEmployee, order);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
+	}
+
+	@RequestMapping(value = "/refund")
+	@ResponseBody
+	public ClientResult orderCancel(HttpServletRequest request, Long id, String infos) {
+		try {
+			
 			return new ClientResult(ActionCode.SUCCESS, null);
 		} catch (Exception e) {
 			e.printStackTrace();

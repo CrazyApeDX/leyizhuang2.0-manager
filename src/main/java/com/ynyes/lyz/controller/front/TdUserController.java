@@ -201,7 +201,7 @@ public class TdUserController {
 
 	@Autowired
 	private TdOwnMoneyRecordService tdOwnMoneyRecordService;
-	
+
 	@Autowired
 	private TdUserCreditLogService tdUserCreditLogService;
 
@@ -1320,8 +1320,9 @@ public class TdUserController {
 		if (null == user) {
 			return "redirect:/login";
 		}
-		
-		Page<TdUserCreditLog> logPage = this.tdUserCreditLogService.findBySellerIdOrderByChangeTimeDesc(user.getSellerId(), 0, 20);
+
+		Page<TdUserCreditLog> logPage = this.tdUserCreditLogService
+				.findBySellerIdOrderByChangeTimeDesc(user.getSellerId(), 0, 20);
 		map.addAttribute("logPage", logPage);
 		map.addAttribute("user", user);
 		return "/client/user_credit";
@@ -1557,9 +1558,11 @@ public class TdUserController {
 		order.setIsRefund(true);
 		tdOrderService.save(order);
 
-		TdUser seller = tdUserService.findOne(order.getSellerId());
-		// 2017-02-13 取消订单的时候增加信用额度
-		tdUserService.repayCredit(CreditChangeType.CANCEL, seller, totalPrice, order.getMainOrderNumber());
+		if (order.getIsSellerOrder()) {
+			TdUser seller = tdUserService.findOne(order.getSellerId());
+			// 2017-02-13 取消订单的时候增加信用额度
+			tdUserService.repayCredit(CreditChangeType.CANCEL, seller, totalPrice, order.getMainOrderNumber());
+		}
 
 		res.put("status", 0);
 		return res;

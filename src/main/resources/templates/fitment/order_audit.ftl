@@ -50,7 +50,9 @@
                 
                 <!-- 订单管理 -->
                 <ul class="order-nav">
-                    <li id="all"><a>全部</a></li>
+                    <li <#if type??&&type=="order">class="current"</#if>><a href="/fit/audit/order">订单提交</a></li>
+                    <li <#if type??&&type=="cancel">class="current"</#if>><a href="/fit/audit/cancel">订单取消</a></li>
+                    <li <#if type??&&type=="refund">class="current"</#if>><a href="/fit/audit/refund">订单退货</a></li>
                 </ul>
                 
                 <!-- 订单分类 -->
@@ -85,7 +87,7 @@
                                     <div style="width:80%;margin-left:3%;line-height:30px">
 	                                	<li class="li1">
 		                                    <label>下单人：<span>${item.employeeName!''}</span></label>
-		                                    <label>审核人：<span>${item.auditorName!''}</span></label>
+		                                    <label>审核人：<span>${item.auditorName!'暂无'}</span></label>
 	                                    </li>
 	                                    <li class="li1">
 	                                    	<label>
@@ -128,11 +130,12 @@
 	                                                	<#if item.isFinish??&&!item.isFinish>
 	                                                		<a href="/fit/pay/${item.id?c}" style="border: #cc1421 1px solid; color: #cc1421;">去支付</a>
                                                 		<#else>
-                                                			<a>已提交</a>
+                                                			<a>已通过</a>
 	                                                	</#if>
 	                                                <#break>
 	                                                <#case "AUDIT_FAILURE">
-	                                                	<a href="javascript:remove(${item.id?c});">删除</a>
+	                                                	<a>未通过</a>
+	                                                	<#--<a href="javascript:remove(${item.id?c});">删除</a>-->
 	                                                <#break>
 	                                            </#switch>
 	                                        </#if>
@@ -142,6 +145,211 @@
                             </#list>
                         </div>
                     </#if>
+                    
+                    <#if orderCancelPage??&&orderCancelPage?size gt 0>
+                    	<div id="cancel_orders" class="some_orders">
+                            <#list orderCancelPage.content as item>
+                                <ol class="order-list" style="border-bottom:2px solid #cc1421;margin-top:0px;" id="order${item.id?c}">
+                                    <li class="li1">
+	                                    <label>订单号：<span>${item.orderNumber!''}</span></label>
+                                        <div class="species" id="status${item.id?c}">
+                                            <#if item.status??>
+                                                <#switch item.status>
+                                                    <#case "WAIT_AUDIT">待审核<#break>
+                                                    <#case "AUDIT_SUCCESS">审核通过<#break>
+                                                    <#case "AUDIT_FAILURE">审核未通过<#break>
+                                                    <#case "CANCEL">已出货：作废<#break>
+                                                </#switch>
+                                            </#if>
+                                        </div>
+                                    </li>
+                                    <#if item.orderGoodsList??>
+                                        <#list item.orderGoodsList as goods>
+                                            <li class="li2">
+                                                <div class="img"><img src="${goods.goodsCoverImageUri!''}" alt="产品图片"></div>
+                                                <div class="product-info">
+                                                    <div class="div1">${goods.goodsTitle!''}</div>
+                                                    <div class="div2">￥<span><#if goods.price??>${goods.price?string("0.00")}<#else>0.00</#if></span>&nbsp;&nbsp;<label>数量：<span>${goods.quantity!'0'}</span></label></div>
+                                                </div>
+                                            </li>
+                                        </#list>
+                                    </#if>
+                                    <div style="width:80%;margin-left:3%;line-height:30px">
+	                                	<li class="li1">
+		                                    <label>下单人：<span>${item.employeeName!''}</span></label>
+		                                    <label>审核人：<span>${item.auditorName!'暂无'}</span></label>
+	                                    </li>
+                                    	<div>申请时间：<#if item.cancelTime??>${item.cancelTime?string("yyyy-MM-dd HH:mm:ss")}</#if></div>
+                                        <div>审核时间：<#if item.auditTime??>${item.auditTime?string("yyyy-MM-dd HH:mm:ss")}<#else>还未审核</#if></div>
+                                    </div>
+                                    <#if employee.isMain>
+	                                    <div class="li3" id="action${item.id?c}">
+	                                        <#if item.status??>
+	                                            <#switch item.status>
+	                                                <#case "WAIT_AUDIT">
+                                                    	<a href="javascript:agree(${item.id?c});">通过</a>
+                                                    	<a href="javascript:reject(${item.id?c});">不通过</a>
+                                                    	<script type="text/javascript">
+                                                			var cancelAgree = function(id) {
+                                                				wait();
+                                                				$.ajax({
+                                                					url: "",
+                                                					method: "POST",
+                                                					data: {
+                                                						id: id,
+                                                						action: "AGREE"
+                                                					},
+                                                					success: function(res) {
+                                                						close();
+                                                						if ("SUCCESS" === res.actionCode) {
+                                                							$("#action" + id).html("<a>已通过</a>");
+                                                						} else {
+                                                							warning(res.content);
+                                                						}
+                                                					}
+                                                	
+                                                				})
+                                                			}
+                                                			var cancelReject = function(id) {
+                                                				wait();
+                                                				$.ajax({
+                                                					url: "",
+                                                					method: "POST",
+                                                					data: {
+                                                						id: id,
+                                                						action: "REJECT"
+                                                					},
+                                                					success: function(res) {
+                                                						close();
+                                                						if ("SUCCESS" === res.actionCode) {
+                                                							$("#action" + id).html("<a>未通过</a>");
+                                                						} else {
+                                                							warning(res.content);
+                                                						}
+                                                					}
+                                                	
+                                                				})
+                                                			}
+                                                    	</script>
+	                                                <#break>
+	                                                <#case "AUDIT_SUCCESS">
+                                            			<a>已通过</a>
+	                                                <#break>
+	                                                <#case "AUDIT_FAILURE">
+	                                                	<a>未通过</a>
+	                                                	<#--<a href="javascript:remove(${item.id?c});">删除</a>-->
+	                                                <#break>
+	                                            </#switch>
+	                                        </#if>
+                                        </#if>
+                                    </div>
+                                </ol>
+                            </#list>
+                        </div>
+                    </#if>
+                    
+                    <#if orderRefundPage??&&orderRefundPage?size gt 0>
+                    	<div id="cancel_orders" class="some_orders">
+                            <#list orderRefundPage.content as item>
+                                <ol class="order-list" style="border-bottom:2px solid #cc1421;margin-top:0px;" id="order${item.id?c}">
+                                    <li class="li1">
+	                                    <label>订单号：<span>${item.orderNumber!''}</span></label>
+                                        <div class="species" id="status${item.id?c}">
+                                            <#if item.status??>
+                                                <#switch item.status>
+                                                    <#case "WAIT_AUDIT">待审核<#break>
+                                                    <#case "AUDIT_SUCCESS">审核通过<#break>
+                                                    <#case "AUDIT_FAILURE">审核未通过<#break>
+                                                    <#case "CANCEL">已出货：作废<#break>
+                                                </#switch>
+                                            </#if>
+                                        </div>
+                                    </li>
+                                    <#if item.orderGoodsList??>
+                                        <#list item.orderGoodsList as goods>
+                                            <li class="li2">
+                                                <div class="img"><img src="${goods.goodsCoverImageUri!''}" alt="产品图片"></div>
+                                                <div class="product-info">
+                                                    <div class="div1">${goods.goodsTitle!''}</div>
+                                                    <div class="div2">￥<span><#if goods.price??>${goods.price?string("0.00")}<#else>0.00</#if></span>&nbsp;&nbsp;<label>数量：<span>${goods.quantity!'0'}</span></label></div>
+                                                </div>
+                                            </li>
+                                        </#list>
+                                    </#if>
+                                    <div style="width:80%;margin-left:3%;line-height:30px">
+	                                	<li class="li1">
+		                                    <label>下单人：<span>${item.employeeName!''}</span></label>
+		                                    <label>审核人：<span>${item.auditorName!'暂无'}</span></label>
+	                                    </li>
+                                    	<div>申请时间：<#if item.refundTime??>${item.refundTime?string("yyyy-MM-dd HH:mm:ss")}</#if></div>
+                                        <div>审核时间：<#if item.auditTime??>${item.auditTime?string("yyyy-MM-dd HH:mm:ss")}<#else>还未审核</#if></div>
+                                    </div>
+                                    <#if employee.isMain>
+	                                    <div class="li3" id="action${item.id?c}">
+	                                        <#if item.status??>
+	                                            <#switch item.status>
+	                                                <#case "WAIT_AUDIT">
+                                                    	<a href="javascript:agree(${item.id?c});">通过</a>
+                                                    	<a href="javascript:reject(${item.id?c});">不通过</a>
+                                                    	<script type="text/javascript">
+                                                			var cancelAgree = function(id) {
+                                                				wait();
+                                                				$.ajax({
+                                                					url: "",
+                                                					method: "POST",
+                                                					data: {
+                                                						id: id,
+                                                						action: "AGREE"
+                                                					},
+                                                					success: function(res) {
+                                                						close();
+                                                						if ("SUCCESS" === res.actionCode) {
+                                                							$("#action" + id).html("<a>已通过</a>");
+                                                						} else {
+                                                							warning(res.content);
+                                                						}
+                                                					}
+                                                	
+                                                				})
+                                                			}
+                                                			var cancelReject = function(id) {
+                                                				wait();
+                                                				$.ajax({
+                                                					url: "",
+                                                					method: "POST",
+                                                					data: {
+                                                						id: id,
+                                                						action: "REJECT"
+                                                					},
+                                                					success: function(res) {
+                                                						close();
+                                                						if ("SUCCESS" === res.actionCode) {
+                                                							$("#action" + id).html("<a>未通过</a>");
+                                                						} else {
+                                                							warning(res.content);
+                                                						}
+                                                					}
+                                                	
+                                                				})
+                                                			}
+                                                    	</script>
+	                                                <#break>
+	                                                <#case "AUDIT_SUCCESS">
+                                            			<a>已通过</a>
+	                                                <#break>
+	                                                <#case "AUDIT_FAILURE">
+	                                                	<a>未通过</a>
+	                                                	<#--<a href="javascript:remove(${item.id?c});">删除</a>-->
+	                                                <#break>
+	                                            </#switch>
+	                                        </#if>
+                                        </#if>
+                                    </div>
+                                </ol>
+                            </#list>
+                        </div>
+                    </#if>
+                    
                 </article>
                 <!-- 用户订单 END -->                           
             </section>

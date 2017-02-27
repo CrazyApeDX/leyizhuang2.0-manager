@@ -21,8 +21,12 @@ import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
+import com.ynyes.fitment.foundation.entity.FitOrderCancel;
+import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 import com.ynyes.fitment.foundation.entity.client.ClientCategory;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
+import com.ynyes.fitment.foundation.service.FitOrderCancelService;
+import com.ynyes.fitment.foundation.service.FitOrderRefundService;
 import com.ynyes.fitment.foundation.service.biz.BizCartGoodsService;
 import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizGoodsService;
@@ -55,6 +59,12 @@ public class FitViewController extends FitBasicController {
 
 	@Autowired
 	private TdOrderService tdOrderService;
+
+	@Autowired
+	private FitOrderCancelService fitOrderCancelService;
+
+	@Autowired
+	private FitOrderRefundService fitOrderRefundService;
 
 	@RequestMapping
 	public String fitIndex(HttpServletRequest request) {
@@ -119,19 +129,48 @@ public class FitViewController extends FitBasicController {
 		}
 	}
 
-	@RequestMapping(value = "/audit")
-	public String audit(HttpServletRequest request, ModelMap map) {
+	@RequestMapping(value = "/audit/{type}")
+	public String audit(HttpServletRequest request, ModelMap map, @PathVariable String type) {
 		try {
 			FitEmployee employee = this.getLoginEmployee(request);
-			Page<FitOrder> orderPage = null;
-			if (employee.getIsMain()) {
-				orderPage = this.bizOrderService.loadOrderByCompanyId(employee.getCompanyId(), Global.DEFAULT_PAGE,
-						Global.DEFAULT_SIZE);
-			} else {
-				orderPage = this.bizOrderService.loadOrderByEmployeeId(employee.getId(), Global.DEFAULT_PAGE,
-						Global.DEFAULT_SIZE);
+			if (null == type) {
+				type = "order";
 			}
-			map.addAttribute("orderPage", orderPage);
+			switch (type) {
+			case "order":
+				Page<FitOrder> orderPage = null;
+				if (employee.getIsMain()) {
+					orderPage = this.bizOrderService.loadOrderByCompanyId(employee.getCompanyId(), Global.DEFAULT_PAGE,
+							Global.DEFAULT_SIZE);
+				} else {
+					orderPage = this.bizOrderService.loadOrderByEmployeeId(employee.getId(), Global.DEFAULT_PAGE,
+							Global.DEFAULT_SIZE);
+				}
+				map.addAttribute("orderPage", orderPage);
+				break;
+			case "cancel":
+				Page<FitOrderCancel> orderCancelPage = null;
+				if (employee.getIsMain()) {
+					orderCancelPage = this.fitOrderCancelService.findByCompanyIdOrderByCancelTimeDesc(
+							employee.getCompanyId(), Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+				} else {
+					orderCancelPage = this.fitOrderCancelService.findByEmployeeIdOrderByCancelTimeDesc(employee.getId(),
+							Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+				}
+				map.addAttribute("orderCancelPage", orderCancelPage);
+				break;
+			case "refund":
+				Page<FitOrderRefund> orderRefundPage = null;
+				if (employee.getIsMain()) {
+					orderRefundPage = this.fitOrderRefundService.findByCompanyIdOrderByRefundTimeDesc(
+							employee.getCompanyId(), Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+				} else {
+					orderRefundPage = this.fitOrderRefundService.findByEmployeeIdOrderByRefundTimeDesc(employee.getId(),
+							Global.DEFAULT_PAGE, Global.DEFAULT_SIZE);
+				}
+				map.addAttribute("orderRefundPage", orderRefundPage);
+				break;
+			}
 			return "/fitment/order_audit";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -244,6 +283,20 @@ public class FitViewController extends FitBasicController {
 		map.addAttribute("status", status);
 		map.addAttribute("orderPage", orderPage);
 		return "/fitment/user_order_list";
+	}
+
+	@RequestMapping(value = "/refund/{id}")
+	public String fitRefund(@PathVariable Long id, HttpServletRequest request, ModelMap map) {
+		TdOrder order = tdOrderService.findOne(id);
+		map.addAttribute("order", order);
+		return "/fitment/user_order_refund";
+	}
+
+	@RequestMapping(value = "/refund/address/{id}/{data}")
+	public String fitRefundAddress(@PathVariable("id") Long id, @PathVariable("data") String data, ModelMap map) {
+		map.addAttribute("id", id);
+		map.addAttribute("data", data);
+		return "/fitment/user_order_refund_address_base";
 	}
 
 	@ModelAttribute
