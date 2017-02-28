@@ -52,4 +52,12 @@ public class FitOrderRefundServiceImpl extends PageableService implements FitOrd
 		return this.fitOrderRefundRepo.findByEmployeeIdOrderByRefundTimeDesc(employeeId, this.initPage(page, size));
 	}
 
+	@Override
+	public FitOrderRefund findOne(Long id) throws Exception {
+		if (null == id) {
+			return null;
+		}
+		return this.fitOrderRefundRepo.findOne(id);
+	}
+
 }

@@ -73,7 +73,7 @@ public class BizOrderRefundServiceImpl implements BizOrderRefundService {
 				orderRefund.setReceiverMobile(receiverMobile);
 				orderRefund.setReceiverAddress(receiverAddressDetail);
 				orderRefund.setReceiverAddressDetail(receiverAddressDetail);
-				
+
 				orderRefund.setOrderGoodsList(orderGoodsList);
 
 				if (employee.getIsMain()) {
@@ -85,7 +85,7 @@ public class BizOrderRefundServiceImpl implements BizOrderRefundService {
 
 					order.setIsRefund(true);
 					this.tdOrderService.save(order);
-					
+
 					this.sendToWms();
 					this.sendToEbs();
 
@@ -109,6 +109,31 @@ public class BizOrderRefundServiceImpl implements BizOrderRefundService {
 	@Override
 	public Boolean validateRepeatAudit(Long orderId, AuditStatus status) throws Exception {
 		return this.fitOrderRefundService.countByOrderIdAndStatus(orderId, status) > 0L;
+	}
+
+	@Override
+	public FitOrderRefund loadOne(Long id) throws Exception {
+		return this.fitOrderRefundService.findOne(id);
+	}
+
+	@Override
+	public void auditAgree(FitEmployee auditor, FitOrderRefund orderRefund) throws Exception {
+		orderRefund.setStatus(AuditStatus.AUDIT_SUCCESS);
+		orderRefund.setAuditTime(new Date());
+		orderRefund.setAuditorId(auditor.getId());
+		orderRefund.setAuditorMobile(auditor.getMobile());
+		orderRefund.setAuditorName(auditor.getName());
+		this.fitOrderRefundService.save(orderRefund);
+	}
+
+	@Override
+	public void auditReject(FitEmployee auditor, FitOrderRefund orderRefund) throws Exception {
+		orderRefund.setStatus(AuditStatus.AUDIT_SUCCESS);
+		orderRefund.setAuditTime(new Date());
+		orderRefund.setAuditorId(auditor.getId());
+		orderRefund.setAuditorMobile(auditor.getMobile());
+		orderRefund.setAuditorName(auditor.getName());
+		this.fitOrderRefundService.save(orderRefund);
 	}
 
 }

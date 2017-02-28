@@ -187,8 +187,8 @@
 	                                        <#if item.status??>
 	                                            <#switch item.status>
 	                                                <#case "WAIT_AUDIT">
-                                                    	<a href="javascript:agree(${item.id?c});">通过</a>
-                                                    	<a href="javascript:reject(${item.id?c});">不通过</a>
+                                                    	<a href="javascript:cancelAgree(${item.id?c});">通过</a>
+                                                    	<a href="javascript:cancelReject(${item.id?c});">不通过</a>
                                                     	<script type="text/javascript">
                                                 			var cancelAgree = function(id) {
                                                 				wait();
@@ -289,13 +289,13 @@
 	                                        <#if item.status??>
 	                                            <#switch item.status>
 	                                                <#case "WAIT_AUDIT">
-                                                    	<a href="javascript:agree(${item.id?c});">通过</a>
-                                                    	<a href="javascript:reject(${item.id?c});">不通过</a>
+                                                    	<a href="javascript:refundAgree(${item.id?c});">通过</a>
+                                                    	<a href="javascript:refundReject(${item.id?c});">不通过</a>
                                                     	<script type="text/javascript">
-                                                			var cancelAgree = function(id) {
+                                                			var refundAgree = function(id) {
                                                 				wait();
                                                 				$.ajax({
-                                                					url: "",
+                                                					url: "/fit/my/refund",
                                                 					method: "POST",
                                                 					data: {
                                                 						id: id,
@@ -312,10 +312,10 @@
                                                 	
                                                 				})
                                                 			}
-                                                			var cancelReject = function(id) {
+                                                			var refundReject = function(id) {
                                                 				wait();
                                                 				$.ajax({
-                                                					url: "",
+                                                					url: "/fit/my/refund",
                                                 					method: "POST",
                                                 					data: {
                                                 						id: id,

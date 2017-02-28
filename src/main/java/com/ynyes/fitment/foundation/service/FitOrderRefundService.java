@@ -8,6 +8,8 @@ import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 public interface FitOrderRefundService {
 
 	FitOrderRefund save(FitOrderRefund orderRefund) throws Exception;
+	
+	FitOrderRefund findOne(Long id) throws Exception;
 
 	Long countByOrderIdAndStatus(Long orderId, AuditStatus status) throws Exception;
 

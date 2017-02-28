@@ -12,6 +12,7 @@ import com.ynyes.fitment.core.constant.AuditStatus;
 import com.ynyes.fitment.core.entity.client.result.ClientResult;
 import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
+import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 import com.ynyes.fitment.foundation.service.biz.BizOrderRefundService;
 
 @Controller
@@ -46,6 +47,30 @@ public class FitOrderReturnAuditController extends FitBasicController {
 			} else {
 				return new ClientResult(ActionCode.SUCCESS, null);
 			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
+		}
+	}
+
+	@RequestMapping(value = "/action")
+	@ResponseBody
+	public ClientResult refundAction(HttpServletRequest request, Long id, String action) {
+
+		try {
+			FitEmployee employee = this.getLoginEmployee(request);
+			FitOrderRefund orderRefund = this.bizOrderRefundService.loadOne(id);
+			switch (action) {
+			case "AGREE":
+				orderRefund.setStatus(AuditStatus.AUDIT_SUCCESS);
+				this.bizOrderRefundService.auditAgree(employee, orderRefund);
+				break;
+			case "REJECT":
+				orderRefund.setStatus(AuditStatus.AUDIT_FAILURE);
+				this.bizOrderRefundService.auditReject(employee, orderRefund);
+				break;
+			}
+			return new ClientResult(ActionCode.SUCCESS, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请联系管理员");
