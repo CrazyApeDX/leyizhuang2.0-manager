@@ -322,6 +322,8 @@ public class TdInterfaceService {
 		orderInf.setDisctrict(tdOrder.getDisctrict());
 		orderInf.setShippingName(tdOrder.getShippingName());
 		orderInf.setShippingPhone(tdOrder.getShippingPhone());
+		orderInf.setSellerPhone(tdOrder.getSellerUsername());
+		orderInf.setSellerName(tdOrder.getSellerRealName());
 		orderInf.setDeliverTypeTitle(tdOrder.getDeliverTypeTitle());
 		orderInf.setIsonlinepay(booleanStrByPayTypeId(tdOrder.getPayTypeId()));
 		orderInf.setPayType(("微信支付".equalsIgnoreCase(payTypeTitle) ? "微信" : payTypeTitle));
