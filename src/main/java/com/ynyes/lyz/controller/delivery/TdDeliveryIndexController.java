@@ -917,8 +917,10 @@ public class TdDeliveryIndexController {
 			rec.setSortId(99L);
 			rec = tdOwnMoneyRecordService.save(rec);
 
-			TdUser seller = tdUserService.findOne(order.getSellerId());
-			tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
+			if (order.getIsSellerOrder()) {
+				TdUser seller = tdUserService.findOne(order.getSellerId());
+				tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
+			}
 
 			// 全额收款
 			if (rec.getIsOwn() == false) {

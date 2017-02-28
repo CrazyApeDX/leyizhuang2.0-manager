@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ynyes.lyz.entity.TdTbwRecm;
 import com.ynyes.lyz.interfaces.entity.TdTbwWholeSepDirection;
-import com.ynyes.lyz.repository.TdTbwRecmRepo;
 import com.ynyes.lyz.repository.TdTbwWholeSepDirectionRepo;
 
 

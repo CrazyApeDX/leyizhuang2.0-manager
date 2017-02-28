@@ -176,7 +176,7 @@ function saveAddress() {
 				if (res.content) {
 					window.location.href = "/fit/pay/" + res.content;
 				} else {
-					window.location.href = "/fit/audit";
+					window.location.href = "/fit/audit/order";
 				}
 			} else {
 				close(1);

@@ -26,7 +26,7 @@
         <article class="my-wallet">
             <!-- 总资产 -->
             <section class="total-assets">
-                <div class="title">信用金（<#if credit??>${credit?string("0.00")}<#else>0.00</#if>元）</a></div>
+                <div class="title">信用金（<#if user.credit??>${user.credit?string("0.00")}<#else>0.00</#if>元）</a></div>
             </section>
             <!-- tips -->
             <#--

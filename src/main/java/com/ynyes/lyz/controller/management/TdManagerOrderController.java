@@ -1291,8 +1291,10 @@ public class TdManagerOrderController {
 		// 2017-02-13：增加信用额度
 		String mainOrderNumber = own.getOrderNumber();
 		TdOrder subOrder = tdOrderService.findByMainOrderNumberIgnoreCase(mainOrderNumber).get(0);
-		TdUser seller = this.tdUserService.findOne(subOrder.getSellerId());
-		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other), mainOrderNumber);
+		if (subOrder.getIsSellerOrder()) {
+			TdUser seller = this.tdUserService.findOne(subOrder.getSellerId());
+			this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other), mainOrderNumber);
+		}
 		// 收款发ebs
 		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(own, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
 
@@ -1393,10 +1395,12 @@ public class TdManagerOrderController {
 		order.setBackOtherPay(other);
 		tdOrderService.save(order);
 
-		// 2017-02-13：增加信用额度
-		TdUser seller = this.tdUserService.findOne(order.getSellerId());
-		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
-				order.getMainOrderNumber());
+		if (order.getIsSellerOrder()) {
+			// 2017-02-13：增加信用额度
+			TdUser seller = this.tdUserService.findOne(order.getSellerId());
+			this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
+					order.getMainOrderNumber());
+		}
 
 		// 记录收款并发ebs
 		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);

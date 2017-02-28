@@ -10,7 +10,7 @@
                 </a>
             </li>
             <li>
-                <a id="go_out" href="/fit/audit">
+                <a id="go_out" href="/fit/audit/order">
                     <div></div>
                     <span>审核</span>
                 </a>

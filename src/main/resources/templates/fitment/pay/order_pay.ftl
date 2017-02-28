@@ -25,7 +25,7 @@
         <#include "/client/common_wait.ftl"> 
         <!-- 头部 -->
         <header>
-            <a class="back" href="/fit/audit"></a>
+            <a class="back" href="/fit/audit/order"></a>
             <p>填写订单</p>
         </header>
         <!-- 头部 END -->
@@ -147,7 +147,7 @@
         			},
         			success: function(res) {
         				if ("SUCCESS" == res.actionCode) {
-        					window.location.href = "/fit/audit";
+        					window.location.href = "/fit/audit/order";
         				} else {
         					close(1);
         					warning(res.content);

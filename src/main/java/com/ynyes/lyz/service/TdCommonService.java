@@ -1179,6 +1179,16 @@ public class TdCommonService {
 		String order_deliveryDate = yyyyMMdd.format(limitDate);
 		Long order_deliveryDeatilId = tempHour;
 
+		String cityShortName = null;
+		switch (city.getCityName()) {
+		case "成都市":
+			cityShortName = "CD_";
+			break;
+		case "郑州市":
+			cityShortName = "ZZ_";
+			break;
+		} 
+		
 		// 以下代码用于生成订单编号
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		Date now = new Date();
@@ -1227,7 +1237,7 @@ public class TdCommonService {
 		virtual.setUsername(user.getUsername());
 		virtual.setUserId(user.getId());
 
-		virtual.setOrderNumber("XN" + orderNum);
+		virtual.setOrderNumber(cityShortName + "XN" + orderNum);
 		virtual.setOrderTime(new Date());
 
 		// Add by Shawn
