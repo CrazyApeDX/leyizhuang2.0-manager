@@ -530,6 +530,13 @@ public class TdManagerUserController {
 			tdManagerLogService.addLog("edit", "修改用户", req);
 		}
 		tdUser.setIsEnable(isEnable);
+		
+		if (null == tdUser.getCredit()) {
+			tdUser.setCredit(0d);
+		}
+		if (null == tdUser.getCreditLimit()) {
+			tdUser.setCreditLimit(0d);
+		}
 		tdUserService.save(tdUser);
 
 		return "redirect:/Verwalter/user/list/";
