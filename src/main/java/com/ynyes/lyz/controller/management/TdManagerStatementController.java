@@ -169,7 +169,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}
 		
 		//门店管理员只能查询归属门店
-		if (tdManagerRole.getTitle().equalsIgnoreCase("门店")) 
+		if (tdManagerRole.getTitle().equalsIgnoreCase("门店")||tdManagerRole.getTitle().equalsIgnoreCase("郑州门店")) 
 			{
 	        	diyCode=tdManager.getDiyCode();
 	        	cityName=null;

@@ -434,7 +434,7 @@ public class TdManagerUserController {
 			{
 				tdUser.setPassword(MD5.md5(oldPassword, 32));
 			}
-			Double newBalance= tdUser.getBalance();
+			/*Double newBalance= tdUser.getBalance();
 			Double oldBalance= Utils.decryptionBalance(userDesc);
 			if(newBalance==null){
 				newBalance=0.0;
@@ -445,7 +445,7 @@ public class TdManagerUserController {
 			if((!oldBalance.equals(newBalance)) || (tdUser.getBalance()!=tdUser.getCashBalance()+tdUser.getUnCashBalance())){
 				tdUser.setIsEnable(false);
 				this.setAndSaveBalanceLog(oldBalance,0L, tdUser, manager);
-			}
+			}*/
 			
 //			// add MDJ
 //			if (!obalance.equals(tdUser.getBalance()) && isVipUser0)

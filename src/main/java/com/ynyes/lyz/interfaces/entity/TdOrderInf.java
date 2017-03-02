@@ -73,6 +73,14 @@ public class TdOrderInf extends TdInfBaseEntity {
 	//门店联系电话
 	@Column
 	private String diySitePhone;
+	
+	//导购电话
+	@Column(length = 20)
+	private String sellerPhone;
+	
+	//导购姓名
+	@Column(length = 100)
+	private String sellerName;
 
 	//省
 	@Column
@@ -440,6 +448,24 @@ public class TdOrderInf extends TdInfBaseEntity {
 	public void setCompanyDeliveryFee(Double companyDeliveryFee) {
 		this.companyDeliveryFee = companyDeliveryFee;
 	}
+	
+	
+
+	public String getSellerPhone() {
+		return sellerPhone;
+	}
+
+	public void setSellerPhone(String sellerPhone) {
+		this.sellerPhone = sellerPhone;
+	}
+
+	public String getSellerName() {
+		return sellerName;
+	}
+
+	public void setSellerName(String sellerName) {
+		this.sellerName = sellerName;
+	}
 
 	@Override
 	public String toString() {
@@ -447,14 +473,14 @@ public class TdOrderInf extends TdInfBaseEntity {
 				+ orderDate + ", mainOrderNumber=" + mainOrderNumber + ", productType=" + productType + ", orderTypeId="
 				+ orderTypeId + ", userid=" + userid + ", username=" + username + ", userphone=" + userphone
 				+ ", diySiteId=" + diySiteId + ", diySiteCode=" + diySiteCode + ", diySiteName=" + diySiteName
-				+ ", diySitePhone=" + diySitePhone + ", province=" + province + ", city=" + city + ", disctrict="
-				+ disctrict + ", shippingName=" + shippingName + ", shippingPhone=" + shippingPhone
-				+ ", deliverTypeTitle=" + deliverTypeTitle + ", isonlinepay=" + isonlinepay + ", payType=" + payType
-				+ ", payDate=" + payDate + ", payAmt=" + payAmt + ", prepayAmt=" + prepayAmt + ", recAmt=" + recAmt
-				+ ", attribute1=" + attribute1 + ", attribute2=" + attribute2 + ", attribute3=" + attribute3
-				+ ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + ", couponFlag=" + couponFlag
-				+ ", deliveryFee=" + deliveryFee + ", creditAmt=" + creditAmt + ", companyDeliveryFee="
-				+ companyDeliveryFee + "]";
+				+ ", diySitePhone=" + diySitePhone + ", sellerPhone=" + sellerPhone + ", sellerName=" + sellerName
+				+ ", province=" + province + ", city=" + city + ", disctrict=" + disctrict + ", shippingName="
+				+ shippingName + ", shippingPhone=" + shippingPhone + ", deliverTypeTitle=" + deliverTypeTitle
+				+ ", isonlinepay=" + isonlinepay + ", payType=" + payType + ", payDate=" + payDate + ", payAmt="
+				+ payAmt + ", prepayAmt=" + prepayAmt + ", recAmt=" + recAmt + ", attribute1=" + attribute1
+				+ ", attribute2=" + attribute2 + ", attribute3=" + attribute3 + ", attribute4=" + attribute4
+				+ ", attribute5=" + attribute5 + ", couponFlag=" + couponFlag + ", deliveryFee=" + deliveryFee
+				+ ", creditAmt=" + creditAmt + ", companyDeliveryFee=" + companyDeliveryFee + "]";
 	}
 
 	
