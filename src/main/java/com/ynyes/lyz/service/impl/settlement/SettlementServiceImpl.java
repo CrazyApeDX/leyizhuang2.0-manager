@@ -812,8 +812,6 @@ public class SettlementServiceImpl implements ISettlementService {
 						}
 						realUser.getBalance();
 						tdUserService.save(realUser);
-						// 使用信用金
-						this.costCredit(subOrder);
 					}
 				}
 			}
@@ -1172,11 +1170,4 @@ public class SettlementServiceImpl implements ISettlementService {
 			}
 		}
 	}
-
-	private void costCredit(TdOrder order) {
-		if (order.getIsSellerOrder()) {
-			this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
-		}
-	}
-
 }

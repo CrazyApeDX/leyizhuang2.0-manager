@@ -105,13 +105,13 @@ public class TdManagerUserController {
 
 	@Autowired
 	private TdDiySiteService tdDiySiteService;
-	
+
 	@Autowired
 	private TdBalanceLogService tdBalanceLogService;
-	
+
 	@Autowired
 	private TdManagerService tdManagerService;
-	
+
 	@Autowired
 	private TdDiySiteRoleService tdDiySiteRoleService;
 
@@ -122,13 +122,13 @@ public class TdManagerUserController {
 	 */
 	@Autowired
 	TdCartColorPackageService TdCartColorPackageService;
-	
+
 	@Autowired
 	TdCartGoodsService tdCartGoodsService;
-	
+
 	@Autowired
 	TdCouponService tdCouponService;
-	
+
 	@Autowired
 	TdReturnNoteService tdReturnNoteService;
 
@@ -167,10 +167,10 @@ public class TdManagerUserController {
 				return res;
 			}
 		}
-		
-		//判断配送员编号是否重复
+
+		// 判断配送员编号是否重复
 		try {
-			if (null != tdUserService.findByOpUser(param)){
+			if (null != tdUserService.findByOpUser(param)) {
 				res.put("info", "已存在相同配送员编号");
 				return res;
 			}
@@ -183,23 +183,24 @@ public class TdManagerUserController {
 
 		return res;
 	}
-	//增加权限判读 增加城市和门店搜索  zp
+
+	// 增加权限判读 增加城市和门店搜索 zp
 	@RequestMapping(value = "/list")
-	public String setting(Integer page, Integer size, String keywords, Long roleId, Long userType,
-			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE, Long[] listId, Integer[] listChkId,
-			ModelMap map, HttpServletRequest req,Long cityCode,Long diyCode) {
+	public String setting(Integer page, Integer size, String keywords, Long roleId, Long userType, String __EVENTTARGET,
+			String __EVENTARGUMENT, String __VIEWSTATE, Long[] listId, Integer[] listChkId, ModelMap map,
+			HttpServletRequest req, Long cityCode, Long diyCode) {
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
-		//获取管理员管辖城市
-    	List<TdCity> cityList= new ArrayList<TdCity>();
-    	//获取管理员管辖门店
-    	List<TdDiySite> diyList=new ArrayList<TdDiySite>(); 
-    	
-    	//管理员获取管辖的城市和门店
-    	tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
-    	
+		// 获取管理员管辖城市
+		List<TdCity> cityList = new ArrayList<TdCity>();
+		// 获取管理员管辖门店
+		List<TdDiySite> diyList = new ArrayList<TdDiySite>();
+
+		// 管理员获取管辖的城市和门店
+		tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
+
 		if (null != __EVENTTARGET) {
 			if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
 				if (null != __EVENTARGUMENT) {
@@ -208,20 +209,20 @@ public class TdManagerUserController {
 			} else if (__EVENTTARGET.equalsIgnoreCase("btnDelete")) {
 				btnDelete("user", listId, listChkId);
 				tdManagerLogService.addLog("delete", "删除用户", req);
-			}else if(__EVENTTARGET.equalsIgnoreCase("btnSearch")){
-				page=0;
+			} else if (__EVENTTARGET.equalsIgnoreCase("btnSearch")) {
+				page = 0;
 			}
 		}
-		
-		//修改城市刷新门店列表
-		if(cityCode!=null){
-			//需要删除的diy
-			List<TdDiySite> diyRemoveList=new ArrayList<TdDiySite>(); 
+
+		// 修改城市刷新门店列表
+		if (cityCode != null) {
+			// 需要删除的diy
+			List<TdDiySite> diyRemoveList = new ArrayList<TdDiySite>();
 			for (TdDiySite tdDiySite : diyList) {
-				if(!cityCode.equals(tdDiySite.getRegionId())){
+				if (!cityCode.equals(tdDiySite.getRegionId())) {
 					diyRemoveList.add(tdDiySite);
-					if(tdDiySite.getId()==diyCode){
-						diyCode=null;
+					if (tdDiySite.getId() == diyCode) {
+						diyCode = null;
 					}
 				}
 			}
@@ -257,15 +258,15 @@ public class TdManagerUserController {
 		Page<TdUser> userPage = null;
 
 		if (null == roleId) {
-			//获取管辖门店id列表
-			List<Long> roleDiyIds=new ArrayList<Long>();
-			if(diyList!=null && diyList.size()>0){
+			// 获取管辖门店id列表
+			List<Long> roleDiyIds = new ArrayList<Long>();
+			if (diyList != null && diyList.size() > 0) {
 				for (TdDiySite diy : diyList) {
 					roleDiyIds.add(diy.getId());
 				}
 			}
-			//获取分页数据
-			userPage=tdUserService.searchList(keywords, roleDiyIds, userType,cityCode,diyCode, size, page);
+			// 获取分页数据
+			userPage = tdUserService.searchList(keywords, roleDiyIds, userType, cityCode, diyCode, size, page);
 		}
 
 		map.addAttribute("user_page", userPage);
@@ -275,35 +276,35 @@ public class TdManagerUserController {
 
 	@RequestMapping(value = "/change_city", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> changeCity(Long cid,HttpServletRequest req){
-		Map<String,Object> map = new HashMap<String,Object>();
+	public Map<String, Object> changeCity(Long cid, HttpServletRequest req) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
-		//获取管理员管辖城市
-    	List<TdCity> cityList= new ArrayList<TdCity>();
-    	//获取管理员管辖门店
-    	List<TdDiySite> diyList=new ArrayList<TdDiySite>(); 
-    	
-    	//管理员获取管辖的城市和门店
-    	tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
-    	
+		// 获取管理员管辖城市
+		List<TdCity> cityList = new ArrayList<TdCity>();
+		// 获取管理员管辖门店
+		List<TdDiySite> diyList = new ArrayList<TdDiySite>();
+
+		// 管理员获取管辖的城市和门店
+		tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
+
 		map.put("code", 0);
 		List<TdDiySite> site_list = tdDiySiteService.findByRegionIdOrderBySortIdAsc(cid);
-		List<TdDiySite> return_list =new ArrayList<TdDiySite>();
+		List<TdDiySite> return_list = new ArrayList<TdDiySite>();
 		for (TdDiySite tdDiySite : site_list) {
-			if(diyList.contains(tdDiySite)){
+			if (diyList.contains(tdDiySite)) {
 				return_list.add(tdDiySite);
 			}
 		}
 		map.put("site_list", return_list);
 		return map;
 	}
-	
+
 	@RequestMapping(value = "/change_diy", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> changeDiy(Long did){
-		Map<String,Object> map = new HashMap<String,Object>();
+	public Map<String, Object> changeDiy(Long did) {
+		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("code", 0);
-		//查询归属导购
+		// 查询归属导购
 		TdDiySite diySite = tdDiySiteService.findOne(did);
 		if (null != diySite) {
 			List<TdUser> user_list = tdUserService.findByCityIdAndCustomerIdAndUserTypeOrCityIdAndCustomerIdAndUserType(
@@ -312,8 +313,8 @@ public class TdManagerUserController {
 		}
 		return map;
 	}
-	
-	//增加权限判读 添加归属导购 zp
+
+	// 增加权限判读 添加归属导购 zp
 	@RequestMapping(value = "/edit")
 	public String userEdit(Long id, Long roleId, String action, String __VIEWSTATE, ModelMap map,
 			HttpServletRequest req) {
@@ -321,75 +322,75 @@ public class TdManagerUserController {
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
-		
-		
+
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
 		map.addAttribute("roleId", roleId);
 
 		TdUser user = tdUserService.findOne(id);
 
-		//获取管理员管辖城市
-    	List<TdCity> cityList= new ArrayList<TdCity>();
-    	//获取管理员管辖门店
-    	List<TdDiySite> diyList=new ArrayList<TdDiySite>(); 
-    	
-    	//管理员获取管辖的城市和门店
-    	tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
-    	
-    	map.addAttribute("city_list",cityList);
-    	map.addAttribute("site_list", diyList);
-		
+		// 获取管理员管辖城市
+		List<TdCity> cityList = new ArrayList<TdCity>();
+		// 获取管理员管辖门店
+		List<TdDiySite> diyList = new ArrayList<TdDiySite>();
+
+		// 管理员获取管辖的城市和门店
+		tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
+
+		map.addAttribute("city_list", cityList);
+		map.addAttribute("site_list", diyList);
+
 		if (null != user) {
 			map.addAttribute("user", user);
-			//查询归属导购
+			// 查询归属导购
 			TdDiySite diySite = tdDiySiteService.findOne(user.getUpperDiySiteId());
 			if (null != diySite) {
-				List<TdUser> user_list = tdUserService.findByCityIdAndCustomerIdAndUserTypeOrCityIdAndCustomerIdAndUserType(
-						diySite.getRegionId(), diySite.getCustomerId());
+				List<TdUser> user_list = tdUserService
+						.findByCityIdAndCustomerIdAndUserTypeOrCityIdAndCustomerIdAndUserType(diySite.getRegionId(),
+								diySite.getCustomerId());
 				map.addAttribute("user_list", user_list);
 			}
-			map.addAttribute("userDesc",Utils.encryptionBalance(user.getBalance()));
-//			List<TdCity> cities = tdCityService.findAll();
-//			map.addAttribute("city_list",cities);
-//			// 获取用户所在城市
-//			Long cityId = user.getCityId();
-//
-//			if (null != cityId) {
-//				TdCity city = tdCityService.findBySobIdCity(cityId);
-//
-//				if (null != city) {
-//					// 获取指定id城市下的所有门店
-//					List<TdDiySite> site_list = tdDiySiteService.findByRegionIdOrderBySortIdAsc(city.getSobIdCity());
-//
-//					map.addAttribute("site_list", site_list);
-//				}
-			}
-//		} else {
-//			List<TdCity> cities = tdCityService.findAll();
-//			map.addAttribute("city_list",cities);
-//			List<TdDiySite> site_list = tdDiySiteService.findAll();
-//			// 获取所有的门店
-//			map.addAttribute("site_list", site_list);
-//		}
+			map.addAttribute("userDesc", Utils.encryptionBalance(user.getBalance()));
+			// List<TdCity> cities = tdCityService.findAll();
+			// map.addAttribute("city_list",cities);
+			// // 获取用户所在城市
+			// Long cityId = user.getCityId();
+			//
+			// if (null != cityId) {
+			// TdCity city = tdCityService.findBySobIdCity(cityId);
+			//
+			// if (null != city) {
+			// // 获取指定id城市下的所有门店
+			// List<TdDiySite> site_list =
+			// tdDiySiteService.findByRegionIdOrderBySortIdAsc(city.getSobIdCity());
+			//
+			// map.addAttribute("site_list", site_list);
+			// }
+		}
+		// } else {
+		// List<TdCity> cities = tdCityService.findAll();
+		// map.addAttribute("city_list",cities);
+		// List<TdDiySite> site_list = tdDiySiteService.findAll();
+		// // 获取所有的门店
+		// map.addAttribute("site_list", site_list);
+		// }
 		return "/site_mag/user_edit";
 	}
 
 	@RequestMapping(value = "/save")
-	public String orderEdit(TdUser tdUser,Double obalance,Double ocashBalance,Double ounCashBalance, String oldPassword,
-			String __VIEWSTATE, ModelMap map, String birthdate, HttpServletRequest req,String userDesc,Boolean isEnable) {
+	public String orderEdit(TdUser tdUser, Double obalance, Double ocashBalance, Double ounCashBalance,
+			String oldPassword, String __VIEWSTATE, ModelMap map, String birthdate, HttpServletRequest req,
+			String userDesc, Boolean isEnable) {
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
 		TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(username);
-		if (manager == null)
-		{
+		if (manager == null) {
 			return "redirect:/Verwalter/login";
 		}
-		
-		
-//		TdUser oldUser= tdUserService.findByUsername(tdUser.geti);
-		
+
+		// TdUser oldUser= tdUserService.findByUsername(tdUser.geti);
+
 		// 修改门店的时候要修改用户的customerId和diyName
 		Long diySiteId = tdUser.getUpperDiySiteId();
 		if (null != diySiteId) {
@@ -402,17 +403,19 @@ public class TdManagerUserController {
 				tdUser.setDiyCode(site.getStoreCode());
 			}
 		}
-		//修改导购的时候修改导购电话和姓名
-		Long sellerId=tdUser.getSellerId();
-		if(null!=sellerId){
-			TdUser sellerUser=tdUserService.findOne(sellerId);
-			if(sellerUser!=null){
+		// 修改导购的时候修改导购电话和姓名
+		Long sellerId = tdUser.getSellerId();
+		if (null != sellerId) {
+			TdUser sellerUser = tdUserService.findOne(sellerId);
+			if (sellerUser != null) {
 				tdUser.setSellerName(sellerUser.getRealName());
-				tdUser.setReferPhone(sellerUser.getUsername());
+				// 2017-03-03 referPhone在注册后就是恒定不变的属性，不可以再修改
+				// tdUser.setReferPhone(sellerUser.getUsername());
 			}
-		}else{
+		} else {
 			tdUser.setSellerName(null);
-			tdUser.setReferPhone(null);
+			// 2017-03-03 referPhone在注册后就是恒定不变的属性，不可以再修改
+			// tdUser.setReferPhone(null);
 		}
 
 		if (null != birthdate) {
@@ -426,111 +429,104 @@ public class TdManagerUserController {
 				e.printStackTrace();
 			}
 		}
-		
+
 		// 设置新密码 zhangji 2016-1-7 22:01:45
-		if (null != tdUser.getId()) //老用户
+		if (null != tdUser.getId()) // 老用户
 		{
-			if (StringUtils.isNotBlank(oldPassword)) 
-			{
+			if (StringUtils.isNotBlank(oldPassword)) {
 				tdUser.setPassword(MD5.md5(oldPassword, 32));
 			}
-			/*Double newBalance= tdUser.getBalance();
-			Double oldBalance= Utils.decryptionBalance(userDesc);
-			if(newBalance==null){
-				newBalance=0.0;
-			}
-			
-			//预存款总额不对
-			//不能修改预存款
-			if((!oldBalance.equals(newBalance)) || (tdUser.getBalance()!=tdUser.getCashBalance()+tdUser.getUnCashBalance())){
-				tdUser.setIsEnable(false);
-				this.setAndSaveBalanceLog(oldBalance,0L, tdUser, manager);
-			}*/
-			
-//			// add MDJ
-//			if (!obalance.equals(tdUser.getBalance()) && isVipUser0)
-//			{
-//				this.setAndSaveBalanceLog(obalance - tdUser.getBalance(),0L, tdUser, manager);
-//				tdUser.setBalance(obalance);
-//			}
-//			if (!ocashBalance.equals(tdUser.getCashBalance()) && isVipUser1)
-//			{
-//				this.setAndSaveBalanceLog(ocashBalance - tdUser.getCashBalance(),1L, tdUser, manager);
-//				tdUser.setCashBalance(ocashBalance);
-//			}
-//			if (!ounCashBalance.equals(tdUser.getUnCashBalance()) && isVipUser2)
-//			{
-//				this.setAndSaveBalanceLog(ounCashBalance - tdUser.getUnCashBalance(),2L, tdUser, manager);
-//				tdUser.setUnCashBalance(ounCashBalance);
-//			}
-		}
-		else//新用户
+			/*
+			 * Double newBalance= tdUser.getBalance(); Double oldBalance=
+			 * Utils.decryptionBalance(userDesc); if(newBalance==null){
+			 * newBalance=0.0; }
+			 * 
+			 * //预存款总额不对 //不能修改预存款 if((!oldBalance.equals(newBalance)) ||
+			 * (tdUser.getBalance()!=tdUser.getCashBalance()+tdUser.
+			 * getUnCashBalance())){ tdUser.setIsEnable(false);
+			 * this.setAndSaveBalanceLog(oldBalance,0L, tdUser, manager); }
+			 */
+
+			// // add MDJ
+			// if (!obalance.equals(tdUser.getBalance()) && isVipUser0)
+			// {
+			// this.setAndSaveBalanceLog(obalance - tdUser.getBalance(),0L,
+			// tdUser, manager);
+			// tdUser.setBalance(obalance);
+			// }
+			// if (!ocashBalance.equals(tdUser.getCashBalance()) && isVipUser1)
+			// {
+			// this.setAndSaveBalanceLog(ocashBalance -
+			// tdUser.getCashBalance(),1L, tdUser, manager);
+			// tdUser.setCashBalance(ocashBalance);
+			// }
+			// if (!ounCashBalance.equals(tdUser.getUnCashBalance()) &&
+			// isVipUser2)
+			// {
+			// this.setAndSaveBalanceLog(ounCashBalance -
+			// tdUser.getUnCashBalance(),2L, tdUser, manager);
+			// tdUser.setUnCashBalance(ounCashBalance);
+			// }
+		} else// 新用户
 		{
 			TdCity city = tdCityService.findBySobIdCity(tdUser.getCityId());
-			if (StringUtils.isNotBlank(oldPassword)) 
-			{
+			if (StringUtils.isNotBlank(oldPassword)) {
 				tdUser.setPassword(MD5.md5(oldPassword, 32));
-			}
-			else
-			{
+			} else {
 				tdUser.setPassword(MD5.md5("123456", 32));
 			}
-			if (null != city)
-			{
+			if (null != city) {
 				tdUser.setCityName(city.getCityName());
 				tdUser.setCityId(city.getSobIdCity());
 			}
 			tdUser.setRegisterTime(new Date());
-//			tdUser.setAllPayed(0.00);
-//			tdUser.setNickname(tdUser.getUsername());
-//			tdUser.setFirstOrder(true);
-//			tdUser.setIsOld(false);
-			
+			// tdUser.setAllPayed(0.00);
+			// tdUser.setNickname(tdUser.getUsername());
+			// tdUser.setFirstOrder(true);
+			// tdUser.setIsOld(false);
+
 			// add MDJ
 			tdUser.setBalance(0d);
 			tdUser.setCashBalance(0d);
 			tdUser.setUnCashBalance(0d);
-//			if (obalance != 0)
-//			{
-//				this.setAndSaveBalanceLog(obalance,0L, tdUser, manager);
-//			}
-//			if (ocashBalance != 0)
-//			{
-//				this.setAndSaveBalanceLog(ocashBalance,1L, tdUser, manager);
-//			}
-//			if (ounCashBalance != 0)
-//			{
-//				this.setAndSaveBalanceLog(ounCashBalance,2L, tdUser, manager);
-//			}
-//			tdUser.setBalance(obalance);
-//			tdUser.setCashBalance(ocashBalance);
-//			tdUser.setUnCashBalance(ounCashBalance);
+			// if (obalance != 0)
+			// {
+			// this.setAndSaveBalanceLog(obalance,0L, tdUser, manager);
+			// }
+			// if (ocashBalance != 0)
+			// {
+			// this.setAndSaveBalanceLog(ocashBalance,1L, tdUser, manager);
+			// }
+			// if (ounCashBalance != 0)
+			// {
+			// this.setAndSaveBalanceLog(ounCashBalance,2L, tdUser, manager);
+			// }
+			// tdUser.setBalance(obalance);
+			// tdUser.setCashBalance(ocashBalance);
+			// tdUser.setUnCashBalance(ounCashBalance);
 		}
-		
-		//如果是导购或者店长修改其名下的会员导购电话 zp
-		if(tdUser.getUserType().equals(1L)||tdUser.getUserType().equals(2L)){
-			//循环修改导购 
-			List<TdUser> userList= tdUserService.findBySellerIdAndUserType(tdUser.getId(), 0L);
-			if(userList!=null && userList.size()>0){
+
+		// 如果是导购或者店长修改其名下的会员导购电话 zp
+		if (tdUser.getUserType().equals(1L) || tdUser.getUserType().equals(2L)) {
+			// 循环修改导购
+			List<TdUser> userList = tdUserService.findBySellerIdAndUserType(tdUser.getId(), 0L);
+			if (userList != null && userList.size() > 0) {
 				for (TdUser user : userList) {
 					user.setSellerName(tdUser.getRealName());
 					tdUserService.save(user);
 				}
 			}
 		}
-		
+
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
 
-		if (null == tdUser.getId()) 
-		{
+		if (null == tdUser.getId()) {
 			tdManagerLogService.addLog("add", "修改用户", req);
-		}
-		else
-		{
+		} else {
 			tdManagerLogService.addLog("edit", "修改用户", req);
 		}
 		tdUser.setIsEnable(isEnable);
-		
+
 		if (null == tdUser.getCredit()) {
 			tdUser.setCredit(0d);
 		}
@@ -541,17 +537,13 @@ public class TdManagerUserController {
 
 		return "redirect:/Verwalter/user/list/";
 	}
-	
-	private void setAndSaveBalanceLog( Double changeBalance,Long balancelType,TdUser newUser,TdManager operator)
-	{
+
+	private void setAndSaveBalanceLog(Double changeBalance, Long balancelType, TdUser newUser, TdManager operator) {
 		TdBalanceLog balanceLog = new TdBalanceLog();
 		balanceLog.setUsername(newUser.getUsername());
-		if (changeBalance != null)
-		{
+		if (changeBalance != null) {
 			balanceLog.setMoney(changeBalance);
-		}
-		else
-		{
+		} else {
 			balanceLog.setMoney(newUser.getBalance());
 		}
 		balanceLog.setType(2L);
@@ -559,27 +551,19 @@ public class TdManagerUserController {
 		balanceLog.setFinishTime(new Date());
 		balanceLog.setIsSuccess(true);
 		balanceLog.setBalanceType(balancelType);
-		if (balancelType == 0)
-		{
+		if (balancelType == 0) {
 			balanceLog.setBalance(newUser.getBalance() + changeBalance);
-		}
-		else if (balancelType == 1)
-		{
+		} else if (balancelType == 1) {
 			balanceLog.setBalance(newUser.getCashBalance() + changeBalance);
-		}
-		else if (balancelType == 2)
-		{
+		} else if (balancelType == 2) {
 			balanceLog.setBalance(newUser.getUnCashBalance() + changeBalance);
 		}
 		balanceLog.setOperator(operator.getUsername());
 		balanceLog.setOperatorIp(operator.getLastLoginIp());
 		balanceLog.setReason("后台管理员修改");
-		if (newUser.getId() != null) 
-		{
+		if (newUser.getId() != null) {
 			balanceLog.setUserId(newUser.getId());
-		}
-		else
-		{
+		} else {
 			balanceLog.setReason("后台新增会员设置预存款");
 		}
 		balanceLog.setDiySiteId(newUser.getUpperDiySiteId());
@@ -649,7 +633,7 @@ public class TdManagerUserController {
 				item.setUsername(newUsername);
 				tdOrderService.save(item);
 			}
-			//修改真实用户的订单
+			// 修改真实用户的订单
 			List<TdOrder> tdRealOrder = tdOrderService.findByRealUserUsernameOrderByIdDesc(oldUsername);
 			for (TdOrder item : tdRealOrder) {
 				item.setRealUserUsername(newUsername);
@@ -657,7 +641,6 @@ public class TdManagerUserController {
 				item.setRealUserRealName(tdUser.getRealName());
 				tdOrderService.save(item);
 			}
-			
 
 			List<TdUserCollect> tdUserCollect = tdUserCollectService.findByUsername(oldUsername);
 			for (TdUserCollect item : tdUserCollect) {
@@ -676,18 +659,17 @@ public class TdManagerUserController {
 				item.setUsername(newUsername);
 				tdUserRecentVisitService.save(item);
 			}
-			//如果是导购或者店长修改其名下的会员导购电话 zp
-			if(tdUser.getUserType().equals(1L)||tdUser.getUserType().equals(2L)){
-				//循环修改导购 
-				List<TdUser> userList= tdUserService.findBySellerIdAndUserType(tdUser.getId(), 0L);
-				if(userList!=null && userList.size()>0){
+			// 如果是导购或者店长修改其名下的会员导购电话 zp
+			if (tdUser.getUserType().equals(1L) || tdUser.getUserType().equals(2L)) {
+				// 循环修改导购
+				List<TdUser> userList = tdUserService.findBySellerIdAndUserType(tdUser.getId(), 0L);
+				if (userList != null && userList.size() > 0) {
 					for (TdUser user : userList) {
 						user.setReferPhone(newUsername);
 						tdUserService.save(user);
 					}
 				}
 			}
-			
 
 		}
 
@@ -1121,7 +1103,6 @@ public class TdManagerUserController {
 
 		return "redirect:/Verwalter/user/suggestion/list";
 	}
-	
 
 	@RequestMapping(value = "/setSeller")
 	public String setReller(Long id, Long roleId, String __VIEWSTATE, ModelMap map, HttpServletRequest req) {
@@ -1133,7 +1114,7 @@ public class TdManagerUserController {
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
 		map.addAttribute("roleId", roleId);
 		if (null != id) {
-			TdUser user= tdUserService.findOne(id);
+			TdUser user = tdUserService.findOne(id);
 			map.addAttribute("user", user);
 			map.addAttribute("userTypeName", tdUserService.getUserTypeName(user.getUserType()));
 		}
@@ -1141,7 +1122,7 @@ public class TdManagerUserController {
 		// tdUserLevelService.findIsEnableTrue());
 		return "/site_mag/user_reller_edit";
 	}
-	
+
 	@RequestMapping(value = "/moreSeller", method = RequestMethod.POST)
 	public String moreReller(Long id, String oldUsername, String newUsername, String __VIEWSTATE, ModelMap map,
 			String birthdate, HttpServletRequest req) {
@@ -1152,17 +1133,17 @@ public class TdManagerUserController {
 
 		TdUser oldTdUser = tdUserService.findOne(id);
 		TdUser newTdUser = tdUserService.findByUsername(newUsername);
-		//输入的导购名不存在
-		if(newTdUser==null){
-			map.put("error", "新的"+tdUserService.getUserTypeName(oldTdUser.getUserType())+"名不存在");
+		// 输入的导购名不存在
+		if (newTdUser == null) {
+			map.put("error", "新的" + tdUserService.getUserTypeName(oldTdUser.getUserType()) + "名不存在");
 			map.put("user", oldTdUser);
 			map.addAttribute("userTypeName", tdUserService.getUserTypeName(oldTdUser.getUserType()));
 			return "/site_mag/user_reller_edit";
 		}
-		
-		List<TdUser> userList= tdUserService.findBySellerIdAndUserType(oldTdUser.getId(), 0L);
-		//循环修改导购
-		if(userList!=null && userList.size()>0){
+
+		List<TdUser> userList = tdUserService.findBySellerIdAndUserType(oldTdUser.getId(), 0L);
+		// 循环修改导购
+		if (userList != null && userList.size() > 0) {
 			for (TdUser tdUser : userList) {
 				tdUser.setSellerId(newTdUser.getId());
 				tdUser.setSellerName(newTdUser.getRealName());
@@ -1177,7 +1158,6 @@ public class TdManagerUserController {
 
 		return "redirect:/Verwalter/user/list/";
 	}
-	
 
 	/*----------------用户投诉咨询 end  ---------------------*/
 
@@ -1367,7 +1347,6 @@ public class TdManagerUserController {
 	// return "/site_mag/error_404";
 	// }
 
-
 	@ModelAttribute
 	public void getModel(@RequestParam(value = "userId", required = false) Long userId,
 			@RequestParam(value = "userLevelId", required = false) Long userLevelId,
@@ -1396,7 +1375,6 @@ public class TdManagerUserController {
 
 	}
 
-
 	private void btnDelete(String type, Long[] ids, Integer[] chkIds) {
 		if (null == ids || null == chkIds || ids.length < 1 || chkIds.length < 1 || null == type || "".equals(type)) {
 			return;
@@ -1423,5 +1401,4 @@ public class TdManagerUserController {
 		}
 	}
 
-	
 }
