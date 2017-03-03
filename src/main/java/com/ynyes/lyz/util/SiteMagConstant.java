@@ -26,6 +26,8 @@ public class SiteMagConstant {
 	public static String imagePath;
 	public static String alipayReturnUrl;
 	public static String alipayReturnUrlAsnyc;
+	public static String wechatReturnUrl;
+	public static String wechatReturnUrlAsnyc;
 
 	static {
 		String ip;
@@ -40,11 +42,13 @@ public class SiteMagConstant {
 			imagePath = "/mnt/root/images/goods";
 			alipayReturnUrl = "http://www.leyizhuang.com.cn/pay/alipay/return";
 			alipayReturnUrlAsnyc = "http://www.leyizhuang.com.cn/pay/alipay/return/async";
+			wechatReturnUrlAsnyc = "http://www.leyizhuang.com.cn/pay/wechat/return/async";
 		} else {
 			backupPath = "src/main/resources/backup/";
 			imagePath = "src/main/resources/static/images";
 			alipayReturnUrl = "http://test.leyizhuang.com.cn/pay/alipay/return";
 			alipayReturnUrlAsnyc = "http://test.leyizhuang.com.cn/pay/alipay/return/async";
+			wechatReturnUrlAsnyc = "http://test.leyizhuang.com.cn/pay/wechat/return/async";
 		}
 	}
 }
