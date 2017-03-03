@@ -140,5 +140,10 @@ public class TdCashRefundInfService {
  		}
  		return repository.findByRefundTypeAndSendFlag(type, flag);
  	}
+
+	public List<TdCashRefundInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag) {
+		
+		return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
+	}
     
 }

@@ -16,5 +16,7 @@ public interface TdCashRefundInfRepo extends PagingAndSortingRepository<TdCashRe
 	
 	// 查询传递失败的提现记录
 	List<TdCashRefundInf> findByRefundTypeAndSendFlag(String type, Integer flag);
+
+	List<TdCashRefundInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag);
 }
 

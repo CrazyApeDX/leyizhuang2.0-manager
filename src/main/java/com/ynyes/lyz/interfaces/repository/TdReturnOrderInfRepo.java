@@ -19,5 +19,7 @@ public interface TdReturnOrderInfRepo
 	List<TdReturnOrderInf> findByOrderNumber(String orderNumber);
 	
 	List<TdReturnOrderInf> findBySobIdAndSendFlag(Long sobId, Integer sendFlag);
+
+	List<TdReturnOrderInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag);
 }
 

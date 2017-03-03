@@ -11,5 +11,7 @@ public interface TdOrderReceiveInfRepo
 		extends PagingAndSortingRepository<TdOrderReceiveInf, Long>, JpaSpecificationExecutor<TdOrderReceiveInf> 
 {
 	List<TdOrderReceiveInf> findByOrderNumber(String orderNumber);
+
+	List<TdOrderReceiveInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag);
 }
 

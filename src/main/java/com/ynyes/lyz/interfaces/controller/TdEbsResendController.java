@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
@@ -97,6 +98,35 @@ public class TdEbsResendController {
 
 		}
 	}
+	
+	/**
+	 * 收款传输失败的全部重传
+	 * 
+	 * @param orderNumber
+	 *            分单号
+	 */
+	@RequestMapping(value = "/cashReceiptAll")
+	@ResponseBody
+	public String resendCashReceiptAll() {
+		
+		List<TdCashReciptInf> cashReciptInfs = tdCashReciptInfService.findBySendFlagIsTrueOrSendFlagIsNull(1);
+		if (cashReciptInfs != null && cashReciptInfs.size() > 0) {
+			for (int i = 0; i < cashReciptInfs.size(); i++) {
+				TdCashReciptInf cashReciptInf = cashReciptInfs.get(i);
+				
+				String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+				if (StringUtils.isBlank(resultStr)) {
+					cashReciptInf.setSendFlag(0);
+				} else {
+					cashReciptInf.setSendFlag(1);
+					cashReciptInf.setErrorMsg(resultStr);
+				}
+			}
+			tdCashReciptInfService.save(cashReciptInfs);
+
+		}
+		return Integer.valueOf(cashReciptInfs.size()).toString();
+	}
 
 	/**
 	 * 退款重传
@@ -127,7 +157,35 @@ public class TdEbsResendController {
 			tdCashRefundInfService.save(cashRefundInfs);
 		}
 	}
-
+	
+	
+	/**
+	 * 退款重传
+	 * 
+	 */
+	@RequestMapping(value = "/cashRefundAll")
+	public String resendCashRefundAll() {
+		List<TdCashRefundInf> cashRefundInfs = tdCashRefundInfService.findBySendFlagOrSendFlagIsNull(0);
+		if (cashRefundInfs != null && cashRefundInfs.size() > 0) {
+			for (int i = 0; i < cashRefundInfs.size(); i++) {
+				TdCashRefundInf cashRefundInf = cashRefundInfs.get(i);
+				if (cashRefundInf.getSendFlag() != null && cashRefundInf.getSendFlag() == 0) {
+					continue;
+				}
+				String resultStr = tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+				if (StringUtils.isBlank(resultStr)) {
+					cashRefundInf.setSendFlag(0);
+				} else {
+					cashRefundInf.setSendFlag(1);
+					cashRefundInf.setErrorMsg(resultStr);
+				}
+			}
+			tdCashRefundInfService.save(cashRefundInfs);
+		}
+		return Integer.valueOf(cashRefundInfs.size()).toString();
+	}
+	
+	
 	/**
 	 * 重传订单
 	 * 
@@ -272,6 +330,32 @@ public class TdEbsResendController {
 			tdOrderReceiveInfService.save(orderReceiveInfs);
 		}
 	}
+	
+	/**
+	 * 全部重传到店自提单收货时间表失败的条目
+	 * 
+	 * @param orderNumber
+	 */
+	@RequestMapping(value = "/orderReceiptAll")
+	public String resendOrderReceiptAll(String orderNumber) {
+		List<TdOrderReceiveInf> orderReceiveInfs = tdOrderReceiveInfService.findBySendFlageOrSendFlagIsNull(1);
+		if (orderReceiveInfs != null && orderReceiveInfs.size() > 0) {
+			for (int i = 0; i < orderReceiveInfs.size(); i++) {
+				TdOrderReceiveInf orderReceiveInf = orderReceiveInfs.get(i);
+				if (orderReceiveInf.getSendFlag() == null || orderReceiveInf.getSendFlag() == 1) {
+					String resultStr = tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+						orderReceiveInf.setSendFlag(0);
+					} else {
+						orderReceiveInf.setSendFlag(1);
+						orderReceiveInf.setErrorMsg(resultStr);
+					}
+				}
+			}
+			tdOrderReceiveInfService.save(orderReceiveInfs);
+		}
+		return Integer.valueOf(orderReceiveInfs.size()).toString();
+	}
 
 	/**
 	 * 重传退货单
@@ -334,6 +418,74 @@ public class TdEbsResendController {
 			}
 			tdReturnCouponInfService.save(returnCouponInfs);
 		}
+	}
+	
+	
+	/**
+	 * 重传传输失败的全部退货单
+	 * 
+	 */
+	@RequestMapping(value = "/returnOrderAll")
+	@ResponseBody
+	public String resendReturnOrderAll() {
+		List<TdReturnOrderInf> returnOrderInfList = tdReturnOrderInfService.findBySendFlagOrSendFlagIsNull(1);
+		for(TdReturnOrderInf returnOrderInf:returnOrderInfList){
+			if (returnOrderInf == null) {
+				return null;
+			}
+			Boolean isSendSuccess = false;
+			// 退单头
+			String returnOrderInfXml = tdInterfaceService.XmlWithObject(returnOrderInf, INFTYPE.RETURNORDERINF);
+			if (returnOrderInfXml != null) {
+				Object[] orderInf = { INFConstants.INF_RT_ORDER_STR, "1", returnOrderInfXml };
+				String result = tdInterfaceService.ebsWsInvoke(orderInf);
+				if (StringUtils.isBlank(result)) {
+					isSendSuccess = true;
+					returnOrderInf.setSendFlag(0);
+				} else {
+					returnOrderInf.setSendFlag(1);
+					returnOrderInf.setErrorMsg(result);
+				}
+				tdReturnOrderInfService.save(returnOrderInf);
+			}
+			// 行
+			List<TdReturnGoodsInf> returnGoodsInfs = tdReturnGoodsInfService
+					.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+			String returnGoodsInfXml = tdInterfaceService.XmlWithObject(returnGoodsInfs, INFTYPE.RETURNGOODSINF);
+			if (returnGoodsInfXml != null && isSendSuccess) {
+				Object[] orderGoodsInf = { INFConstants.INF_RT_ORDER_GOODS_STR, "1", returnGoodsInfXml };
+				String reuslt = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
+				for (int i = 0; i < returnGoodsInfs.size(); i++) {
+					if (StringUtils.isBlank(reuslt)) {
+						returnGoodsInfs.get(i).setSendFlag(0);
+					} else {
+						returnGoodsInfs.get(i).setSendFlag(1);
+						returnGoodsInfs.get(i).setErrorMsg(reuslt);
+					}
+				}
+				tdReturnGoodsInfService.save(returnGoodsInfs);
+			}
+			// 券
+			List<TdReturnCouponInf> returnCouponInfs = tdReturnCouponInfService
+					.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+			String returnCouponInfXml = tdInterfaceService.XmlWithObject(returnCouponInfs, INFTYPE.RETURNCOUPONINF);
+			if (returnCouponInfXml != null && isSendSuccess) {
+				Object[] orderInf = { INFConstants.INF_RT_ORDER_COUPONS_STR, "1", returnCouponInfXml };
+				String reuslt = tdInterfaceService.ebsWsInvoke(orderInf);
+				for (int i = 0; i < returnCouponInfs.size(); i++) {
+					if (StringUtils.isBlank(reuslt)) {
+						returnCouponInfs.get(i).setSendFlag(0);
+					} else {
+						returnCouponInfs.get(i).setSendFlag(1);
+						returnCouponInfs.get(i).setErrorMsg(reuslt);
+					}
+				}
+				tdReturnCouponInfService.save(returnCouponInfs);
+			}
+		}
+		
+		return "处理订单个数："+Integer.valueOf(returnOrderInfList.size()).toString();
+		
 	}
 
 	/**
@@ -423,6 +575,33 @@ public class TdEbsResendController {
 			}
 			tdReturnTimeInfService.save(returnTimeInfs);
 		}
+	}
+	
+	/**
+	 * 重传全部传输失败退货单时间
+	 * 
+	 * @param returnNumber
+	 *            退货单号
+	 */
+	@RequestMapping(value = "/returnTimeAll")
+	public String resendReturnTimeAll() {
+		List<TdReturnTimeInf> returnTimeInfs = tdReturnTimeInfService.findBySendFlagOrSendFlagIsNull(1);
+		if (returnTimeInfs != null && returnTimeInfs.size() > 0) {
+			for (int i = 0; i < returnTimeInfs.size(); i++) {
+				TdReturnTimeInf returnTimeInf = returnTimeInfs.get(i);
+				if (returnTimeInf.getSendFlag() == null || returnTimeInf.getSendFlag() == 1) {
+					String resultStr = tdInterfaceService.ebsWithObject(returnTimeInf, INFTYPE.RETURNTIMEINF);
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+						returnTimeInf.setSendFlag(0);
+					} else {
+						returnTimeInf.setSendFlag(1);
+						returnTimeInf.setErrorMsg(resultStr);
+					}
+				}
+			}
+			tdReturnTimeInfService.save(returnTimeInfs);
+		}
+		return Integer.valueOf(returnTimeInfs.size()).toString();
 	}
 
 }

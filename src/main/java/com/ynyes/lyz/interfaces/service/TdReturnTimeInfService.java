@@ -129,5 +129,10 @@ public class TdReturnTimeInfService {
     {
         return (List<TdReturnTimeInf>) repository.save(entities);
     }
+
+	public List<TdReturnTimeInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag) {
+		
+		return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
+	}
     
 }

@@ -11,5 +11,7 @@ public interface TdReturnTimeInfRepo
 		extends PagingAndSortingRepository<TdReturnTimeInf, Long>, JpaSpecificationExecutor<TdReturnTimeInf> 
 {
 	List<TdReturnTimeInf> findByReturnNumber(String returnNumber);
+
+	List<TdReturnTimeInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag);
 }
 

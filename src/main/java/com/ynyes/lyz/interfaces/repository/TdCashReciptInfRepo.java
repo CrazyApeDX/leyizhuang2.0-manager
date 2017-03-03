@@ -20,4 +20,6 @@ public interface TdCashReciptInfRepo
 
 	TdCashReciptInf findByOrderNumberAndReceiptClassAndReceiptType(String orderNumber, String receiptClass,
 			String receiptType);
+
+	List<TdCashReciptInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag);
 }

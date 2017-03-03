@@ -84,6 +84,12 @@ public class TdOrderReceiveInfService {
     	return repository.findByOrderNumber(orderNumber);
     }
     
+    public List<TdOrderReceiveInf> findBySendFlageOrSendFlagIsNull(Integer sendFlag)
+    {
+    	
+    	return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
+    }
+    
     /**
      * 查找
      * 
