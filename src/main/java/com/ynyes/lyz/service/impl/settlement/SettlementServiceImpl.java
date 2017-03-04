@@ -26,6 +26,7 @@ import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeLine;
 import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
+import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.excp.AppErrorParamsExcp;
 import com.ynyes.lyz.service.TdBalanceLogService;
@@ -894,6 +895,8 @@ public class SettlementServiceImpl implements ISettlementService {
 			}
 			tdUserService.save(realUser);
 		}
+		
+		this.costCredit(mainOrder);
 	}
 
 	private void saveAndSend(HttpServletRequest req, Map<Long, TdOrder> subOrderMap, TdOrder mainOrder,
@@ -1167,6 +1170,12 @@ public class SettlementServiceImpl implements ISettlementService {
 			} else {
 				return quantity * unit;
 			}
+		}
+	}
+	
+	private void costCredit(TdOrder order) {
+		if (!order.getIsOnlinePay()) {
+			this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
 		}
 	}
 }

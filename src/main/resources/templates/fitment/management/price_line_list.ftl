@@ -121,11 +121,7 @@
 			                	<#if item.endTime??>${item.endTime?string("yyyy-MM-dd HH:mm:ss")}<#else>0.00</#if>
 			                </td>
 			                <td align="center">
-			                	<#if item.isEnable==true>
-			                		<font color="green">有效</font>
-			                	<#else>
-			                		<font color="red">失效</font>
-			                	</#if>
+		                		<font color="green">有效</font>
 			                </td>
 			            </tr>
         			</#list>
