@@ -35,7 +35,11 @@ public class TdReserveOrder {
 	// 确认日期
 	@Column
 	private Date getTime;
-
+	
+	//客户编号
+	@Column
+	private Long userId;
+	
 	// 客户名称
 	@Column
 	private String realUserRealName;
@@ -174,15 +178,26 @@ public class TdReserveOrder {
 	public void setReserveType(String reserveType) {
 		this.reserveType = reserveType;
 	}
+	
+	
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
 	@Override
 	public String toString() {
 		return "TdReserveOrder [id=" + id + ", reserveType=" + reserveType + ", diySiteName=" + diySiteName + ", city="
-				+ city + ", getTime=" + getTime + ", realUserRealName=" + realUserRealName + ", username=" + username
-				+ ", sellerRealName=" + sellerRealName + ", sku=" + sku + ", quantity=" + quantity + ", buyPrice="
-				+ buyPrice + ", totalPrice=" + totalPrice + ", couponOrderNumber=" + couponOrderNumber + "]";
+				+ city + ", getTime=" + getTime + ", userId=" + userId + ", realUserRealName=" + realUserRealName
+				+ ", username=" + username + ", sellerRealName=" + sellerRealName + ", sku=" + sku + ", quantity="
+				+ quantity + ", buyPrice=" + buyPrice + ", totalPrice=" + totalPrice + ", couponOrderNumber="
+				+ couponOrderNumber + "]";
 	}
 
+	
 	
 	
 	

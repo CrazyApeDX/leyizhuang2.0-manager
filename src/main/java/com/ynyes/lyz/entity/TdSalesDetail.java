@@ -39,6 +39,9 @@ public class TdSalesDetail {
 	//导购姓名
 	@Column
 	private String sellerRealName;
+	// 客户编号，取td_user表中的id值
+	@Column
+	private Long userId;
 	//客户名称
 	@Column
 	private String realName;
@@ -286,5 +289,12 @@ public class TdSalesDetail {
 	public void setWhName(String whName) {
 		this.whName = whName;
 	}
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+	
 	
 }

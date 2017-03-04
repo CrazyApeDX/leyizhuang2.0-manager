@@ -37,7 +37,11 @@ public class TdReceipt {
 	// 分单号
 	@Column
 	private String orderNumber;
-
+	
+	//会员编号,取td_user表中的id值
+	@Column
+	private Long userId;
+	
 	// 会员姓名
 	@Column
 	private String realUserRealName;
@@ -287,17 +291,30 @@ public class TdReceipt {
 	public void setRealPayTime(Date realPayTime) {
 		this.realPayTime = realPayTime;
 	}
+	
+	
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
 	@Override
 	public String toString() {
 		return "TdReceipt [id=" + id + ", diySiteName=" + diySiteName + ", receiptType=" + receiptType
-				+ ", mainOrderNumber=" + mainOrderNumber + ", orderNumber=" + orderNumber + ", realUserRealName="
-				+ realUserRealName + ", username=" + username + ", sellerRealName=" + sellerRealName + ", orderTime="
-				+ orderTime + ", deliverTypeTitle=" + deliverTypeTitle + ", receiptTime=" + receiptTime + ", actualPay="
-				+ actualPay + ", otherPay=" + otherPay + ", diyCash=" + diyCash + ", diyPos=" + diyPos + ", diyOther="
-				+ diyOther + ", summary=" + summary + ", createUsername=" + createUsername + ", cityName=" + cityName
-				+ ", diySiteCode=" + diySiteCode + ", diyId=" + diyId + ", realPayTime=" + realPayTime + "]";
+				+ ", mainOrderNumber=" + mainOrderNumber + ", orderNumber=" + orderNumber + ", userId=" + userId
+				+ ", realUserRealName=" + realUserRealName + ", username=" + username + ", sellerRealName="
+				+ sellerRealName + ", orderTime=" + orderTime + ", deliverTypeTitle=" + deliverTypeTitle
+				+ ", receiptTime=" + receiptTime + ", actualPay=" + actualPay + ", otherPay=" + otherPay + ", diyCash="
+				+ diyCash + ", diyPos=" + diyPos + ", diyOther=" + diyOther + ", summary=" + summary
+				+ ", createUsername=" + createUsername + ", cityName=" + cityName + ", diySiteCode=" + diySiteCode
+				+ ", diyId=" + diyId + ", realPayTime=" + realPayTime + "]";
 	}
+
+	
 
 	
 	

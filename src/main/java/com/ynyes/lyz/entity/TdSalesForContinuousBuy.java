@@ -43,6 +43,9 @@ public class TdSalesForContinuousBuy {
 	// 订单日期（下单日期）
 	@Column
 	private Date orderTime;
+	//客户编号
+	@Column
+	private Long userId;
 	// 客户电话
 	@Column
 	private String username;
@@ -329,21 +332,32 @@ public class TdSalesForContinuousBuy {
 	public void setMonthStr(Integer monthStr) {
 		this.monthStr = monthStr;
 	}
+	
+	
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
 	@Override
 	public String toString() {
 		return "TdSalesForContinuousBuy [id=" + id + ", cityName=" + cityName + ", diySiteName=" + diySiteName
 				+ ", sType=" + sType + ", mainOrderNumber=" + mainOrderNumber + ", orderNumber=" + orderNumber
-				+ ", orderTime=" + orderTime + ", username=" + username + ", realName=" + realName + ", identityType="
-				+ identityType + ", sellerUsername=" + sellerUsername + ", sellerRealName=" + sellerRealName + ", sku="
-				+ sku + ", goodsTitle=" + goodsTitle + ", isGift=" + isGift + ", goodsPrice=" + goodsPrice
-				+ ", goodsQuantity=" + goodsQuantity + ", goodsTotalPrice=" + goodsTotalPrice + ", cashCouponPrice="
-				+ cashCouponPrice + ", cashCouponQuantity=" + cashCouponQuantity + ", cashCouponTotalPrice="
-				+ cashCouponTotalPrice + ", productCouponPrice=" + productCouponPrice + ", productCouponQuantity="
-				+ productCouponQuantity + ", productCouponTotalPrice=" + productCouponTotalPrice + ", salesSummary="
-				+ salesSummary + ", monthStr=" + monthStr + "]";
+				+ ", orderTime=" + orderTime + ", userId=" + userId + ", username=" + username + ", realName="
+				+ realName + ", identityType=" + identityType + ", sellerUsername=" + sellerUsername
+				+ ", sellerRealName=" + sellerRealName + ", sku=" + sku + ", goodsTitle=" + goodsTitle + ", isGift="
+				+ isGift + ", goodsPrice=" + goodsPrice + ", goodsQuantity=" + goodsQuantity + ", goodsTotalPrice="
+				+ goodsTotalPrice + ", cashCouponPrice=" + cashCouponPrice + ", cashCouponQuantity="
+				+ cashCouponQuantity + ", cashCouponTotalPrice=" + cashCouponTotalPrice + ", productCouponPrice="
+				+ productCouponPrice + ", productCouponQuantity=" + productCouponQuantity + ", productCouponTotalPrice="
+				+ productCouponTotalPrice + ", salesSummary=" + salesSummary + ", monthStr=" + monthStr + "]";
 	}
 
+	
 	
 	
 	

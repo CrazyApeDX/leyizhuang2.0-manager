@@ -95,6 +95,7 @@ public interface TdAgencyFundRepo extends PagingAndSortingRepository<TdAgencyFun
 			+" 	o.delivery_detail_id delivery_detail_id, "
 			+" 	o.delivery_time delivery_time, "
 			+"	o.remark remark, "
+			+"  o.user_id user_id, "
 			+"  owd.is_enable is_enable, "
 			+"  owd.ispassed is_passed "
 			+" FROM "

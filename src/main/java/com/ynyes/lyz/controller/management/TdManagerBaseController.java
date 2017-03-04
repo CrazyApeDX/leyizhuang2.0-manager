@@ -242,8 +242,8 @@ public class TdManagerBaseController {
 	 * @注释：下载
 	 */
 	public Boolean downloadForSale(HSSFWorkbook wb, String exportUrl,HttpServletResponse response,String fileName) { 
-		File newFile = new File("/mnt/root/assets","sale"+String.valueOf(System.currentTimeMillis())+".xls");
-		//File newFile = new File("e:/report","sale"+String.valueOf(System.currentTimeMillis())+".xls");
+		//File newFile = new File("/mnt/root/assets","sale"+String.valueOf(System.currentTimeMillis())+".xls");
+		File newFile = new File("e:/report","sale"+String.valueOf(System.currentTimeMillis())+".xls");
 		// 新文件写入数据，并下载*****************************************************
 				if (wb != null) {
 					try {

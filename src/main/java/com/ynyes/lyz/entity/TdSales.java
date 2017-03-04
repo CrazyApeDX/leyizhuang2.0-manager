@@ -43,6 +43,9 @@ public class TdSales {
 	// 订单日期（下单日期）
 	@Column
 	private Date orderTime;
+	//客户编号
+	@Column
+	private Long userId;
 	// 客户电话
 	@Column
 	private String username;
@@ -50,8 +53,7 @@ public class TdSales {
 	@Column 
 	private String realName;
 	
-	//客户类型
-	
+	//客户类型 0会员，1零售
 	@Column
 	private Boolean identityType;
 
@@ -285,6 +287,20 @@ public class TdSales {
 
 	public void setProductCouponQuantity(Long productCouponQuantity) {
 		this.productCouponQuantity = productCouponQuantity;
+	}
+	
+	
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public void setIdentityType(Boolean identityType) {
+		this.identityType = identityType;
 	}
 
 	@Override

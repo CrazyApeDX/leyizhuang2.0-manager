@@ -42,7 +42,11 @@ public class TdOwn {
 	// 销顾电话
 	@Column
 	private String sellerUsername;
-
+	
+	//客户编号
+	@Column
+	private Long userId;
+	
 	// 客户电话
 	@Column
 	private String username;
@@ -195,14 +199,26 @@ public class TdOwn {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	
+	
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
 	@Override
 	public String toString() {
 		return "TdOwn [id=" + id + ", diySiteName=" + diySiteName + ", mainOrderNumber=" + mainOrderNumber
 				+ ", statusId=" + statusId + ", orderTime=" + orderTime + ", sellerRealName=" + sellerRealName
-				+ ", sellerUsername=" + sellerUsername + ", username=" + username + ", realUserRealName="
-				+ realUserRealName + ", owned=" + owned + ", whName=" + whName + ", duRealName=" + duRealName
-				+ ", duUsername=" + duUsername + ", shippingAddress=" + shippingAddress + ", remark=" + remark + "]";
+				+ ", sellerUsername=" + sellerUsername + ", userId=" + userId + ", username=" + username
+				+ ", realUserRealName=" + realUserRealName + ", owned=" + owned + ", whName=" + whName + ", duRealName="
+				+ duRealName + ", duUsername=" + duUsername + ", shippingAddress=" + shippingAddress + ", remark="
+				+ remark + "]";
 	}
+
+	
 
 }

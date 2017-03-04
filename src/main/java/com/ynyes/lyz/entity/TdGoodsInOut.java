@@ -47,6 +47,9 @@ public class TdGoodsInOut {
 	//客户电话
 	@Column
 	private String username;
+	//会员编号，取td_user表中的id值
+	@Column
+	private Long userId;
 	//产品编号
 	@Column
 	private String sku;
@@ -288,5 +291,13 @@ public class TdGoodsInOut {
 	public void setDiyId(Long diyId) {
 		this.diyId = diyId;
 	}
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+	
+	
 
 }

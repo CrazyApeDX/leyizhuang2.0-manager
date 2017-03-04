@@ -18,7 +18,7 @@ public interface TdSalesForContinuousBuyRepo extends
 		PagingAndSortingRepository<TdSalesForContinuousBuy, Long>,
 		JpaSpecificationExecutor<TdSalesForContinuousBuy> {
 	
-	@Query(value=" SELECT * "
+	@Query(value=" SELECT sb.*,u.id user_id "
 			+" FROM "
 			+" 	td_sales_for_continuous_buy sb left join td_user u on u.username = sb.username "
 			+" LEFT JOIN td_diy_site diy ON sb.diy_site_name = diy.title "

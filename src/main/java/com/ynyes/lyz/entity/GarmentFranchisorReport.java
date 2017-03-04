@@ -38,6 +38,10 @@ public class GarmentFranchisorReport {
 	@Column
 	private String deliveryPhone;
 	
+	//客户编号
+	@Column 
+	private Long userId;
+	
 	@Column
 	private String realUserRealName;
 	
@@ -231,16 +235,28 @@ public class GarmentFranchisorReport {
 	public void setPayTypeId(Integer payTypeId) {
 		this.payTypeId = payTypeId;
 	}
+	
+	
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
 
 	@Override
 	public String toString() {
 		return "GarmentFranchisorReport [id=" + id + ", cityName=" + cityName + ", diySiteName=" + diySiteName
 				+ ", whName=" + whName + ", deliveryName=" + deliveryName + ", deliveryPhone=" + deliveryPhone
-				+ ", realUserRealName=" + realUserRealName + ", realUserUsername=" + realUserUsername
-				+ ", sellerRealName=" + sellerRealName + ", mainOrderNumber=" + mainOrderNumber + ", orderNumber="
-				+ orderNumber + ", orderTime=" + orderTime + ", deliveryTime=" + deliveryTime + ", statusId=" + statusId
-				+ ", actualPay=" + actualPay + ", otherPay=" + otherPay + ", cashPay=" + cashPay + ", cashCoupon="
-				+ cashCoupon + "]";
+				+ ", userId=" + userId + ", realUserRealName=" + realUserRealName + ", realUserUsername="
+				+ realUserUsername + ", sellerRealName=" + sellerRealName + ", mainOrderNumber=" + mainOrderNumber
+				+ ", orderNumber=" + orderNumber + ", orderTime=" + orderTime + ", deliveryTime=" + deliveryTime
+				+ ", statusId=" + statusId + ", actualPay=" + actualPay + ", otherPay=" + otherPay + ", cashPay="
+				+ cashPay + ", cashCoupon=" + cashCoupon + ", payTypeId=" + payTypeId + "]";
 	}
+
+	
 
 }
