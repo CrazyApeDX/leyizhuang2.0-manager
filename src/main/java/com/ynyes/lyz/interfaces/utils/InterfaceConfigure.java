@@ -43,8 +43,7 @@ public class InterfaceConfigure
 				System.err.println("EBS境：正式环境===================================================================");
 			} else {
 				WMS_WS_URL = "http://120.76.214.99:8199/WmsInterServer.asmx?wsdl";
-				EBS_WS_URL = "http://erpap.zghuarun.com:8008/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl";
-				//EBS_WS_URL = "http://erptest.zghuarun.com:8030/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl";
+				EBS_WS_URL = "http://erptest.zghuarun.com:8030/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl";
 				//EBS_WS_URL = "http://erptest.zghuarun.com:8030/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl";
 			}
 		} catch (UnknownHostException e) {
