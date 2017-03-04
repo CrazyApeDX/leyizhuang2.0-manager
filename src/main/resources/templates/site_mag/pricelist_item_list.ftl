@@ -60,7 +60,7 @@ function __doPostBack(eventTarget, eventArgument) {
                 </ul>
             </div> -->
             <div class="r-list">
-                <input name="keywords" type="text" class="keyword">
+                <input name="keywords" type="text" class="keyword" value="${keywords!''}">
                 <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>
             </div>
         </div>

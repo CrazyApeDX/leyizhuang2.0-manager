@@ -299,6 +299,7 @@ public class TdManagerBuyCouponBySellerController {
 			orderGoods.setType(1L);
 			orderGoods.setCouponMoney(subPrice * coupons[i]);
 			orderGoods.setCashNumber(coupons[i]);
+			orderGoods.setIsWallAccessory(goods.getIsWallAccessory());
 			tdOrderGoodsService.save(orderGoods);
 			orderGoodsList.add(orderGoods);
 		}

@@ -1348,6 +1348,7 @@ public class TdPriceCountService {
 														proCoupon.setSellerId(tdCoupon.getSellerId());
 														proCoupon.setSellerRealName(tdCoupon.getSellerRealName());
 														proCoupon.setSellerUsername(tdCoupon.getSellerUsername());
+														proCoupon.setCouponOrderNumber(tdCoupon.getCouponOrderNumber());
 														send_list.remove(tdCoupon);
 														send_pro_coupon_condition.put(goodsId, send_list);
 													} else if (null != buy_list && buy_list.size() > 0) {
