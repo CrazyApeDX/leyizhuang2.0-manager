@@ -538,7 +538,7 @@ public class TdManagerUserController {
 		return "redirect:/Verwalter/user/list/";
 	}
 
-	private void setAndSaveBalanceLog(Double changeBalance, Long balancelType, TdUser newUser, TdManager operator) {
+	public void setAndSaveBalanceLog(Double changeBalance, Long balancelType, TdUser newUser, TdManager operator) {
 		TdBalanceLog balanceLog = new TdBalanceLog();
 		balanceLog.setUsername(newUser.getUsername());
 		if (changeBalance != null) {

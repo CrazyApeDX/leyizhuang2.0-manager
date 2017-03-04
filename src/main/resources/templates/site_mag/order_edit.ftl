@@ -1199,6 +1199,9 @@
     <!--工具栏-->
     <div class="page-footer">
         <div class="btn-list">
+        	<#if isown==false>
+         		<input type="button" id="backMoney" value="填写收款" class="btn">
+        	</#if>
             <#if order.statusId==1>
                 <input type="button" id="btnConfirm" value="确认订单" class="btn">
                 <input type="button" id="btnCancel" value="取消订单" class="btn green">
@@ -1207,13 +1210,8 @@
                     <input type="button" id="btnCancel" value="取消订单" class="btn green">
             <#elseif order.statusId==3>
                 <#if order.deliverTypeTitle=='门店自提'>
-                <#if isown==true>
-                <input type="button" id="btnOrderExpress" value="确认发货" class="btn">
-                <#else>
-                 <input type="button" id="backMoney" value="填写收款" class="btn">
-                </#if>
-                
-                </#if>
+                	<input type="button" id="btnOrderExpress" value="确认发货" class="btn">
+            	</#if>
                 <#--<input type="button" id="btnCancel" value="取消订单" class="btn green">-->
             <#elseif order.statusId==4>
                 <#if order.deliverTypeTitle=='门店自提'>
