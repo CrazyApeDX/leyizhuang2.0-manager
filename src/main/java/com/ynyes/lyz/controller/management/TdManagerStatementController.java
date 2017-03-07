@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,6 +37,8 @@ import com.ynyes.lyz.entity.TdGoodsInOut;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
+import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdOwn;
 import com.ynyes.lyz.entity.TdReceipt;
 import com.ynyes.lyz.entity.TdReserveOrder;
@@ -42,8 +46,10 @@ import com.ynyes.lyz.entity.TdReturnReport;
 import com.ynyes.lyz.entity.TdSales;
 import com.ynyes.lyz.entity.TdSalesDetail;
 import com.ynyes.lyz.entity.TdSalesForContinuousBuy;
+import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.TdSubOwn;
 import com.ynyes.lyz.entity.TdWareHouse;
+import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
 import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
 import com.ynyes.lyz.service.TdActiveUserService;
 import com.ynyes.lyz.service.TdAgencyFundService;
@@ -57,6 +63,8 @@ import com.ynyes.lyz.service.TdGoodsInOutService;
 import com.ynyes.lyz.service.TdManagerRoleService;
 import com.ynyes.lyz.service.TdManagerService;
 import com.ynyes.lyz.service.TdOrderDeliveryFeeDetailService;
+import com.ynyes.lyz.service.TdOrderGoodsService;
+import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdOwnService;
 import com.ynyes.lyz.service.TdReceiptService;
 import com.ynyes.lyz.service.TdReserveOrderService;
@@ -123,6 +131,12 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	
 	@Autowired
 	TdOrderDeliveryFeeDetailService tdOrderDeliveryFeeDetailService;
+	
+	@Autowired
+	TdOrderService tdOrderService;
+	
+	@Autowired
+	TdOrderGoodsService tdOrderGoodsService;
 	
 	
 	
@@ -485,6 +499,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="会员连续购买记录";
 		}else if(statusId==14){
 			fileName="乐易装运费报表";
+		}else if(statusId==15){
+			fileName="乐易装运费报表(备用)";
 		}
 		return fileName;
 	}
@@ -530,7 +546,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}else if(statusId==14){//乐易装华润运费报表
 			wb=LyzHrDeliveryFeeBook(begin,end,diyCode,cityName,username,roleDiyIds);
 		}else if(statusId==15){//乐易装华润运费报表（备用）
-			wb=LyzHrDeliveryFeeBookBackUp(begin,end,diyCode,cityName,username,roleDiyIds);
+			//wb=LyzHrDeliveryFeeBookBackUp(begin,end,diyCode,cityName,username,roleDiyIds);
 		}
 		return wb;
 	}
@@ -2718,16 +2734,382 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 * @param cityName
 	 * @param username
 	 * @param roleDiyIds
-	 * @return
-	 */
+	 * @return 
+	 *//*
 	private HSSFWorkbook LyzHrDeliveryFeeBookBackUp(Date begin, Date end, String diyCode, String cityName,
 			String username, List<String> roleDiyIds) {
 		// 创建工作簿
 		HSSFWorkbook wb = new HSSFWorkbook();
+		List<TdOrder> orders = tdOrderService.findOrdersOfDeliveryHome(begin,end,diyCode,cityName,roleDiyIds);//按条件查找全部送货上门的订单
+		int maxRowNum = 60000;
+		int maxSize = 0;
+		if (orders != null) {
+			maxSize = orders.size();
+		}
+		int sheets = maxSize / maxRowNum + 1;
+		// 写入excel文件数据信息
+				for (int i = 0; i < sheets; i++) {
+
+					// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+					HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
+					// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+					// 列宽
+					int[] widths = { 20, 30, 20, 20, 15, 15, 20, 18, 18, 18, 25, 25, 18, 18, 18, 18, 18, 18, 18, 18, 18 };
+					sheetColumnWidth(sheet, widths);
+
+					// 第四步，创建单元格，并设置值表头 设置表头居中
+					HSSFCellStyle style = wb.createCellStyle();
+					style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+					style.setWrapText(true);
+
+					// 设置标题
+					HSSFRow row = sheet.createRow((int) 0);
+
+					String[] cellValues = { "门店名称", "主单号", "下单日期", "封车日期", "订单状态", "导购", "客户名称", "客户电话", "大桶漆配送费", "硝基漆10L配送费",
+							"小桶漆/木器漆配送费", "4kg以下漆类配送费", "墙面辅料费", "客户应承担运费", "打折减免客户运费", "购辅料减免客户运费", "客户实际运费", "商户应承担运费",
+							"打折减免商户运费", "购辅料减免商户运费", "商户实际运费" };
+					cellDates(cellValues, style, row);
+
+					for (int j = 0; j < maxRowNum; j++) {
+						if (j + i * maxRowNum >= maxSize) {
+							break;
+						}
+						TdOrder detail = orders.get(j + i * maxRowNum);
+						row = sheet.createRow((int) j + 1);
+
+						// 门店名称
+						if (null != detail.getDiySiteName()) {
+							row.createCell(0).setCellValue(objToString(detail.getDiySiteName()));
+						} else {
+							row.createCell(0).setCellValue(" ");
+						}
+
+						// 主单号
+
+						if (null != detail.getMainOrderNumber()) {
+							row.createCell(1).setCellValue(objToString(detail.getMainOrderNumber()));
+						} else {
+							row.createCell(1).setCellValue(" ");
+						}
+
+						// 下单日期
+						if (null != detail.getOrderTime()) {
+							row.createCell(2).setCellValue(objToString(detail.getOrderTime()));
+						} else {
+							row.createCell(2).setCellValue(objToString(" "));
+						}
+
+						// 封车日期
+						if (null != detail.getSendTime()) {
+							row.createCell(3).setCellValue(objToString(detail.getSendTime()));
+						} else {
+							row.createCell(3).setCellValue(objToString(" "));
+						}
+
+						// 订单状态
+						if (null != detail.getStatusId()) {
+							switch (detail.getStatusId().intValue()) {
+							case 4:
+								row.createCell(4).setCellValue("待签收");
+								break;
+							case 5:
+								row.createCell(4).setCellValue("待评价");
+								break;
+							case 6:
+								row.createCell(4).setCellValue("已完成");
+								break;
+							case 7:
+								row.createCell(4).setCellValue("已取消");
+								break;
+							case 8:
+								row.createCell(4).setCellValue("已删除");
+								break;
+							case 9:
+								row.createCell(4).setCellValue("退货中");
+								break;
+							case 10:
+								row.createCell(4).setCellValue("退货确认");
+								break;
+							case 11:
+								row.createCell(4).setCellValue("退货取消");
+								break;
+							case 12:
+								row.createCell(4).setCellValue("退货完成");
+								break;
+							default:
+								break;
+							}
+						} else {
+							row.createCell(4).setCellValue(objToString(" "));
+						}
+
+						// 导购
+						if (null != detail.getSellerRealName()) {
+							row.createCell(5).setCellValue(objToString(detail.getSellerRealName()));
+						} else {
+							row.createCell(5).setCellValue(objToString(" "));
+						}
+
+						// 客户名称
+						if (null != detail.getRealUserRealName()) {
+							row.createCell(6).setCellValue(objToString(detail.getRealUserRealName()));
+						} else {
+							row.createCell(6).setCellValue(objToString(" "));
+						}
+
+						// 客户电话
+						if (null != detail.getUsername()) {
+							row.createCell(7).setCellValue(objToString(replacePhoneNumberWithStar(detail.getUsername())));
+						} else {
+							row.createCell(7).setCellValue(objToString(" "));
+						}
+						
+						List<TdOrderGoods> orderGoodsList = tdOrderGoodsService.findByMainOrderNumber(detail.getMainOrderNumber());
+						TdOrder orderYF = tdOrderService.findFixedFlagByMainOrderNumber(detail.getMainOrderNumber());
+						Map<String,Double> deliveryMap = new HashMap<>();//用map存储用户运费和公司运费
+						if(null != orderYF && null !=orderYF.getIsFixedDeliveryFee() && orderYF.getIsFixedDeliveryFee()){
+							deliveryMap.put("user_delivery_fee", orderYF.getDeliverFee());
+							deliveryMap.put("company_delivery_fee", orderYF.getCompanyDeliveryFee());
+						}else {
+							double bucketsOfPaintFee = 0;//大桶漆配送费
+							double nitrolacquerFee = 0;//硝基漆10L配送费
+							double carpentryPaintFee = 0;//小桶漆/木器漆配送费
+							double belowFourKiloFee = 0;//4kg以下漆类配送费
+							double wallAccessories = 0;//订单辅料总金额 
+							double consumerDeliveryFee = 0;//客户承担的运费
+							double companyDeliveryFee = 0;//公司承担的运费
+							
+							long consumerAffordQuantity = 0;//客户承担运费的漆桶数
+							
+							long companyAffordQuantity  = 0;//公司承担运费的漆桶数
+							TdOrderDeliveryFeeDetail deliveryFeeDetail = tdOrderDeliveryFeeDetailService.findByMainOrderNumber(detail.getOrderNumber());
+							if(null == detail){
+								deliveryFeeDetail = new TdOrderDeliveryFeeDetail();
+							}
+							detail.setMainOrderNumber(null == order.getMainOrderNumber() ? order.getOrderNumber():order.getMainOrderNumber());
+							detail.setDiySiteId(order.getDiySiteId());
+							detail.setDiySiteName(order.getDiySiteName());
+							detail.setOrderTime(null == order.getOrderTime()?null: order.getOrderTime());
+							detail.setSellerUsername(order.getSellerUsername());
+							detail.setSellerRealName(order.getSellerRealName());
+							detail.setUsername(order.getUsername());
+							detail.setUserRealName(order.getRealUserRealName());
+							detail.setIsCustomerDeliveryFeeModified(false);
+							
+							Double deliveryFee = 0d;//运费总额
+							
+							//Map<Long, TdOrderGoods> orderGoodsMap = this.countOrderGoodsNumber(order);
+							for (TdOrderGoods orderGoods : orderGoodsMap.values()) {
+								TdDeliveryFeeHead tdDeliveryFeeHead = tdDeliveryFeeHeadService.findBySobIdAndGoodsId(user.getCityId(), orderGoods.getGoodsId());
+								Double fee = this.countOrderGoodsDeliveryFee(user, orderGoods);
+								//运费大于0 说明该产品有运费配置，则tdDeliveryFeeHead不为null
+								if(null != fee && fee>0){
+									switch (tdDeliveryFeeHead.getGoodsTypeId()) {
+									case 1:
+										bucketsOfPaintFee+=fee;
+										break;
+									case 2:
+										nitrolacquerFee+=fee;
+										break;
+									case 3:
+										carpentryPaintFee+=fee;
+										break;
+									case 4:
+										belowFourKiloFee+=fee;
+										break;
+									default:
+										break;
+									}
+								}
+								
+								
+							
+								if(null != tdDeliveryFeeHead && tdDeliveryFeeHead.getAssumedObjectId()==1){
+									consumerDeliveryFee+=fee;
+									consumerAffordQuantity+=orderGoods.getQuantity();
+									
+								}else if(null != tdDeliveryFeeHead && tdDeliveryFeeHead.getAssumedObjectId()==2){
+									companyDeliveryFee+=fee;
+									companyAffordQuantity+=orderGoods.getQuantity();
+								}
+								if(orderGoods.getIsWallAccessory() == true){
+									wallAccessories += orderGoods.getPrice()*orderGoods.getQuantity();
+								}
+								
+							}
+							
+							//设置各种类漆的运费金额
+							detail.setBucketsOfPaintFee(bucketsOfPaintFee);
+							detail.setNitrolacquerFee(nitrolacquerFee);
+							detail.setCarpentryPaintFee(carpentryPaintFee);
+							detail.setBelowFourKiloFee(belowFourKiloFee);
+							
+							//设置本单墙面辅料总金额
+							detail.setWallAccessories(wallAccessories);
+							
+							detail.setConsumerDeliveryFee(consumerDeliveryFee);//设置优惠前客户承担运费金额
+							detail.setCompanyDeliveryFee(companyDeliveryFee);//设置优惠前公司承担运费金额
+							
+							deliveryFee = consumerDeliveryFee + companyDeliveryFee;
+							
+							
+							TdSetting setting = tdSettingService.findTopBy();
+							
+							// 判断总运费金额是否大于等于20，如果小于20，则差额由华润公司承担
+							Double settingMinFee = null == setting.getMinDeliveryFee() ? 0d : setting.getMinDeliveryFee();
+							if (deliveryFee > 0 && deliveryFee < settingMinFee) {
+								companyDeliveryFee = settingMinFee-consumerDeliveryFee;
+								detail.setCompanyDeliveryFeeAdjust(companyDeliveryFee - detail.getCompanyDeliveryFee());//设置华润公司补运费差价金额
+							}else{
+								detail.setCompanyDeliveryFeeAdjust(0.00);
+							}
+							// 运费折扣优惠，如果用户承担运费的漆类桶数和华润承担运费的类桶数任意一个大于20桶，则双方运费都打7.5折；如果大于100桶，折扣为6折
+							if((consumerAffordQuantity>=20 && consumerAffordQuantity<99) || (companyAffordQuantity>=20 && companyAffordQuantity<99)){
+								consumerDeliveryFee = consumerDeliveryFee * 0.75;
+								companyDeliveryFee = companyDeliveryFee * 0.75;
+								deliveryFee = consumerDeliveryFee + companyDeliveryFee;
+							}else if(consumerAffordQuantity>= 100 ||companyAffordQuantity>=100 ){
+								consumerDeliveryFee = consumerDeliveryFee * 0.6;
+								companyDeliveryFee = companyDeliveryFee * 0.6;
+								deliveryFee = consumerDeliveryFee + companyDeliveryFee;
+							}
+							detail.setConsumerDeliveryFeeDiscount(detail.getConsumerDeliveryFee()-consumerDeliveryFee);//设置用户运费打折金额
+							detail.setCompanyDeliveryFeeDiscount(detail.getCompanyDeliveryFee()+detail.getCompanyDeliveryFeeAdjust()-companyDeliveryFee);//设置华润公司运费打折金额
+							//墙面辅料金额以500为阶梯减免运费。500减20,1000减40，以此类推。其中减免的运费优先由用户享受，如果用户承担的运费小于优惠金额，则剩余的优惠金额才能由华润享受
+							if(wallAccessories>=500){
+								double reduceDeliveryFee = (wallAccessories/500) * 20;//购辅料减免运费总额
+								if(reduceDeliveryFee <= consumerDeliveryFee){//如果辅料减免的运费小于当前用户承担的运费，则全部用来减免用户用费
+									detail.setConsumerDeliveryFeeReduce(reduceDeliveryFee);
+									detail.setCompanyDeliveryFeeReduce(0.00);
+									
+									consumerDeliveryFee -= reduceDeliveryFee;
+								}else if(reduceDeliveryFee > consumerDeliveryFee){//如果辅料减免运费大于用户承担的运费，则用户用费全面，剩余部分用来减免华润运费
+									detail.setConsumerDeliveryFeeReduce(consumerDeliveryFee);
+									detail.setCompanyDeliveryFeeReduce(reduceDeliveryFee - consumerDeliveryFee);
+									
+									companyDeliveryFee -=(reduceDeliveryFee - consumerDeliveryFee); 
+									consumerDeliveryFee = 0;
+									
+								}
+							}else{
+								detail.setConsumerDeliveryFeeReduce(0.00);
+								detail.setCompanyDeliveryFeeReduce(0.00);
+							}
+							//
+							detail.setConsumerDeliveryFeeFinal(consumerDeliveryFee);
+							detail.setCompanyDeliveryFeeFinal(companyDeliveryFee);
+							detail.setCustomerDeliveryFeeBeforeModified(consumerDeliveryFee);
+							tdOrderDeliveryFeedetailService.save(detail);
+
+							Double settingMaxFee = null == setting.getMaxDeliveryFee() ? 0d : setting.getMaxDeliveryFee();
+							if (deliveryFee > settingMaxFee) {
+								deliveryFee = settingMaxFee;
+							}
+
+							order.setDeliverFee(consumerDeliveryFee);
+							order.setReceivableFee(consumerDeliveryFee);
+							deliveryMap.put("user_delivery_fee", consumerDeliveryFee);
+							deliveryMap.put("company_delivery_fee", companyDeliveryFee);
+							return deliveryMap;
+						}
+					
+
+						// 大桶漆配送费
+						if (null != detail.getBucketsOfPaintFee()) {
+							row.createCell(8).setCellValue(objToString(detail.getBucketsOfPaintFee()));
+						} else {
+							row.createCell(8).setCellValue(objToString("0.00 "));
+						}
+
+						// 硝基漆10L配送费
+						if (null != detail.getNitrolacquerFee()) {
+							row.createCell(9).setCellValue(objToString(detail.getNitrolacquerFee()));
+						} else {
+							row.createCell(9).setCellValue(objToString("0.00 "));
+						}
+
+						// 小桶漆/木器漆配送费
+						if (null != detail.getCarpentryPaintFee()) {
+							row.createCell(10).setCellValue(objToString(detail.getCarpentryPaintFee()));
+						} else {
+							row.createCell(10).setCellValue(objToString("0.00"));
+						}
+
+						// 4kg以下漆类配送费
+						if (null != detail.getBelowFourKiloFee()) {
+							row.createCell(11).setCellValue(objToString(detail.getBelowFourKiloFee()));
+						} else {
+							row.createCell(11).setCellValue(objToString("0.00"));
+						}
+
+						// 墙面辅料金额
+						if (null != detail.getWallAccessories()) {
+							row.createCell(12).setCellValue(objToString(detail.getWallAccessories()));
+						} else {
+							row.createCell(12).setCellValue(objToString("0.00"));
+						}
+
+						// 客户应承担运费
+						if (null != detail.getConsumerDeliveryFee()) {
+							row.createCell(13).setCellValue(objToString(detail.getConsumerDeliveryFee()));
+						} else {
+
+							row.createCell(13).setCellValue(objToString("0.00"));
+						}
+
+						// 打折减免运费
+						if (null != detail.getConsumerDeliveryFeeDiscount()) {
+							row.createCell(14).setCellValue(objToString(detail.getConsumerDeliveryFeeDiscount()));
+						} else {
+							row.createCell(14).setCellValue("0.00");
+						}
+
+						// 购辅料减免运费
+						if (null != detail.getConsumerDeliveryFeeReduce()) {
+							row.createCell(15).setCellValue(objToString(detail.getConsumerDeliveryFeeReduce()));
+						} else {
+							row.createCell(15).setCellValue(objToString("0.00"));
+						}
+
+						// 客户实际运费
+						if (null != detail.getConsumerDeliveryFeeFinal()) {
+							row.createCell(16).setCellValue(objToString(detail.getConsumerDeliveryFeeFinal()));
+						} else {
+							row.createCell(16).setCellValue(objToString("0.00"));
+						}
+
+						// 公司应承担运费
+						if (null != detail.getCompanyDeliveryFee()) {
+							row.createCell(17).setCellValue(objToString(detail.getCompanyDeliveryFee()));
+						} else {
+							row.createCell(17).setCellValue(objToString("0.00"));
+						}
+
+						// 打折减免公司运费
+						if (null != detail.getCompanyDeliveryFeeDiscount()) {
+							row.createCell(18).setCellValue(objToString(detail.getCompanyDeliveryFeeDiscount()));
+						} else {
+							row.createCell(18).setCellValue(objToString("0.00"));
+						}
+						// 购辅料减免运费
+						if (null != detail.getCompanyDeliveryFeeReduce()) {
+							row.createCell(19).setCellValue(objToString(detail.getCompanyDeliveryFeeReduce()));
+						} else {
+							row.createCell(19).setCellValue(objToString("0.00"));
+						}
+						// 公司实际运费
+						if (null != detail.getCompanyDeliveryFeeFinal()) {
+							row.createCell(20).setCellValue(objToString(detail.getCompanyDeliveryFeeFinal()));
+						} else {
+							row.createCell(20).setCellValue(objToString("0.00"));
+						}
+
+					}
+					}
 		
 		return null;
 	}
-
+*/
 	
 	private String objToString(Object obj) {
 		if (obj == null) {

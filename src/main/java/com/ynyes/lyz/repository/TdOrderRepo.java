@@ -319,5 +319,32 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 
 	Page<TdOrder> findByRealUserUsernameAndStatusIdOrderByOrderTimeDesc(String sellerUsername, Long statusId,
 			Pageable page);
+	
+	@Query(value= " SELECT "
+			+" 	o.* "
+			+" FROM "
+			+" 	td_order o "
+			+" LEFT JOIN td_diy_site diy ON o.diy_site_id = diy.id "
+			+" WHERE "
+			+" 	o.deliver_type_title = '送货上门' "
+			+" AND o.status_id NOT IN (1, 2, 3, 7, 8) "
+			+" AND o.send_time >= ?1 "
+			+" AND o.send_time <= ?2 "
+			+" AND diy.city LIKE ?3 "
+			+" AND o.diy_site_code LIKE ?4 "
+			+" AND diy.id IN ?5 "
+			+" GROUP BY o.main_order_number"
+			+" ORDER BY "
+			+" 	o.send_time DESC; ",nativeQuery=true)
+	List<TdOrder> queryDownList(Date begin, Date end, String cityName, String diySiteCode, List<String> roleDiyIds);
+	
+	@Query(value=" SELECT "
+			+" 	* "
+			+" FROM "
+			+" 	td_order o "
+			+" WHERE "
+			+" 	o.main_order_number = ?1"
+			+" AND o.order_number LIKE '%YF%'; ",nativeQuery=true)
+	TdOrder findFixedFlagByMainOrderNumber(String mainOrderNumber);
 
 }

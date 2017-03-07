@@ -203,4 +203,11 @@ public class TdOrderGoodsService {
     	//保存
     	order.setOrderGoodsList(orderGoodsList);
     }
+
+	public List<TdOrderGoods> findByMainOrderNumber(String mainOrderNumber) {
+		if(null == mainOrderNumber){
+			return null;
+		}
+		return repository.findByMainOrderNumber(mainOrderNumber);
+	}
 }
