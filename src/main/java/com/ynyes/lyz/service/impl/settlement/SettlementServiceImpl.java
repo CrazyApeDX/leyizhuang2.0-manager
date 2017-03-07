@@ -1174,7 +1174,7 @@ public class SettlementServiceImpl implements ISettlementService {
 	}
 	
 	private void costCredit(TdOrder order) {
-		if (!order.getIsOnlinePay()) {
+		if (!(null != order.getIsOnlinePay() && order.getIsOnlinePay())) {
 			this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
 		}
 	}

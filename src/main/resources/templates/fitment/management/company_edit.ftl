@@ -73,7 +73,7 @@
   			<dl>
     			<dt>信用额度限制</dt>
     			<dd>
-        			<input name="creditLimit" type="text" value="<#if company??>${(company.creditLimit!"0.00")?string("0.00")}</#if>" class="input normal" 
+        			<input name="credit" type="text" value="<#if company??>${(company.credit!"0.00")?string("0.00")}</#if>" class="input normal" 
         				datatype="/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/" sucmsg=" "> 
         			<span class="Validform_checktip">*当前信用额度</span>
     			</dd>

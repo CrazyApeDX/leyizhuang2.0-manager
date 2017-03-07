@@ -1558,7 +1558,7 @@ public class TdUserController {
 		order.setIsRefund(true);
 		tdOrderService.save(order);
 
-		if (order.getIsSellerOrder()) {
+		if (!(null != order.getIsOnlinePay() && order.getIsOnlinePay())) {
 			TdUser seller = tdUserService.findOne(order.getSellerId());
 			// 2017-02-13 取消订单的时候增加信用额度
 			tdUserService.repayCredit(CreditChangeType.CANCEL, seller, totalPrice, order.getMainOrderNumber());
