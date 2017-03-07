@@ -225,6 +225,7 @@ $(function () {
             <option value="9">取消订单退银联第三方支付</option>
             <option value="10">装饰公司信用额度充值</option>
             <option value="11">CRM积分转预存款</option>
+            <option value="12">其它</option>
         </select>
     </dd>
   </dl>

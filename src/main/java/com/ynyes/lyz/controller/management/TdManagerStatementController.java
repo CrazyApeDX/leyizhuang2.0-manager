@@ -530,11 +530,15 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=continuousBuyBook(begin,end,diyCode,cityName,username,roleDiyIds);
 		}else if(statusId==14){//乐易装华润运费报表
 			wb=LyzHrDeliveryFeeBook(begin,end,diyCode,cityName,username,roleDiyIds);
+		}else if(statusId==15){//乐易装华润运费报表（备用）
+			wb=LyzHrDeliveryFeeBookBackUp(begin,end,diyCode,cityName,username,roleDiyIds);
 		}
 		return wb;
 	}
 	
 	
+	
+
 	/**
 	 * 出退货明细报表
 	 * 查询条件增加管理员管辖门店
@@ -2705,6 +2709,24 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			}
 		}
 		return wb;
+	}
+	
+	/**
+	 * 乐易装华润基础运费报表（备用）
+	 * @param begin
+	 * @param end
+	 * @param diyCode
+	 * @param cityName
+	 * @param username
+	 * @param roleDiyIds
+	 * @return
+	 */
+	private HSSFWorkbook LyzHrDeliveryFeeBookBackUp(Date begin, Date end, String diyCode, String cityName,
+			String username, List<String> roleDiyIds) {
+		// 创建工作簿
+		HSSFWorkbook wb = new HSSFWorkbook();
+		
+		return null;
 	}
 
 	

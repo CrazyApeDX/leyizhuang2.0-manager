@@ -99,7 +99,9 @@ function downloaddate(type)
                 <#elseif 12==statusId>
                     <span>加盟商对账报表</span>    
                 <#elseif 14==statusId>
-                    <span>乐易装华润运费报表</span>    
+                    <span>乐易装华润运费报表</span>
+                <#elseif 15==statusId>
+                    <span>乐易装华润运费报表(备用)</span>    
                 </#if>
             </#if> 
     </div>

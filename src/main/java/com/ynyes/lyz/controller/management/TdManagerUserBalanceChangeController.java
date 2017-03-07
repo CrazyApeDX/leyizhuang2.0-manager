@@ -330,6 +330,9 @@ public class TdManagerUserBalanceChangeController {
 			case 11:
 				description="CRM积分转预存款";
 				break;
+			case 12:
+				description="其它";
+				break;
 			default:
 				break;
 			}
