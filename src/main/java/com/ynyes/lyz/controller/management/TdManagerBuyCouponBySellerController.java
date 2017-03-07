@@ -28,6 +28,7 @@ import com.ynyes.lyz.entity.TdActivity;
 import com.ynyes.lyz.entity.TdActivityGift;
 import com.ynyes.lyz.entity.TdActivityGiftList;
 import com.ynyes.lyz.entity.TdBrand;
+import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdCouponModule;
 import com.ynyes.lyz.entity.TdDiySite;
@@ -47,6 +48,7 @@ import com.ynyes.lyz.interfaces.utils.StringTools;
 import com.ynyes.lyz.service.TdActivityGiftService;
 import com.ynyes.lyz.service.TdActivityService;
 import com.ynyes.lyz.service.TdBrandService;
+import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
 import com.ynyes.lyz.service.TdCouponModuleService;
 import com.ynyes.lyz.service.TdCouponService;
@@ -120,6 +122,9 @@ public class TdManagerBuyCouponBySellerController {
 
 	@Autowired
 	private TdOwnMoneyRecordService tdOwnMoneyRecordService;
+	
+	@Autowired
+	private TdCityService tdCityService;
 
 	@RequestMapping
 	public String index(HttpServletRequest req, ModelMap map) {
@@ -216,7 +221,7 @@ public class TdManagerBuyCouponBySellerController {
 			res.put("message", "销顾不存在");
 			return res;
 		}
-		
+
 		if (remark.contains("&")) {
 			res.put("message", "备注不能输入特殊符号&");
 			return res;
@@ -233,13 +238,27 @@ public class TdManagerBuyCouponBySellerController {
 		StringBuffer cashCouponId = new StringBuffer();
 		List<TdOrderGoods> orderGoodsList = new ArrayList<>();
 
+		// 获取用户的城市
+		Long cityId = user.getCityId();
+		TdCity city = tdCityService.findBySobIdCity(cityId);
+
+		String cityShortName = null;
+		switch (city.getCityName()) {
+		case "成都市":
+			cityShortName = "CD_";
+			break;
+		case "郑州市":
+			cityShortName = "ZZ_";
+			break;
+		}
+
 		// 创建订单号
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		Date now = new Date();
 		String sDate = sdf.format(now);
 		Random random = new Random();
 		Integer suiji = random.nextInt(900) + 100;
-		String orderNum = "XN" + sDate + suiji;
+		String orderNum = cityShortName + "XN" + sDate + suiji;
 
 		// 创建订单
 		TdOrder order = new TdOrder();
@@ -299,6 +318,7 @@ public class TdManagerBuyCouponBySellerController {
 			orderGoods.setType(1L);
 			orderGoods.setCouponMoney(subPrice * coupons[i]);
 			orderGoods.setCashNumber(coupons[i]);
+			orderGoods.setIsWallAccessory(goods.getIsWallAccessory());
 			tdOrderGoodsService.save(orderGoods);
 			orderGoodsList.add(orderGoods);
 		}
@@ -331,10 +351,10 @@ public class TdManagerBuyCouponBySellerController {
 		req.getSession().setAttribute("MANAGER_ORDER", order);
 
 		res.put("total", order.getTotalPrice());
-		
+
 		/* 2016-12-08修改：获取用户的预存款总额 */
 		res.put("balance", user.getBalance());
-		
+
 		res.put("status", 0);
 		return res;
 	}
@@ -1592,7 +1612,7 @@ public class TdManagerBuyCouponBySellerController {
 
 			orderGoods.setShareUnit(shareUnit);
 			tdOrderGoodsService.save(orderGoods);
-//			orderGoods.setPrice(orderGoods.getPrice() - shareUnit);
+			// orderGoods.setPrice(orderGoods.getPrice() - shareUnit);
 		}
 	}
 }

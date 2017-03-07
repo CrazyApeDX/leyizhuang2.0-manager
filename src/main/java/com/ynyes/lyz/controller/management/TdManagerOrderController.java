@@ -1395,12 +1395,10 @@ public class TdManagerOrderController {
 		order.setBackOtherPay(other);
 		tdOrderService.save(order);
 
-		if (order.getIsSellerOrder()) {
-			// 2017-02-13：增加信用额度
-			TdUser seller = this.tdUserService.findOne(order.getSellerId());
-			this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
-					order.getMainOrderNumber());
-		}
+		// 2017-02-13：增加信用额度
+		TdUser seller = this.tdUserService.findOne(order.getSellerId());
+		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
+				order.getMainOrderNumber());
 
 		// 记录收款并发ebs
 		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);

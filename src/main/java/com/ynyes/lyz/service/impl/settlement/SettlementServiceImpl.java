@@ -895,6 +895,8 @@ public class SettlementServiceImpl implements ISettlementService {
 			}
 			tdUserService.save(realUser);
 		}
+		
+		this.costCredit(mainOrder);
 	}
 
 	private void saveAndSend(HttpServletRequest req, Map<Long, TdOrder> subOrderMap, TdOrder mainOrder,
@@ -1168,6 +1170,12 @@ public class SettlementServiceImpl implements ISettlementService {
 			} else {
 				return quantity * unit;
 			}
+		}
+	}
+	
+	private void costCredit(TdOrder order) {
+		if (!order.getIsOnlinePay()) {
+			this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
 		}
 	}
 }

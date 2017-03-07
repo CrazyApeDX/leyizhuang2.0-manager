@@ -84,6 +84,7 @@ public class TdManagerPriceListController {
             size = SiteMagConstant.pageSize;;
         }
         
+        map.addAttribute("keywords", keywords);
         map.addAttribute("page", page);
         map.addAttribute("size", size);
         map.addAttribute("__EVENTTARGET", __EVENTTARGET);

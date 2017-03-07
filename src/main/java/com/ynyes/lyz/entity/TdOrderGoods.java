@@ -136,30 +136,30 @@ public class TdOrderGoods {
 	// 是否是券
 	@Column
 	private Boolean isCoupon;
-	
-	//调色包归属商品SKU zp
+
+	// 调色包归属商品SKU zp
 	@Column
 	private String ownerGoodsSku;
-	//活动id(可以为多个) zp
+	// 活动id(可以为多个) zp
 	@Column
 	private String activityId;
-	
+
 	// 券金额
 	@Column
 	private Double couponMoney;
-	
+
 	// 该商品运费单价
 	@Column(scale = 2)
 	private Double deliveryUnit;
-	
+
 	// 满减分摊金额
 	@Column(scale = 2)
 	private Double shareUnit;
-	
-	//是否墙面辅料
-	@Column(nullable=false)
-	private Boolean isWallAccessory ;
-	
+
+	// 是否墙面辅料
+	@Column(nullable = false)
+	private Boolean isWallAccessory = false;
+
 	public String getSubOrderNumber() {
 		return subOrderNumber;
 	}
@@ -447,6 +447,5 @@ public class TdOrderGoods {
 	public void setIsWallAccessory(Boolean isWallAccessory) {
 		this.isWallAccessory = isWallAccessory;
 	}
-	
-	
+
 }

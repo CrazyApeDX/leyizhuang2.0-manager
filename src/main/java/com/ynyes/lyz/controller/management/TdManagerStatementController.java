@@ -35,7 +35,6 @@ import com.ynyes.lyz.entity.TdGoodsInOut;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
-import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOwn;
 import com.ynyes.lyz.entity.TdReceipt;
 import com.ynyes.lyz.entity.TdReserveOrder;
