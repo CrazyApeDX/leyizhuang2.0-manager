@@ -712,9 +712,9 @@ public class TdInterfaceService {
 			if(tdRecharge.getTypeTitle().equals("信用额度")){
 				cashReciptInf.setReceiptClass("信用额度");
 				cashReciptInf.setProductType("CREDIT");
-			}else if(tdRecharge.getTypeTitle().equals("CRM积分")){
+			/*}else if(tdRecharge.getTypeTitle().equals("CRM积分")){
 				cashReciptInf.setReceiptClass("CRM积分");
-				cashReciptInf.setProductType("CRM");
+				cashReciptInf.setProductType("CRM");*/
 			}else{
 				cashReciptInf.setReceiptClass("预收款");
 				cashReciptInf.setProductType("PREPAY");

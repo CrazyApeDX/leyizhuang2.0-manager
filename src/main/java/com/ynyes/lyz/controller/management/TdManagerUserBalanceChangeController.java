@@ -331,7 +331,7 @@ public class TdManagerUserBalanceChangeController {
 				description="CRM积分转预存款";
 				break;
 			case 12:
-				description="其它";
+				description="郑州返利预存款";
 				break;
 			default:
 				break;
@@ -376,6 +376,9 @@ public class TdManagerUserBalanceChangeController {
 			case 11:
 				changeTypeTitle="CRM积分";
 				break;
+			case 12:
+				changeTypeTitle="郑州返利预存款";
+				break;
 			default:
 				break;
 			}
@@ -384,8 +387,8 @@ public class TdManagerUserBalanceChangeController {
 		String type = null;
 		if(changeTypeTitle.equals("信用额度")){
 			type = "CREDIT";
-		}else if(changeTypeTitle.equals("CRM积分")){
-			type = "CRM";  
+		/*}else if(changeTypeTitle.equals("CRM积分")){
+			type = "CRM";  */
 		}else{
 			type ="PREPAY";
 		}
@@ -578,7 +581,7 @@ public class TdManagerUserBalanceChangeController {
 			deposit.setAgreeTime(deposit.getCreateTime());
 			deposit.setRemitTime(deposit.getRemitTime());
 			deposit = tdDepositService.save(deposit);
-			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,"PREPAY");
+			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
 			tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
 		}
 		

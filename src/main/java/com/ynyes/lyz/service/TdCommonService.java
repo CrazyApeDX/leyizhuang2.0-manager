@@ -3688,8 +3688,8 @@ public class TdCommonService {
 			cashRefundInf.setDiySiteCode(user.getDiyCode());
 			if (desc.equals("信用额度")) {
 				cashRefundInf.setRefundClass("信用额度");
-			} else if (desc.equals("CRM积分")) {
-				cashRefundInf.setRefundClass("CRM积分");
+			/*} else if (desc.equals("CRM积分")) {
+				cashRefundInf.setRefundClass("CRM积分");*/
 			} else {
 				cashRefundInf.setRefundClass("预收款");
 			}

@@ -921,4 +921,32 @@ public class TdOrderService {
 					pageRequest);
 		}
 	}
+
+	public List<TdOrder> findOrdersOfDeliveryHome(Date begin, Date end, String diySiteCode, String cityName,
+			List<String> roleDiyIds) {
+		// 判断空值
+				if (null == begin || "".equals(begin)) {
+					begin = Utils.getSysStartDate();
+				}
+				if (null == end || "".equals(end)) {
+					end = new Date();
+				}
+				if (org.apache.commons.lang3.StringUtils.isBlank(cityName)) {
+					cityName = "%";
+				}
+				if (org.apache.commons.lang3.StringUtils.isBlank(diySiteCode)) {
+					diySiteCode = "%";
+				}
+				if (null == roleDiyIds || roleDiyIds.size() == 0) {
+					roleDiyIds.add("0");
+				}
+				return repository.queryDownList(begin, end, cityName, diySiteCode, roleDiyIds);
+	}
+
+	public TdOrder findFixedFlagByMainOrderNumber(String mainOrderNumber) {
+		if(null == mainOrderNumber){
+			return null;
+		}
+		return repository.findFixedFlagByMainOrderNumber(mainOrderNumber);
+	}
 }
