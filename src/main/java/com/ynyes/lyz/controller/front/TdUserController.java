@@ -1463,6 +1463,7 @@ public class TdUserController {
 
 		// 查询到指定的订单
 		TdOrder order = tdOrderService.findOne(orderId);
+		Long originStatus = new Long(order.getStatusId());
 		if (null != order.getStatusId()) {
 			if (4L == order.getStatusId()) {
 				res.put("message", "已出库的订单不能取消");
@@ -1558,7 +1559,7 @@ public class TdUserController {
 		order.setIsRefund(true);
 		tdOrderService.save(order);
 
-		if (!(null != order.getIsOnlinePay() && order.getIsOnlinePay())) {
+		if (!(null != order.getIsOnlinePay() && order.getIsOnlinePay()) && 3L == originStatus) {
 			TdUser seller = tdUserService.findOne(order.getSellerId());
 			// 2017-02-13 取消订单的时候增加信用额度
 			tdUserService.repayCredit(CreditChangeType.CANCEL, seller, totalPrice, order.getMainOrderNumber());
