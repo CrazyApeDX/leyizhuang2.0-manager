@@ -59,7 +59,6 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 				.setType(inputCredit < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
 				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
-		System.err.println(log);
 		return this.fitCreditChangeLogService.save(log);
 	}
 
