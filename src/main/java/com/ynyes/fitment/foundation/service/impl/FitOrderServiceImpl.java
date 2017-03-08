@@ -25,6 +25,7 @@ public class FitOrderServiceImpl extends PageableService implements FitOrderServ
 		if (null == order) {
 			return null;
 		}
+		System.err.println(order.getAuditorMobile());
 		return this.fitOrderRepo.save(order);
 	}
 	
