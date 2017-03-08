@@ -204,6 +204,9 @@
 	           		<div class="order_row">不可提现预存款<div class="order_right">${order.unCashBalanceUsed?string("currency") }</div></div>
 	           		</#if>
             	</#if>
+            	<#if order.credit??&&order.credit gt 0>
+            		<div class="order_row">信用金<div class="order_right">${order.credit?string("currency") }</div></div>
+            	</#if>
 	           	<#if order.otherPay?? && order.otherPay!=0>
 	           	<div class="order_row">第三方支付<div class="order_right">${order.otherPay?string("currency") }</div></div>
 	           	</#if>
@@ -217,7 +220,9 @@
 	           	<div class="order_row">其他支付<div class="order_right">${order.backOtherPay?string("currency") }</div></div>
 	           	</#if>
            		<div class="order_border"></div>
-           		<div class="order_row total_pay"><div class="order_right"><span>实付款 ：</span>${totolPayment?string("currency") }</div></div>
+           		<#if totolPayment??>
+           			<div class="order_row total_pay"><div class="order_right"><span>实付款 ：</span>${totolPayment?string("currency") }</div></div>
+           		</#if>
             </article>
             <!-- 订单详情 END -->
                     
@@ -252,10 +257,12 @@
             </article>
             <!-- 配送信息 END -->
         </#if>
+        <#--
 		<#if !(order.isCoupon??&&order.isCoupon==true)>
 	        <footer>
 	        	<a class="btn-clearing" href="/goods/again?orderId=${orderId?c}">再来一单</a>
 	        </footer>
         </#if>
+        -->
     </body>
 </html>

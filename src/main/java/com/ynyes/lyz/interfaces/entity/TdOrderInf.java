@@ -12,157 +12,157 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class TdOrderInf extends TdInfBaseEntity {
-	
-	//分公司ID
+
+	// 分公司ID
 	@Column
 	private Long sobId;
 
-	//销售单头ID (APP唯一)
+	// 销售单头ID (APP唯一)
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long headerId;
 
-	//销售订单号(分单号)
+	// 销售订单号(分单号)
 	@Column
 	private String orderNumber;
 
-	//订单日期
+	// 订单日期
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date orderDate;
 
-	//APP主单号
+	// APP主单号
 	@Column
 	private String mainOrderNumber;
 
-	//APP单据产品类型 HR华润,LYZ乐易装,YR莹润
+	// APP单据产品类型 HR华润,LYZ乐易装,YR莹润
 	@Column
 	private String productType;
 
-	//1.要货单：B2B HR产品直接“无价”批发给“直营门店”
-	//2.要货单：B2B HR产品“经销价”批发给“经销门店”
-	//3.销售订单：B2C LYZ和YR产品直接“零售价”销售给门店陈列
-	//4.销售订单：B2C HR,LYZ和YR产品直接“零售价”销售给会员
+	// 1.要货单：B2B HR产品直接“无价”批发给“直营门店”
+	// 2.要货单：B2B HR产品“经销价”批发给“经销门店”
+	// 3.销售订单：B2C LYZ和YR产品直接“零售价”销售给门店陈列
+	// 4.销售订单：B2C HR,LYZ和YR产品直接“零售价”销售给会员
 	@Column
 	private Integer orderTypeId;
 
-	//APP会员ID（APP是唯一）
+	// APP会员ID（APP是唯一）
 	@Column
 	private Long userid;
 
-	//APP会员名称（姓名）
+	// APP会员名称（姓名）
 	@Column
 	private String username;
 
-	//APP会员电话(账号)
+	// APP会员电话(账号)
 	@Column
 	private String userphone;
 
-	//APP门店ID 
+	// APP门店ID
 	@Column
 	private Long diySiteId;
 
-	//门店编码 
+	// 门店编码
 	@Column
 	private String diySiteCode;
 
-	//门店名称 
+	// 门店名称
 	@Column
 	private String diySiteName;
 
-	//门店联系电话
+	// 门店联系电话
 	@Column
 	private String diySitePhone;
-	
-	//导购电话
+
+	// 导购电话
 	@Column(length = 20)
 	private String sellerPhone;
-	
-	//导购姓名
+
+	// 导购姓名
 	@Column(length = 100)
 	private String sellerName;
 
-	//省
+	// 省
 	@Column
 	private String province;
 
-	//城市
+	// 城市
 	@Column
 	private String city;
 
-	//区
+	// 区
 	@Column
 	private String disctrict;
 
-	//收货人
+	// 收货人
 	@Column
 	private String shippingName;
 
-	//收货电话
+	// 收货电话
 	@Column
 	private String shippingPhone;
 
-	//配送方式名称
+	// 配送方式名称
 	@Column
 	private String deliverTypeTitle;
 
-	//是否线上支付
+	// 是否线上支付
 	@Column
 	private String isonlinepay;
 
-	//支付类型（支付宝,微信,银联）
+	// 支付类型（支付宝,微信,银联）
 	@Column
 	private String payType;
 
-	//付款日期(点结算时的时间)
+	// 付款日期(点结算时的时间)
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date payDate;
 
-	//支付金额
-	@Column(scale=2)
+	// 支付金额
+	@Column(scale = 2)
 	private Double payAmt;
 
-	//预存款使用金额
-	@Column(scale=2)
+	// 预存款使用金额
+	@Column(scale = 2)
 	private Double prepayAmt;
-	
-	//应支付的金额
+
+	// 应支付的金额
 	@Column
 	private Double recAmt;
-	
-	//预留字段1
+
+	// 预留字段1
 	@Column
 	private String attribute1;
-	
-	//预留字段2
+
+	// 预留字段2
 	@Column
 	private String attribute2;
-	
-	//预留字段3
+
+	// 预留字段3
 	@Column
 	private String attribute3;
-	
-	//预留字段4
+
+	// 预留字段4
 	@Column
 	private String attribute4;
-	
-	//预留字段5
+
+	// 预留字段5
 	@Column
 	private String attribute5;
-	
+
 	// 新增字段：是否使用产品券
 	@Column
 	private Character couponFlag;
-	
+
 	// 新增字段：运费
 	@Column(scale = 2)
 	private Double deliveryFee;
-	
+
 	// 新增字段：信用金
 	@Column(scale = 2, nullable = false)
 	private Double creditAmt = 0d;
-	
+
 	// 新增字段： 华润公司承担运费
 	@Column(scale = 2, nullable = false)
 	private Double companyDeliveryFee = 0d;
@@ -212,7 +212,7 @@ public class TdOrderInf extends TdInfBaseEntity {
 	}
 
 	public void setProductType(String productType) {
-		this.productType = productType;
+		this.productType = productType.replace("CD_", "").replace("ZZ_", "").replace("CQ_", "").replace("FIT", "");
 	}
 
 	public Integer getOrderTypeId() {
@@ -366,7 +366,7 @@ public class TdOrderInf extends TdInfBaseEntity {
 	public void setPrepayAmt(Double prepayAmt) {
 		this.prepayAmt = prepayAmt;
 	}
-	
+
 	public Double getRecAmt() {
 		return recAmt;
 	}
@@ -438,8 +438,6 @@ public class TdOrderInf extends TdInfBaseEntity {
 	public void setCreditAmt(Double creditAmt) {
 		this.creditAmt = creditAmt;
 	}
-	
-	
 
 	public Double getCompanyDeliveryFee() {
 		return companyDeliveryFee;
@@ -448,8 +446,6 @@ public class TdOrderInf extends TdInfBaseEntity {
 	public void setCompanyDeliveryFee(Double companyDeliveryFee) {
 		this.companyDeliveryFee = companyDeliveryFee;
 	}
-	
-	
 
 	public String getSellerPhone() {
 		return sellerPhone;
@@ -483,5 +479,4 @@ public class TdOrderInf extends TdInfBaseEntity {
 				+ ", creditAmt=" + creditAmt + ", companyDeliveryFee=" + companyDeliveryFee + "]";
 	}
 
-	
 }

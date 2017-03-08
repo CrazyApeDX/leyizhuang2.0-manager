@@ -363,6 +363,7 @@ public class TdInterfaceService {
 		} else {
 			orderInf.setCompanyDeliveryFee(0d);
 		}
+		orderInf.setAttribute1(tdOrder.getCredit() + "");
 		tdOrderInfService.save(orderInf);
 
 		// 商品TdOrderGoodsInf

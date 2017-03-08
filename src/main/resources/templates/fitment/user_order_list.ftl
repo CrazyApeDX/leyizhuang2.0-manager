@@ -183,7 +183,8 @@
                                                     <#case 2>待付款<#break>
                                                     <#case 3>待发货<#break>
                                                     <#case 4>待签收<#break>
-                                                    <#case 5>已完成<#break>
+                                                    <#case 5>待评价<#break>
+                                                    <#case 6>已完成<#break>
                                                     <#case 7>已取消<#break>
                                                     <#case 9>退货中<#break>
                                                     <#case 10>退货确认<#break>

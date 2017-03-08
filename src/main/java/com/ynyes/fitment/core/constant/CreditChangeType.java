@@ -2,5 +2,5 @@ package com.ynyes.fitment.core.constant;
 
 public enum CreditChangeType {
 
-	CONSUME, CUT, RECHARGE
+	CONSUME, CUT, RECHARGE, REPAY
 }

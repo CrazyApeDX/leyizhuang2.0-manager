@@ -29,11 +29,14 @@ import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizOrderService;
 import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdCity;
+import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.service.TdBrandService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
+import com.ynyes.lyz.service.TdDiySiteInventoryService;
+import com.ynyes.lyz.service.TdGoodsService;
 import com.ynyes.lyz.service.TdOrderGoodsService;
 import com.ynyes.lyz.service.TdOrderService;
 
@@ -70,6 +73,12 @@ public class BizOrderServiceImpl implements BizOrderService {
 
 	@Autowired
 	private TdCommonService tdCommonService;
+
+	@Autowired
+	private TdGoodsService tdGoodsService;
+
+	@Autowired
+	private TdDiySiteInventoryService tdDiySiteInventoryService;
 
 	@Override
 	public FitOrder initOrder(List<FitCartGoods> cartGoodsList, String receiver, String receiverMobile,
@@ -226,12 +235,13 @@ public class BizOrderServiceImpl implements BizOrderService {
 		order.setActualPay(0d);
 		order.setCashBalanceUsed(0d);
 		order.setProductCouponId("");
-		order.setUnCashBalanceUsed(fitOrder.getBalancePayed() + fitOrder.getUpstairsBalancePayed());
+		order.setUnCashBalanceUsed(0d);
 		order.setDeliverFee(fitOrder.getDeliveryFee());
 		order.setDeliveryDetailId(fitOrder.getDeliveryTime());
 		order.setDiySitePhone(fitOrder.getAuditorMobile());
 		order.setLimitCash(0d);
 		order.setUserId(fitOrder.getEmployeeId());
+		order.setCredit(fitOrder.getBalancePayed() + fitOrder.getUpstairsBalancePayed());
 
 		FitCompany company = fitCompanyService.findOne(fitOrder.getCompanyId());
 		TdCity city = tdCityService.findBySobIdCity(company.getSobId());
@@ -301,6 +311,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 	@Override
 	public void finishOrder(FitOrder fitOrder) throws Exception {
 		this.costCredit(fitOrder);
+		this.costInventory(fitOrder);
 		TdOrder order = this.transformer(fitOrder);
 		Map<Long, TdOrder> subOrderMap = new HashMap<>();
 		this.disminlateGoods(order, subOrderMap);
@@ -427,7 +438,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 			if (null != subOrder) {
 				Double subPrice = subOrder.getTotalPrice();
 				if (null == subPrice || 0.00 == subPrice) {
-					subOrder.setUnCashBalanceUsed(0.00);
+					subOrder.setCredit(0.00);
 				} else {
 					Double point;
 					if (totalPrice == 0) {
@@ -441,15 +452,18 @@ public class BizOrderServiceImpl implements BizOrderService {
 					}
 					if (null != point) {
 						DecimalFormat df = new DecimalFormat("#.00");
-						String scale2_uncash = df.format(mainOrder.getUnCashBalanceUsed() * point);
+						String scale2_uncash = df.format(mainOrder.getCredit() * point);
 						if (null == scale2_uncash) {
 							scale2_uncash = "0.00";
 						}
-						subOrder.setUnCashBalanceUsed(Double.parseDouble(scale2_uncash));
-						subOrder.setActualPay(subOrder.getUnCashBalanceUsed() + subOrder.getCashBalanceUsed());
+						subOrder.setCredit(Double.parseDouble(scale2_uncash));
+						// subOrder.setActualPay(subOrder.getUnCashBalanceUsed()
+						// + subOrder.getCashBalanceUsed());
 						subOrder.setPoint(point);
-						String leftPrice = df.format(subOrder.getTotalPrice() - subOrder.getActualPay());
-						subOrder.setTotalPrice(Double.parseDouble(leftPrice));
+						// String leftPrice = df.format(subOrder.getTotalPrice()
+						// - subOrder.getCredit());
+						subOrder.setTotalPrice(0d);
+						// subOrder.setTotalPrice(Double.parseDouble(leftPrice));
 
 						subOrder = tdOrderService.save(subOrder);
 					}
@@ -474,6 +488,26 @@ public class BizOrderServiceImpl implements BizOrderService {
 			tdCommonService.sendWms(sendOrders, mainOrderNumber, 0d);
 		}
 		tdCommonService.sendEbs(sendOrders);
+	}
+
+	private void costInventory(FitOrder order) {
+		Long companyId = order.getCompanyId();
+		Long regionId = 0L;
+		try {
+			FitCompany company = fitCompanyService.findOne(companyId);
+			regionId = company.getSobId();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		List<FitOrderGoods> orderGoodsList = order.getOrderGoodsList();
+		for (FitOrderGoods orderGoods : orderGoodsList) {
+			Long goodsId = orderGoods.getGoodsId();
+			Long quantity = orderGoods.getQuantity();
+
+			TdGoods goods = tdGoodsService.findOne(goodsId);
+			tdDiySiteInventoryService.costCityInventory(regionId, goods, quantity, order.getOrderNumber(),
+					order.getEmployeeMobile(), "配送发货");
+		}
 	}
 
 }

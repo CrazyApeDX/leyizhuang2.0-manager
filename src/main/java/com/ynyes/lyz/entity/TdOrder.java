@@ -403,22 +403,26 @@ public class TdOrder {
 	// 上楼费
 	@Column(length = 10, scale = 2)
 	private Double upstairsFee = 0d;
-	
+
 	// 已收上楼费（预存款）
 	@Column(length = 10, scale = 2)
 	private Double upstairsBalancePayed = 0d;
-	
+
 	// 已收上楼费（第三方）
 	@Column(length = 10, scale = 2)
 	private Double upstairsOtherPayed = 0d;
-	
+
 	// 剩余上楼费
 	@Column(length = 10, scale = 2)
 	private Double upstairsLeftFee = 0d;
-	
+
 	// 公司承担的运费
 	@Column(length = 10, scale = 2)
 	private Double companyDeliveryFee = 0d;
+
+	// 装饰公司使用的信用额度
+	@Column(scale = 2, nullable = false)
+	private Double credit = 0d;
 
 	public Double getRefund() {
 		return refund;
@@ -1187,7 +1191,13 @@ public class TdOrder {
 	public void setCompanyDeliveryFee(Double companyDeliveryFee) {
 		this.companyDeliveryFee = companyDeliveryFee;
 	}
-	
-	
-	
+
+	public Double getCredit() {
+		return credit;
+	}
+
+	public void setCredit(Double credit) {
+		this.credit = credit;
+	}
+
 }

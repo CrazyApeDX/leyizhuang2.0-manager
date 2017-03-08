@@ -14,8 +14,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDiySiteInventory;
 import com.ynyes.lyz.entity.TdDiySiteInventoryLog;
+import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.repository.TdDiySiteInventoryLogRepo;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
@@ -23,6 +25,9 @@ import com.ynyes.lyz.util.Restrictions;
 @Service
 @Transactional
 public class TdDiySiteInventoryLogService {
+
+	@Autowired
+	private TdCityService tdCityService;
 
 	@Autowired
 	private TdDiySiteInventoryLogRepo repository;
@@ -47,39 +52,36 @@ public class TdDiySiteInventoryLogService {
 		return repository.findOne(id);
 	}
 
-	public List<TdDiySiteInventoryLog> findAll() 
-	{
+	public List<TdDiySiteInventoryLog> findAll() {
 		return (List<TdDiySiteInventoryLog>) repository.findAll();
 	}
-	public Page<TdDiySiteInventoryLog> findAll(int page,int size)
-	{
-		PageRequest pageRequest = new PageRequest(page, size,new Sort(Direction.DESC,"changeDate"));
+
+	public Page<TdDiySiteInventoryLog> findAll(int page, int size) {
+		PageRequest pageRequest = new PageRequest(page, size, new Sort(Direction.DESC, "changeDate"));
 		return repository.findAll(pageRequest);
 	}
-	
-	public void saveWithRequsition(HttpServletRequest req,Long oldValue,Long newValue)
-	{
+
+	public void saveWithRequsition(HttpServletRequest req, Long oldValue, Long newValue) {
 		TdDiySiteInventoryLog log = new TdDiySiteInventoryLog();
 		log.setChangeDate(new Date());
 	}
-	
-	public Boolean saveChangeLog(TdDiySiteInventory diySiteInventory,Long changeValue,String orderNumber,HttpServletRequest req,String changeName)
-	{
+
+	public Boolean saveChangeLog(TdDiySiteInventory diySiteInventory, Long changeValue, String orderNumber,
+			HttpServletRequest req, String changeName) {
 		String username = null;
 		String changeType = null;
-		//请求不能为空
-		if (req != null)
-		{
-			//判断是订单修改还是管理员修改
-			if(orderNumber == null){
+		// 请求不能为空
+		if (req != null) {
+			// 判断是订单修改还是管理员修改
+			if (orderNumber == null) {
 				username = (String) req.getSession().getAttribute("manager");
 				changeType = "管理员修改";
-			}else{
+			} else {
 				username = (String) req.getSession().getAttribute("username");
 				changeType = "订单修改";
 			}
 		}
-		
+
 		TdDiySiteInventoryLog log = new TdDiySiteInventoryLog();
 		log.setDiySiteTitle(diySiteInventory.getDiySiteName());
 		log.setRegionName(diySiteInventory.getRegionName());
@@ -97,66 +99,61 @@ public class TdDiySiteInventoryLogService {
 		log.setChangeType(changeName);
 		this.save(log);
 		return true;
-		
+
 	}
+
 	/**
 	 * 根据城市,门店查找库存
+	 * 
 	 * @param regionId
 	 * @param keywords
 	 * @param page
 	 * @param size
 	 * @return
 	 */
-	public List<TdDiySiteInventoryLog> searchList(Long regionId,Long diyId, String keywords,Date startTime,Date endDate,Integer type)
-	{
+	public List<TdDiySiteInventoryLog> searchList(Long regionId, Long diyId, String keywords, Date startTime,
+			Date endDate, Integer type) {
 		Criteria<TdDiySiteInventoryLog> c = new Criteria<TdDiySiteInventoryLog>();
-		if (type == 1)
-		{
-			if(regionId!=null)
-			{
-				c.add( Restrictions.eq("regionId", regionId, true));
-			}
-			else
-			{
+		if (type == 1) {
+			if (regionId != null) {
+				c.add(Restrictions.eq("regionId", regionId, true));
+			} else {
 				c.add(Restrictions.isNull("diySiteId"));
 			}
-		}
-		else if (type == 2)
-		{
-			if(diyId!=null)
-			{
-				c.add( Restrictions.eq("diySiteId", diyId, true));
-			}
-			else
-			{
+		} else if (type == 2) {
+			if (diyId != null) {
+				c.add(Restrictions.eq("diySiteId", diyId, true));
+			} else {
 				c.add(Restrictions.isNotNull("diySiteId"));
 			}
 		}
-		
-		
-		if(StringUtils.isNotBlank(keywords)){
-			c.add(Restrictions.or(Restrictions.eq("goodsTitle", keywords, true),Restrictions.eq("goodsSku", keywords, true)));
+
+		if (StringUtils.isNotBlank(keywords)) {
+			c.add(Restrictions.or(Restrictions.eq("goodsTitle", keywords, true),
+					Restrictions.eq("goodsSku", keywords, true)));
 		}
-		if(startTime!=null){
+		if (startTime != null) {
 			c.add(Restrictions.gte("changeDate", startTime, true));
 		}
-		if(endDate!=null){
+		if (endDate != null) {
 			c.add(Restrictions.lte("changeDate", endDate, true));
 		}
 		c.setOrderByAsc("goodsSku");
 		return repository.findAll(c);
 	}
-	
+
 	public Page<TdDiySiteInventoryLog> findBySiteIdAndKeywords(Long siteId, String keywords, int page, int size) {
 		PageRequest pageable = new PageRequest(page, size);
-		if (StringUtils.isBlank(keywords)){
+		if (StringUtils.isBlank(keywords)) {
 			return repository.findByDiySiteId(siteId, pageable);
-		}else {
-			return repository.findByDiySiteIdAndGoodsSkuContainingOrDiySiteIdAndGoodsTitleContainingOrderByIdAsc(siteId, keywords, siteId, keywords, pageable);
+		} else {
+			return repository.findByDiySiteIdAndGoodsSkuContainingOrDiySiteIdAndGoodsTitleContainingOrderByIdAsc(siteId,
+					keywords, siteId, keywords, pageable);
 		}
 	}
 
-	public Page<TdDiySiteInventoryLog> findByRegionIdOnlyAndKeywords(Long regionId, String keywords, int page, int size) {
+	public Page<TdDiySiteInventoryLog> findByRegionIdOnlyAndKeywords(Long regionId, String keywords, int page,
+			int size) {
 		PageRequest pageable = new PageRequest(page, size);
 		if (StringUtils.isBlank(keywords))
 			return repository.findByRegionIdAndDiySiteIdIsNull(regionId, pageable);
@@ -172,15 +169,15 @@ public class TdDiySiteInventoryLogService {
 		return repository.findByRegionIdAndGoodsSkuContainingOrRegionIdAndGoodsTitleContainingOrderByIdAsc(regionId,
 				keywords, regionId, keywords, pageable);
 	}
-	
-	public Page<TdDiySiteInventoryLog> findCityInventoryAndKeywords(String keywords, int page, int size)
-	{
+
+	public Page<TdDiySiteInventoryLog> findCityInventoryAndKeywords(String keywords, int page, int size) {
 		PageRequest pageable = new PageRequest(page, size);
-		if (StringUtils.isBlank(keywords))
-		{
+		if (StringUtils.isBlank(keywords)) {
 			return repository.findByDiySiteIdIsNull(pageable);
 		}
-		return repository.findByDiySiteIdIsNullAndGoodsSkuContainingOrDiySiteIdIsNullAndGoodsTitleContainingOrderByIdAsc(keywords, keywords, pageable);
+		return repository
+				.findByDiySiteIdIsNullAndGoodsSkuContainingOrDiySiteIdIsNullAndGoodsTitleContainingOrderByIdAsc(
+						keywords, keywords, pageable);
 	}
 
 	public Page<TdDiySiteInventoryLog> findAll(String keywords, int page, int size) {
@@ -189,5 +186,23 @@ public class TdDiySiteInventoryLogService {
 			return repository.findByGoodsSkuContainingOrGoodsTitleContainingOrderByIdAsc(keywords, keywords,
 					pageRequest);
 		return repository.findAll(pageRequest);
+	}
+
+	public void fitmentCreateLog(String description, TdGoods goods, Long changeValue, String orderNumber, Long regionId,
+			String manager, Long afterChange, String type) {
+		TdDiySiteInventoryLog log = new TdDiySiteInventoryLog();
+		log.setChangeDate(new Date());
+		log.setDescription(description);
+		log.setGoodsId(goods.getId());
+		log.setGoodsTitle(goods.getTitle());
+		log.setGoodsSku(goods.getCode());
+		log.setChangeValue(changeValue);
+		log.setOrderNumber(orderNumber);
+		log.setRegionId(regionId);
+		TdCity city = this.tdCityService.findBySobIdCity(regionId);
+		log.setRegionName(city.getCityName());
+		log.setManager(manager);
+		log.setAfterChange(afterChange);
+		log.setChangeType(type);
 	}
 }

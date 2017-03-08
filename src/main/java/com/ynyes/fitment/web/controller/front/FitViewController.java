@@ -298,6 +298,13 @@ public class FitViewController extends FitBasicController {
 		map.addAttribute("data", data);
 		return "/fitment/user_order_refund_address_base";
 	}
+	
+	@RequestMapping(value = "/detail/{id}")
+	public String fitDetail(@PathVariable("id") Long id, ModelMap map) {
+		TdOrder order = tdOrderService.findOne(id);
+		map.addAttribute("order", order);
+		return "/fitment/user_order_detail";
+	}
 
 	@ModelAttribute
 	public void modelAttrubute(HttpServletRequest request, ModelMap map) {

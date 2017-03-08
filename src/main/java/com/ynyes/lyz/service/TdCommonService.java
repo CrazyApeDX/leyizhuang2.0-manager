@@ -314,7 +314,13 @@ public class TdCommonService {
 
 				if (null == unit || 0.00 == unit.doubleValue()) {
 					String orderNumber = returnNote.getOrderNumber();
-					if (orderNumber.contains("HR")) {
+					if (orderNumber.contains("HRFIT")) {
+						orderNumber = orderNumber.replace("HRFIT", "XN");
+					} else if (orderNumber.contains("YRFIT")) {
+						orderNumber = orderNumber.replace("YRFIT", "XN");
+					} else if (orderNumber.contains("LYZFIT")) {
+						orderNumber = orderNumber.replace("LYZFIT", "XN");
+					} else if (orderNumber.contains("HR")) {
 						orderNumber = orderNumber.replace("HR", "XN");
 					} else if (orderNumber.contains("YR")) {
 						orderNumber = orderNumber.replace("YR", "XN");
@@ -1187,8 +1193,8 @@ public class TdCommonService {
 		case "郑州市":
 			cityShortName = "ZZ_";
 			break;
-		} 
-		
+		}
+
 		// 以下代码用于生成订单编号
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		Date now = new Date();
@@ -1319,7 +1325,7 @@ public class TdCommonService {
 		virtual = this.getGift(req, virtual);
 
 		// 获取运费
-		//Double fee = 0.00;
+		// Double fee = 0.00;
 		// TdSubdistrict subdistrict =
 		// tdSubdistrictService.findOne(defaultAddress.getSubdistrictId());
 		// if (null == subdistrict) {
@@ -1329,11 +1335,11 @@ public class TdCommonService {
 		// if (null == fee) {
 		// fee = 0.00;
 		// }
-		
-		//fee = settlementService.countOrderDeliveryFee(user, virtual);
+
+		// fee = settlementService.countOrderDeliveryFee(user, virtual);
 		Map<String, Double> depiveryFeeMap = new HashMap<>();
 		depiveryFeeMap = settlementService.countOrderDeliveryFee(user, virtual);
-		
+
 		virtual.setDeliverFee(depiveryFeeMap.get("user_delivery_fee"));
 		virtual.setCompanyDeliveryFee(depiveryFeeMap.get("company_delivery_fee"));
 
@@ -3688,8 +3694,10 @@ public class TdCommonService {
 			cashRefundInf.setDiySiteCode(user.getDiyCode());
 			if (desc.equals("信用额度")) {
 				cashRefundInf.setRefundClass("信用额度");
-			/*} else if (desc.equals("CRM积分")) {
-				cashRefundInf.setRefundClass("CRM积分");*/
+				/*
+				 * } else if (desc.equals("CRM积分")) {
+				 * cashRefundInf.setRefundClass("CRM积分");
+				 */
 			} else {
 				cashRefundInf.setRefundClass("预收款");
 			}
