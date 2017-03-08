@@ -768,7 +768,7 @@ public class TdManagerOrderController {
 						tdOrderService.findAllAddConditionDeliveryType(keywords, orderStartTime, orderEndTime,
 								usernameList, sellerRealName, shippingAddress, shippingPhone, deliveryTime, userPhone,
 								shippingName, sendTime, statusId, diyCode, city, deliveryType, cityDiyCodes,
-								roleDiyCodes, size, page));
+								roleDiyCodes, size, page, false));
 			}
 		}
 

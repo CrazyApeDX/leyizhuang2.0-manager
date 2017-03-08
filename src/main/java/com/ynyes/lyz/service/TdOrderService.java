@@ -538,9 +538,15 @@ public class TdOrderService {
 	public Page<TdOrder> findAllAddConditionDeliveryType(String keywords, String orderStartTime, String orderEndTime,
 			List<String> usernameList, String sellerRealName, String shippingAddress, String shippingPhone,
 			String deliveryTime, String userPhone, String shippingName, String sendTime, Long statusId, String diyCode,
-			String city, String deliverTypeTitle, List<String> roleCitys, List<String> roleDiys, int size, int page) {
+			String city, String deliverTypeTitle, List<String> roleCitys, List<String> roleDiys, int size, int page,
+			Boolean isFitment) {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdOrder> c = new Criteria<TdOrder>();
+		if (isFitment) {
+			c.add(Restrictions.like("orderNumber", "FIT", true));
+		} else {
+			c.add(Restrictions.notLike("orderNumber", "FIT", true));
+		}
 		if (null != keywords && !keywords.equalsIgnoreCase("")) {
 			c.add(Restrictions.like("orderNumber", keywords, true));
 		}
@@ -925,26 +931,26 @@ public class TdOrderService {
 	public List<TdOrder> findOrdersOfDeliveryHome(Date begin, Date end, String diySiteCode, String cityName,
 			List<String> roleDiyIds) {
 		// 判断空值
-				if (null == begin || "".equals(begin)) {
-					begin = Utils.getSysStartDate();
-				}
-				if (null == end || "".equals(end)) {
-					end = new Date();
-				}
-				if (org.apache.commons.lang3.StringUtils.isBlank(cityName)) {
-					cityName = "%";
-				}
-				if (org.apache.commons.lang3.StringUtils.isBlank(diySiteCode)) {
-					diySiteCode = "%";
-				}
-				if (null == roleDiyIds || roleDiyIds.size() == 0) {
-					roleDiyIds.add("0");
-				}
-				return repository.queryDownList(begin, end, cityName, diySiteCode, roleDiyIds);
+		if (null == begin || "".equals(begin)) {
+			begin = Utils.getSysStartDate();
+		}
+		if (null == end || "".equals(end)) {
+			end = new Date();
+		}
+		if (org.apache.commons.lang3.StringUtils.isBlank(cityName)) {
+			cityName = "%";
+		}
+		if (org.apache.commons.lang3.StringUtils.isBlank(diySiteCode)) {
+			diySiteCode = "%";
+		}
+		if (null == roleDiyIds || roleDiyIds.size() == 0) {
+			roleDiyIds.add("0");
+		}
+		return repository.queryDownList(begin, end, cityName, diySiteCode, roleDiyIds);
 	}
 
 	public TdOrder findFixedFlagByMainOrderNumber(String mainOrderNumber) {
-		if(null == mainOrderNumber){
+		if (null == mainOrderNumber) {
 			return null;
 		}
 		return repository.findFixedFlagByMainOrderNumber(mainOrderNumber);
