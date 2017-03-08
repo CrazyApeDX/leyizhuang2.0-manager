@@ -13,7 +13,9 @@ import com.ynyes.fitment.foundation.entity.FitPriceHeader;
 @Repository
 public interface FitPriceHeaderRepo extends ApplicationRepo<FitPriceHeader> {
 
-	@Query("select h from FitPriceHeader h where :now > h.startTime and :now < h.endTime and h.priceType = :priceType")
-	List<FitPriceHeader> findActivePriceHeaderByPriceType(@Param("priceType") String priceType,
-			@Param("now") Date now) throws Exception;
+	@Query("select h from FitPriceHeader h where :now > h.startTime and :now < h.endTime and h.priceType = :priceType and h.isEnable")
+	List<FitPriceHeader> findActivePriceHeaderByPriceType(@Param("priceType") String priceType, @Param("now") Date now)
+			throws Exception;
+
+	FitPriceHeader findByEbsId(Long ebsId);
 }

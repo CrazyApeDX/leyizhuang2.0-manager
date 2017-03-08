@@ -18,7 +18,7 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 
 	@Autowired
 	private FitCompanyRepo fitCompanyRepo;
-	
+
 	@Override
 	public FitCompany save(FitCompany fitCompany) throws Exception {
 		if (null == fitCompany) {
@@ -26,7 +26,7 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 		}
 		return this.fitCompanyRepo.save(fitCompany);
 	}
-	
+
 	@Override
 	public void delete(Long id) throws Exception {
 		if (null != id) {
@@ -38,7 +38,7 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 	public FitCompany findOne(Long companyId) throws Exception {
 		return this.fitCompanyRepo.findOne(companyId);
 	}
-	
+
 	@Override
 	public List<FitCompany> findAll() throws Exception {
 		return this.fitCompanyRepo.findAll();
@@ -59,5 +59,14 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 	public Boolean validateRepeatCompanyByCode(String code, Long id) throws Exception {
 		Long count = this.fitCompanyRepo.countByCodeAndIdNot(code, id);
 		return (count > 0);
+	}
+
+	@Override
+	public FitCompany findByCode(String code) {
+		if (null == code) {
+			return null;
+		} else {
+			return this.fitCompanyRepo.findByCode(code);
+		}
 	}
 }

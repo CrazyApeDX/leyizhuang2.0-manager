@@ -19,7 +19,7 @@ public class TdPriceHeaderServiceImpl extends PageableService implements FitPric
 
 	@Autowired
 	private FitPriceHeaderRepo fitPriceHeaderRepo;
-	
+
 	@Override
 	public FitPriceHeader findOne(Long id) throws Exception {
 		if (null == id) {
@@ -36,6 +36,24 @@ public class TdPriceHeaderServiceImpl extends PageableService implements FitPric
 	@Override
 	public Page<FitPriceHeader> findAll(Integer page, Integer size) throws Exception {
 		return this.fitPriceHeaderRepo.findAll(this.initPage(page, size));
+	}
+
+	@Override
+	public FitPriceHeader save(FitPriceHeader header) {
+		if (null == header) {
+			return null;
+		} else {
+			return this.fitPriceHeaderRepo.save(header);
+		}
+	}
+
+	@Override
+	public FitPriceHeader findByEbsId(Long ebsId) {
+		if (null == ebsId) {
+			return null;
+		} else {
+			return this.fitPriceHeaderRepo.findByEbsId(ebsId);
+		}
 	}
 
 }
