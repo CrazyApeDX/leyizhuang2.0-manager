@@ -72,6 +72,7 @@ import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.TdWareHouseService;
 import com.ynyes.lyz.util.SiteMagConstant;
 
+
 @Controller
 @RequestMapping("/Verwalter/statement")
 public class TdManagerStatementController extends TdManagerBaseController {

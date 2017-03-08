@@ -42,6 +42,7 @@ import com.ynyes.lyz.service.TdSettingService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
 
+
 /**
  * <p>
  * 标题：SettlementServiceImpl.java
@@ -1107,6 +1108,7 @@ public class SettlementServiceImpl implements ISettlementService {
 					tdOrderGoods.setGoodsId(orderGoods.getGoodsId());
 					tdOrderGoods.setQuantity(orderGoods.getQuantity());
 					tdOrderGoods.setIsWallAccessory(orderGoods.getIsWallAccessory());
+					tdOrderGoods.setPrice(orderGoods.getPrice());
 					map.put(goodsId, tdOrderGoods);
 				} else {
 					tdOrderGoods.setQuantity(tdOrderGoods.getQuantity() + orderGoods.getQuantity());
