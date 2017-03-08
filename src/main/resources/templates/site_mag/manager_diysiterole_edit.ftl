@@ -107,7 +107,6 @@ function checkCity(obj){
         	<#assign cityId=0>
         	<#if diysite_list??>
         		<#list diysite_list as item>
-        		
         			<tr>
 	        			<td style="white-space:nowrap;word-break:break-all;overflow:hidden;">
 	        					<#if item.cityId?? && cityId!=item.cityId >

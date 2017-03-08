@@ -104,9 +104,11 @@
 			                    </span>
 			                    <input type="hidden" name="listId" id="listId" value="${item.id?c}">
 			                </td>
+			                <#--
 			                <td align="left">
 			                	<a href="/Verwalter/fitment/company/edit/${item.id?c}">${item.name!""}</a>
 		                	</td>
+		                	-->
 			                <td align="left">${item.goodsSku!""}</td>
 			                <td align="left">
 			                	<#if item.price??>${item.price?string("0.00")}</#if>
