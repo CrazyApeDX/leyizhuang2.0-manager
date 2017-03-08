@@ -65,8 +65,8 @@ public class FitManagementEmployeeController {
 	public String companySave(FitEmployee employee, String oldPassword) {
 		try {
 			if (null == employee.getId()) {
-				employee.setPassword(
-						null == oldPassword ? MD5.md5(Global.DEFAULT_PASSWORD, 32) : MD5.md5(oldPassword, 32));
+				employee.setPassword((null == oldPassword || "".equalsIgnoreCase(oldPassword))
+						? MD5.md5(Global.DEFAULT_PASSWORD, 32) : MD5.md5(oldPassword, 32));
 			} else {
 				if (null == oldPassword) {
 					employee.setPassword(null);
@@ -80,7 +80,7 @@ public class FitManagementEmployeeController {
 		}
 		return "redirect:/Verwalter/fitment/employee/list";
 	}
-	
+
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
 	public String companyDelete(@PathVariable Long id) {
 		try {
