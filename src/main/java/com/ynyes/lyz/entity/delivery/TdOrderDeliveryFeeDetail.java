@@ -83,8 +83,12 @@ public class TdOrderDeliveryFeeDetail {
 	@Column(length = 100, nullable = false)
 	private Double companyDeliveryFee;
 	
-	//运费总额不足20华润公司补差价
+	//运费总额不足20客户补差价
 	@Column(length = 100, nullable = false)
+	private Double consumerDeliveryFeeAdjust;
+	
+	//运费不足20华润补差价
+	@Column(length = 100,nullable = false)
 	private Double companyDeliveryFeeAdjust;
 
 	// 客户运费打折金额
@@ -316,17 +320,13 @@ public class TdOrderDeliveryFeeDetail {
 		this.companyDeliveryFeeFinal = companyDeliveryFeeFinal;
 	}
 	
-	
-
-	public Double getCompanyDeliveryFeeAdjust() {
-		return companyDeliveryFeeAdjust;
+	public Double getConsumerDeliveryFeeAdjust() {
+		return consumerDeliveryFeeAdjust;
 	}
 
-	public void setCompanyDeliveryFeeAdjust(Double companyDeliveryFeeAdjust) {
-		this.companyDeliveryFeeAdjust = companyDeliveryFeeAdjust;
+	public void setConsumerDeliveryFeeAdjust(Double consumerDeliveryFeeAdjust) {
+		this.consumerDeliveryFeeAdjust = consumerDeliveryFeeAdjust;
 	}
-	
-	
 
 	public Boolean getIsCustomerDeliveryFeeModified() {
 		return isCustomerDeliveryFeeModified;
@@ -344,6 +344,16 @@ public class TdOrderDeliveryFeeDetail {
 	public void setCustomerDeliveryFeeBeforeModified(Double customerDeliveryFeeBeforeModified) {
 		this.customerDeliveryFeeBeforeModified = customerDeliveryFeeBeforeModified;
 	}
+	
+	
+
+	public Double getCompanyDeliveryFeeAdjust() {
+		return companyDeliveryFeeAdjust;
+	}
+
+	public void setCompanyDeliveryFeeAdjust(Double companyDeliveryFeeAdjust) {
+		this.companyDeliveryFeeAdjust = companyDeliveryFeeAdjust;
+	}
 
 	@Override
 	public String toString() {
@@ -354,15 +364,14 @@ public class TdOrderDeliveryFeeDetail {
 				+ bucketsOfPaintFee + ", nitrolacquerFee=" + nitrolacquerFee + ", carpentryPaintFee="
 				+ carpentryPaintFee + ", belowFourKiloFee=" + belowFourKiloFee + ", wallAccessories=" + wallAccessories
 				+ ", consumerDeliveryFee=" + consumerDeliveryFee + ", companyDeliveryFee=" + companyDeliveryFee
-				+ ", companyDeliveryFeeAdjust=" + companyDeliveryFeeAdjust + ", consumerDeliveryFeeDiscount="
-				+ consumerDeliveryFeeDiscount + ", companyDeliveryFeeDiscount=" + companyDeliveryFeeDiscount
-				+ ", consumerDeliveryFeeReduce=" + consumerDeliveryFeeReduce + ", companyDeliveryFeeReduce="
-				+ companyDeliveryFeeReduce + ", consumerDeliveryFeeFinal=" + consumerDeliveryFeeFinal
-				+ ", companyDeliveryFeeFinal=" + companyDeliveryFeeFinal + ", isCustomerDeliveryFeeModified="
-				+ isCustomerDeliveryFeeModified + ", customerDeliveryFeeBeforeModified="
-				+ customerDeliveryFeeBeforeModified + "]";
+				+ ", consumerDeliveryFeeAdjust=" + consumerDeliveryFeeAdjust + ", companyDeliveryFeeAdjust="
+				+ companyDeliveryFeeAdjust + ", consumerDeliveryFeeDiscount=" + consumerDeliveryFeeDiscount
+				+ ", companyDeliveryFeeDiscount=" + companyDeliveryFeeDiscount + ", consumerDeliveryFeeReduce="
+				+ consumerDeliveryFeeReduce + ", companyDeliveryFeeReduce=" + companyDeliveryFeeReduce
+				+ ", consumerDeliveryFeeFinal=" + consumerDeliveryFeeFinal + ", companyDeliveryFeeFinal="
+				+ companyDeliveryFeeFinal + ", isCustomerDeliveryFeeModified=" + isCustomerDeliveryFeeModified
+				+ ", customerDeliveryFeeBeforeModified=" + customerDeliveryFeeBeforeModified + "]";
 	}
 
 	
-
 }
