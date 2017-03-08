@@ -88,6 +88,12 @@ public class TdDeliveryFeeHeadService {
 		}
 		return repository.findBySobId(sobId);
 	}
+	public TdDeliveryFeeHead findByGoodsId(Long goodsId) {
+		if (null == goodsId) {
+			return null;
+		}
+		return repository.findByGoodsId(goodsId);
+	}
 
 	public Page<TdDeliveryFeeHead> findBySobId(Long sobId, int page, int size) {
 		if (null == sobId) {

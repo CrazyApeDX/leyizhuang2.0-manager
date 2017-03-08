@@ -25,4 +25,6 @@ public interface TdDeliveryFeeHeadRepository
 	Page<TdDeliveryFeeHead> findBySobId(Long sobId, Pageable pageRequest);
 	
 	Page<TdDeliveryFeeHead> findBySobIdAndGoodsSkuContaining(Long sobId, String keywords, Pageable pageRequest);
+
+	TdDeliveryFeeHead findByGoodsId(Long goodsId);
 }
