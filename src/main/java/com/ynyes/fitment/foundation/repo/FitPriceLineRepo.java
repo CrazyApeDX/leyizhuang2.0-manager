@@ -11,6 +11,8 @@ import com.ynyes.fitment.foundation.entity.FitPriceLine;
 public interface FitPriceLineRepo extends ApplicationRepo<FitPriceLine> {
 
 	Page<FitPriceLine> findByHeaderId(Long headerId, Pageable page) throws Exception;
-	
+
 	FitPriceLine findByHeaderIdAndGoodsId(Long headerId, Long goodsId) throws Exception;
+
+	FitPriceLine findByEbsId(Long ebsId);
 }

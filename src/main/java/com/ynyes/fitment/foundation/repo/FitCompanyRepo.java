@@ -10,7 +10,7 @@ public interface FitCompanyRepo extends ApplicationRepo<FitCompany>  {
 
 	FitCompany findByName(String name) throws Exception;
 	
-	FitCompany findByCode(String code) throws Exception;
+	FitCompany findByCode(String code);
 	
 	Long countByNameAndIdNot(String name, Long id) throws Exception;
 	

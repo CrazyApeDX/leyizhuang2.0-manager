@@ -18,6 +18,8 @@ public interface FitCompanyService {
 	
 	List<FitCompany> findAll() throws Exception;
 	
+	FitCompany findByCode(String code);
+	
 	Boolean validateRepeatCompanyByName(String name, Long id) throws Exception;
 	
 	Boolean validateRepeatCompanyByCode(String code, Long id) throws Exception;
