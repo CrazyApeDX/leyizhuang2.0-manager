@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.embedded.MultipartConfigFactory;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
-import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +20,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @EnableAutoConfiguration
 @EnableScheduling
 @ImportResource({ "/cxf-servlet.xml" })
-@EnableEurekaClient
 public class LyzApplication extends SpringBootServletInitializer implements
 		CommandLineRunner {
 

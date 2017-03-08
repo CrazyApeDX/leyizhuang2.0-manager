@@ -1107,6 +1107,7 @@ public class SettlementServiceImpl implements ISettlementService {
 					tdOrderGoods.setGoodsId(orderGoods.getGoodsId());
 					tdOrderGoods.setQuantity(orderGoods.getQuantity());
 					tdOrderGoods.setIsWallAccessory(orderGoods.getIsWallAccessory());
+					tdOrderGoods.setPrice(orderGoods.getPrice());
 					map.put(goodsId, tdOrderGoods);
 				} else {
 					tdOrderGoods.setQuantity(tdOrderGoods.getQuantity() + orderGoods.getQuantity());
