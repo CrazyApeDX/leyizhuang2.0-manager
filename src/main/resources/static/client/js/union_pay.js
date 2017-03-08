@@ -88,9 +88,9 @@ var REMARK1='';
 var REMARK2='';
 
 
-var bankURL='http://128.128.96.175:8001/app/ccbMain'; //sit
+//var bankURL='http://128.128.96.175:8001/app/ccbMain'; //sit
 //var bankURL='http://128.128.96.2:8001/app/ccbMain';  //ua
-//var bankURL='https://ibsbjstar.ccb.com.cn/app/ccbMain';  //生产
+var bankURL='https://ibsbjstar.ccb.com.cn/CCBIS/ccbMain';  //生产
 
 
 //以下内容不要轻易改动

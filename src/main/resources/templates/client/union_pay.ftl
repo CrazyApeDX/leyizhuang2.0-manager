@@ -157,7 +157,7 @@
 					<td height="20">银行网址【URL】</td>
 					<td height="20">
 					<select name="bankURL" id="bankURL">
-						<option value='https://ibsbjstar.ccb.com.cn/app/ccbMain'>生产:https://ibsbjstar.ccb.com.cn/app/ccbMain</option>
+						<option value='https://ibsbjstar.ccb.com.cn/CCBIS/ccbMain'>生产:https://ibsbjstar.ccb.com.cn/CCBIS/ccbMain</option>
 					</select>
 					<br>
 					<span class="smallfont">说明：要从http://开始添加，到？号以前，？号不要添加</span></td>
