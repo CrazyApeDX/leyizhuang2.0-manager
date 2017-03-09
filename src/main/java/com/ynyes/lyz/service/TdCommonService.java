@@ -2455,6 +2455,7 @@ public class TdCommonService {
 			requisition.setSellerTel(order.getSellerUsername());
 
 			List<TdRequisitionGoods> requisitionGoodsList = new ArrayList<>();
+			Double deliveryFee = 0.00;
 			for (TdOrder tdOrder : orderList) {
 
 				if (null != tdOrder && null != tdOrder.getTotalPrice()) {
@@ -2502,7 +2503,13 @@ public class TdCommonService {
 						requisitionGoodsList.add(requisitionGoods);
 					}
 				}
+				
+				if(order.getOrderNumber().contains("YF")){
+					deliveryFee = order.getDeliverFee();
+				}
+				
 			}
+			requisition.setDeliveryFee(deliveryFee);
 			if ("支付宝".equalsIgnoreCase(payTypeTitle) || "银行卡".equalsIgnoreCase(payTypeTitle)
 					|| "微信支付".equalsIgnoreCase(payTypeTitle)) {
 				requisition.setLeftPrice(0.0);
