@@ -1074,7 +1074,7 @@ public class SettlementServiceImpl implements ISettlementService {
 						detail.setCompanyDeliveryFeeReduce(0.00);
 						
 						consumerDeliveryFee -= reduceDeliveryFee;
-					}else if(reduceDeliveryFee > consumerDeliveryFee){//如果辅料减免运费大于用户承担的运费，则用户用费全免，剩余部分用来减免华润运费
+					}else if(reduceDeliveryFee > consumerDeliveryFee && reduceDeliveryFee< deliveryFee){//如果辅料减免运费大于用户承担的运费，则用户用费全免，剩余部分用来减免华润运费
 						detail.setConsumerDeliveryFeeReduce(consumerDeliveryFee);
 						detail.setCompanyDeliveryFeeReduce(reduceDeliveryFee - consumerDeliveryFee);
 						
