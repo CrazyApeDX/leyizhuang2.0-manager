@@ -32,5 +32,7 @@ public interface BizOrderService {
 	
 	Boolean validateEnoughCredit(FitOrder order) throws Exception;
 	
+	Boolean validateEnoughInventory(FitOrder order) throws Exception;
+	
 	void finishOrder(FitOrder order) throws Exception;
 }

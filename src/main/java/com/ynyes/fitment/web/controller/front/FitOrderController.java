@@ -154,8 +154,13 @@ public class FitOrderController extends FitBasicController {
 			FitOrder order = this.bizOrderService.findOne(id);
 			Boolean validate = this.bizOrderService.validateEnoughCredit(order);
 			if (validate) {
-				this.bizOrderService.finishOrder(order);
-				return new ClientResult(ActionCode.SUCCESS, null);
+				// 校验库存
+				if (this.bizOrderService.validateEnoughInventory(order)) {
+					this.bizOrderService.finishOrder(order);
+					return new ClientResult(ActionCode.SUCCESS, null);
+				} else {
+					return new ClientResult(ActionCode.FAILURE, "库存不足，无法完成订单");
+				}
 			} else {
 				return new ClientResult(ActionCode.FAILURE, "信用金不足，无法完成订单");
 			}

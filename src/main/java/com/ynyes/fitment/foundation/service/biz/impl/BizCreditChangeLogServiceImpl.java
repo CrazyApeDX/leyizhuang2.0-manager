@@ -48,13 +48,13 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	}
 
 	@Override
-	public FitCreditChangeLog repayLog(FitCompany company, FitOrderCancel orderCancel) throws Exception {
+	public FitCreditChangeLog cancelLog(FitCompany company, FitOrderCancel orderCancel) throws Exception {
 		FitCreditChangeLog log = new FitCreditChangeLog();
 		log.setCreateOrigin(OriginType.BUSINESS);
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getCredit() - orderCancel.getCredit()).setAfterChange(company.getCredit())
 				.setMoney(orderCancel.getCredit()).setChangeTime(new Date())
-				.setReferenceNumber(orderCancel.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.REPAY)
+				.setReferenceNumber(orderCancel.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.CANCEL)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(orderCancel.getAuditorId()).setRemark("订单取消")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);

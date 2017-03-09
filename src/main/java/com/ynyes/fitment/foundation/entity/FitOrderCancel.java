@@ -20,38 +20,38 @@ import com.ynyes.fitment.core.entity.persistent.table.TableEntity;
 @Table(name = "FIT_ORDER_CANCEL")
 public class FitOrderCancel extends TableEntity {
 
-	@Column(length = 20, nullable = false, updatable = false)
+	@Column(length = 20, nullable = false)
 	private Long employeeId;
 
-	@Column(length = 30, nullable = false, updatable = false)
+	@Column(length = 30, nullable = false)
 	private String employeeMobile;
 
-	@Column(length = 30, nullable = false, updatable = false)
+	@Column(length = 30, nullable = false)
 	private String employeeName;
 
-	@Column(length = 20, updatable = false)
+	@Column(length = 20)
 	private Long auditorId;
 
-	@Column(length = 30, updatable = false)
+	@Column(length = 30)
 	private String auditorMobile;
 
-	@Column(length = 30, updatable = false)
+	@Column(length = 30)
 	private String auditorName;
 
-	@Column(length = 20, nullable = false, updatable = false)
+	@Column(length = 20, nullable = false)
 	private Long companyId;
 
-	@Column(length = 30, nullable = false, updatable = false)
+	@Column(length = 30, nullable = false)
 	private String companyName;
 
-	@Column(length = 30, nullable = false, updatable = false)
+	@Column(length = 30, nullable = false)
 	private String orderNumber;
 
-	@Column(length = 15, nullable = false, updatable = false)
+	@Column(length = 15, nullable = false)
 	@Enumerated(EnumType.STRING)
 	private AuditStatus status = AuditStatus.WAIT_AUDIT;
 
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date cancelTime;
 
@@ -64,12 +64,12 @@ public class FitOrderCancel extends TableEntity {
 	@JoinColumn(name = "FIT_ORDER_CANCEL_ID")
 	private List<FitOrderCancelGoods> orderGoodsList;
 
-	@Column(nullable = false, updatable = false)
+	@Column(nullable = false)
 	private Long orderId;
 
-	@Column(nullable = false ,updatable = false)
+	@Column(nullable = false, updatable = false)
 	private Double credit = 0d;
-	
+
 	public Long getEmployeeId() {
 		return employeeId;
 	}

@@ -15,7 +15,7 @@ public interface BizCreditChangeLogService {
 
 	FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception;
 	
-	FitCreditChangeLog repayLog(FitCompany company, FitOrderCancel orderCancel) throws Exception;
+	FitCreditChangeLog cancelLog(FitCompany company, FitOrderCancel orderCancel) throws Exception;
 
 	FitCreditChangeLog manageLog(TdManager manager, FitCompany company, Double inputCredit, String remark) throws Exception;
 
