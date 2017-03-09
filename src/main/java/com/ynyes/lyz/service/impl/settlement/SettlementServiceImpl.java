@@ -1079,7 +1079,13 @@ public class SettlementServiceImpl implements ISettlementService {
 						detail.setCompanyDeliveryFeeReduce(reduceDeliveryFee - consumerDeliveryFee);
 						
 						companyDeliveryFee -=(reduceDeliveryFee - consumerDeliveryFee); 
-						consumerDeliveryFee = 0;
+						consumerDeliveryFee = 0.0;
+						
+					}else{
+						detail.setConsumerDeliveryFeeReduce(consumerDeliveryFee);
+						detail.setCompanyDeliveryFeeReduce(companyDeliveryFee);
+						consumerDeliveryFee = 0.0;
+						companyDeliveryFee = 0.0;
 						
 					}
 				}else{
