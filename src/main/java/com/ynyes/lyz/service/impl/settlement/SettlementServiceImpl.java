@@ -1056,7 +1056,7 @@ public class SettlementServiceImpl implements ISettlementService {
 					detail.setCompanyDeliveryFeeAdjust(0.00);
 				}
 				// 运费折扣优惠，如果用户承担运费的漆类桶数和华润承担运费的类桶数任意一个大于20桶，则双方运费都打7.5折；如果大于100桶，折扣为6折
-				if (20<=(consumerAffordQuantity + consumerAffordQuantity) && (consumerAffordQuantity + consumerAffordQuantity)< 99){
+				if (20<=(consumerAffordQuantity + companyAffordQuantity) && (consumerAffordQuantity + companyAffordQuantity)< 99){
 					consumerDeliveryFee = consumerDeliveryFee * 0.75;
 					companyDeliveryFee = companyDeliveryFee * 0.75;
 					deliveryFee = consumerDeliveryFee + companyDeliveryFee;
@@ -1066,10 +1066,10 @@ public class SettlementServiceImpl implements ISettlementService {
 					deliveryFee = consumerDeliveryFee + companyDeliveryFee;
 				}
 				detail.setConsumerDeliveryFeeDiscount(detail.getConsumerDeliveryFee()-detail.getConsumerDeliveryFeeAdjust() - consumerDeliveryFee);// 设置用户运费打折金额
-				detail.setCompanyDeliveryFeeDiscount(detail.getCompanyDeliveryFee()-detail.getCompanyDeliveryFeeAdjust() - companyDeliveryFee);// 设置华润公司运费打折金额
+				detail.setCompanyDeliveryFeeDiscount(detail.getCompanyDeliveryFee()+detail.getCompanyDeliveryFeeAdjust() - companyDeliveryFee);// 设置华润公司运费打折金额
 				// 墙面辅料金额以500为阶梯减免运费。500减20,1000减40，以此类推。其中减免的运费优先由用户享受，如果用户承担的运费小于优惠金额，则剩余的优惠金额才能由华润享受
 				if (wallAccessories >= 500) {
-					double reduceDeliveryFee = (wallAccessories / 500) * 20;// 购辅料减免运费总额
+					double reduceDeliveryFee = ((int)wallAccessories / 500) * 20;// 购辅料减免运费总额
 					if (reduceDeliveryFee <= deliveryFee) {
 						if (reduceDeliveryFee <= consumerDeliveryFee) {// 如果辅料减免的运费小于当前用户承担的运费，则全部用来减免用户用费
 							detail.setConsumerDeliveryFeeReduce(reduceDeliveryFee);
