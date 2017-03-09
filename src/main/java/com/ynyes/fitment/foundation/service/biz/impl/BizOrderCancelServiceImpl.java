@@ -32,9 +32,11 @@ import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.interfaces.entity.TdOrderInf;
+import com.ynyes.lyz.interfaces.entity.TdReturnGoodsInf;
 import com.ynyes.lyz.interfaces.entity.TdReturnOrderInf;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.service.TdOrderInfService;
+import com.ynyes.lyz.interfaces.service.TdReturnGoodsInfService;
 import com.ynyes.lyz.interfaces.service.TdReturnOrderInfService;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.interfaces.utils.StringTools;
@@ -95,6 +97,9 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 
 	@Autowired
 	private BizCreditChangeLogService bizCreditChangeLogService;
+
+	@Autowired
+	private TdReturnGoodsInfService tdReturnGoodsInfService;
 
 	@Override
 	public void auditAgree(FitEmployee auditor, FitOrderCancel orderCancel) throws Exception {
@@ -302,7 +307,7 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 
 		returnNote.setOrderTime(new Date());
 
-		returnNote.setTurnPrice(order.getTotalGoodsPrice());
+		returnNote.setTurnPrice(order.getCredit());
 		List<TdOrderGoods> orderGoodsList = new ArrayList<>();
 
 		// 商品
@@ -323,6 +328,7 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 				orderGoods.setGoodsTitle(oGoods.getGoodsTitle());
 
 				orderGoods.setPrice(oGoods.getPrice());
+				orderGoods.setRealPrice(oGoods.getRealPrice());
 				orderGoods.setQuantity(oGoods.getQuantity());
 
 				orderGoods.setDeliveredQuantity(oGoods.getDeliveredQuantity());
@@ -333,11 +339,11 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 				if (null == unit || 0.00 == unit.doubleValue()) {
 					String orderNumber = returnNote.getOrderNumber();
 					if (orderNumber.contains("HRFIT")) {
-						orderNumber = orderNumber.replace("HRFIT", "XN");
+						orderNumber = orderNumber.replace("HRFIT", "XNFIT");
 					} else if (orderNumber.contains("YRFIT")) {
-						orderNumber = orderNumber.replace("YRFIT", "XN");
+						orderNumber = orderNumber.replace("YRFIT", "XNFIT");
 					} else if (orderNumber.contains("LYZFIT")) {
-						orderNumber = orderNumber.replace("LYZFIT", "XN");
+						orderNumber = orderNumber.replace("LYZFIT", "XNFIT");
 					} else if (orderNumber.contains("HR")) {
 						orderNumber = orderNumber.replace("HR", "XN");
 					} else if (orderNumber.contains("YR")) {
@@ -398,6 +404,7 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 		returnOrderInf.setUserphone(tdOrderInf.getUserphone());
 		returnOrderInf.setOrderTypeId(tdOrderInf.getOrderTypeId());
 		returnOrderInf.setDeliverTypeTitle(tdOrderInf.getDeliverTypeTitle());
+		returnOrderInf.setAttribute1(returnNote.getTurnPrice() + "");
 
 		returnOrderInf.setPrepayAmt(0d);
 		returnOrderInf.setAuditDate(new Date());
@@ -421,6 +428,14 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 				if (goodsQuantity == null) {
 					goodsQuantity = 0l;
 				}
+
+				TdReturnGoodsInf goodsInf = new TdReturnGoodsInf();
+				goodsInf.setRtHeaderId(returnOrderInf.getRtHeaderId());
+				goodsInf.setSku(tdOrderGoods.getSku());
+				goodsInf.setQuantity(goodsQuantity);
+				goodsInf.setLsPrice(tdOrderGoods.getRealPrice());
+				goodsInf.setLsSharePrice(singlePrice);
+				tdReturnGoodsInfService.save(goodsInf);
 			}
 		}
 	}

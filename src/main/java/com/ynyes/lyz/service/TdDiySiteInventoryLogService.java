@@ -204,5 +204,6 @@ public class TdDiySiteInventoryLogService {
 		log.setManager(manager);
 		log.setAfterChange(afterChange);
 		log.setChangeType(type);
+		repository.save(log);
 	}
 }

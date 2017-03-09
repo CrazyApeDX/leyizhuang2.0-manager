@@ -111,6 +111,9 @@ public class BizCartGoodsServiceImpl implements BizCartGoodsService {
 			} else if (quantity < 1) {
 				cart.setQuantity(1L);
 				this.fitCartGoodsService.save(cart);
+			} else {
+				cart.setQuantity(quantity);
+				this.fitCartGoodsService.save(cart);
 			}
 			break;
 		}

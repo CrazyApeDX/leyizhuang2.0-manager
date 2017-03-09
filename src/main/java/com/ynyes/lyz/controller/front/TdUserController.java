@@ -1322,7 +1322,7 @@ public class TdUserController {
 		}
 
 		Page<TdUserCreditLog> logPage = this.tdUserCreditLogService
-				.findBySellerIdOrderByChangeTimeDesc(user.getSellerId(), 0, 20);
+				.findBySellerIdOrderByChangeTimeDesc(user.getId(), 0, 20);
 		map.addAttribute("logPage", logPage);
 		map.addAttribute("user", user);
 		return "/client/user_credit";

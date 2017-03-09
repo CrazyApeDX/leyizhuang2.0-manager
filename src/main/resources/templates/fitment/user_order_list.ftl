@@ -228,6 +228,7 @@
                                                 					close(1);
                                                 					if ("SUCCESS" === res.actionCode) {
                                             							$("#container" + id).remove();
+                                            							window.location.reload();
                                                 					} else {
                                                 						warning(res.content);
                                                 					}

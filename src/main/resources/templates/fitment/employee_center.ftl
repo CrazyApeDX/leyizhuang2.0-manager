@@ -95,15 +95,17 @@
 					</div>
 					<div class="index_test_box"></div>
 					
-					<ul>
-						<li>
-							<a href="/fit/credit">
-								<p>信用金</p>							
-								<img src="/client/images/index_guide_right.png" />
-								<span></span>
-							</a>
-						</li>
-					</ul>
+					<#if employee??&&employee.isMain>
+						<ul>
+							<li>
+								<a href="/fit/credit">
+									<p>信用金</p>							
+									<img src="/client/images/index_guide_right.png" />
+									<span></span>
+								</a>
+							</li>
+						</ul>
+					</#if>
 				</div>
 			</section>
 			<#include "/fitment/common_footer.ftl">

@@ -48,7 +48,6 @@
                     <a href="/user/deposit">提现</a>
                 </div>
             </section>
-            
             <#if user.userType==1||user.userType==2>
 	            <section class="coupon">
 	                <a href="/user/credit">
