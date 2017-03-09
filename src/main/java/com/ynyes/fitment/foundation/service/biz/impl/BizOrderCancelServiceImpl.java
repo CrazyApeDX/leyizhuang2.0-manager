@@ -367,13 +367,14 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 
 		returnNote.setReturnGoodsList(orderGoodsList);
 		tdOrderGoodsService.save(orderGoodsList);
-		this.initReturnOrder(returnNote, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
+		this.initReturnOrder(returnNote, INFConstants.INF_RETURN_ORDER_CANCEL_INT,
+				tdCityService.findByCityName(order.getCity()).getSobIdCity());
 		tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
 		tdInterfaceService.sendReturnOrderByAsyn(returnNote);
 		return tdReturnNoteService.save(returnNote);
 	}
 
-	private void initReturnOrder(TdReturnNote returnNote, Integer type) {
+	private void initReturnOrder(TdReturnNote returnNote, Integer type, Long sobId) {
 		if (returnNote == null) {
 			return;
 		}
@@ -385,10 +386,7 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 		}
 
 		returnOrderInf = new TdReturnOrderInf();
-		TdDiySite diySite = tdDiySiteService.findOne(returnNote.getDiySiteId());
-		if (diySite != null) {
-			returnOrderInf.setSobId(diySite.getRegionId());
-		}
+		returnOrderInf.setSobId(sobId);
 
 		returnOrderInf.setReturnNumber(returnNote.getReturnNumber());
 		returnOrderInf.setReturnDate(returnNote.getOrderTime());

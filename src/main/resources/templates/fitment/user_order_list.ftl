@@ -267,6 +267,32 @@
                                                     	}
                                                     </script>
                                                 <#break>
+                                                <#case 6>
+                                                    <a href="/fit/detail/${item.id?c}">订单详情</a>
+                                                    <#if !(item.isRefund??&&item.isRefund==true)>
+                                                    	<a href="javascript:checkRefund(${item.id?c})">申请退货</a>
+                                                    </#if>
+                                                    <script type="text/javascript">
+                                                    	var checkRefund = function(id) {
+                                                    		wait();
+                                                    		$.ajax({
+                                                    			url: "/fit/my/refund/check",
+                                                    			method: "POST",
+                                                    			data: {
+                                                    				id: id
+                                                    			},
+                                                    			success: function(res) {
+                                                    				if ("SUCCESS" == res.actionCode) {
+                                                    					window.location.href = "/fit/refund/" + id
+                                                    				} else {
+                                                    					close(1);
+                                                    					warning(res.content);
+                                                    				}
+                                                    			}
+                                                    		})
+                                                    	}
+                                                    </script>
+                                                <#break>
                                             </#switch>
                                         </#if>
                                     </div>

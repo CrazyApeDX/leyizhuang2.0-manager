@@ -1206,10 +1206,14 @@
         	</#if>
             <#if order.statusId==1>
                 <input type="button" id="btnConfirm" value="确认订单" class="btn">
-                <input type="button" id="btnCancel" value="取消订单" class="btn green">
+                <#if !(order.orderNumber?contains("FIT"))>
+                	<input type="button" id="btnCancel" value="取消订单" class="btn green">
+                </#if>
             <#elseif order.statusId==2>
                     <#--后台确认付款没有拆单 <input type="button" id="btnPayment" value="确认付款" class="btn"> -->
-                    <input type="button" id="btnCancel" value="取消订单" class="btn green">
+                    <#if !(order.orderNumber?contains("FIT"))>
+                	<input type="button" id="btnCancel" value="取消订单" class="btn green">
+                </#if>
             <#elseif order.statusId==3>
                 <#if order.deliverTypeTitle=='门店自提'>
                 	<input type="button" id="btnOrderExpress" value="确认发货" class="btn">

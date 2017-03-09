@@ -18,4 +18,6 @@ public interface FitOrderRefundService {
 
 	Page<FitOrderRefund> findByEmployeeIdOrderByRefundTimeDesc(Long employeeId, Integer page, Integer size)
 			throws Exception;
+	
+	FitOrderRefund findByOrderNumberAndStatus(String orderNumber, AuditStatus status);
 }

@@ -16,4 +16,8 @@ public interface BizOrderRefundService {
 	void auditAgree(FitEmployee operator, FitOrderRefund orderRefund) throws Exception;
 	
 	void auditReject(FitEmployee operator, FitOrderRefund orderRefund) throws Exception;
+	
+	void refundSomething(FitOrderRefund orderRefund);
+	
+	FitOrderRefund findByOrderNumberAndStatus(String orderNumber, AuditStatus status);
 }

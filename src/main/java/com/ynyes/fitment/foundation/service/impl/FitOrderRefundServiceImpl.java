@@ -60,4 +60,13 @@ public class FitOrderRefundServiceImpl extends PageableService implements FitOrd
 		return this.fitOrderRefundRepo.findOne(id);
 	}
 
+	@Override
+	public FitOrderRefund findByOrderNumberAndStatus(String orderNumber, AuditStatus status) {
+		if (null == orderNumber || null == status) {
+			return null;
+		} else {
+			return this.fitOrderRefundRepo.findByOrderNumberAndStatus(orderNumber, status);
+		}
+	}
+
 }

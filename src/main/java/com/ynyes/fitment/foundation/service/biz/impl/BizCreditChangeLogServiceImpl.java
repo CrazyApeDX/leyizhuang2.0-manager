@@ -16,6 +16,7 @@ import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
 import com.ynyes.fitment.foundation.entity.FitOrderCancel;
+import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
@@ -56,6 +57,19 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 				.setMoney(orderCancel.getCredit()).setChangeTime(new Date())
 				.setReferenceNumber(orderCancel.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.CANCEL)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(orderCancel.getAuditorId()).setRemark("订单取消")
+				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
+		return this.fitCreditChangeLogService.save(log);
+	}
+	
+	@Override
+	public FitCreditChangeLog refundLog(FitCompany company, FitOrderRefund orderRefund) throws Exception {
+		FitCreditChangeLog log = new FitCreditChangeLog();
+		log.setCreateOrigin(OriginType.BUSINESS);
+		log.setCreateTime(new Date());
+		log.setBeforeChange(company.getCredit() - orderRefund.getCredit()).setAfterChange(company.getCredit())
+				.setMoney(orderRefund.getCredit()).setChangeTime(new Date())
+				.setReferenceNumber(orderRefund.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.REFUND)
+				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(orderRefund.getAuditorId()).setRemark("订单退货")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
 	}

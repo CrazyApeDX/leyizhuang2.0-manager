@@ -28,6 +28,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.ynyes.fitment.core.constant.AuditStatus;
+import com.ynyes.fitment.foundation.entity.FitOrderRefund;
+import com.ynyes.fitment.foundation.service.biz.BizOrderRefundService;
 import com.ynyes.lyz.entity.TdDeliveryInfo;
 import com.ynyes.lyz.entity.TdDeliveryInfoDetail;
 import com.ynyes.lyz.entity.TdDiySite;
@@ -101,6 +104,9 @@ public class TdDeliveryIndexController {
 
 	@Autowired
 	private TdPayTypeService tdPayTypeService;
+
+	@Autowired
+	private BizOrderRefundService bizOrderRefundService;
 
 	@RequestMapping
 	public String deliveryIndex(HttpServletRequest req) {
@@ -540,6 +546,12 @@ public class TdDeliveryIndexController {
 
 		// 增加库存
 		tdDiySiteInventoryService.changeGoodsInventory(returnNote, req);
+
+		if (returnNote.getOrderNumber().contains("FIT")) {
+			FitOrderRefund orderRefund = this.bizOrderRefundService
+					.findByOrderNumberAndStatus(returnNote.getOrderNumber(), AuditStatus.AUDIT_SUCCESS);
+			this.bizOrderRefundService.refundSomething(orderRefund);
+		}
 
 		// 自动通知WMS
 		// tdCommonService.sendBackMsgToWMS(returnNote);

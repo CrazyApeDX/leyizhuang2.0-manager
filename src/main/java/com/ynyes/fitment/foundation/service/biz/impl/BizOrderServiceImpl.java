@@ -506,7 +506,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 			Long quantity = orderGoods.getQuantity();
 
 			TdGoods goods = tdGoodsService.findOne(goodsId);
-			tdDiySiteInventoryService.costCityInventory(regionId, goods, quantity, order.getOrderNumber(),
+			tdDiySiteInventoryService.costCityInventory(regionId, goods, quantity * -1, order.getOrderNumber(),
 					order.getEmployeeMobile(), "配送发货");
 		}
 	}

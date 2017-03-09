@@ -9,6 +9,7 @@ import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
 import com.ynyes.fitment.foundation.entity.FitOrderCancel;
+import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 import com.ynyes.lyz.entity.TdManager;
 
 public interface BizCreditChangeLogService {
@@ -16,6 +17,8 @@ public interface BizCreditChangeLogService {
 	FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception;
 	
 	FitCreditChangeLog cancelLog(FitCompany company, FitOrderCancel orderCancel) throws Exception;
+	
+	FitCreditChangeLog refundLog(FitCompany company, FitOrderRefund orderRefund) throws Exception;
 
 	FitCreditChangeLog manageLog(TdManager manager, FitCompany company, Double inputCredit, String remark) throws Exception;
 

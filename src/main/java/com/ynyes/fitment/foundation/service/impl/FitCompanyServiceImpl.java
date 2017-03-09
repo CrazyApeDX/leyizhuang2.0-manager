@@ -35,7 +35,7 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 	}
 
 	@Override
-	public FitCompany findOne(Long companyId) throws Exception {
+	public FitCompany findOne(Long companyId) {
 		return this.fitCompanyRepo.findOne(companyId);
 	}
 

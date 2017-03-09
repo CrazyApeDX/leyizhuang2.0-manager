@@ -115,6 +115,7 @@
 		                                    	</label>
 	                                    	</#if>
 	                                    </li>
+	                                    <div>地址：${item.receiveAddress}</div>
                                     	<div>下单时间：<#if item.orderTime??>${item.orderTime?string("yyyy-MM-dd HH:mm:ss")}</#if></div>
                                         <div>审核时间：<#if item.auditTime??>${item.auditTime?string("yyyy-MM-dd HH:mm:ss")}<#else>还未审核</#if></div>
                                     </div>

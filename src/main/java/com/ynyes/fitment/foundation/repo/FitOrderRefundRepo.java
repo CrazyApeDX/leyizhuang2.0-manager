@@ -16,4 +16,7 @@ public interface FitOrderRefundRepo extends ApplicationRepo<FitOrderRefund> {
 	Page<FitOrderRefund> findByCompanyIdOrderByRefundTimeDesc(Long companyId, Pageable page) throws Exception;
 	
 	Page<FitOrderRefund> findByEmployeeIdOrderByRefundTimeDesc(Long employeeId, Pageable page) throws Exception;
+	
+	FitOrderRefund findByOrderNumberAndStatus(String orderNumber, AuditStatus status);
+	
 }
