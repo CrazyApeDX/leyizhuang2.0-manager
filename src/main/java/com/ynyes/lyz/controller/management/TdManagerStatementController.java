@@ -618,7 +618,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","下单日期","出&退货日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号",
-	        		"产品名称","数量","单价","总价","现金卷","品牌","商品父分类","商品子分类","配送方式","中转仓",
+	        		"产品名称","数量","单价","总价","品牌","商品父分类","商品子分类","配送方式","中转仓",
 	        		"配送人员","配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
 			cellDates(cellValues, style, row);
 			
@@ -664,29 +664,29 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//产品总价
 				row.createCell(14).setCellValue((goodsInOut.getTotalPrice()*100)/100);
 	        	//现金卷
-	            row.createCell(15).setCellValue(objToString(goodsInOut.getCashCoupon()));
+	            //row.createCell(15).setCellValue(objToString(goodsInOut.getCashCoupon()));
 	          	//品牌
-				row.createCell(16).setCellValue(objToString(goodsInOut.getBrandTitle()));
+				row.createCell(15).setCellValue(objToString(goodsInOut.getBrandTitle()));
 	    		//商品父分类
-				row.createCell(17).setCellValue(objToString(goodsInOut.getGoodsParentTypeTitle()));
+				row.createCell(16).setCellValue(objToString(goodsInOut.getGoodsParentTypeTitle()));
 				//商品子分类
-	        	row.createCell(18).setCellValue(objToString(goodsInOut.getGoodsTypeTitle()));
+	        	row.createCell(17).setCellValue(objToString(goodsInOut.getGoodsTypeTitle()));
 				//配送方式
-	        	row.createCell(19).setCellValue(objToString(goodsInOut.getDeliverTypeTitle()));
+	        	row.createCell(18).setCellValue(objToString(goodsInOut.getDeliverTypeTitle()));
 				//中转仓
-	            row.createCell(20).setCellValue(objToString(goodsInOut.getWhName()));
+	            row.createCell(19).setCellValue(objToString(goodsInOut.getWhName()));
 	    		//配送人员
-	        	row.createCell(21).setCellValue(objToString(goodsInOut.getDeliverRealName()));
+	        	row.createCell(20).setCellValue(objToString(goodsInOut.getDeliverRealName()));
 	        	//配送人员电话
-	        	row.createCell(22).setCellValue(objToString(goodsInOut.getDeliverUsername()));
+	        	row.createCell(21).setCellValue(objToString(goodsInOut.getDeliverUsername()));
 	        	//收货人姓名 收货人电话 收货人地址
 	        	if(!"门店自提".equals(goodsInOut.getDeliverTypeTitle())){
-	        		row.createCell(23).setCellValue(objToString(goodsInOut.getShippingName()));
-	        		row.createCell(24).setCellValue(objToString(goodsInOut.getShippingPhone()));
-	        		row.createCell(25).setCellValue(objToString(goodsInOut.getShippingAddress()));
+	        		row.createCell(22).setCellValue(objToString(goodsInOut.getShippingName()));
+	        		row.createCell(23).setCellValue(objToString(goodsInOut.getShippingPhone()));
+	        		row.createCell(24).setCellValue(objToString(goodsInOut.getShippingAddress()));
 	        	}
 	        	//订单备注
-	        	row.createCell(26).setCellValue(objToString(goodsInOut.getRemark()));
+	        	row.createCell(25).setCellValue(objToString(goodsInOut.getRemark()));
 //	            System.out.println("正在生成excel文件的 sheet"+(i+1)+"第"+(j+1)+"行");
 			}
 //			System.out.println("正在生成excel文件的 sheet"+(i+1));
@@ -1033,7 +1033,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","下单日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号","产品名称",
-	        		"数量","单价","总价","现金卷","品牌","商品父分类","商品子分类","配送方式","中转仓","配送人员",
+	        		"数量","单价","总价","品牌","商品父分类","商品子分类","配送方式","中转仓","配送人员",
 	        		"配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
 			cellDates(cellValues, style, row);
 			
@@ -1077,35 +1077,35 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//产品总价
 				row.createCell(13).setCellValue((salesDetail.getTotalPrice()*100)/100);
 	        	//现金卷
-	            row.createCell(14).setCellValue(objToString(salesDetail.getCashCoupon()));
+	            //row.createCell(14).setCellValue(objToString(salesDetail.getCashCoupon()));
 	          	//品牌
-				row.createCell(15).setCellValue(objToString(salesDetail.getBrandTitle()));
+				row.createCell(14).setCellValue(objToString(salesDetail.getBrandTitle()));
 	    		//商品父分类
-				row.createCell(16).setCellValue(objToString(salesDetail.getGoodsParentTypeTitle()));
+				row.createCell(15).setCellValue(objToString(salesDetail.getGoodsParentTypeTitle()));
 				//商品子分类
-	        	row.createCell(17).setCellValue(objToString(salesDetail.getGoodsTypeTitle()));
+	        	row.createCell(16).setCellValue(objToString(salesDetail.getGoodsTypeTitle()));
 				//配送方式
-	        	row.createCell(18).setCellValue(objToString(salesDetail.getDeliverTypeTitle()));
+	        	row.createCell(17).setCellValue(objToString(salesDetail.getDeliverTypeTitle()));
 				//中转仓
-	            row.createCell(19).setCellValue(objToString(salesDetail.getWhName()));
+	            row.createCell(18).setCellValue(objToString(salesDetail.getWhName()));
 	    		//配送人员
-	        	row.createCell(20).setCellValue(objToString(salesDetail.getDeliverRealName()));
+	        	row.createCell(19).setCellValue(objToString(salesDetail.getDeliverRealName()));
 	        	//配送人员电话
-	        	row.createCell(21).setCellValue(objToString(salesDetail.getDeliverUsername()));
+	        	row.createCell(20).setCellValue(objToString(salesDetail.getDeliverUsername()));
 	        	//收货人姓名
 	        	if(!"门店自提".equals(salesDetail.getDeliverTypeTitle())){
-	        		row.createCell(22).setCellValue(objToString(salesDetail.getShippingName()));
+	        		row.createCell(21).setCellValue(objToString(salesDetail.getShippingName()));
 	        	}
 	        	//收货人电话
 	        	if(!"门店自提".equals(salesDetail.getDeliverTypeTitle())){
-	        		row.createCell(23).setCellValue(objToString(salesDetail.getShippingPhone()));
+	        		row.createCell(22).setCellValue(objToString(salesDetail.getShippingPhone()));
 	        	}
 	        	//收货人地址
 	        	if(!"门店自提".equals(salesDetail.getDeliverTypeTitle())){
-	        		row.createCell(24).setCellValue(objToString(salesDetail.getShippingAddress()));
+	        		row.createCell(23).setCellValue(objToString(salesDetail.getShippingAddress()));
 	        	}
 	        	//订单备注
-	        	row.createCell(25).setCellValue(objToString(salesDetail.getRemark()));
+	        	row.createCell(24).setCellValue(objToString(salesDetail.getRemark()));
 				
 //	            System.out.println("正在生成excel文件的 sheet"+(i+1)+"第"+(j+1)+"行");
 			}
@@ -1320,7 +1320,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","下单日期","确认日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号",
-	        		"产品名称","数量","单价","总价","现金卷","品牌","商品父分类","商品子分类","订单备注"};
+	        		"产品名称","数量","单价","总价","品牌","商品父分类","商品子分类","订单备注"};
 			cellDates(cellValues, style, row);
 			
 			for(int j=0;j<maxRowNum;j++)
@@ -1365,13 +1365,13 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//产品总价
 				row.createCell(14).setCellValue((goodsInOut.getTotalPrice()*100)/100);
 	        	//现金卷
-	            row.createCell(15).setCellValue(objToString(goodsInOut.getCashCoupon()));
+	            //row.createCell(15).setCellValue(objToString(goodsInOut.getCashCoupon()));
 	          	//品牌
-				row.createCell(16).setCellValue(objToString(goodsInOut.getBrandTitle()));
+				row.createCell(15).setCellValue(objToString(goodsInOut.getBrandTitle()));
 	    		//商品父分类
-				row.createCell(17).setCellValue(objToString(goodsInOut.getGoodsParentTypeTitle()));
+				row.createCell(16).setCellValue(objToString(goodsInOut.getGoodsParentTypeTitle()));
 				//商品子分类
-	        	row.createCell(18).setCellValue(objToString(goodsInOut.getGoodsTypeTitle()));
+	        	row.createCell(17).setCellValue(objToString(goodsInOut.getGoodsTypeTitle()));
 				//配送方式
 	        	/*row.createCell(18).setCellValue(objToString(goodsInOut.getDeliverTypeTitle()));
 				//中转仓
@@ -1387,7 +1387,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        		row.createCell(24).setCellValue(objToString(goodsInOut.getShippingAddress()));
 	        	}*/
 	        	//订单备注
-	        	row.createCell(19).setCellValue(objToString(goodsInOut.getRemark()));
+	        	row.createCell(18).setCellValue(objToString(goodsInOut.getRemark()));
 //	            System.out.println("正在生成excel文件的 sheet"+(i+1)+"第"+(j+1)+"行");
 			}
 //			System.out.println("正在生成excel文件的 sheet"+(i+1));
