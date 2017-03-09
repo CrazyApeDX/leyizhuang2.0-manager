@@ -379,7 +379,11 @@ public class TdInterfaceService {
 				goodsInf.setQuantity(tdOrderGoods.getQuantity());
 				// goodsInf.setJxPrice(tdOrderGoods.getRealPrice());
 				// //针对JX商：b2c到店自提不传，
-				goodsInf.setLsPrice(tdOrderGoods.getPrice());
+				if (tdOrder.getOrderNumber().contains("FIT")) {
+					goodsInf.setLsPrice(tdOrderGoods.getRealPrice());
+				} else {
+					goodsInf.setLsPrice(tdOrderGoods.getPrice());
+				}
 				goodsInf.setGiftFlag("N");
 				goodsInf.setPromotion(tdOrderGoods.getActivityId());
 				tdOrderGoodsInfService.save(goodsInf);

@@ -55,6 +55,8 @@
                                     	<#switch item.type>
                                     		<#case "CONSUME">消费<#break>
                                     		<#case "CUT">削减<#break>
+                                    		<#case "CANCEL">订单取消<#break>
+                                    		<#case "REFUND">订单退货<#break>
                                     		<#case "RECHARGE">充值<#break>
                                     	</#switch>
                                     </div>

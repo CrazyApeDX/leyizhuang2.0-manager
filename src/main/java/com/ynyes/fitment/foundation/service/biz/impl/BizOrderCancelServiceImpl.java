@@ -104,6 +104,8 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 		orderCancel.setAuditorMobile(auditor.getMobile());
 		orderCancel.setAuditorName(auditor.getName());
 		this.fitOrderCancelService.save(orderCancel);
+		// 在此增加装饰公司取消订单处理
+		this.actWithCancel(orderCancel);
 	}
 
 	@Override
@@ -211,7 +213,7 @@ public class BizOrderCancelServiceImpl implements BizOrderCancelService {
 
 	private void repayCredit(FitCompany company, Double credit, FitOrderCancel orderCancel) throws Exception {
 		company.setCredit(company.getCredit() + credit);
-		bizCreditChangeLogService.repayLog(company, orderCancel);
+		bizCreditChangeLogService.cancelLog(company, orderCancel);
 		this.fitCompanyService.save(company);
 	}
 

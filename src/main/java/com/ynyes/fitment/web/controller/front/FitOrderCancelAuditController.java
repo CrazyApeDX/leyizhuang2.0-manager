@@ -15,7 +15,7 @@ import com.ynyes.fitment.foundation.entity.FitOrderCancel;
 import com.ynyes.fitment.foundation.service.biz.BizOrderCancelService;
 
 @RestController
-@RequestMapping(value = "/fit/order/cancel", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+@RequestMapping(value = "/fit/my/cancel", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 public class FitOrderCancelAuditController extends FitBasicController {
 
 	@Autowired

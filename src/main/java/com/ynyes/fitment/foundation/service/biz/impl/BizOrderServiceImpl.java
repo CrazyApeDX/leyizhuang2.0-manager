@@ -29,6 +29,7 @@ import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizOrderService;
 import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdCity;
+import com.ynyes.lyz.entity.TdDiySiteInventory;
 import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
@@ -508,6 +509,24 @@ public class BizOrderServiceImpl implements BizOrderService {
 			tdDiySiteInventoryService.costCityInventory(regionId, goods, quantity, order.getOrderNumber(),
 					order.getEmployeeMobile(), "配送发货");
 		}
+	}
+
+	@Override
+	public Boolean validateEnoughInventory(FitOrder order) throws Exception {
+		Long companyId = order.getCompanyId();
+		FitCompany company = this.fitCompanyService.findOne(companyId);
+		Long sobId = company.getSobId();
+		List<FitOrderGoods> orderGoodsList = order.getOrderGoodsList();
+		for (FitOrderGoods orderGoods : orderGoodsList) {
+			Long goodsId = orderGoods.getGoodsId();
+			Long quantity = orderGoods.getQuantity();
+			TdDiySiteInventory inventory = this.tdDiySiteInventoryService
+					.findByGoodsIdAndRegionIdAndDiySiteIdIsNull(goodsId, sobId);
+			if (null == inventory || inventory.getInventory() < quantity) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

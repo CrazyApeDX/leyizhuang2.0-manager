@@ -193,7 +193,7 @@
                                                 			var cancelAgree = function(id) {
                                                 				wait();
                                                 				$.ajax({
-                                                					url: "",
+                                                					url: "/fit/my/cancel",
                                                 					method: "POST",
                                                 					data: {
                                                 						id: id,
@@ -213,7 +213,7 @@
                                                 			var cancelReject = function(id) {
                                                 				wait();
                                                 				$.ajax({
-                                                					url: "",
+                                                					url: "/fit/my/cancel",
                                                 					method: "POST",
                                                 					data: {
                                                 						id: id,

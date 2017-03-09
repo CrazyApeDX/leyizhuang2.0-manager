@@ -1199,8 +1199,10 @@
     <!--工具栏-->
     <div class="page-footer">
         <div class="btn-list">
-        	<#if isown==false && !(order.isCoupon??&&order.isCoupon)>
-         		<input type="button" id="backMoney" value="填写收款" class="btn">
+    		<#if order.deliverTypeTitle?? && order.deliverTypeTitle=="门店自提">
+	        	<#if isown==false && !(order.isCoupon??&&order.isCoupon)>
+	         		<input type="button" id="backMoney" value="填写收款" class="btn">
+	        	</#if>
         	</#if>
             <#if order.statusId==1>
                 <input type="button" id="btnConfirm" value="确认订单" class="btn">
