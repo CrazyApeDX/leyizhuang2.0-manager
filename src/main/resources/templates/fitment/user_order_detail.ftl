@@ -160,10 +160,9 @@
                     -->
                     <li class="li5">支付方式：${order.payTypeTitle!''}<div class="div1">商品总额：<p>￥<span><#if order.totalGoodsPrice??>${order.totalGoodsPrice?string("0.00")}<#else>0.00</#if></span></p></div></li>
 					<li class="li5">运费：<#if order.deliverFee??>${order.deliverFee?string("0.00")}<#else>0.00</#if></li>
-                    <li class="li5">是否代下单：<#if order.isSellerOrder??&&order.isSellerOrder>是<#else>否</#if></li>
                     <li class="li5" style="overflow: visible;height: auto;">订单备注：${order.remark!''}</li>
-                    <li class="li5">服务导购：${order.sellerRealName!''}</li>
-                    <li class="li5">导购电话：${order.sellerUsername!''}</li>
+                    <li class="li5">审核人：${order.sellerRealName!''}</li>
+                    <li class="li5">审核人电话：${(order.sellerUsername!'')?replace("FIT","")}</li>
                     <li class="li5">使用现金券：<div class="div1">券金额：<p>￥<span><#if order.cashCoupon??>${order.cashCoupon?string("0.00")}<#else>0.00</#if></span></p></div></li>
                     <#-- 代付款订单和取消订单特殊处理 -->
                     <#if order.statusId==2 || order.statusId==7>
@@ -204,8 +203,10 @@
 	           		<div class="order_row">不可提现预存款<div class="order_right">${order.unCashBalanceUsed?string("currency") }</div></div>
 	           		</#if>
             	</#if>
-            	<#if order.credit??&&order.credit gt 0>
-            		<div class="order_row">信用金<div class="order_right">${order.credit?string("currency") }</div></div>
+            	<#if employee??&&employee.isMain>
+            		<#if order.credit??&&order.credit gt 0>
+            			<div class="order_row">信用金<div class="order_right">${order.credit?string("currency") }</div></div>
+            		</#if>
             	</#if>
 	           	<#if order.otherPay?? && order.otherPay!=0>
 	           	<div class="order_row">第三方支付<div class="order_right">${order.otherPay?string("currency") }</div></div>

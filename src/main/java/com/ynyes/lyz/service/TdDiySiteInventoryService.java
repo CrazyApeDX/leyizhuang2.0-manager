@@ -513,6 +513,13 @@ public class TdDiySiteInventoryService {
 		c.setOrderByAsc("goodsCode");
 		return repository.findAll(c);
 	}
+	
+	public TdDiySiteInventory findByGoodsIdAndRegionIdAndDiySiteIdIsNull(Long goodsId, Long regionId) {
+		if (null == goodsId || null == regionId) {
+			return null;
+		}
+		return this.repository.findByGoodsIdAndRegionIdAndDiySiteIdIsNull(goodsId, regionId);
+	}
 
 	public void costCityInventory(Long regionId, TdGoods goods, Long quantity, String orderNumber, String manager,
 			String type) {
