@@ -8,6 +8,8 @@ import com.ynyes.fitment.foundation.entity.client.ClientGoods;
 public interface BizGoodsService {
 
 	List<ClientCategory> getCategoryTree(Long companyId) throws Exception;
-	
-	List<ClientGoods> getGoodsByCategoryId(Long categoryId,Long companyId) throws Exception;
+
+	List<ClientGoods> getGoodsByCategoryId(Long categoryId, Long companyId) throws Exception;
+
+	List<ClientGoods> getGoodsByCompanyIdAndKeywords(Long companyId, String keywords) throws Exception;
 }

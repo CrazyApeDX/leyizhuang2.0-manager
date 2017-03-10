@@ -60,7 +60,7 @@ public class BizGoodsServiceImpl implements BizGoodsService {
 		// categoryList.remove(i);
 		// }
 		// }
-		
+
 		List<FitCompanyCategory> categoryList = this.fitCompanyCategoryService
 				.findByCompanyIdAndCategoryParentIdOrderByIdAsc(companyId, 0l);
 
@@ -134,6 +134,24 @@ public class BizGoodsServiceImpl implements BizGoodsService {
 		// clientGoods.setPrice(price);
 		// clientGoodsList.add(clientGoods);
 		// }
+		return clientGoodsList;
+	}
+
+	@Override
+	public List<ClientGoods> getGoodsByCompanyIdAndKeywords(Long companyId, String keywords) throws Exception {
+		List<FitCompanyGoods> goodsList = this.fitCompanyGoodsService.findByCompanyIdAndKeywords(companyId, keywords);
+		List<ClientGoods> clientGoodsList = new ArrayList<ClientGoods>();
+		for (FitCompanyGoods fitCompanyGoods : goodsList) {
+			Long inventory = bizInventoryService.getCityInventoryByGoodsId(companyId, fitCompanyGoods.getGoodsId());
+			Double price = bizPriceService.getPriceByCompanyIdAndGoodsId(companyId, fitCompanyGoods.getGoodsId());
+			if (null == inventory || inventory.equals(0l)) {
+				// do nothing!
+			} else if (null == price || price.equals(0d)) {
+				// do nothing!
+			} else {
+				clientGoodsList.add(new ClientGoods().init(fitCompanyGoods, price, inventory));
+			}
+		}
 		return clientGoodsList;
 	}
 

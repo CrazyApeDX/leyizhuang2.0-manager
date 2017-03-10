@@ -21,7 +21,7 @@
                </a>
             </li>
             <li>
-                <a href="/user/selected">
+                <a href="/fit/cart">
                     <div></div>
                     <span>购物车</span>
                 </a>
