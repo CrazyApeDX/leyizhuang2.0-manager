@@ -2301,6 +2301,9 @@ public class TdCommonService {
 					if (null != subOrder) {
 						subOrder.setRemarkInfo("物流已受理");
 					}
+					if(subOrder.getOrderNumber().contains("YF") && subOrder.getDeliverFee() ==0.0){
+						orderList.remove(subOrder);
+					}
 				}
 				tdOrderService.save(orderList);
 			}

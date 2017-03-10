@@ -654,17 +654,19 @@ public class SettlementServiceImpl implements ISettlementService {
 			TdOrder order = new TdOrder();
 			order.setOrderNumber(mainOrder.getOrderNumber().replace("XN", "YF"));
 			this.initSubOrder(order, mainOrder);
-			if (null != mainOrder.getDeliverFee() && mainOrder.getDeliverFee() > 0) {
+			if (mainOrder.getDeliverFee() + mainOrder.getCompanyDeliveryFee() > 0) {
 				order.setDeliverFee(mainOrder.getDeliverFee());
 				order.setCompanyDeliveryFee(mainOrder.getCompanyDeliveryFee());
 				if (null == order.getTotalPrice()) {
 					order.setTotalPrice(0.00);
 				}
 				order.setTotalPrice(order.getTotalPrice() + order.getDeliverFee());
-				if (!order.getTotalPrice().equals(0d)) {
+
+				if (order.getDeliverFee() > 0) {
 					order = tdOrderService.save(order);
-					subOrderMap.put(0L, order);
 				}
+				subOrderMap.put(0L, order);
+
 			}
 		}
 	}
@@ -914,7 +916,9 @@ public class SettlementServiceImpl implements ISettlementService {
 			if (!("送货上门".equals(subOrder.getDeliverTypeTitle()))) {
 				sendWMS = false;
 			}
-			subOrder = tdOrderService.save(subOrder);
+			if(!(subOrder.getOrderNumber().contains("YF") && subOrder.getDeliverFee()==0.0)){
+				subOrder = tdOrderService.save(subOrder);
+			}
 			sendOrders.add(subOrder);
 		}
 
