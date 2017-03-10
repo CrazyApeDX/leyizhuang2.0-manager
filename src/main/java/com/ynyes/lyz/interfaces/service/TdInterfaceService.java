@@ -1377,7 +1377,8 @@ public class TdInterfaceService {
 					+ object.getAttribute2() + "</ATTRIBUTE2>" + "<ATTRIBUTE3>" + object.getAttribute3()
 					+ "</ATTRIBUTE3>" + "<ATTRIBUTE4>" + object.getAttribute4() + "</ATTRIBUTE4>" + "<ATTRIBUTE5>"
 					+ object.getAttribute5() + "</ATTRIBUTE5>" + "<COUPON_FLAG>" + object.getCouponFlag()
-					+ "</COUPON_FLAG>" + "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>" + "<CREDIT_AMT>"
+					+ "</COUPON_FLAG>" + "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>"+
+					"<COMPANY_DELIVERY_FEE>"+object.getCompanyDeliveryFee()+"</COMPANY_DELIVERY_FEE>" + "<CREDIT_AMT>"
 					+ object.getCreditAmt() + "</CREDIT_AMT>" + "</TABLE>";
 			break;
 		}
