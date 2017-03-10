@@ -335,7 +335,7 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			+" AND diy.id IN ?5 "
 			+" GROUP BY o.main_order_number"
 			+" ORDER BY "
-			+" 	o.send_time DESC; ",nativeQuery=true)
+			+" 	o.send_time DESC ; ",nativeQuery=true)
 	List<TdOrder> queryDownList(Date begin, Date end, String cityName, String diySiteCode, List<String> roleDiyIds);
 	
 	@Query(value=" SELECT "
@@ -343,7 +343,7 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			+" FROM "
 			+" 	td_order o "
 			+" WHERE "
-			+" 	o.main_order_number = ?1"
+			+" 	o.main_order_number = ?1 "
 			+" AND o.order_number LIKE '%YF%'; ",nativeQuery=true)
 	TdOrder findFixedFlagByMainOrderNumber(String mainOrderNumber);
 

@@ -2882,7 +2882,6 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				List<TdOrderGoods> orderGoodsList = tdOrderGoodsService
 						.findByMainOrderNumber(detail.getMainOrderNumber());
 				TdOrder orderYF = tdOrderService.findFixedFlagByMainOrderNumber(detail.getMainOrderNumber());
-				Map<String, Double> deliveryMap = new HashMap<>();// 用map存储用户运费和公司运费
 
 				double bucketsOfPaintFee = 0;// 大桶漆配送费
 				double nitrolacquerFee = 0;// 硝基漆10L配送费
@@ -2896,7 +2895,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 
 				long companyAffordQuantity = 0;// 公司承担运费的漆桶数
 				TdOrderDeliveryFeeDetail deliveryFeeDetail = tdOrderDeliveryFeeDetailService
-						.findByMainOrderNumber(detail.getOrderNumber());
+						.findByMainOrderNumber(detail.getMainOrderNumber());
 				if (null == deliveryFeeDetail){
 					deliveryFeeDetail = new TdOrderDeliveryFeeDetail();
 				}
@@ -3004,18 +3003,20 @@ public class TdManagerStatementController extends TdManagerBaseController {
 
 				TdSetting setting = tdSettingService.findTopBy();
 
+				// 判断总运费金额是否大于等于20，如果小于20，则差额由华润公司承担
 				Double settingMinFee = null == setting.getMinDeliveryFee() ? 0d : setting.getMinDeliveryFee();
-				if (deliveryFee > 0 && deliveryFee < settingMinFee) {
-					if (consumerDeliveryFee > 0.00 && companyDeliveryFee == 0.00) { // 客户承担运费差额
+				if (deliveryFee <= settingMinFee) {
+					if (consumerDeliveryFee > 0.00 && companyDeliveryFee == 0.00) { // 客户承担运费
 						deliveryFeeDetail.setConsumerDeliveryFeeAdjust(settingMinFee - deliveryFee);
 						deliveryFeeDetail.setCompanyDeliveryFeeAdjust(0.00);
 						consumerDeliveryFee = settingMinFee;
-						deliveryFeeDetail.setConsumerDeliveryFee(consumerDeliveryFee);
-					} else { // 公司承担运费差额
+					} else if(consumerDeliveryFee >= 0.00 && companyDeliveryFee > 0.00) {
 						deliveryFeeDetail.setConsumerDeliveryFeeAdjust(0.00);
 						deliveryFeeDetail.setCompanyDeliveryFeeAdjust(settingMinFee - deliveryFee);
-						companyDeliveryFee = settingMinFee;
-						deliveryFeeDetail.setCompanyDeliveryFee(companyDeliveryFee);
+						companyDeliveryFee = settingMinFee-consumerDeliveryFee;
+					}else if(consumerDeliveryFee == 0.00 && companyDeliveryFee == 0.00){
+						deliveryFeeDetail.setConsumerDeliveryFeeAdjust(0.00);
+						deliveryFeeDetail.setCompanyDeliveryFeeAdjust(0.00);
 					}
 
 				} else {
@@ -3023,8 +3024,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 					deliveryFeeDetail.setCompanyDeliveryFeeAdjust(0.00);
 				}
 				// 运费折扣优惠，如果用户承担运费的漆类桶数和华润承担运费的类桶数任意一个大于20桶，则双方运费都打7.5折；如果大于100桶，折扣为6折
-				if ((consumerAffordQuantity >= 20 && consumerAffordQuantity < 99)
-						|| (companyAffordQuantity >= 20 && companyAffordQuantity < 99)) {
+				if (20<=(consumerAffordQuantity + companyAffordQuantity) && (consumerAffordQuantity + companyAffordQuantity)< 99){
 					consumerDeliveryFee = consumerDeliveryFee * 0.75;
 					companyDeliveryFee = companyDeliveryFee * 0.75;
 					deliveryFee = consumerDeliveryFee + companyDeliveryFee;
@@ -3033,24 +3033,30 @@ public class TdManagerStatementController extends TdManagerBaseController {
 					companyDeliveryFee = companyDeliveryFee * 0.6;
 					deliveryFee = consumerDeliveryFee + companyDeliveryFee;
 				}
-				deliveryFeeDetail.setConsumerDeliveryFeeDiscount(
-						deliveryFeeDetail.getConsumerDeliveryFee() - consumerDeliveryFee);// 设置用户运费打折金额
-				deliveryFeeDetail
-						.setCompanyDeliveryFeeDiscount(deliveryFeeDetail.getCompanyDeliveryFee() - companyDeliveryFee);// 设置华润公司运费打折金额
+				deliveryFeeDetail.setConsumerDeliveryFeeDiscount(deliveryFeeDetail.getConsumerDeliveryFee()-deliveryFeeDetail.getConsumerDeliveryFeeAdjust() - consumerDeliveryFee);// 设置用户运费打折金额
+				deliveryFeeDetail.setCompanyDeliveryFeeDiscount(deliveryFeeDetail.getCompanyDeliveryFee()+deliveryFeeDetail.getCompanyDeliveryFeeAdjust() - companyDeliveryFee);// 设置华润公司运费打折金额
 				// 墙面辅料金额以500为阶梯减免运费。500减20,1000减40，以此类推。其中减免的运费优先由用户享受，如果用户承担的运费小于优惠金额，则剩余的优惠金额才能由华润享受
 				if (wallAccessories >= 500) {
-					double reduceDeliveryFee = (wallAccessories / 500) * 20;// 购辅料减免运费总额
-					if (reduceDeliveryFee <= consumerDeliveryFee) {// 如果辅料减免的运费小于当前用户承担的运费，则全部用来减免用户用费
-						deliveryFeeDetail.setConsumerDeliveryFeeReduce(reduceDeliveryFee);
-						deliveryFeeDetail.setCompanyDeliveryFeeReduce(0.00);
+					double reduceDeliveryFee = ((int)wallAccessories / 500) * 20;// 购辅料减免运费总额
+					if (reduceDeliveryFee <= deliveryFee) {
+						if (reduceDeliveryFee <= consumerDeliveryFee) {// 如果辅料减免的运费小于当前用户承担的运费，则全部用来减免用户用费
+							deliveryFeeDetail.setConsumerDeliveryFeeReduce(reduceDeliveryFee);
+							deliveryFeeDetail.setCompanyDeliveryFeeReduce(0.00);
 
-						consumerDeliveryFee -= reduceDeliveryFee;
-					} else if (reduceDeliveryFee > consumerDeliveryFee) {// 如果辅料减免运费大于用户承担的运费，则用户用费全面，剩余部分用来减免华润运费
+							consumerDeliveryFee -= reduceDeliveryFee;
+						} else{// 如果辅料减免运费大于用户承担的运费，则用户用费全免，剩余部分用来减免华润运费
+							deliveryFeeDetail.setConsumerDeliveryFeeReduce(consumerDeliveryFee);
+							deliveryFeeDetail.setCompanyDeliveryFeeReduce(reduceDeliveryFee - consumerDeliveryFee);
+
+							companyDeliveryFee -= (reduceDeliveryFee - consumerDeliveryFee);
+							consumerDeliveryFee = 0.0;
+
+						}
+					} else {//如果运费减免大于当前运费总和，则运费全为0
 						deliveryFeeDetail.setConsumerDeliveryFeeReduce(consumerDeliveryFee);
-						deliveryFeeDetail.setCompanyDeliveryFeeReduce(reduceDeliveryFee - consumerDeliveryFee);
-
-						companyDeliveryFee -= (reduceDeliveryFee - consumerDeliveryFee);
-						consumerDeliveryFee = 0;
+						deliveryFeeDetail.setCompanyDeliveryFeeReduce(companyDeliveryFee);
+						consumerDeliveryFee = 0.0;
+						companyDeliveryFee = 0.0;
 
 					}
 				} else {

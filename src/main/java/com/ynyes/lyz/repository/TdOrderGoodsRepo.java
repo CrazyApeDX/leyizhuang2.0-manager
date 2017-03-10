@@ -27,6 +27,6 @@ public interface TdOrderGoodsRepo extends
 			+" 	td_order o "
 			+" INNER JOIN td_order_goods og ON o.id = og.td_order_id "
 			+" WHERE "
-			+" 	o.main_order_number = ?1; ",nativeQuery=true)
+			+" 	o.main_order_number = ?1 ; ",nativeQuery=true)
 	List<TdOrderGoods> findByMainOrderNumber(String mainOrderNumber);
 }
