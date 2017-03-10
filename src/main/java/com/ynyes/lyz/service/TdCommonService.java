@@ -2297,7 +2297,15 @@ public class TdCommonService {
 				tdInterfaceService.smsSend(INFTYPE.WMSWEBSERVICE);
 			} else {
 				// 根据乐易装的要求，当成功将信息发送至WMS时，保留提示信息
-				for (TdOrder subOrder : orderList) {
+				for (int i = 0; i < orderList.size(); i++) {
+					if (null != orderList.get(i)) {
+						orderList.get(i).setRemarkInfo("物流已受理");
+					}
+					if(!(orderList.get(i).getOrderNumber().contains("YF") && orderList.get(i).getDeliverFee()==0.0)){
+						tdOrderService.save(orderList.get(i));
+					}
+				}
+				/*for (TdOrder subOrder : orderList) {
 					if (null != subOrder) {
 						subOrder.setRemarkInfo("物流已受理");
 					}
@@ -2305,7 +2313,7 @@ public class TdCommonService {
 						orderList.remove(subOrder);
 					}
 				}
-				tdOrderService.save(orderList);
+				tdOrderService.save(orderList);*/
 			}
 		}
 	}
