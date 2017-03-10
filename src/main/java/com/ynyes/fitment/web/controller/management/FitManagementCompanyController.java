@@ -158,7 +158,7 @@ public class FitManagementCompanyController {
 			String manageUsername = (String) request.getSession().getAttribute(LoginSign.MANAGER_SIGN.toString());
 			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
 			FitCompany company = this.fitCompanyService.findOne(id);
-			this.bizCreditChangeLogService.manageLog(manager, company, credit, "");
+			this.bizCreditChangeLogService.creditAction(manager, company, credit, "");
 			return new ClientResult(ActionCode.SUCCESS, null);
 		} catch (Exception e) {
 			e.printStackTrace();

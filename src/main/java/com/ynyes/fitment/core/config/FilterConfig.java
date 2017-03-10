@@ -13,7 +13,7 @@ public class FilterConfig {
 	public FilterRegistrationBean fitFrontFilter() {
 		FilterRegistrationBean bean = new FilterRegistrationBean(new FitmentFrontFilter());
 		bean.addUrlPatterns("/fit/home", "/fit/cart", "/fit/address", "/fit/audit/*", "/fit/pay/*", "/fit/employee/*",
-				"/fit/credit", "/fit/history/*", "/fit/refund/*");
+				"/fit/credit", "/fit/history/*", "/fit/refund/*", "/fit/search");
 		return bean;
 	}
 }

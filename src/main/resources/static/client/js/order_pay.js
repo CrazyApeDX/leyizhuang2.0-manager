@@ -102,8 +102,9 @@ function pay() {
 				if ("支付宝" == res.title) {
 					window.location.href = "/pay/alipay?number=" + res.order_number
 							+ "&type=0";
-				} else if (res.title == "微信支付") {
-					document.location = "WXAppPay:WX:" + res.order_number;
+				} else if ("微信支付" == res.title) {
+					console.log(res);
+//					document.location = "WXAppPay:WX:" + res.order_number;
 				} else if ("银行卡" === res.title) {
 					window.location.href = "/pay/union?number=" + res.order_number
 							+ "&type=0";

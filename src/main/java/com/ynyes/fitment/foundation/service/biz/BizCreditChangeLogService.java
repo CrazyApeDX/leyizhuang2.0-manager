@@ -13,6 +13,8 @@ import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 import com.ynyes.lyz.entity.TdManager;
 
 public interface BizCreditChangeLogService {
+	
+	void creditAction(TdManager manager, FitCompany company, Double inputCredit, String remark) throws Exception;
 
 	FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception;
 	

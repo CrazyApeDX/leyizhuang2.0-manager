@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.wechat.WechatOrder;
 import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
@@ -1746,6 +1747,7 @@ public class TdOrderController {
 				res.put("status", 3);
 				res.put("title", payType.getTitle());
 				res.put("order_number", order_temp.getOrderNumber());
+				res.put("token", new WechatOrder().CREATE(order_temp, req.getRemoteAddr()));
 				return res;
 			} else {
 				// 设置支付方式为其他

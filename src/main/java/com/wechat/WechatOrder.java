@@ -11,7 +11,7 @@ public class WechatOrder {
 	// 应用ID
 	private String appid = "wx6ea338a1c0fc1978";
 	// 商户号
-	private String mch_id;
+	private String mch_id = "1446016602";
 	// 随机字符串
 	private String nonce_str = UUID.randomUUID().toString().replace("-", "").toUpperCase();
 	// 签名
@@ -116,7 +116,7 @@ public class WechatOrder {
 		String fee = fen.toString();
 		fee = fee.substring(0, fee.indexOf("."));
 		this.setTotal_fee(Integer.parseInt(fee));
-		this.setSpbill_create_ip(ip);
+		this.setSpbill_create_ip("192.168.0.1");
 		this.setSign(this.createSign());
 		return this;
 	}
@@ -133,5 +133,22 @@ public class WechatOrder {
 		buffer.append("notify_url").append(this.notify_url).append('&');
 		buffer.append("trade_type").append(this.trade_type).append('&');
 		return MD5.md5(buffer.toString(), 32);
+	}
+
+	public String toXML() {
+		StringBuffer buffer = new StringBuffer();
+		buffer.append("<xml>");
+		buffer.append("<appid>").append(this.appid).append("</appid>");
+		buffer.append("<mch_id>").append(this.mch_id).append("</mch_id>");
+		buffer.append("<nonce_str>").append(this.nonce_str).append("</nonce_str>");
+		buffer.append("<sign>").append(this.sign).append("</sign>");
+		buffer.append("<body>").append(this.body).append("</body>");
+		buffer.append("<out_trade_no>").append(this.out_trade_no).append("</out_trade_no>");
+		buffer.append("<total_fee>").append(this.total_fee).append("</total_fee>");
+		buffer.append("<spbill_create_ip>").append(this.spbill_create_ip).append("</spbill_create_ip>");
+		buffer.append("<notify_url>").append(this.notify_url).append("</notify_url>");
+		buffer.append("<trade_type>").append(this.trade_type).append("</trade_type>");
+		buffer.append("</xml>");
+		return buffer.toString();
 	}
 }
