@@ -24,6 +24,7 @@ import com.ynyes.fitment.foundation.entity.FitOrder;
 import com.ynyes.fitment.foundation.entity.FitOrderCancel;
 import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 import com.ynyes.fitment.foundation.entity.client.ClientCategory;
+import com.ynyes.fitment.foundation.entity.client.ClientGoods;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitOrderCancelService;
 import com.ynyes.fitment.foundation.service.FitOrderRefundService;
@@ -298,12 +299,27 @@ public class FitViewController extends FitBasicController {
 		map.addAttribute("data", data);
 		return "/fitment/user_order_refund_address_base";
 	}
-	
+
 	@RequestMapping(value = "/detail/{id}")
 	public String fitDetail(@PathVariable("id") Long id, ModelMap map) {
 		TdOrder order = tdOrderService.findOne(id);
 		map.addAttribute("order", order);
 		return "/fitment/user_order_detail";
+	}
+
+	@RequestMapping(value = "/search")
+	public String fitSearch(HttpServletRequest request, String keywords, ModelMap map) {
+		FitEmployee employee = this.getLoginEmployee(request);
+		try {
+			List<ClientGoods> goodsList = bizGoodsService.getGoodsByCompanyIdAndKeywords(employee.getCompanyId(),
+					keywords);
+			map.addAttribute("goodsList", goodsList);
+			map.addAttribute("keywords", keywords);
+			return "/fitment/goods_search";
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "/fitment/500";
+		}
 	}
 
 	@ModelAttribute
