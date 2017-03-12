@@ -1,6 +1,7 @@
 package com.ynyes.fitment.foundation.service.biz;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.domain.Page;
 
@@ -12,7 +13,7 @@ import com.ynyes.lyz.entity.TdOrder;
 public interface BizOrderService {
 
 	FitOrder initOrder(List<FitCartGoods> cartGoodsList, String receiver, String receiverMobile, String baseAddress,
-			String detailAddress, FitEmployee employee) throws Exception;
+			String detailAddress, FitEmployee employee, String deliveryDate, Long deliveryTime) throws Exception;
 
 	FitOrder auditOrder(Long orderId, FitEmployee auditor, String action) throws Exception;
 
@@ -29,10 +30,14 @@ public interface BizOrderService {
 	FitOrder saveDelivery(FitOrder order, String deliveryDate, Long deliveryTime, Long floor) throws Exception;
 
 	TdOrder transformer(FitOrder order) throws Exception;
-	
+
 	Boolean validateEnoughCredit(FitOrder order) throws Exception;
-	
+
 	Boolean validateEnoughInventory(FitOrder order) throws Exception;
-	
+
 	void finishOrder(FitOrder order) throws Exception;
+
+	Map<String, Object> loadDeliveryTimeInforBaseNow(FitEmployee employee);
+
+	FitOrder checkDeliveryInfo(FitOrder order, FitEmployee fitEmployee) throws Exception;
 }

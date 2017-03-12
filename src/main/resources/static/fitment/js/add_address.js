@@ -131,13 +131,20 @@ function saveAddress() {
 	var detailAddress = $("#detailAddress").val();
 	var baseAddress = $("#add_btn").html();
 
+	var limitDay = $("#early_date").val();
+	var limitId = $("#early_time").val();
+	var date = $("#theTime").val();
+	var detailTime = $("#detailTime").val();
+	var limitTime = limitDay + " "
+			+ (limitId + ":30-" + (parseInt(limitId) + 1) + ":30");
+
 	if (!/^1\d{10}$/.test(receiverMobile)) {
 		warning("请输入正确的手机号码");
 		return;
 	}
-	
+
 	if (baseAddress.length <= 3) {
-		warning("请点击\"" + baseAddress +"\"选择详细的行政区划和行政街道");
+		warning("请点击\"" + baseAddress + "\"选择详细的行政区划和行政街道");
 		return;
 	}
 
@@ -151,20 +158,38 @@ function saveAddress() {
 		return;
 	}
 
+	// 选择的日期不能少于最小日期
+	var time = new Date(date.replace("-", "/").replace("-", "/"));
+	var limit = new Date(limitDay.replace("-", "/").replace("-", "/"));
+
+	if ((time - limit) < 0) {
+		warning("您能选择的最早时间为<br>" + limitTime);
+		return;
+	}
+
+	if ((time - limit) == 0) {
+		if ((detailTime * 1 - limitId * 1) < 0) {
+			warning("您能选择的最早时间为<br>" + limitTime);
+			return;
+		}
+	}
+
 	// 开启等待图标
 	wait();
 
 	// 发送异步请求
 	$.ajax({
-//		url : "/user/address/add/save",
-		url: "/fit/order/init",
+		// url : "/user/address/add/save",
+		url : "/fit/order/init",
 		type : "post",
 		timeout : 10000,
 		data : {
 			receiver : receiverName,
 			receiverMobile : receiverMobile,
-			baseAddress: baseAddress,
+			baseAddress : baseAddress,
 			detailAddress : detailAddress,
+			selectedDate: date,
+			selectedTime: detailTime
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			// 关闭等待图标

@@ -37,7 +37,7 @@ public class FitPriceHeader extends TableEntity {
 	@Column(nullable = false, unique = true)
 	private Long ebsId;
 
-	@Column(nullable = false, unique = true)
+	@Column
 	private String ebsNumber;
 	
 	public String getTitle() {

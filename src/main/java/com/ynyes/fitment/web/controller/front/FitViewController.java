@@ -1,6 +1,7 @@
 package com.ynyes.fitment.web.controller.front;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -123,6 +124,8 @@ public class FitViewController extends FitBasicController {
 	@RequestMapping(value = "/address")
 	public String address(HttpServletRequest request, ModelMap map) {
 		try {
+			Map<String, Object> deliveryInfo = this.bizOrderService.loadDeliveryTimeInforBaseNow(this.getLoginEmployee(request));
+			map.addAttribute("deliveryInfo", deliveryInfo);
 			return "/fitment/address_base";
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -184,6 +187,7 @@ public class FitViewController extends FitBasicController {
 		try {
 			FitOrder order = this.bizOrderService.findOne(id);
 			FitCompany company = this.fitCompanyService.findOne(order.getCompanyId());
+			order = this.bizOrderService.checkDeliveryInfo(order, this.getLoginEmployee(request));
 			map.addAttribute("credit", company.getCredit());
 			map.addAttribute("order", order);
 			return "/fitment/pay/order_pay";

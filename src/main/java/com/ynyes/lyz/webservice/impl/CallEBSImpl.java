@@ -393,7 +393,7 @@ public class CallEBSImpl implements ICallEBS {
 					} else {
 						header.setEndTime(null);
 					}
-					header.setIsEnable("Y" == active_flag ? true : false);
+					header.setIsEnable("Y".equalsIgnoreCase(active_flag) ? true : false);
 					header.setEbsNumber(description);
 					header.setPriceType(price_type.replace("CB_", ""));
 					fitPriceHeaderService.save(header);

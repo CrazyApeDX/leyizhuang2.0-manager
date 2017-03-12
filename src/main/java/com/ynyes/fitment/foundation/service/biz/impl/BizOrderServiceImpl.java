@@ -83,7 +83,8 @@ public class BizOrderServiceImpl implements BizOrderService {
 
 	@Override
 	public FitOrder initOrder(List<FitCartGoods> cartGoodsList, String receiver, String receiverMobile,
-			String baseAddress, String detailAddress, FitEmployee employee) throws Exception {
+			String baseAddress, String detailAddress, FitEmployee employee, String deliveryDate, Long deliveryTime)
+			throws Exception {
 		List<FitOrderGoods> orderGoodsList = new ArrayList<>();
 		for (FitCartGoods cartGoods : cartGoodsList) {
 			if (null != cartGoods) {
@@ -113,6 +114,8 @@ public class BizOrderServiceImpl implements BizOrderService {
 		order.setReceivePhone(receiverMobile);
 		order.setReceiveAddress(baseAddress + detailAddress);
 		this.loadDeliveryTime(order);
+		order.setDeliveryDate(deliveryDate);
+		order.setDeliveryTime(deliveryTime);
 		return this.fitOrderService.save(order.initOrderNumber().initPrice());
 	}
 
@@ -527,6 +530,70 @@ public class BizOrderServiceImpl implements BizOrderService {
 			}
 		}
 		return true;
+	}
+
+	@Override
+	public Map<String, Object> loadDeliveryTimeInforBaseNow(FitEmployee employee) {
+		Map<String, Object> res = new HashMap<>();
+		Long companyId = employee.getCompanyId();
+		FitCompany company = fitCompanyService.findOne(companyId);
+		TdCity city = tdCityService.findBySobIdCity(company.getSobId());
+
+		Date now = new Date();
+
+		int hour = Integer.parseInt(new SimpleDateFormat("HH").format(now));
+
+		int minute = Integer.parseInt(new SimpleDateFormat("mm").format(now));
+
+		Calendar cal = Calendar.getInstance();
+
+		Long delay = city.getDelayHour();
+		if (null == delay) {
+			delay = 0L;
+		}
+
+		Date limitDate = new Date();
+		Long tempHour = hour + delay;
+		if (24 <= tempHour) {
+			cal.add(Calendar.DATE, 1);
+			limitDate = cal.getTime();
+			tempHour = 9L;
+		}
+
+		// 判断能否当天配送
+		if (tempHour > city.getFinishHour() || (tempHour == city.getFinishHour() && minute > city.getFinishMinute())) {
+			cal.add(Calendar.DATE, 1);
+			limitDate = cal.getTime();
+			tempHour = 9L;
+		}
+
+		res.put("EARLY_DATE", new SimpleDateFormat("yyyy-MM-dd").format(limitDate));
+		res.put("EARLY_TIME", tempHour);
+		return res;
+	}
+
+	@Override
+	public FitOrder checkDeliveryInfo(FitOrder order, FitEmployee employee) throws Exception {
+		Map<String, Object> result = this.loadDeliveryTimeInforBaseNow(employee);
+		order.setEarlyDate((String) result.get("EARLY_DATE"));
+		order.setEarlyTime((Long) result.get("EARLY_TIME"));
+
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+
+		Date selectedDate = format.parse(order.getDeliveryDate());
+		Date limitDate = format.parse(order.getEarlyDate());
+
+		if (selectedDate.getTime() < limitDate.getTime()) {
+			order.setDeliveryDate(order.getEarlyDate());
+		}
+
+		if (order.getDeliveryDate().equalsIgnoreCase(order.getEarlyDate())) {
+			if (order.getEarlyTime() > order.getDeliveryTime()) {
+				order.setDeliveryTime(order.getEarlyTime());
+			}
+		}
+		
+		return this.fitOrderService.save(order);
 	}
 
 }
