@@ -1171,7 +1171,7 @@ public class TdManagerOrderController {
 			String mainOrderNumber = own.getOrderNumber();
 			System.out.println(mainOrderNumber.substring(2, mainOrderNumber.length()));
 			List<TdOrder> orderList = tdOrderService
-					.findByOrderNumberContaining(mainOrderNumber.substring(2, mainOrderNumber.length()));
+					.findByOrderNumberContaining(mainOrderNumber.substring(5, mainOrderNumber.length()));
 			map.addAttribute("orderList", orderList);
 			if (null != orderList && orderList.size() > 0) {
 				map.addAttribute("order", orderList.get(0));
