@@ -557,12 +557,13 @@ public class CallEBSImpl implements ICallEBS {
 					}
 					tdPriceListItemService.save(tdPriceListItem);
 				} else {
+					FitPriceHeader header = fitPriceHeaderService.findByEbsId(list_header_id);
 					FitPriceLine line = fitPriceLineService.findByEbsId(list_line_id);
 					if (null == line) {
 						line = new FitPriceLine();
 						line.setEbsId(list_line_id);
 					}
-					line.setHeaderId(list_header_id);
+					line.setHeaderId(header.getId());
 					line.setEbsNumber(description);
 
 					TdGoods goods = tdGoodsService.findByCode(item_num);
