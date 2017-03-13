@@ -10,10 +10,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity.OriginType;
 import com.ynyes.fitment.core.service.PageableService;
+import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.entity.FitCompanyGoods;
+import com.ynyes.fitment.foundation.entity.FitPriceLine;
 import com.ynyes.fitment.foundation.repo.FitCompanyGoodsRepo;
+import com.ynyes.fitment.foundation.repo.FitCompanyRepo;
+import com.ynyes.fitment.foundation.repo.FitPriceLineRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyGoodsService;
 import com.ynyes.lyz.entity.TdGoods;
+import com.ynyes.lyz.service.TdGoodsService;
 
 @Service
 @Transactional
@@ -21,6 +26,15 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 
 	@Autowired
 	private FitCompanyGoodsRepo fitCompanyGoodsRepo;
+
+	@Autowired
+	private FitCompanyRepo fitCompanyRepo;
+
+	@Autowired
+	private FitPriceLineRepo fitPriceLineRepo;
+	
+	@Autowired
+	private TdGoodsService tdGoodsService;
 
 	@Override
 	public Page<FitCompanyGoods> findByCompanyIdOrderByGoodsSortIdAsc(Long companyId, Integer page, Integer size)
@@ -76,7 +90,7 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 	@Override
 	public List<FitCompanyGoods> findByCompanyIdAndCategoryIdOrderByGoodsSortIdAsc(Long companyId, Long categoryId)
 			throws Exception {
-		if(null == companyId || null == categoryId){
+		if (null == companyId || null == categoryId) {
 			return null;
 		}
 		return this.fitCompanyGoodsRepo.findByCompanyIdAndCategoryIdOrderByGoodsSortIdAsc(companyId, categoryId);
@@ -88,6 +102,38 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 			return null;
 		}
 		return this.fitCompanyGoodsRepo.findByCompanyIdAndKeywords(companyId, keywords);
+	}
+
+	@Override
+	public void initCompanyGoodsByPriceLine(Long companyId) throws Exception {
+		FitCompany company = this.fitCompanyRepo.findOne(companyId);
+		this.initCompanyGoods(companyId, company.getLsPriceHeaderId());
+		this.initCompanyGoods(companyId, company.getLyzPriceHeaderId());
+		this.initCompanyGoods(companyId, company.getYrPriceHeaderId());
+	}
+
+	private void initCompanyGoods(Long companyId, Long priceHeaderId) throws Exception {
+		List<FitPriceLine> priceLineList = this.fitPriceLineRepo.findByHeaderId(priceHeaderId);
+		if (null != priceLineList && priceLineList.size() > 0) {
+			for (FitPriceLine line : priceLineList) {
+				Long goodsId = line.getGoodsId();
+				if (!this.validateRepeatByCompanyIdAndGoodsId(companyId, goodsId)) {
+					FitCompanyGoods companyGoods = new FitCompanyGoods();
+					TdGoods goods = this.tdGoodsService.findOne(goodsId);
+					companyGoods.setCompanyId(companyId);
+					companyGoods.setGoodsId(goods.getId());
+					companyGoods.setGoodsTitle(goods.getTitle());
+					companyGoods.setGoodsSku(goods.getCode());
+					companyGoods.setGoodsCoverImageUri(goods.getCoverImageUri());
+					companyGoods.setCategoryId(goods.getCategoryId());
+					companyGoods.setGoodsSortId(goods.getSortId());
+					companyGoods.setBrandId(goods.getBrandId());
+					companyGoods.setBrandTitle(goods.getBrandTitle());
+					this.fitCompanyGoodsRepo.save(companyGoods);
+				}
+			}
+		}
+
 	}
 
 }

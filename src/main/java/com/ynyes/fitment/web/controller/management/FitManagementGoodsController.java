@@ -1,7 +1,6 @@
 package com.ynyes.fitment.web.controller.management;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -76,13 +75,14 @@ public class FitManagementGoodsController {
 	@RequestMapping(value = "/init/{companyId}", method = RequestMethod.GET)
 	public String companyGoodsInit(@PathVariable("companyId") Long companyId) {
 		try {
-			List<TdGoods> goodsList = this.tdGoodsService.findAll();
-			for (TdGoods goods : goodsList) {
-				Boolean validate = this.fitCompanyGoodsService.validateRepeatByCompanyIdAndGoodsId(companyId, goods.getId());
-				if (!validate) {
-					this.fitCompanyGoodsService.managerAddCompanyGoods(goods, companyId);
-				}
-			}
+//			List<TdGoods> goodsList = this.tdGoodsService.findAll();
+//			for (TdGoods goods : goodsList) {
+//				Boolean validate = this.fitCompanyGoodsService.validateRepeatByCompanyIdAndGoodsId(companyId, goods.getId());
+//				if (!validate) {
+//					this.fitCompanyGoodsService.managerAddCompanyGoods(goods, companyId);
+//				}
+//			}
+			this.fitCompanyGoodsService.initCompanyGoodsByPriceLine(companyId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
