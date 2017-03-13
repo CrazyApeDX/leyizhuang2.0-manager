@@ -137,6 +137,8 @@ function saveAddress() {
 	var detailTime = $("#detailTime").val();
 	var limitTime = limitDay + " "
 			+ (limitId + ":30-" + (parseInt(limitId) + 1) + ":30");
+	
+	var remark = $("#remark").val();
 
 	if (!/^1\d{10}$/.test(receiverMobile)) {
 		warning("请输入正确的手机号码");
@@ -155,6 +157,11 @@ function saveAddress() {
 
 	if (!isAllLegal(detailAddress)) {
 		warning("详细地址不能输入除-()#,外的特殊字符");
+		return;
+	}
+	
+	if (remark.length > 200) {
+		warning("备注不能超过200位，请更改");
 		return;
 	}
 
@@ -189,7 +196,8 @@ function saveAddress() {
 			baseAddress : baseAddress,
 			detailAddress : detailAddress,
 			selectedDate: date,
-			selectedTime: detailTime
+			selectedTime: detailTime,
+			remark: remark
 		},
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			// 关闭等待图标

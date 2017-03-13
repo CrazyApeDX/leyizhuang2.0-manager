@@ -83,8 +83,8 @@ public class BizOrderServiceImpl implements BizOrderService {
 
 	@Override
 	public FitOrder initOrder(List<FitCartGoods> cartGoodsList, String receiver, String receiverMobile,
-			String baseAddress, String detailAddress, FitEmployee employee, String deliveryDate, Long deliveryTime)
-			throws Exception {
+			String baseAddress, String detailAddress, FitEmployee employee, String deliveryDate, Long deliveryTime,
+			String remark) throws Exception {
 		List<FitOrderGoods> orderGoodsList = new ArrayList<>();
 		for (FitCartGoods cartGoods : cartGoodsList) {
 			if (null != cartGoods) {
@@ -116,6 +116,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 		this.loadDeliveryTime(order);
 		order.setDeliveryDate(deliveryDate);
 		order.setDeliveryTime(deliveryTime);
+		order.setRemark(remark);
 		return this.fitOrderService.save(order.initOrderNumber().initPrice());
 	}
 
@@ -592,7 +593,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 				order.setDeliveryTime(order.getEarlyTime());
 			}
 		}
-		
+
 		return this.fitOrderService.save(order);
 	}
 

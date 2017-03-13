@@ -64,7 +64,7 @@ public class FitOrderController extends FitBasicController {
 	@RequestMapping(value = "/init", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
 	public ClientResult fitOrderPost(HttpServletRequest request, String receiver, String receiverMobile,
-			String baseAddress, String detailAddress, String selectedDate, Long selectedTime) {
+			String baseAddress, String detailAddress, String selectedDate, Long selectedTime, String remark) {
 		FitEmployee employee = this.getLoginEmployee(request);
 		try {
 			List<FitCartGoods> cartGoodsList = this.bizCartGoodsService.loadEmployeeCart(employee.getId());
@@ -72,7 +72,7 @@ public class FitOrderController extends FitBasicController {
 				return new ClientResult(ActionCode.FAILURE, "当前购物车中无商品，请返回并点击\"审核\"查看订单是否已经生成");
 			}
 			FitOrder order = this.bizOrderService.initOrder(cartGoodsList, receiver, receiverMobile, baseAddress,
-					detailAddress, employee, selectedDate, selectedTime);
+					detailAddress, employee, selectedDate, selectedTime, remark);
 			if (employee.getIsMain()) {
 				return new ClientResult(ActionCode.SUCCESS, order.getId());
 			} else {

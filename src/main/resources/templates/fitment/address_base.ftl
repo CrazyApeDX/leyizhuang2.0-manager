@@ -88,6 +88,11 @@
 		                </div>
 		            </article>
 	            </article>
+	            <article class="fill-order-list">
+		            <section class="leave-message">
+	                    <input id="remark" type="text" maxlength="200" placeholder="给商家留言">
+	                </section>
+                </article>
 	            <script>
 	            var $$ = function (id) {
 	                return document.getElementById(id);

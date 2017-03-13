@@ -13,7 +13,8 @@ import com.ynyes.lyz.entity.TdOrder;
 public interface BizOrderService {
 
 	FitOrder initOrder(List<FitCartGoods> cartGoodsList, String receiver, String receiverMobile, String baseAddress,
-			String detailAddress, FitEmployee employee, String deliveryDate, Long deliveryTime) throws Exception;
+			String detailAddress, FitEmployee employee, String deliveryDate, Long deliveryTime, String remark)
+			throws Exception;
 
 	FitOrder auditOrder(Long orderId, FitEmployee auditor, String action) throws Exception;
 
