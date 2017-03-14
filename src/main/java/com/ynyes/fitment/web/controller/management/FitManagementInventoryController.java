@@ -15,7 +15,7 @@ public class FitManagementInventoryController extends FitManagementBasicControll
 	@Autowired
 	private FitCompanyGoodsService fitCompanyGoodsService;
 
-	@RequestMapping(value = "/init/{companyId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/init/{companyId}", method = RequestMethod.GET)
 	public String initInventory(@PathVariable Long companyId) {
 		try {
 			// List<TdGoods> goodsList = this.tdGoodsService.findAll();
