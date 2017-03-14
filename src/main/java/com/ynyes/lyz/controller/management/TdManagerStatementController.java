@@ -2901,6 +2901,22 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				}
 				Double deliveryFee = 0d;// 运费总额
 				TdUser userTemp = tdUserService.findByUsername(detail.getUsername());
+				if(null == userTemp){
+					System.out.println("该单未找到用户："+detail.getMainOrderNumber());
+					userTemp = new TdUser();
+					
+						switch (detail.getCity()) {
+						case "成都市":
+							userTemp.setCityId(2121L);
+							break;
+						case "郑州市":
+							userTemp.setCityId(2033L);
+							break;
+						default:
+							break;
+						}
+					}
+				
 
 				// Map<Long, TdOrderGoods> orderGoodsMap =
 				// this.countOrderGoodsNumber(order);

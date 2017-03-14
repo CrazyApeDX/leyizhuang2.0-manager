@@ -36,7 +36,7 @@ public interface TdReserveOrderRepo extends
 	 * @return
 	 */
 	@Query(value =" SELECT "
-			+" 	round(round(rand(),4)*1000000) id, "
+			+" 	UUID() id, "
 			+" 	diy.city city, "
 			+"  '产品券' reserve_type, "
 			+" 	coupon.diy_site_tital diy_site_name, "
@@ -77,7 +77,7 @@ public interface TdReserveOrderRepo extends
 			+" 	coupon.buy_price "
 			+" union all "
 			+" SELECT "
-			+" 	round(round(rand(),4)*1000000) id, "
+			+" 	UUID() id, "
 			+" 	diy.city city, "
 			+" 	'自提单' AS reserve_type, "
 			+" 	diy.title diy_site_name, "
