@@ -1183,6 +1183,7 @@ public class SettlementServiceImpl implements ISettlementService {
 		Long quantity = orderGoods.getQuantity();
 		quantity = null == quantity ? 0 : quantity;
 		Long goodsId = orderGoods.getGoodsId();
+		
 		TdDeliveryFeeLine deliveryFeeLine = tdDeliveryFeeLineService.findBySobIdAndGoodsIdAndNumber(user.getCityId(),
 				goodsId, quantity);
 		if (null == deliveryFeeLine) {
