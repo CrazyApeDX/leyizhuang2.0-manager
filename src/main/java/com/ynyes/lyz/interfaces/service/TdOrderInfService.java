@@ -134,5 +134,10 @@ public class TdOrderInfService {
     	}
     	return repository.findBySendFlagAndSobId(sendFlag, sobId);
     }
+
+	public List<TdOrderInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag) {
+		// TODO Auto-generated method stub
+		return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
+	}
     
 }

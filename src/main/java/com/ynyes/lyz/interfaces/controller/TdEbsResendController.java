@@ -245,6 +245,71 @@ public class TdEbsResendController {
 			tdOrderCouponInfService.save(couponInfs);
 		}
 	}
+	
+	/**
+	 * 重传传输失败全部订单
+	 * 
+	 * @param orderNumber
+	 *            分单号
+	 */
+	@RequestMapping(value = "/orderAll")
+	public void resendOrderAll(String orderNumber) {
+		List<TdOrderInf> orderInfoList = tdOrderInfService.findBySendFlagOrSendFlagIsNull(0);
+		for (TdOrderInf tdOrderInf : orderInfoList) {
+			TdOrderInf orderInf = tdOrderInfService.findByOrderNumber(orderNumber);
+			if (orderInf == null || (orderInf.getSendFlag() != null && orderInf.getSendFlag() == 0)) {
+				return;
+			}
+			Boolean isOrderInfSucceed = false;
+
+			String orderInfXML = tdInterfaceService.XmlWithObject(orderInf, INFTYPE.ORDERINF);
+			Object[] orderInfObject = { INFConstants.INF_ORDER_STR, "1", orderInfXML };
+			String resultStr = tdInterfaceService.ebsWsInvoke(orderInfObject);
+			if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+				isOrderInfSucceed = true;
+				orderInf.setSendFlag(0);
+			} else {
+				orderInf.setSendFlag(1);
+				orderInf.setErrorMsg(resultStr);
+			}
+			tdOrderInfService.save(orderInf);
+			// 商品
+			List<TdOrderGoodsInf> goodsInfs = tdOrderGoodsInfService.findByOrderHeaderId(orderInf.getHeaderId());
+			String orderGoodsInfXML = tdInterfaceService.XmlWithObject(goodsInfs, INFTYPE.ORDERGOODSINF);
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(orderGoodsInfXML) && isOrderInfSucceed) {
+				Object[] orderGoodsInf = { INFConstants.INF_ORDER_GOODS_STR, "1", orderGoodsInfXML };
+				String resultStr1 = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
+				for (int i = 0; i < goodsInfs.size(); i++) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1)) {
+						goodsInfs.get(i).setSendFlag(0);
+					} else {
+						goodsInfs.get(i).setSendFlag(1);
+						goodsInfs.get(i).setErrorMsg(resultStr1);
+					}
+				}
+
+				tdOrderGoodsInfService.save(goodsInfs);
+			}
+			// 券
+			List<TdOrderCouponInf> couponInfs = tdOrderCouponInfService.findByorderHeaderId(orderInf.getHeaderId());
+			String orderCouponInfXML = tdInterfaceService.XmlWithObject(couponInfs, INFTYPE.ORDERCOUPONINF);
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(orderCouponInfXML) && isOrderInfSucceed) {
+				Object[] orderCouponInf = { INFConstants.INF_ORDER_COUPON_STR, "1", orderCouponInfXML };
+				String result = tdInterfaceService.ebsWsInvoke(orderCouponInf);
+				for (int i = 0; i < couponInfs.size(); i++) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(result)) {
+						couponInfs.get(i).setSendFlag(0);
+					} else {
+						couponInfs.get(i).setSendFlag(1);
+						couponInfs.get(i).setErrorMsg(result);
+					}
+				}
+				tdOrderCouponInfService.save(couponInfs);
+			}
+		}
+		
+	}
+
 
 	/**
 	 * 重传订单商品
