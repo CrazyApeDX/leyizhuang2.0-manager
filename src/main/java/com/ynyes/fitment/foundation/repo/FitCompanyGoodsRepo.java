@@ -21,7 +21,11 @@ public interface FitCompanyGoodsRepo extends ApplicationRepo<FitCompanyGoods> {
 
 	Long countByCompanyIdAndGoodsId(Long companyId, Long goodsId) throws Exception;
 
+	FitCompanyGoods findByCompanyIdAndGoodsId(Long companyId, Long goodsId) throws Exception;
+
 	@Query("select goods from FitCompanyGoods goods where goods.companyId = :companyId and (goods.goodsTitle like concat('%',:keywords,'%') or goods.goodsSku like concat('%',:keywords,'%')) order by goodsSortId asc")
 	List<FitCompanyGoods> findByCompanyIdAndKeywords(@Param("companyId") Long companyId,
 			@Param("keywords") String keywords);
+
+	List<FitCompanyGoods> findByCompanyId(Long companyId) throws Exception;
 }

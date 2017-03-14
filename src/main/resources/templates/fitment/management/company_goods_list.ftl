@@ -82,13 +82,25 @@
 						<li>
 							<a class="all" href="javascript:initGoods(${companyId?c})">
 								<i></i>
-								<span>初始化</span>
+								<span>商品初始化</span>
+							</a>
+						</li>
+						<li>
+							<a class="all" href="javascript:initInventory(${companyId?c})">
+								<i></i>
+								<span>库存初始化</span>
 							</a>
 						</li>
 						<script type="text/javascript">
 							var initGoods = function(companyId) {
 								$.dialog.confirm("是否确认初始化", function() {
 									window.location.href = "/Verwalter/fitment/goods/init/" + companyId;
+									return true;
+								});
+							}
+							var initGoods = function(companyId) {
+								$.dialog.confirm("是否确认初始化", function() {
+									window.location.href = "/Verwalter/fitment/inventory/init/" + companyId;
 									return true;
 								});
 							}

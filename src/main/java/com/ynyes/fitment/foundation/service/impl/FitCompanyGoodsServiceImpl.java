@@ -17,7 +17,10 @@ import com.ynyes.fitment.foundation.repo.FitCompanyGoodsRepo;
 import com.ynyes.fitment.foundation.repo.FitCompanyRepo;
 import com.ynyes.fitment.foundation.repo.FitPriceLineRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyGoodsService;
+import com.ynyes.lyz.entity.TdDiySiteInventory;
 import com.ynyes.lyz.entity.TdGoods;
+import com.ynyes.lyz.service.TdCityService;
+import com.ynyes.lyz.service.TdDiySiteInventoryService;
 import com.ynyes.lyz.service.TdGoodsService;
 
 @Service
@@ -32,9 +35,15 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 
 	@Autowired
 	private FitPriceLineRepo fitPriceLineRepo;
-	
+
 	@Autowired
 	private TdGoodsService tdGoodsService;
+
+	@Autowired
+	private TdDiySiteInventoryService tdDiySiteInventoryService;
+
+	@Autowired
+	private TdCityService tdCityService;
 
 	@Override
 	public Page<FitCompanyGoods> findByCompanyIdOrderByGoodsSortIdAsc(Long companyId, Integer page, Integer size)
@@ -117,23 +126,60 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 		if (null != priceLineList && priceLineList.size() > 0) {
 			for (FitPriceLine line : priceLineList) {
 				Long goodsId = line.getGoodsId();
-				if (!this.validateRepeatByCompanyIdAndGoodsId(companyId, goodsId)) {
-					FitCompanyGoods companyGoods = new FitCompanyGoods();
-					TdGoods goods = this.tdGoodsService.findOne(goodsId);
-					companyGoods.setCompanyId(companyId);
-					companyGoods.setGoodsId(goods.getId());
-					companyGoods.setGoodsTitle(goods.getTitle());
-					companyGoods.setGoodsSku(goods.getCode());
-					companyGoods.setGoodsCoverImageUri(goods.getCoverImageUri());
-					companyGoods.setCategoryId(goods.getCategoryId());
-					companyGoods.setGoodsSortId(goods.getSortId());
-					companyGoods.setBrandId(goods.getBrandId());
-					companyGoods.setBrandTitle(goods.getBrandTitle());
-					this.fitCompanyGoodsRepo.save(companyGoods);
+				// if (!this.validateRepeatByCompanyIdAndGoodsId(companyId,
+				// goodsId)) {
+				FitCompanyGoods companyGoods = this.findByCompanyIdAndGoodsId(companyId, goodsId);
+				companyGoods = null == companyGoods ? new FitCompanyGoods() : companyGoods;
+				TdGoods goods = this.tdGoodsService.findOne(goodsId);
+				companyGoods.setCompanyId(companyId);
+				companyGoods.setGoodsId(goods.getId());
+				companyGoods.setGoodsTitle(goods.getTitle());
+				companyGoods.setGoodsSku(goods.getCode());
+				companyGoods.setGoodsCoverImageUri(goods.getCoverImageUri());
+				companyGoods.setCategoryId(goods.getCategoryId());
+				companyGoods.setGoodsSortId(goods.getSortId());
+				companyGoods.setBrandId(goods.getBrandId());
+				companyGoods.setBrandTitle(goods.getBrandTitle());
+				this.fitCompanyGoodsRepo.save(companyGoods);
+			}
+			// }
+		}
+
+	}
+
+	@Override
+	public FitCompanyGoods findByCompanyIdAndGoodsId(Long companyId, Long goodsId) throws Exception {
+		if (null == companyId || null == goodsId) {
+			return null;
+		}
+		return this.fitCompanyGoodsRepo.findByCompanyIdAndGoodsId(companyId, goodsId);
+	}
+
+	@Override
+	public void initInventoryByCompanyId(Long companyId) throws Exception {
+		FitCompany company = fitCompanyRepo.findOne(companyId);
+		List<FitCompanyGoods> goodsList = this.fitCompanyGoodsRepo.findByCompanyId(companyId);
+		if (null != goodsList && goodsList.size() > 0) {
+			for (FitCompanyGoods companyGoods : goodsList) {
+				Long goodsId = companyGoods.getGoodsId();
+				TdGoods goods = tdGoodsService.findOne(goodsId);
+				TdDiySiteInventory inventory = tdDiySiteInventoryService
+						.findByGoodsIdAndRegionIdAndDiySiteIdIsNull(goodsId, company.getSobId());
+				if (null == inventory) {
+					inventory = new TdDiySiteInventory();
+					inventory.setRegionId(company.getSobId());
+					inventory.setRegionName(tdCityService.findBySobIdCity(company.getSobId()).getCityName());
+					inventory.setGoodsId(goods.getId());
+					inventory.setGoodsTitle(goods.getTitle());
+					inventory.setGoodsCode(goods.getCode());
+					inventory.setInventory(0L);
+					inventory.setCategoryId(goods.getCategoryId());
+					inventory.setCategoryTitle(goods.getCategoryTitle());
+					inventory.setCategoryIdTree(goods.getCategoryIdTree());
+					this.tdDiySiteInventoryService.save(inventory);
 				}
 			}
 		}
-
 	}
 
 }

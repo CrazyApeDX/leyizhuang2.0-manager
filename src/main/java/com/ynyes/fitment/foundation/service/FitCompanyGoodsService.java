@@ -24,6 +24,10 @@ public interface FitCompanyGoodsService {
 			throws Exception;
 
 	List<FitCompanyGoods> findByCompanyIdAndKeywords(Long companyId, String keywords);
-	
+
 	void initCompanyGoodsByPriceLine(Long companyId) throws Exception;
+
+	FitCompanyGoods findByCompanyIdAndGoodsId(Long companyId, Long goodsId) throws Exception;
+
+	void initInventoryByCompanyId(Long companyId) throws Exception;
 }

@@ -1,5 +1,7 @@
 package com.ynyes.fitment.foundation.service.impl;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,9 @@ public class FitPriceLineServiceImpl extends PageableService implements FitPrice
 		if (null == headerId || null == goodsId) {
 			return null;
 		}
-		return this.fitPriceLineRepo.findByHeaderIdAndGoodsId(headerId, goodsId);
+		Date now = new Date();
+		return this.fitPriceLineRepo.findByHeaderIdAndGoodsIdAndStartTimeBeforeAndEndTimeAfter(headerId, goodsId, now,
+				now);
 	}
 
 	@Override
