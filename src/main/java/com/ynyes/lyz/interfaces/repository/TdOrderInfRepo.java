@@ -15,5 +15,7 @@ public interface TdOrderInfRepo extends PagingAndSortingRepository<TdOrderInf, L
 	List<TdOrderInf> findBySendFlag(Integer sendFlag);
 	
 	List<TdOrderInf> findBySendFlagAndSobId(Integer sendFlag, Long sobId);
+
+	List<TdOrderInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag);
 }
 
