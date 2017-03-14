@@ -98,7 +98,7 @@
 									return true;
 								});
 							}
-							var initGoods = function(companyId) {
+							var initInventory = function(companyId) {
 								$.dialog.confirm("是否确认初始化", function() {
 									window.location.href = "/Verwalter/fitment/inventory/init/" + companyId;
 									return true;
