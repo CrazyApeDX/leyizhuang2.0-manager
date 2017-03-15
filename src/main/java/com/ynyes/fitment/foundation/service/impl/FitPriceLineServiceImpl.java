@@ -33,8 +33,9 @@ public class FitPriceLineServiceImpl extends PageableService implements FitPrice
 			return null;
 		}
 		Date now = new Date();
-		return this.fitPriceLineRepo.findByHeaderIdAndGoodsIdAndStartTimeBeforeAndEndTimeAfter(headerId, goodsId, now,
-				now);
+		return this.fitPriceLineRepo
+				.findByHeaderIdAndGoodsIdAndStartTimeBeforeAndEndTimeAfterOrHeaderIdAndGoodsIdAndStartTimeBeforeAndEndTimeIsNull(
+						headerId, goodsId, now, now, headerId, goodsId, now);
 	}
 
 	@Override

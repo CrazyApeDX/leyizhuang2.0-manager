@@ -26,5 +26,9 @@ public interface FitPriceLineRepo extends ApplicationRepo<FitPriceLine> {
 			@Param("goodsId") Long goodsId, @Param("startTime") Date startTime, @Param("endTime") Date endTime)
 			throws Exception;
 
+	FitPriceLine findByHeaderIdAndGoodsIdAndStartTimeBeforeAndEndTimeAfterOrHeaderIdAndGoodsIdAndStartTimeBeforeAndEndTimeIsNull(
+			Long headerId1, Long goodsId1, Date startTime1, Date endTime1, Long headerId2, Long goodsId2,
+			Date startTime2);
+
 	FitPriceLine findByEbsId(Long ebsId);
 }
