@@ -129,9 +129,9 @@ public class TdReturnOrderInfService {
 		return repository.findBySobIdAndSendFlag(sobId, sendFlag);
 	}
 
-	public List<TdReturnOrderInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag) {
+	public List<TdReturnOrderInf> findFailedOrderList(Integer sendFlag,Date initDate) {
 		
-		return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
+		return repository.findFailedOrderList(sendFlag,initDate);
 	}
 
 }

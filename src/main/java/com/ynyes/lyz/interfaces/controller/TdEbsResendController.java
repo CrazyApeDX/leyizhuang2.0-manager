@@ -1,5 +1,8 @@
 package com.ynyes.lyz.interfaces.controller;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -251,17 +254,23 @@ public class TdEbsResendController {
 	 * 
 	 * @param orderNumber
 	 *            分单号
+	 * @throws ParseException 
 	 */
 	@RequestMapping(value = "/orderAll")
-	public void resendOrderAll(String orderNumber) {
-		List<TdOrderInf> orderInfoList = tdOrderInfService.findBySendFlagOrSendFlagIsNull(0);
-		for (TdOrderInf tdOrderInf : orderInfoList) {
-			TdOrderInf orderInf = tdOrderInfService.findByOrderNumber(orderNumber);
-			if (orderInf == null || (orderInf.getSendFlag() != null && orderInf.getSendFlag() == 0)) {
+	public void resendOrderAll(String beginDate) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String beginDateFormat = null;
+		if(null == beginDate || "".equals(beginDate.toString().trim())){
+			beginDateFormat = format.format(new Date());
+		}
+		beginDateFormat = beginDate;
+		Date beginDateFinal = format.parse(beginDateFormat);
+		List<TdOrderInf> orderInfoList = tdOrderInfService.findBySendFlagOrSendFlagIsNullAndInitDateGreaterThan(1,beginDateFinal);
+		for (TdOrderInf orderInf : orderInfoList) {
+			if (null == orderInf) {
 				return;
 			}
 			Boolean isOrderInfSucceed = false;
-
 			String orderInfXML = tdInterfaceService.XmlWithObject(orderInf, INFTYPE.ORDERINF);
 			Object[] orderInfObject = { INFConstants.INF_ORDER_STR, "1", orderInfXML };
 			String resultStr = tdInterfaceService.ebsWsInvoke(orderInfObject);
@@ -488,12 +497,19 @@ public class TdEbsResendController {
 	
 	/**
 	 * 重传传输失败的全部退货单
+	 * @throws ParseException 
 	 * 
 	 */
 	@RequestMapping(value = "/returnOrderAll")
 	@ResponseBody
-	public String resendReturnOrderAll() {
-		List<TdReturnOrderInf> returnOrderInfList = tdReturnOrderInfService.findBySendFlagOrSendFlagIsNull(1);
+	public String resendReturnOrderAll(String initDateString) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date initDate= null;
+		if(null ==initDateString){
+			initDateString = sdf.format(new Date()) ;
+		}
+		initDate = sdf.parse(initDateString);
+		List<TdReturnOrderInf> returnOrderInfList = tdReturnOrderInfService.findFailedOrderList(1,initDate);
 		for(TdReturnOrderInf returnOrderInf:returnOrderInfList){
 			if (returnOrderInf == null) {
 				return null;

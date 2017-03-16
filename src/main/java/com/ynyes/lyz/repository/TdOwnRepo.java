@@ -63,7 +63,7 @@ public interface TdOwnRepo extends
 			+" WHERE "
 			+" 	o.send_time >= ?1 "
 			+" AND o.send_time <= ?2  "
-			+" AND o.deliver_type_title = '送货上门'  "
+			/*+" AND o.deliver_type_title = '送货上门'  "*/
 			+" AND o.city LIKE ?3 "
 			+" AND o.total_price - o.other_pay > 0  "
 			+" AND o.diy_site_code LIKE ?4   "
