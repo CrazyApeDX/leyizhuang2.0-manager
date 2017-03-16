@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -52,6 +53,8 @@ import com.ynyes.lyz.service.TdSubdistrictService;
 import com.ynyes.lyz.service.TdUpstairsSettingService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
+import com.ynyes.lyz.util.MyWechatPay;
+import com.ynyes.lyz.util.WechatUtil;
 
 @Controller
 @RequestMapping(value = "/order")
@@ -1642,7 +1645,7 @@ public class TdOrderController {
 	 */
 	@RequestMapping(value = "/check")
 	@ResponseBody
-	public Map<String, Object> checkOrder(HttpServletRequest req, ModelMap map, Long id) {
+	public Map<String, Object> checkOrder(HttpServletRequest req, HttpServletResponse resp, ModelMap map, Long id) {
 		// System.err.println("进入支付控制器");
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
@@ -1736,7 +1739,7 @@ public class TdOrderController {
 		// 修复double类型数据精度不够的问题
 		BigDecimal bg = new BigDecimal(order_temp.getTotalPrice());
 		order_temp.setTotalPrice(bg.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue());
-		
+
 		if (isOnline) {
 			// 判断是否还有未支付的金额
 			if ((order_temp.getTotalPrice() + order_temp.getUpstairsLeftFee()) > 0) {
@@ -1746,7 +1749,12 @@ public class TdOrderController {
 				res.put("status", 3);
 				res.put("title", payType.getTitle());
 				res.put("order_number", order_temp.getOrderNumber());
-//				res.put("token", new WechatOrder().CREATE(order_temp, req.getRemoteAddr()));
+				if ("微信支付".equalsIgnoreCase(payType.getTitle())) {
+					res.put("wechat", MyWechatPay.weixinPrePay(order_temp.getOrderNumber(),
+							new BigDecimal(order_temp.getTotalPrice()), req));
+				}
+				// res.put("token", new WechatOrder().CREATE(order_temp,
+				// req.getRemoteAddr()));
 				return res;
 			} else {
 				// 设置支付方式为其他
@@ -1907,7 +1915,7 @@ public class TdOrderController {
 
 		// 获取虚拟订单
 		TdOrder order = (TdOrder) req.getSession().getAttribute("order_temp");
-		
+
 		// 清空原来的预存款支付金额，重新算价
 		order.setTotalPrice(order.getTotalPrice() + order.getActualPay());
 		order.setActualPay(0d);

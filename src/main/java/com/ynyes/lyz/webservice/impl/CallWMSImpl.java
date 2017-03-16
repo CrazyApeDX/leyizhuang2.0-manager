@@ -1519,8 +1519,21 @@ public class CallWMSImpl implements ICallWMS {
 					TdDiySiteInventory inventory = tdDiySiteInventoryService
 							.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(gcode, cCompanyId);
 					if (inventory == null) {
-						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + gcode
-								+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
+						inventory = new TdDiySiteInventory();
+						TdCity city = tdCityService.findOne(cCompanyId);
+						TdGoods goods = tdGoodsService.findByCode(gcode);
+						inventory.setRegionId(city.getId());
+						inventory.setRegionName(city.getCityName());
+						inventory.setGoodsId(goods.getId());
+						inventory.setGoodsTitle(goods.getTitle());
+						inventory.setGoodsCode(goods.getCode());
+						inventory.setInventory(0L);
+						inventory.setCategoryId(goods.getCategoryId());
+						inventory.setCategoryTitle(goods.getCategoryTitle());
+						inventory.setCategoryIdTree(goods.getCategoryIdTree());
+						
+//						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + gcode
+//								+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
 					}
 					Double.parseDouble(tdTbwRecd.getRecQty());
 					Double cRecQty = Double.parseDouble(tdTbwRecd.getRecQty());

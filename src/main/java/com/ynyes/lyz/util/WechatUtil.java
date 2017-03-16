@@ -32,36 +32,35 @@ public class WechatUtil {
 		String token = AccessTokenRequestHandler.getAccessToken();
 		if (!"".equals(token)) {
 			//设置package订单参数
-			packageReqHandler.setParameter("appid", "WX");//银行渠道
-			packageReqHandler.setParameter("body", "测试"); //商品描述   
+			packageReqHandler.setParameter("appid", this.appid);//银行渠道
+			packageReqHandler.setParameter("body", "乐易装线上支付"); //商品描述   
 			packageReqHandler.setParameter("notify_url", this.notify_url); //接收财付通通知的URL  
 			packageReqHandler.setParameter("out_trade_no", order.getOrderNumber()); //商家订单号   
-			packageReqHandler.setParameter("total_fee", "1"); //商品金额,以分为单位  
+			packageReqHandler.setParameter("total_fee", order.getTotalPrice() * 100 +""); //商品金额,以分为单位  
 			packageReqHandler.setParameter("spbill_create_ip",request.getRemoteAddr()); //订单生成的机器IP，指用户浏览器端IP  
 
-			//获取package包
-			String packageValue = null;
-			try {
-				packageValue = packageReqHandler.getRequestURL();
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-			}
+//			//获取package包
+//			String packageValue = null;
+//			try {
+//				packageValue = packageReqHandler.getRequestURL();
+//			} catch (UnsupportedEncodingException e) {
+//				e.printStackTrace();
+//			}
 
 			String noncestr = WXUtil.getNonceStr();
 			String timestamp = WXUtil.getTimeStamp();
-			String traceid = "";
 			////设置获取prepayid支付参数
-			prepayReqHandler.setParameter("appid", ConstantUtil.APP_ID);
-			prepayReqHandler.setParameter("appkey", ConstantUtil.APP_KEY);
+			prepayReqHandler.setParameter("appid", this.appid);
+//			prepayReqHandler.setParameter("appkey", ConstantUtil.APP_KEY);
 			prepayReqHandler.setParameter("noncestr", noncestr);
-			prepayReqHandler.setParameter("package", packageValue);
-			prepayReqHandler.setParameter("timestamp", timestamp);
-			prepayReqHandler.setParameter("traceid", traceid);
+//			prepayReqHandler.setParameter("package", packageValue);
+//			prepayReqHandler.setParameter("timestamp", timestamp);
+//			prepayReqHandler.setParameter("traceid", traceid);
 
 			//生成获取预支付签名
 			String sign = prepayReqHandler.createSHA1Sign();
 			//增加非参与签名的额外参数
-			prepayReqHandler.setParameter("app_signature", sign);
+			prepayReqHandler.setParameter("sign", sign);
 			prepayReqHandler.setParameter("sign_method",
 					ConstantUtil.SIGN_METHOD);
 			String gateUrl = ConstantUtil.GATEURL + token;
@@ -69,13 +68,14 @@ public class WechatUtil {
 
 			//获取prepayId
 			String prepayid = prepayReqHandler.sendPrepay();
+			System.err.println(prepayid);
 			//吐回给客户端的参数
 			if (null != prepayid && !"".equals(prepayid)) {
 				//输出参数列表
 				clientHandler.setParameter("appid", ConstantUtil.APP_ID);
 				clientHandler.setParameter("appkey", ConstantUtil.APP_KEY);
 				clientHandler.setParameter("noncestr", noncestr);
-				//clientHandler.setParameter("package", "Sign=" + packageValue);
+//				clientHandler.setParameter("package", "Sign=" + packageValue);
 				clientHandler.setParameter("package", "Sign=WXPay");
 				clientHandler.setParameter("partnerid", ConstantUtil.PARTNER);
 				clientHandler.setParameter("prepayid", prepayid);
@@ -95,6 +95,9 @@ public class WechatUtil {
 			retcode = -1;
 			retmsg = "错误：获取不到Token";
 		}
+		System.err.println(retcode);
+		System.err.println(retmsg);
+		System.err.println(xml_body);
 		return "";
 	}
 }
