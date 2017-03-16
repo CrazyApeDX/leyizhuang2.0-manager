@@ -711,6 +711,7 @@ public class CallEBSImpl implements ICallEBS {
 					tdGoods.setBrandTitle(tdBrand.getTitle());
 				}
 				tdGoods.setAttribute1(attribute1);
+				tdGoods.setIsWallAccessory(false);//是否是“墙面辅料”产品，默认false。用于计算运费
 				tdGoodsService.save(tdGoods, "数据导入");
 			}
 			return "<RESULTS><STATUS><CODE>0</CODE><MESSAGE></MESSAGE></STATUS></RESULTS>";

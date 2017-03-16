@@ -16,7 +16,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class TdOwn {
 
 	@Id
-	@GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+	@GenericGenerator(name= "uuidGenerator",strategy = "uuid")
 	private String id;
 
 	// 门店名称

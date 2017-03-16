@@ -139,5 +139,10 @@ public class TdOrderInfService {
 		// TODO Auto-generated method stub
 		return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
 	}
+
+	public List<TdOrderInf> findBySendFlagOrSendFlagIsNullAndInitDateGreaterThan(Integer sendFlag, Date beginDateFormat) {
+		
+		return repository.findFailedOrderList(beginDateFormat,sendFlag);
+	}
     
 }
