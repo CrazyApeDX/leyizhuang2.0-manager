@@ -1704,7 +1704,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 						if(tdSubOwn.getOrderNumber().contains("HR")){
 							HRTotalPrice+=tdSubOwn.getTotalPrice();
 							HRotherPay+=tdSubOwn.getOtherPay();
-						}else if(tdSubOwn.getOrderNumber().contains("LYZ") || tdSubOwn.getOrderNumber().contains("YR")){
+						}else if(tdSubOwn.getOrderNumber().contains("LYZ") || tdSubOwn.getOrderNumber().contains("YR")||tdSubOwn.getOrderNumber().contains("YF")){
 							OtherTotalPrice+=tdSubOwn.getTotalPrice();
 							elseOtherPay+=tdSubOwn.getOtherPay();
 						}
