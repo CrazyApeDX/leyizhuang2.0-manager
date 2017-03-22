@@ -34,14 +34,15 @@ function userRemark(old_remark) {
 			// 关闭等待图标
 			close(100);
 			if (0 == res.status) {
-			    warning("已保存");
-			    $("#remark").attr("onblur", "userRemark('" + res.remark + "');")
+				warning("已保存");
+				$("#remark")
+						.attr("onblur", "userRemark('" + res.remark + "');")
 			} else {
-			    if (res.message) {
-				warning(res.message);
-			    } else {
-				warning("亲，您的网速不给力啊");
-			    }
+				if (res.message) {
+					warning(res.message);
+				} else {
+					warning("亲，您的网速不给力啊");
+				}
 			}
 		}
 	});
@@ -100,14 +101,14 @@ function pay() {
 			if (3 == res.status) {
 				close(1);
 				if ("支付宝" == res.title) {
-					window.location.href = "/pay/alipay?number=" + res.order_number
-							+ "&type=0";
+					window.location.href = "/pay/alipay?number="
+							+ res.order_number + "&type=0";
 				} else if ("微信支付" == res.title) {
 					console.log(res);
-//					document.location = "WXAppPay:WX:" + res.order_number;
+					// document.location = "WXAppPay:WX:" + res.order_number;
 				} else if ("银行卡" === res.title) {
-					window.location.href = "/pay/union?number=" + res.order_number
-							+ "&type=0";
+					window.location.href = "/pay/union?number="
+							+ res.order_number + "&type=0";
 				}
 			}
 		}
@@ -115,31 +116,29 @@ function pay() {
 }
 
 function confirmPay() {
-    
-    // 第一次点击的时候锁定按钮
-    $("#buyNow").removeAttr("href");
-    
+
+	// 第一次点击的时候锁定按钮
+	$("#buyNow").removeAttr("href");
+
 	wait();
 	$.ajax({
 		url : "/order/coupon/confirm",
 		timeout : 20000,
 		type : "post",
 		error : function() {
-		    	$("#buyNow").attr("href", "javascript:confirmPay();");
+			$("#buyNow").attr("href", "javascript:confirmPay();");
 			close(1);
 			warning("亲，您的网速不给力啊");
 		},
 		success : function(res) {
-		    	$("#buyNow").attr("href", "javascript:confirmPay();");
+			$("#buyNow").attr("href", "javascript:confirmPay();");
 			if (-1 === res.status) {
 				close(-1);
 				warning("该订单不能选择'货到付款'或'到店支付'");
-			}
-			else if (-2 === res.status) {
+			} else if (-2 === res.status) {
 				close(-1);
 				warning(res.message);
-			}
-			else if (-3 === res.status) {
+			} else if (-3 === res.status) {
 				close(-1);
 				warning("非华润产品请选择物流配送！");
 			}
@@ -158,30 +157,30 @@ function confirmPay() {
  */
 function sellerOtherIncome(old_income) {
 	var income = $("#otherIncome").val();
-	var totalPay=$("#order_total_price").html();
+	var totalPay = $("#order_total_price").html();
 	// 如果没有填写其他收入，则修改为0
 	if ("" == income) {
-		income=0;
+		income = 0;
 	}
 	// 如果跟上一次一样，也不需要存储
 	if (old_income == income) {
 		$("#otherIncome").val("");
 		return;
 	}
-	//判断是否是数字
-	if(isNaN(income)){
+	// 判断是否是数字
+	if (isNaN(income)) {
 		warning("亲，请输入数字");
 		$("#otherIncome").val("");
 		return;
 	}
-	//判断是否大于0
-	if(income<0){
+	// 判断是否大于0
+	if (income < 0) {
 		warning("亲，请输入大于等于0的数字");
 		$("#otherIncome").val("");
 		return;
 	}
-	//判断是否大于支付金额
-	if(income>totalPay){
+	// 判断是否大于支付金额
+	if (income > totalPay) {
 		warning("亲，不能大于支付价格");
 		$("#otherIncome").val("");
 		return;
@@ -208,7 +207,8 @@ function sellerOtherIncome(old_income) {
 			close(100);
 			if (0 == res.status) {
 				warning("已保存");
-				$("#otherIncome").attr("onblur", "sellerOtherIncome('" + res.otherIncome + "');")
+				$("#otherIncome").attr("onblur",
+						"sellerOtherIncome('" + res.otherIncome + "');")
 			} else {
 				warning("亲，请输入正确的数字");
 			}

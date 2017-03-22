@@ -54,7 +54,6 @@ import com.ynyes.lyz.service.TdUpstairsSettingService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
 import com.ynyes.lyz.util.MyWechatPay;
-import com.ynyes.lyz.util.WechatUtil;
 
 @Controller
 @RequestMapping(value = "/order")
@@ -372,6 +371,13 @@ public class TdOrderController {
 		map.addAttribute("no_product_coupon_list", no_product_coupon_list);
 		map.addAttribute("product_coupon_list", product_coupon_list);
 		map.addAttribute("flag", "Y");
+
+		// {
+		// Long diySiteId = order_temp.getDiySiteId();
+		// TdDiySite diySite = this.tdDiySiteService.findOne(diySiteId);
+		//
+		// }
+
 		return "/client/order_pay";
 
 	}
@@ -2114,6 +2120,22 @@ public class TdOrderController {
 
 		// 获取指定的订单
 		TdOrder order = (TdOrder) req.getSession().getAttribute("order_temp");
+
+		// 2017-03-22修改：郑州加盟商门店使用门店自提的时候不允许点击去支付
+		Long diySiteId = order.getDiySiteId();
+		TdDiySite diySite = tdDiySiteService.findOne(diySiteId);
+		Long regionIdTemp = diySite.getRegionId();
+		String custTypeNameTemp = diySite.getCustTypeName();
+		String deliveryTitleTemp = order.getDeliverTypeTitle();
+
+		// 死代码
+		if (2033 == regionIdTemp && "经销商".equalsIgnoreCase(custTypeNameTemp)
+				&& "门店自提".equalsIgnoreCase(deliveryTitleTemp)) {
+			res.put("status", -2);
+			res.put("message", "郑州加盟商门店不能使用到店自提");
+			return res;
+		}
+
 		if (null != order) {
 			if ((order.getIsCoupon() != null && !order.getIsCoupon()) || order.getIsCoupon() == null
 					|| !"门店自提".equals(order.getDeliverTypeTitle())) {
@@ -2194,7 +2216,8 @@ public class TdOrderController {
 						// tdDiySiteInventoryService
 						// .findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(sku,
 						// regionId);
-						// if (diySiteInventory == null || inventoryMap.get(sku)
+						// if (diySiteInventory == null ||
+						// inventoryMap.get(sku)
 						// == null
 						// || diySiteInventory.getInventory() <
 						// inventoryMap.get(sku)) {
