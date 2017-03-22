@@ -32,14 +32,14 @@ public interface TdDeliveryCheckReportRepo extends
 			+" 	o.shipping_address shipping_address, "
 			+" 	o.order_time order_time, "
 			+" 	o.send_time send_time, "
-			+" 	sum(o.total_price - o.other_pay) agency_fund, "
+			+" 	sum(IFNULL(o.total_price,0) - IFNULL(o.other_pay,0)) agency_fund, "
 			+"	o.remark remark, "
 			+" CASE "
 			+" WHEN o.status_id=12 AND rn.remark_info ='拒签退货' "
 			+" THEN rn.order_time "
-			+" WHEN sum(o.total_price) - sum(o.other_pay) = 0 THEN "
+			+" WHEN sum(IFNULL(o.total_price,0)) - sum(IFNULL(o.other_pay,0)) = 0 THEN "
 			+" o.delivery_time "
-			+" WHEN sum(o.total_price) - sum(o.other_pay) > 0 THEN "
+			+" WHEN sum(IFNULL(o.total_price,0)) - sum(IFNULL(o.other_pay,0)) > 0 THEN "
 			+" owd.create_time "
 			+" ELSE NULL "
 			+" END operation_time "
@@ -59,16 +59,15 @@ public interface TdDeliveryCheckReportRepo extends
 			+" LEFT JOIN td_diy_site diy ON o.diy_site_code = diy.store_code "	
 			+" LEFT JOIN td_return_note rn ON o.order_number = rn.order_number	"
 			+" WHERE "
-			+" 	diy.city LIKE ?3 "
+			+" 	( diy.city LIKE ?3 or o.city LIKE ?3 ) "
 			+" AND o.deliver_type_title = '送货上门' "
 			+" AND o.status_id >= 4 "
 			+" AND o.status_id NOT IN (7, 8) "
 			+" AND o.send_time >= ?1 "
 			+" AND o.send_time <= ?2 "
-			+" AND o.diy_site_code LIKE ?4 "
-			+" AND o.diy_site_id IN ?5 "
+			/*+" AND o.diy_site_code LIKE ?4 "
+			+" AND o.diy_site_id IN ?5 "*/
 			+" GROUP BY o.main_order_number"
 			+" ORDER BY o.send_time ",nativeQuery=true)
-	List<DeliveryCheckReport> queryDownList(Date begin, Date end, String cityName, String diySiteCode,
-			List<String> roleDiyIds);
+	List<DeliveryCheckReport> queryDownList(Date begin, Date end, String cityName);
 }

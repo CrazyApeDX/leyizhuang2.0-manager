@@ -46,7 +46,7 @@ public class TdDeliveryCheckReportService {
 			if (roleDiyIds == null || roleDiyIds.size() == 0) {
 				roleDiyIds.add("0");
 			}
-			return repository.queryDownList(begin, end, cityName, diySiteCode, roleDiyIds);
+			return repository.queryDownList(begin, end, cityName);
 
 		
 	}
