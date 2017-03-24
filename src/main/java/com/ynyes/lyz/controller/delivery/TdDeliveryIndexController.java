@@ -918,8 +918,12 @@ public class TdDeliveryIndexController {
 			rec.setMoney(money);
 			rec.setPos(pos);
 			rec.setUsername(order.getUsername());
-			if (owned != null && owned == 0) {
+			if (owned != null && owned.equals(0d)) {
 				rec.setIsOwn(false);
+				if (order.getIsSellerOrder()) {
+					TdUser seller = tdUserService.findOne(order.getSellerId());
+					tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
+				}
 
 			} else {
 				rec.setIsOwn(true);
@@ -928,11 +932,6 @@ public class TdDeliveryIndexController {
 			rec.setIsPayed(false);
 			rec.setSortId(99L);
 			rec = tdOwnMoneyRecordService.save(rec);
-
-			if (order.getIsSellerOrder()) {
-				TdUser seller = tdUserService.findOne(order.getSellerId());
-				tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
-			}
 
 			// 全额收款
 			if (rec.getIsOwn() == false) {
