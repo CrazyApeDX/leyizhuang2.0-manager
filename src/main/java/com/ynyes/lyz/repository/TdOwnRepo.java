@@ -48,6 +48,7 @@ public interface TdOwnRepo extends
 			+"	o.user_id user_id, "
 			+" 	o.username username, "
 			+" 	o.real_user_real_name real_user_real_name, "
+			+"  o.deliver_type_title delivery_type_title, "
 			+" 	IFNULL(sum(o.total_price), 0) - IFNULL(sum(o.other_pay), 0) - IFNULL(omr.money, 0) - IFNULL(omr.pos, 0) - IFNULL(omr.back_money, 0) - IFNULL(omr.back_pos, 0) - IFNULL(omr.back_other, 0) owned, "
 			+" 	wh.wh_name wh_name, "
 			+" 	du.real_name du_real_name, "

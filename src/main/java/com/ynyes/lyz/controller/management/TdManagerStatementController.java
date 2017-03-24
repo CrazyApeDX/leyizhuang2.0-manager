@@ -1738,8 +1738,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
 					row.createCell(12).setCellValue(objToString(own.getDuUsername()));
 					
 					//收货地址
-					row.createCell(13).setCellValue(objToString(own.getShippingAddress()));
-					
+					if(own.getDeliveryTypeTitle().equals("送货上门")){
+						row.createCell(13).setCellValue(objToString(own.getShippingAddress()));
+					}
 					//订单备注
 					
 					row.createCell(14).setCellValue(objToString(own.getRemark()));

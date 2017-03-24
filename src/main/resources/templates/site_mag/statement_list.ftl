@@ -141,8 +141,8 @@ function downloaddate(type)
 						</div>
 					</div>
 					</#if>
-
-					<#if diySiteList?? && diySiteList?size gt 0 >
+							
+					<#if diySiteList?? && diySiteList?size gt 0 && statusId != 11 >
 					<div class="odiv" style="float: left; width: 310px;">
 						<span class="span1">门店名称：</span>
 						<div class="rule-single-select">

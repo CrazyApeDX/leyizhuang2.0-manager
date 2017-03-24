@@ -79,6 +79,10 @@ public class TdOwn {
 	// 订单备注
 	@Column
 	private String remark;
+	
+	private String deliveryTypeTitle;
+	
+	
 
 	public String getId() {
 		return id;
@@ -207,6 +211,16 @@ public class TdOwn {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+	
+	
+
+	public String getDeliveryTypeTitle() {
+		return deliveryTypeTitle;
+	}
+
+	public void setDeliveryTypeTitle(String deliveryTypeTitle) {
+		this.deliveryTypeTitle = deliveryTypeTitle;
 	}
 
 	@Override
