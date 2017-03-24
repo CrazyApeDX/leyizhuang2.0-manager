@@ -1205,6 +1205,19 @@ public class TdManagerOrderController {
 		Long[] ids = { id };
 		if (type == 1) {
 			btnEnale(ids);
+			// 2017-03-24修改：只有当审核同意的时候才归还信用额度
+			TdOwnMoneyRecord ownMoneyRecord = tdOwnMoneyRecordService.findOne(id);
+			String orderNumber = ownMoneyRecord.getOrderNumber();
+			List<TdOrder> orderList = tdOrderService.findByMainOrderNumberIgnoreCase(orderNumber);
+			if (null != orderList && orderList.size() > 0) {
+				TdOrder order = orderList.get(0);
+				if (order.getIsSellerOrder()) {
+					TdUser seller = tdUserService.findOne(order.getSellerId());
+					tdUserService.repayCredit(CreditChangeType.REPAY, seller, ownMoneyRecord.getPayed(),
+							order.getMainOrderNumber());
+				}
+			}
+
 		} else {
 			btnNotEnale(ids);
 		}
