@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -70,6 +71,8 @@ public class TdEbsResendController {
 
 	@Autowired
 	private TdReturnTimeInfService tdReturnTimeInfService;
+	
+	Logger log = Logger.getLogger(TdEbsResendController.class);
 
 	/**
 	 * 收款重传
@@ -258,6 +261,8 @@ public class TdEbsResendController {
 	 */
 	@RequestMapping(value = "/orderAll")
 	public void resendOrderAll(String beginDate) throws ParseException {
+		int count = 1;
+		log.info("开始重传"+beginDate+"之后所有传输失败的订单头(td_order_inf):");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String beginDateFormat = null;
 		if(null == beginDate || "".equals(beginDate.toString().trim())){
@@ -266,9 +271,11 @@ public class TdEbsResendController {
 		beginDateFormat = beginDate;
 		Date beginDateFinal = format.parse(beginDateFormat);
 		List<TdOrderInf> orderInfoList = tdOrderInfService.findBySendFlagOrSendFlagIsNullAndInitDateGreaterThan(1,beginDateFinal);
+		log.info("共有 "+orderInfoList.size()+" 条记录");
 		for (TdOrderInf orderInf : orderInfoList) {
+			log.info("开始处理第 "+count+" 条记录");
 			if (null == orderInf) {
-				return;
+				continue;
 			}
 			Boolean isOrderInfSucceed = false;
 			String orderInfXML = tdInterfaceService.XmlWithObject(orderInf, INFTYPE.ORDERINF);
@@ -315,7 +322,10 @@ public class TdEbsResendController {
 				}
 				tdOrderCouponInfService.save(couponInfs);
 			}
+			count++;
 		}
+		log.info("处理完毕，共计处理 "+count+" 条记录");
+		
 		
 	}
 
@@ -503,6 +513,7 @@ public class TdEbsResendController {
 	@RequestMapping(value = "/returnOrderAll")
 	@ResponseBody
 	public String resendReturnOrderAll(String initDateString) throws ParseException {
+		
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date initDate= null;
 		if(null ==initDateString){
