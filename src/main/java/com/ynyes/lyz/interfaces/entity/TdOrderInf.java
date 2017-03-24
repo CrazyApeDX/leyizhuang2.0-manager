@@ -212,7 +212,8 @@ public class TdOrderInf extends TdInfBaseEntity {
 	}
 
 	public void setProductType(String productType) {
-		this.productType = productType.replace("CD_", "").replace("ZZ_", "").replace("CQ_", "").replace("FIT", "");
+//		this.productType = productType.replace("CD_", "").replace("ZZ_", "").replace("CQ_", "").replace("FIT", "");
+		this.productType = productType;
 	}
 
 	public Integer getOrderTypeId() {
