@@ -46,7 +46,7 @@
                                     		<#case "REPAY">订单还款<#break>
                                     	</#switch>
                                     </div>
-                                    <div class="c999">变更前：<#if item.beforeChange??>${item.beforeChange?string("0.00")}<#else>0.00</#if></div>
+                                    <div class="c999">变更前：<#if item.brforeChange??>${item.brforeChange?string("0.00")}<#else>0.00</#if></div>
                                     <div class="c999">变更后：<#if item.afterChange??>${item.afterChange?string("0.00")}<#else>0.00</#if></div>
                                 </div>
                                 <div class="div2">

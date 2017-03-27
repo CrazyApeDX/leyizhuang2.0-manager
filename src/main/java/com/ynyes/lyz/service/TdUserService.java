@@ -440,12 +440,12 @@ public class TdUserService {
 	public void repayCredit(CreditChangeType type, TdUser seller, TdOrder order) {
 		seller.setCredit(seller.getCredit() + order.getTotalPrice());
 		this.save(seller);
-		tdUserCreditService.createLogByCondition(CreditChangeType.CONSUME, seller, order);
+		tdUserCreditService.createLogByCondition(type, seller, order);
 	}
 
 	public void repayCredit(CreditChangeType type, TdUser seller, Double amount, String orderNumber) {
 		seller.setCredit(seller.getCredit() + amount);
 		this.save(seller);
-		tdUserCreditService.createLogByCondition(CreditChangeType.CONSUME, seller, orderNumber, amount);
+		tdUserCreditService.createLogByCondition(type, seller, orderNumber, amount);
 	}
 }
