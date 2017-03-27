@@ -978,6 +978,8 @@ public class TdInterfaceService {
 		returnOrderInf.setPrepayAmt(returnBalance);
 		returnOrderInf.setAuditDate(new Date());
 		if (type == INFConstants.INF_RETURN_ORDER_CANCEL_INT) {
+			
+			returnOrderInf.setPrepayAmt(tdOrderInf.getPayAmt());
 			returnOrderInf.setStatus("订单取消");
 		} else if (type == INFConstants.INF_RETURN_ORDER_SUB_INT) {
 			returnOrderInf.setStatus("销售退货");
