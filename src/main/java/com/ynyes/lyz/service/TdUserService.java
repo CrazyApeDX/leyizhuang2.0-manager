@@ -432,20 +432,26 @@ public class TdUserService {
 	}
 
 	public void useCredit(CreditChangeType type, TdUser seller, TdOrder order) {
-		seller.setCredit(seller.getCredit() - order.getTotalPrice());
-		this.save(seller);
-		tdUserCreditService.createLogByCondition(type, seller, order);
+		if (order.getTotalPrice() > 0) {
+			seller.setCredit(seller.getCredit() - order.getTotalPrice());
+			this.save(seller);
+			tdUserCreditService.createLogByCondition(type, seller, order);
+		}
 	}
 
 	public void repayCredit(CreditChangeType type, TdUser seller, TdOrder order) {
-		seller.setCredit(seller.getCredit() + order.getTotalPrice());
-		this.save(seller);
-		tdUserCreditService.createLogByCondition(type, seller, order);
+		if (order.getTotalPrice() > 0) {
+			seller.setCredit(seller.getCredit() + order.getTotalPrice());
+			this.save(seller);
+			tdUserCreditService.createLogByCondition(type, seller, order);
+		}
 	}
 
 	public void repayCredit(CreditChangeType type, TdUser seller, Double amount, String orderNumber) {
-		seller.setCredit(seller.getCredit() + amount);
-		this.save(seller);
-		tdUserCreditService.createLogByCondition(type, seller, orderNumber, amount);
+		if (amount > 0) {
+			seller.setCredit(seller.getCredit() + amount);
+			this.save(seller);
+			tdUserCreditService.createLogByCondition(type, seller, orderNumber, amount);
+		}
 	}
 }

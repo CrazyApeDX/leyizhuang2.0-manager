@@ -423,7 +423,7 @@ public class TdOrder {
 	// 装饰公司使用的信用额度
 	@Column(scale = 2, nullable = false)
 	private Double credit = 0d;
-
+	
 	public Double getRefund() {
 		return refund;
 	}
