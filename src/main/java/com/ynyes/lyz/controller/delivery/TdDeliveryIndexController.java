@@ -920,10 +920,8 @@ public class TdDeliveryIndexController {
 			rec.setUsername(order.getUsername());
 			if (owned != null && owned.equals(0d)) {
 				rec.setIsOwn(false);
-				if (order.getIsSellerOrder()) {
-					TdUser seller = tdUserService.findOne(order.getSellerId());
-					tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
-				}
+				TdUser seller = tdUserService.findOne(order.getSellerId());
+				tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
 
 			} else {
 				rec.setIsOwn(true);
