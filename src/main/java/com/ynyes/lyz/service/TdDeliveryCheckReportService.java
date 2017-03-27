@@ -40,13 +40,11 @@ public class TdDeliveryCheckReportService {
 			if (StringUtils.isBlank(cityName)) {
 				cityName = "%";
 			}
-			if (StringUtils.isBlank(diySiteCode)) {
-				diySiteCode = "%";
-			}
+			diySiteCode = "%";
 			if (roleDiyIds == null || roleDiyIds.size() == 0) {
 				roleDiyIds.add("0");
 			}
-			return repository.queryDownList(begin, end, cityName);
+			return repository.queryDownList(begin, end, cityName,diySiteCode,roleDiyIds);
 
 		
 	}
