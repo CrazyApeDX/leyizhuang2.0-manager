@@ -24,16 +24,20 @@ public interface TdSubOwnRepo extends
 			+ "	o.order_number order_number, "
 			+ "	IFNULL(o.total_price,0) total_price , "
 			+ "	IFNULL(o.other_pay,0) other_pay, "
-			+ "	IFNULL(owd.money,0) money, "
-			+ "	IFNULL(owd.pos,0) pos, "
+			+ " case when (owd.is_enable is true and owd.ispassed is true) "
+			+ " then IFNULL(owd.money,0) "
+			+ " else 0 "
+			+ " end as money, "
+			+ " case when (owd.is_enable is true and owd.ispassed is true) "
+			+ " then IFNULL(owd.pos,0) "
+			+ " else 0 "
+			+ " end as pos, "
 			+ "	IFNULL(owd.back_money,0) back_money, "
 			+ "	IFNULL(owd.back_pos,0) back_pos, "
 			+ "	IFNULL(owd.back_other,0) back_other "
 			+ " FROM "
 			+ "	td_order o "
 			+ " LEFT JOIN td_own_money_record owd ON o.main_order_number = owd.order_number "
-			+ " where o.main_order_number = ?1"
-			+ " and owd.is_enable is true "
-			+ " and owd.ispassed is true ; ",nativeQuery=true)
+			+ " where o.main_order_number = ?1 ; ",nativeQuery=true)
 	List<TdSubOwn> queryDownListDetail(String orderNumber);
 }

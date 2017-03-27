@@ -89,6 +89,8 @@ public interface TdOwnRepo extends
 			+ " FROM "
 			+ "	td_order o "
 			+ " LEFT JOIN td_own_money_record owd ON o.main_order_number = owd.order_number "
-			+ " where o.main_order_number = ?1 ; ",nativeQuery=true)
+			+ " where o.main_order_number = ?1"
+			+ " and owd.is_enable is true "
+			+ " and owd.ispassed is true ; ",nativeQuery=true)
 	List<TdSubOwn> queryDownListDetail(String orderNumber);
 }

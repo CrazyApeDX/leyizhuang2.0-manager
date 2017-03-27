@@ -218,7 +218,7 @@ public class TdRegistController {
 			return res;
 		}
 		TdSmsAccount account = tdSmsAccountService.findOne(region.getSmsAccountId());
-		String url = "http://www.mob800.com/interface/Send.aspx?enCode=" + account.getEncode() + "&enPass="
+		String url = "http://115.28.146.248:6070/interface/Send.aspx?enCode=" + account.getEncode() + "&enPass="
 				+ account.getEnpass() + "&userName=" + account.getUserName() + "&mob=" + phone + "&msg=" + content;
 		StringBuffer return_code = null;
 		try {
