@@ -138,6 +138,7 @@ public class TdPromotionController {
 								cartGoods.setQuantity(quantity);
 								cartGoods.setTotalPrice(cartGoods.getPrice() * cartGoods.getQuantity());
 								cartGoods.setRealTotalPrice(cartGoods.getRealPrice() * cartGoods.getQuantity());
+								cartGoods.setIsWallAccessory(goods.getIsWallAccessory());
 								tdCartGoodsService.save(cartGoods);
 							}
 						}
