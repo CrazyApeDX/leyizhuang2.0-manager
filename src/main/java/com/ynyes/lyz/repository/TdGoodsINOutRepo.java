@@ -318,9 +318,6 @@ public interface TdGoodsINOutRepo extends
 			+"	AND o.diy_site_id IN ?5"
 			+"	ORDER BY"
 			+" sales_time DESC;",nativeQuery=true
-
-
-
 	)
 	List<TdGoodsInOut> queryDownListTake(Date begin, Date end, String cityName,
 			String diySiteCode, List<String> roleDiyIds);
