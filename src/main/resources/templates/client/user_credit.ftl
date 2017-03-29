@@ -43,6 +43,7 @@
                                     	<#switch item.type>
                                     		<#case "CONSUME">订单消费<#break>
                                     		<#case "CANCEL">订单取消<#break>
+                                    		<#case "REJECT">订单拒签<#break>
                                     		<#case "REPAY">订单还款<#break>
                                     	</#switch>
                                     </div>

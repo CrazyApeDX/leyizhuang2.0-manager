@@ -643,6 +643,9 @@ public class TdDeliveryIndexController {
 								rec.setIsPayed(false);
 								rec.setSortId(99L);
 								rec = tdOwnMoneyRecordService.save(rec);
+								
+								TdUser seller = tdUserService.findOne(order.getSellerId());
+								tdUserService.repayCredit(CreditChangeType.REJECT, seller, rec.getOwned(), rec.getOrderNumber());
 							}
 						} else {
 							// do nothing!
@@ -857,6 +860,7 @@ public class TdDeliveryIndexController {
 							subOrder.setStatusId(12L);
 							subOrder.setIsRefund(true);
 							subOrder = tdOrderService.save(subOrder);
+							
 						}
 
 					}

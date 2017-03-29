@@ -69,6 +69,10 @@ public class TdUserCreditLogService {
 			log.setBrforeChange(seller.getCredit() - order.getTotalPrice());
 			log.setChangeValue(order.getTotalPrice());
 			break;
+		case REJECT:
+			log.setBrforeChange(seller.getCredit() - order.getTotalPrice());
+			log.setChangeValue(order.getTotalPrice());
+			break;
 		case REPAY:
 			log.setBrforeChange(seller.getCredit() - order.getTotalPrice());
 			log.setChangeValue(order.getTotalPrice());
@@ -95,6 +99,10 @@ public class TdUserCreditLogService {
 			log.setChangeValue(-1 * amount);
 			break;
 		case CANCEL:
+			log.setBrforeChange(seller.getCredit() - amount);
+			log.setChangeValue(amount);
+			break;
+		case REJECT:
 			log.setBrforeChange(seller.getCredit() - amount);
 			log.setChangeValue(amount);
 			break;
