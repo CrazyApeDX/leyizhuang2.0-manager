@@ -43,6 +43,24 @@ public class TdGenerationController {
 		return result;
 	} 
 	
+	@RequestMapping(value = "/order", produces = "application/json;charset=utf8")
+	@ResponseBody
+	public String generationOrderAll(String beginDate) throws ParseException {
+		
+		if(null ==beginDate ){
+			return "起始时间有误！";
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		List<TdOrder> orders = tdOrderService.findMissedOrders(sdf.parse(beginDate));
+		for (TdOrder tdOrder : orders) {
+			String result = generationService.generateOrderData(tdOrder);
+			System.out.println(result);
+		}
+		String sb = "共处理"+orders.size()+"条数据!";
+		return sb ;
+	} 
+	
+	
 	/**
 	 * 生成EBS退货单信息
 	 * @param beginDate 起始时间，表示检索数据范围从哪一天开始
@@ -75,7 +93,7 @@ public class TdGenerationController {
 		List<TdReturnNote> refuseNotes = tdReturnNoteService.findRefusedReturnOrder(sdf.parse(beginDate));
 		System.out.println("开始处理拒签退货未生成的退货单，共"+refuseNotes.size()+"条数据!");
 		for (TdReturnNote tdReturnNote : refuseNotes) {
-			System.out.println("拒签退货共"+notes.size()+"条数据,正在处理第"+(++monitor)+"条数据！");
+			System.out.println("拒签退货共"+refuseNotes.size()+"条数据,正在处理第"+(++monitor)+"条数据！");
 			TdOrder order = tdOrderService.findByOrderNumber(tdReturnNote.getOrderNumber());
 			tdInterfaceService.initReturnOrder(tdReturnNote, INFConstants.INF_RETURN_ORDER_SUB_INT);
 			tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
@@ -89,7 +107,7 @@ public class TdGenerationController {
 		List<TdReturnNote> returnNotes = tdReturnNoteService.findNormalReturnOrder(sdf.parse(beginDate));
 		System.out.println("开始处理正常退货未生成的退货单,共"+returnNotes.size()+"条数据!");
 		for (TdReturnNote tdReturnNote : returnNotes) {
-			System.out.println("正常退货共"+notes.size()+"条数据,正在处理第"+(++monitor)+"条数据！");
+			System.out.println("正常退货共"+returnNotes.size()+"条数据,正在处理第"+(++monitor)+"条数据！");
 			TdOrder order = tdOrderService.findByOrderNumber(tdReturnNote.getOrderNumber());
 			tdInterfaceService.initReturnOrder(tdReturnNote, INFConstants.INF_RETURN_ORDER_SUB_INT);
 			tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_SUB_INT);

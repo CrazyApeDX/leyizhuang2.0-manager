@@ -346,5 +346,29 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			+" 	o.main_order_number = ?1 "
 			+" AND o.order_number LIKE '%YF%'; ",nativeQuery=true)
 	TdOrder findFixedFlagByMainOrderNumber(String mainOrderNumber);
+	
+	@Query(value=" SELECT "
+			+" 	o.* "
+			+" FROM "
+			+" 	td_order o "
+			+" WHERE "
+			+" 	( "
+			+" 		o.is_coupon IS FALSE "
+			+" 		OR o.is_coupon IS NULL "
+			+" 	) "
+			+" AND o.order_number NOT IN ( "
+			+" 	SELECT "
+			+" 		order_number "
+			+" 	FROM "
+			+" 		td_order_inf "
+			+" 	WHERE "
+			+" 		init_date >= ?1 "
+			+" ) "
+			+" AND o.order_number NOT LIKE '%XN%' "
+			+" AND o.`status_id` NOT IN (1, 2) "
+			+" AND o.`order_time`>= ?1 "
+			+" ORDER BY "
+			+" 	o.order_time DESC; ",nativeQuery=true)
+	List<TdOrder> findMissedOrders(Date beginDate);
 
 }

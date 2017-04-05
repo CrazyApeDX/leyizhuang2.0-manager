@@ -955,4 +955,8 @@ public class TdOrderService {
 		}
 		return repository.findFixedFlagByMainOrderNumber(mainOrderNumber);
 	}
+
+	public List<TdOrder> findMissedOrders(Date beginDate) {
+		return repository.findMissedOrders(beginDate);
+	}
 }
