@@ -363,12 +363,14 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			+" 		td_order_inf "
 			+" 	WHERE "
 			+" 		init_date >= ?1 "
+			+"	AND init_date < ?2"
 			+" ) "
 			+" AND o.order_number NOT LIKE '%XN%' "
 			+" AND o.`status_id` NOT IN (1, 2) "
 			+" AND o.`order_time`>= ?1 "
+			+" AND o.`order_time` < ?2	"
 			+" ORDER BY "
 			+" 	o.order_time DESC; ",nativeQuery=true)
-	List<TdOrder> findMissedOrders(Date beginDate);
+	List<TdOrder> findMissedOrders(Date beginDate,Date endDate);
 
 }

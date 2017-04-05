@@ -45,13 +45,13 @@ public class TdGenerationController {
 	
 	@RequestMapping(value = "/order", produces = "application/json;charset=utf8")
 	@ResponseBody
-	public String generationOrderAll(String beginDate) throws ParseException {
+	public String generationOrderAll(String beginDate,String endDate) throws ParseException {
 		
 		if(null ==beginDate ){
 			return "起始时间有误！";
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<TdOrder> orders = tdOrderService.findMissedOrders(sdf.parse(beginDate));
+		List<TdOrder> orders = tdOrderService.findMissedOrders(sdf.parse(beginDate),sdf.parse(endDate));
 		for (TdOrder tdOrder : orders) {
 			String result = generationService.generateOrderData(tdOrder);
 			System.out.println(result);
