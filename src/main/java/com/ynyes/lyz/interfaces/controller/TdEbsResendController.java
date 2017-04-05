@@ -171,7 +171,7 @@ public class TdEbsResendController {
 	 */
 	@RequestMapping(value = "/cashRefundAll")
 	public String resendCashRefundAll() {
-		List<TdCashRefundInf> cashRefundInfs = tdCashRefundInfService.findBySendFlagOrSendFlagIsNull(0);
+		List<TdCashRefundInf> cashRefundInfs = tdCashRefundInfService.findBySendFlagOrSendFlagIsNull(1);
 		if (cashRefundInfs != null && cashRefundInfs.size() > 0) {
 			for (int i = 0; i < cashRefundInfs.size(); i++) {
 				TdCashRefundInf cashRefundInf = cashRefundInfs.get(i);
