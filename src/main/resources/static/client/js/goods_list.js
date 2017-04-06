@@ -407,3 +407,15 @@ function keyup(obj){
 function afterpaste(obj){
 	if(obj.value.length==1){obj.value=obj.value.replace(/[^1-9]/g,'')}else{obj.value=obj.value.replace(/\D/g,'')};
 }
+
+//商品数量输入框获取焦点时清空
+function clearQuantity(obj){
+	obj.value="";
+}
+
+//商品数量如果为空，则设为0
+function setQuantity(obj){
+	if(obj.value.length==0){
+		obj.value=obj.min;
+	}
+}
