@@ -11,6 +11,7 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 
 import com.ynyes.lyz.entity.TdGoods;
+import com.ynyes.lyz.entity.goods.ClientGoodsResult;
 
 /**
  * TdGoods 实体数据库操作接口
@@ -549,4 +550,13 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			@Param("diySiteId") Long diySiteId);
 
 	List<TdGoods> findByCodeContaining(String keywords);
+	
+	@Query("select goods.id as goodsId, goods.title as goodsTitle, goods.code as goodsSku, "
+			+ "goods.brandTitle as brandTitle, goods.brandId as brandId, "
+			+ "goods.isColorful as isColorful, inventory.inventory as inventory "
+			+ "from TdGoods goods, TdDiySiteInventory inventory where "
+			+ "goods.categoryId = :categoryId and goods.isOnSale = true and "
+			+ "goods.id = inventory.goodsId and inventory.regionId = :sobId and "
+			+ "inventory.diyCode is null and inventory.inventory > 0")
+	List<ClientGoodsResult> findGoodsByInventoryByCategoryId(@Param("categoryId") Long categoryId, @Param("sobId") Long sobId);
 }

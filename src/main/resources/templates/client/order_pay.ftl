@@ -125,6 +125,80 @@
 	                   	<a class="target" href="/order/delivery">${order.sellerRealName!'暂无'}</a>
 	                </section>
                 </#if>
+                
+                <#if order.isSellerOrder??&&order.isSellerOrder>
+                	<section class="invoice-info">
+	                    <label>下单用户</label>
+	                   	<a class="target" id="selectedUser" href="javascript:seller.getInfo();">${order.realUserRealName!""}</a>
+	                   	<script type="text/javascript">
+	                   		var seller = {};
+	                   		// 获取用户信息的方法
+							seller.getInfo = function() {
+								wait();
+								$.ajax({
+									url : "/order/get/user/infomation",
+									timeout : 20000,
+									type : "post",
+									error : function() {
+										close(1);
+										warning("亲，您的网速不给力啊");
+									},
+									success : function(res) {
+										$("#changeInfo").html(res);
+										win_yes();
+										close(1);
+									}
+								});
+							}
+							// 根据关键词查找用户的方法
+							seller.searchInfo = function() {
+								this.keywords = document.getElementById("keywords").value;
+								wait();
+								$.ajax({
+									url : "/order/change/user/info",
+									timeout : 20000,
+									type : "post",
+									data : {
+										keywords : this.keywords
+									},
+									error : function() {
+										close(1);
+										warning("亲，您的网速不给力啊");
+									},
+									success : function(res) {
+										close(1);
+										$("#changeInfo").html(res);
+									}
+								});
+							}
+							seller.selectInfo = function(id) {
+								$.ajax({
+									url: "/order/selected/user",
+									timeout : 20000,
+									type : "post",
+									data : {
+										userId : id,
+										orderId: ${order.id?c}
+									},
+									error : function() {
+										close(1);
+										warning("亲，您的网速不给力啊");
+									},
+									success : function(res) {
+										close(1);
+										if (0 === res.status) {
+											$("#selectedUser").html(res.content);
+											win_no();
+										} else {
+											warning("亲，您的网速不给力啊");
+										}
+									}
+								});
+							}
+	                   	</script>
+	                </section>
+                </#if>
+                
                 <!-- 留言 -->
                 <section class="leave-message" <#--暂时隐藏 <#if user??&&user.userType==1>style="height: 80px;" </#if> --> >
                     <input id="remark" onblur="userRemark('${order.remark!''}');" type="text" maxlength="200" value="${order.remark!''}" placeholder="给商家留言">

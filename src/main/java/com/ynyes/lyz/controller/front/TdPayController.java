@@ -253,7 +253,7 @@ public class TdPayController {
 		return "/client/pay_success";
 	}
 
-	@RequestMapping(value = "/pay/alipay/return/async")
+	@RequestMapping(value = "/alipay/return/async")
 	@ResponseBody
 	public String payAlipayReturnAsync(HttpServletRequest req) {
 

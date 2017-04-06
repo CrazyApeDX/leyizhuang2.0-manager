@@ -94,11 +94,10 @@ public class TdPriceListService {
 
 	public Page<TdPriceList> searchAll(String keywords, int page, int size) {
 		PageRequest pageRequest = new PageRequest(page, size);
-		return  repository.findByNameContaining(keywords, pageRequest);
+		return repository.findByNameContaining(keywords, pageRequest);
 	}
 
-	public Page<TdPriceList> findAll(int page, int size)
-	{
+	public Page<TdPriceList> findAll(int page, int size) {
 		PageRequest pageRequest = new PageRequest(page, size, new Sort(Direction.ASC, "sortId"));
 		return repository.findAll(pageRequest);
 	}
@@ -108,14 +107,14 @@ public class TdPriceListService {
 	 * 
 	 * @author dengxiao
 	 */
-	public TdPriceList findByPriceTypeAndCityIdAndStartDateActiveBeforeAndEndDateActiveAfterAndActiveFlagTrue(String priceType,
-			Long cityId) {
+	public TdPriceList findByPriceTypeAndCityIdAndStartDateActiveBeforeAndEndDateActiveAfterAndActiveFlagTrue(
+			String priceType, Long cityId) {
 		if (null == priceType || null == cityId) {
 			return null;
 		}
 		List<TdPriceList> list = repository
-				.findByPriceTypeAndCityIdAndStartDateActiveBeforeAndEndDateActiveAfterAndActiveFlag(priceType,
-						cityId, new Date(), new Date(),"Y");
+				.findByPriceTypeAndCityIdAndStartDateActiveBeforeAndEndDateActiveAfterAndActiveFlag(priceType, cityId,
+						new Date(), new Date(), "Y");
 		if (null == list || list.size() == 0) {
 			return null;
 		} else {
@@ -123,24 +122,29 @@ public class TdPriceListService {
 		}
 
 	}
-	
-	public List<TdPriceList> findBySobIdAndPriceTypeAndStartDateActiveAndEndDateActive(Long sobId,String priceType,Date start,Date end)
-	{
-		if(null == sobId || null == priceType || null == start)
-		{
+
+	public List<TdPriceList> findBySobIdAndPriceTypeAndStartDateActiveAndEndDateActive(Long sobId, String priceType,
+			Date start, Date end) {
+		if (null == sobId || null == priceType || null == start) {
 			return null;
 		}
-		return repository.findByCityIdAndPriceTypeAndStartDateActiveBeforeAndEndDateActiveIsNullOrCityIdAndPriceTypeAndStartDateActiveBeforeAndEndDateActiveAfterOrCityIdAndPriceTypeAndStartDateActiveIsNull(
-																					sobId, priceType, start,
-																					sobId, priceType, start, end,
-																					sobId,priceType);
+		return repository
+				.findByCityIdAndPriceTypeAndStartDateActiveBeforeAndEndDateActiveIsNullOrCityIdAndPriceTypeAndStartDateActiveBeforeAndEndDateActiveAfterOrCityIdAndPriceTypeAndStartDateActiveIsNull(
+						sobId, priceType, start, sobId, priceType, start, end, sobId, priceType);
 	}
-	
-	public List<TdPriceList> findByCityId(Long cityId){
-		if(cityId==null){
+
+	public List<TdPriceList> findByCityId(Long cityId) {
+		if (cityId == null) {
 			return null;
 		}
 		return repository.findByCityId(cityId);
+	}
+
+	public List<TdPriceList> findByCityIdAndActiveFlag(Long sobId) {
+		if (sobId == null) {
+			return null;
+		}
+		return repository.findByCityIdAndActiveFlag(sobId, "Y");
 	}
 
 }

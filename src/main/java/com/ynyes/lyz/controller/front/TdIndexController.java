@@ -115,6 +115,9 @@ public class TdIndexController {
 	
 	@Autowired
 	private TdCashRefundInfService tdCashRefundInfService;
+	
+//	@Autowired
+//	private TdMemberAuthService tdMemberAuthService;
 
 	@RequestMapping("/sendRequisition")
 	@ResponseBody
@@ -575,4 +578,16 @@ public class TdIndexController {
 		res.put("status", 0);
 		return res;
 	}
+	
+//	@RequestMapping(value = "/rpc")
+//	@ResponseBody
+//	public RPCResult rpcTest() {
+//		try {
+//			return this.tdMemberAuthService.login("12345678910", "123456");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return new RPCResult().internalServerError("出错了");
+//		}
+//	}
+	
 }

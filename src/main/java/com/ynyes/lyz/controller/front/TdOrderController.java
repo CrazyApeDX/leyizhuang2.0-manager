@@ -2110,6 +2110,24 @@ public class TdOrderController {
 		}
 		return "/client/order_user_info";
 	}
+	
+	@RequestMapping(value = "/selected/user")
+	@ResponseBody
+	public Map<String, Object> selectedUser(HttpServletRequest request, Long orderId, Long userId) {
+		Map<String, Object> res = new HashMap<>();
+		res.put("status", -1);
+		
+		TdOrder order = tdOrderService.findOne(orderId);
+		TdUser user = tdUserService.findOne(userId);
+		order.setRealUserId(user.getId());
+		order.setRealUserRealName(user.getRealName());
+		order.setRealUserUsername(user.getUsername());
+		tdOrderService.save(order);
+		
+		res.put("content", order.getRealUserRealName());
+		res.put("status", 0);
+		return res;
+	}
 
 	// 增加判断库存
 	@RequestMapping(value = "/coupon/confirm")

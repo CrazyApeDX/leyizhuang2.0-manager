@@ -36,5 +36,7 @@ public interface TdPriceListRepo extends
 	 * 根据城市编号查询价目表头
 	 */
 	List<TdPriceList> findByCityId(Long cityId);
+	
+	List<TdPriceList> findByCityIdAndActiveFlag(Long cityId, String activeFlag);
 
 }
