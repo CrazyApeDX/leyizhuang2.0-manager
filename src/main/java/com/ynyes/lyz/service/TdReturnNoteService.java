@@ -340,4 +340,17 @@ public class TdReturnNoteService {
 		return repository.findAll(c,pageRequest);
 	}
 
+	public List<TdReturnNote> findMissedReturnOrder(Date beginDate) {
+		
+		return repository.findMissedReturnOrder(beginDate) ;
+	}
+
+	public List<TdReturnNote> findRefusedReturnOrder(Date beginDate) {
+		return repository.findRefusedReturnOrder(beginDate);
+	}
+
+	public List<TdReturnNote> findNormalReturnOrder(Date beginDate) {
+		return repository.findNormalReturnOrder(beginDate);
+	}
+
 }

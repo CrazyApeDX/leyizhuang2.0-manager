@@ -45,7 +45,7 @@ public interface TdOrderDeliveryFeeDetailRepo extends PagingAndSortingRepository
 			+" INNER JOIN td_order od ON odd.main_order_number = od.main_order_number "
 			+" INNER JOIN td_diy_site diy ON od.diy_site_id = diy.id "
 			+" WHERE "
-			+" 	od.order_number LIKE 'YF%' "
+			+" 	od.order_number LIKE '%YF%' "
 			+" AND od.deliver_type_title = '送货上门' "
 			+" AND od.status_id NOT IN (1, 2, 3, 7, 8) "
 			+" AND od.send_time >= ?1 "

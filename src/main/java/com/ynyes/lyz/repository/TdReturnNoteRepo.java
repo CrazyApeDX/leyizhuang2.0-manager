@@ -69,4 +69,64 @@ public interface TdReturnNoteRepo extends PagingAndSortingRepository<TdReturnNot
 	 */
 	List<TdReturnNote> findByReturnNumberContainingAndUsernameAndRemarkInfoNotOrOrderNumberContainingAndUsernameAndRemarkInfoNotOrderByOrderTimeDesc(String keywords1,String username1,String remark1,String keywords2,String username2,String remark2);
 	
+	@Query(value=" SELECT "
+			+" 	rn.* "
+			+" FROM "
+			+" 	td_return_note rn "
+			+" WHERE "
+			+" 	( "
+			+" 		rn.is_coupon IS FALSE "
+			+" 		OR rn.is_coupon IS NULL "
+			+" 	) "
+			+" AND rn.order_time >= ?1 "
+			+" AND rn.return_number NOT IN ( "
+			+" 	SELECT "
+			+" 		return_number "
+			+" 	FROM "
+			+" 		td_return_order_inf "
+			+" 	WHERE "
+			+" 		init_date >= ?1 "
+			+" ) AND rn.remark_info ='用户取消订单，退货'; ",nativeQuery=true)
+	List<TdReturnNote> findMissedReturnOrder(Date beginDate);
+
+	@Query(value=" SELECT "
+			+" 	rn.* "
+			+" FROM "
+			+" 	td_return_note rn "
+			+" WHERE "
+			+" 	( "
+			+" 		rn.is_coupon IS FALSE "
+			+" 		OR rn.is_coupon IS NULL "
+			+" 	) "
+			+" AND rn.order_time >= ?1 "
+			+" AND rn.return_number NOT IN ( "
+			+" 	SELECT "
+			+" 		return_number "
+			+" 	FROM "
+			+" 		td_return_order_inf "
+			+" 	WHERE "
+			+" 		init_date >= ?1 "
+			+" ) AND rn.remark_info ='拒签退货'; ",nativeQuery=true)
+	List<TdReturnNote> findRefusedReturnOrder(Date beginDate);
+	
+	@Query(value=" SELECT "
+			+" 	rn.* "
+			+" FROM "
+			+" 	td_return_note rn "
+			+" WHERE "
+			+" 	( "
+			+" 		rn.is_coupon IS FALSE "
+			+" 		OR rn.is_coupon IS NULL "
+			+" 	) "
+			+" AND rn.order_time >= ?1 "
+			+" AND rn.return_number NOT IN ( "
+			+" 	SELECT "
+			+" 		return_number "
+			+" 	FROM "
+			+" 		td_return_order_inf "
+			+" 	WHERE "
+			+" 		init_date >= ?1 "
+			+" ) AND rn.remark_info NOT in('拒签退货','用户取消订单，退货'); ",nativeQuery=true)
+	List<TdReturnNote> findNormalReturnOrder(Date beginDate);
+	
 }

@@ -20,15 +20,15 @@ public interface TdSubOwnRepo extends
 		JpaSpecificationExecutor<TdSubOwn> {
 
 
-	@Query(value=" SELECT UUID() id, "
+	@Query(value=" SELECT DISTINCT UUID() id, "
 			+ "	o.order_number order_number, "
 			+ "	IFNULL(o.total_price,0) total_price , "
 			+ "	IFNULL(o.other_pay,0) other_pay, "
-			+ " case when (owd.is_enable is true and owd.ispassed is true) "
+			+ " case when ((owd.is_own is false) or (owd.is_enable is true and owd.ispassed is true)) "
 			+ " then IFNULL(owd.money,0) "
 			+ " else 0 "
 			+ " end as money, "
-			+ " case when (owd.is_enable is true and owd.ispassed is true) "
+			+ " case when ((owd.is_own is false) or (owd.is_enable is true and owd.ispassed is true)) "
 			+ " then IFNULL(owd.pos,0) "
 			+ " else 0 "
 			+ " end as pos, "
