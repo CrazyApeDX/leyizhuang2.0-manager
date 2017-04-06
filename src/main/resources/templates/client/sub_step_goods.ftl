@@ -19,7 +19,7 @@
                     	<span>促销</span>	
                     </#if>
                     <a href="javascript:changeQuantity(${clientGoods.goodsId?c},'add');">+</a>
-                    <input min="0" class="goodsSelectedQuantity" type="number" id="quantity${clientGoods.goodsId?c}" value="0" onkeyup="keyup(this)" onafterpaste="afterpaste(this)" onchange="changeQuantity(${clientGoods.goodsId?c})">
+                    <input min="0" class="goodsSelectedQuantity" type="number" id="quantity${clientGoods.goodsId?c}" value="0" onkeyup="keyup(this)" onafterpaste="afterpaste(this)" onchange="changeQuantity(${clientGoods.goodsId?c})" onfocus="clearQuantity(this)" onblur="setQuantity(this)">
                     <a href="javascript:changeQuantity(${clientGoods.goodsId?c},'delete');">-</a>
                 </div>
                 <div class="fen_div02" value="${clientGoods_index} ">

@@ -22,7 +22,7 @@
                     </#if>
                     <div>
                         <span onclick="changeQuantity(${clientGoods.goodsId?c},'delete')">-</span>
-                        <input class="goodsSelectedQuantity" min="0" type="number" id="quantity${clientGoods.goodsId?c}" value="0" onchange="quantityChange(${clientGoods.goodsId?c})" onkeyup="keyup(this)" onafterpaste="afterpaste(this)">
+                        <input class="goodsSelectedQuantity" min="0" type="number" id="quantity${clientGoods.goodsId?c}" value="0" onchange="quantityChange(${clientGoods.goodsId?c})" onkeyup="keyup(this)" onafterpaste="afterpaste(this)" onfocus="clearQuantity(this)" onblur="setQuantity(this)">
                         <span onclick="changeQuantity(${clientGoods.goodsId?c},'add')">+</span>
                     </div>
                 </dd>
