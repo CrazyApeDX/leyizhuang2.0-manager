@@ -1,8 +1,16 @@
 package com.ynyes.lyz.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +25,10 @@ import org.springframework.ui.ModelMap;
 
 import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdGoods;
+import com.ynyes.lyz.entity.TdPriceList;
+import com.ynyes.lyz.entity.TdPriceListItem;
 import com.ynyes.lyz.entity.TdProductCategory;
+import com.ynyes.lyz.entity.goods.ClientGoods;
 import com.ynyes.lyz.repository.TdGoodsRepo;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
@@ -33,6 +44,13 @@ import com.ynyes.lyz.util.SiteMagConstant;
 @Service
 @Transactional
 public class TdGoodsService {
+
+	private EntityManagerFactory emf;
+
+	@PersistenceUnit
+	public void setEntityManagerFactory(EntityManagerFactory emf) {
+		this.emf = emf;
+	}
 
 	@Autowired
 	TdGoodsRepo repository;
@@ -60,7 +78,7 @@ public class TdGoodsService {
 
 	@Autowired
 	private TdBrandService tdBrandService;
-	
+
 	/******** 功能部分 ***********/
 
 	/**
@@ -140,6 +158,7 @@ public class TdGoodsService {
 
 		return repository.findAll(pageRequest);
 	}
+
 	// 查找所有商品
 	public List<TdGoods> findAll() {
 		return (List<TdGoods>) repository.findAll();
@@ -1281,10 +1300,9 @@ public class TdGoodsService {
 		}
 		return repository.findByCode(code);
 	}
-	public TdGoods findByCodeAndStatus(String code,Long status)
-	{
-		if (null == code || status == null)
-		{
+
+	public TdGoods findByCodeAndStatus(String code, Long status) {
+		if (null == code || status == null) {
 			return null;
 		}
 		return repository.findByCodeAndInventoryItemStatus(code, status);
@@ -1295,13 +1313,13 @@ public class TdGoodsService {
 	 * 
 	 * @author dengxiao
 	 */
-	public List<TdGoods> searchGoodsOrderBySortIdAsc(String keywords,String cateId) {
+	public List<TdGoods> searchGoodsOrderBySortIdAsc(String keywords, String cateId) {
 		if (null == keywords) {
 			return null;
 		}
 		return repository
 				.findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySortIdAsc(
-						keywords,cateId);
+						keywords, cateId);
 	}
 
 	/**
@@ -1309,13 +1327,13 @@ public class TdGoodsService {
 	 * 
 	 * @author dengxiao
 	 */
-	public List<TdGoods> searchGoodsOrderBySortIdDesc(String keywords,String cateId) {
+	public List<TdGoods> searchGoodsOrderBySortIdDesc(String keywords, String cateId) {
 		if (null == keywords) {
 			return null;
 		}
 		return repository
 				.findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySortIdDesc(
-						keywords,cateId);
+						keywords, cateId);
 	}
 
 	/**
@@ -1323,11 +1341,11 @@ public class TdGoodsService {
 	 * 
 	 * @author dengxiao
 	 */
-	public List<TdGoods> searchGoodsOrderBySalePriceAsc(String keywords, Long priceListId,String cateId) {
+	public List<TdGoods> searchGoodsOrderBySalePriceAsc(String keywords, Long priceListId, String cateId) {
 		if (null == keywords || null == priceListId) {
 			return null;
 		}
-		return repository.searchGoodsOrderBySalePriceAsc(keywords, priceListId,cateId);
+		return repository.searchGoodsOrderBySalePriceAsc(keywords, priceListId, cateId);
 	}
 
 	/**
@@ -1335,11 +1353,11 @@ public class TdGoodsService {
 	 * 
 	 * @author dengxiao
 	 */
-	public List<TdGoods> searchGoodsOrderBySalePriceDesc(String keywords, Long priceListId,String cateId) {
+	public List<TdGoods> searchGoodsOrderBySalePriceDesc(String keywords, Long priceListId, String cateId) {
 		if (null == keywords || null == priceListId) {
 			return null;
 		}
-		return repository.searchGoodsOrderBySalePriceDesc(keywords, priceListId,cateId);
+		return repository.searchGoodsOrderBySalePriceDesc(keywords, priceListId, cateId);
 	}
 
 	/**
@@ -1347,13 +1365,13 @@ public class TdGoodsService {
 	 * 
 	 * @author dengxiao
 	 */
-	public List<TdGoods> searchGoodsOrderBySoldNumberAsc(String keywords,String cateId) {
+	public List<TdGoods> searchGoodsOrderBySoldNumberAsc(String keywords, String cateId) {
 		if (null == keywords) {
 			return null;
 		}
 		return repository
 				.findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySoldNumberAsc(
-						keywords,cateId);
+						keywords, cateId);
 	}
 
 	/**
@@ -1361,13 +1379,13 @@ public class TdGoodsService {
 	 * 
 	 * @author dengxiao
 	 */
-	public List<TdGoods> searchGoodsOrderBySoldNumberDesc(String keywords,String cateId) {
+	public List<TdGoods> searchGoodsOrderBySoldNumberDesc(String keywords, String cateId) {
 		if (null == keywords) {
 			return null;
 		}
 		return repository
 				.findByNameContainingOrTitleContainingOrSubTitleContainingOrCodeContainingOrCategoryTitleContainingOrderBySoldNumberDesc(
-						keywords,cateId);
+						keywords, cateId);
 	}
 
 	public List<TdGoods> searchGoods(String keywords) {
@@ -1436,160 +1454,264 @@ public class TdGoodsService {
 		if (null == categoryId) {
 			return null;
 		}
-		return repository.findByCategoryIdAndIsOnSaleTrueAndIsCouponFalseOrCategoryIdAndIsOnSaleTrueAndIsCouponIsNullOrderBySortIdAsc(
+		return repository
+				.findByCategoryIdAndIsOnSaleTrueAndIsCouponFalseOrCategoryIdAndIsOnSaleTrueAndIsCouponIsNullOrderBySortIdAsc(
 						categoryId, categoryId);
 	}
-	
+
 	public List<TdGoods> findGoodsByCategoryIdWithoutUnSale(Long categoryId, Long diySiteId) {
 		if (null == categoryId || null == diySiteId) {
 			return null;
 		}
 		return repository.findGoodsByCategoryIdWithoutUnSale(categoryId, diySiteId);
 	}
-	
-	public List<TdGoods> findBySobId(Long sobId)
-	{
+
+	public List<TdGoods> findBySobId(Long sobId) {
 		return repository.findBySobId(sobId);
 	}
-	
+
 	/**
 	 * app 商品搜索
-	 * @param keywords 搜索关键字
-	 * @param sortFiled 排序字段
-	 * @param rule 正序反序
-	 * @param categoryTitle 一级类别
+	 * 
+	 * @param keywords
+	 *            搜索关键字
+	 * @param sortFiled
+	 *            排序字段
+	 * @param rule
+	 *            正序反序
+	 * @param categoryTitle
+	 *            一级类别
 	 * @return 结果集
 	 * @author zp
 	 */
-	public List<TdGoods> searchGoodsList(String keywords,String sortFiled,String rule,List<String> categoryTitle){
+	public List<TdGoods> searchGoodsList(String keywords, String sortFiled, String rule, List<String> categoryTitle) {
 		Criteria<TdGoods> c = new Criteria<TdGoods>();
-		//查询条件
-		if(StringUtils.isNotBlank(keywords)){
-			c.add(Restrictions.or(Restrictions.like("name", keywords, true),Restrictions.like("title", keywords, true),
-					Restrictions.like("subTitle", keywords, true),Restrictions.like("code", keywords, true),
+		// 查询条件
+		if (StringUtils.isNotBlank(keywords)) {
+			c.add(Restrictions.or(Restrictions.like("name", keywords, true), Restrictions.like("title", keywords, true),
+					Restrictions.like("subTitle", keywords, true), Restrictions.like("code", keywords, true),
 					Restrictions.like("categoryTitle", keywords, true)));
 		}
-		if(categoryTitle!=null && categoryTitle.size()>0){
-			c.add(Restrictions.in("categoryTitle",categoryTitle,true));
+		if (categoryTitle != null && categoryTitle.size() > 0) {
+			c.add(Restrictions.in("categoryTitle", categoryTitle, true));
 		}
 		c.add(Restrictions.eq("isOnSale", true, true));
-		//排序
-		if("0".equals(sortFiled)){
-			if("0".equals(rule)){
+		// 排序
+		if ("0".equals(sortFiled)) {
+			if ("0".equals(rule)) {
 				c.setOrderByAsc("sortId");
-			}else{
+			} else {
 				c.setOrderByDesc("sortId");
 			}
-		}else if("1".equals(sortFiled)){
-			if("0".equals(rule)){
+		} else if ("1".equals(sortFiled)) {
+			if ("0".equals(rule)) {
 				c.setOrderByAsc("sortId");
-			}else{
+			} else {
 				c.setOrderByDesc("sortId");
 			}
-		}else if("2".equals(sortFiled)){
-			if("0".equals(rule)){
+		} else if ("2".equals(sortFiled)) {
+			if ("0".equals(rule)) {
 				c.setOrderByAsc("soldNumber");
-			}else{
+			} else {
 				c.setOrderByDesc("soldNumber");
 			}
 		}
 		return repository.findAll(c);
-		
+
 	}
-	
+
 	/**
 	 * 后代 商品查询
-	 * @param keywords 关键字
-	 * @param brandId 品牌id
-	 * @param categoryId 类别id
-	 * @param page 页数
-	 * @param size 行数
-	 * @param isOnsale 商品上下架
+	 * 
+	 * @param keywords
+	 *            关键字
+	 * @param brandId
+	 *            品牌id
+	 * @param categoryId
+	 *            类别id
+	 * @param page
+	 *            页数
+	 * @param size
+	 *            行数
+	 * @param isOnsale
+	 *            商品上下架
 	 * @return 分页结果集
 	 * @author zp
 	 */
-	public Page<TdGoods> searchGoodsList(String keywords,Long brandId,Long categoryId,int page,int size,Boolean isOnSale){
-		//分页加排序
+	public Page<TdGoods> searchGoodsList(String keywords, Long brandId, Long categoryId, int page, int size,
+			Boolean isOnSale) {
+		// 分页加排序
 		PageRequest pageRequest = new PageRequest(page, size,
 				new Sort(Direction.ASC, "sortId").and(new Sort(Direction.DESC, "id")));
 		Criteria<TdGoods> c = new Criteria<TdGoods>();
-		//查询条件
-		if(StringUtils.isNotBlank(keywords)){
-			c.add(Restrictions.or(Restrictions.like("name", keywords, true),Restrictions.like("title", keywords, true),
-					Restrictions.like("subTitle", keywords, true),Restrictions.like("code", keywords, true),
+		// 查询条件
+		if (StringUtils.isNotBlank(keywords)) {
+			c.add(Restrictions.or(Restrictions.like("name", keywords, true), Restrictions.like("title", keywords, true),
+					Restrictions.like("subTitle", keywords, true), Restrictions.like("code", keywords, true),
 					Restrictions.like("categoryTitle", keywords, true)));
 		}
-		if(categoryId!=null){
-			if(categoryId==-1L){
+		if (categoryId != null) {
+			if (categoryId == -1L) {
 				c.add(Restrictions.isNull("categoryIdTree"));
-			}else{
+			} else {
 				String catIdStr = "[" + categoryId + "]";
-				c.add(Restrictions.like("categoryIdTree",catIdStr,true));
+				c.add(Restrictions.like("categoryIdTree", catIdStr, true));
 			}
-			
+
 		}
-		if(brandId!=null){
-			c.add(Restrictions.eq("brandId",brandId,true));
+		if (brandId != null) {
+			c.add(Restrictions.eq("brandId", brandId, true));
 		}
-		if(isOnSale!=null){
+		if (isOnSale != null) {
 			c.add(Restrictions.eq("isOnSale", isOnSale, true));
 		}
-		return repository.findAll(c,pageRequest);
+		return repository.findAll(c, pageRequest);
 	}
-	
-	public List<TdGoods> searchGoodsByKeywordsAndBrand(String keywords,Long brandId){
+
+	public List<TdGoods> searchGoodsByKeywordsAndBrand(String keywords, Long brandId) {
 		Criteria<TdGoods> c = new Criteria<TdGoods>();
-		//查询条件
-		if(StringUtils.isNotBlank(keywords)){
-			c.add(Restrictions.or(Restrictions.like("title", keywords, true),Restrictions.like("subTitle", keywords, true),
-					Restrictions.like("code", keywords, true)));
+		// 查询条件
+		if (StringUtils.isNotBlank(keywords)) {
+			c.add(Restrictions.or(Restrictions.like("title", keywords, true),
+					Restrictions.like("subTitle", keywords, true), Restrictions.like("code", keywords, true)));
 		}
-		if(brandId!=null){
+		if (brandId != null) {
 			c.add(Restrictions.eq("brandId", brandId, true));
 		}
 		return repository.findAll(c);
 	}
-	
+
 	// 查找所有商品按序号排序
-	public Page<TdGoods> queryAllOrderBySortIdAsc(List<Long> priceListIdList,List<Long> categoryIdList,String keywords,int page, int size) {
+	public Page<TdGoods> queryAllOrderBySortIdAsc(List<Long> priceListIdList, List<Long> categoryIdList,
+			String keywords, int page, int size) {
 		PageRequest pageRequest = new PageRequest(page, size, new Sort(Direction.ASC, "sortId"));
 
-		return repository.queryAllOrderBySortIdAsc(priceListIdList,categoryIdList,keywords,pageRequest);
+		return repository.queryAllOrderBySortIdAsc(priceListIdList, categoryIdList, keywords, pageRequest);
 	}
-	
+
 	/**
-	 *优惠卷商品查询
-	 * @param cityId 城市id
-	 * @param brandId 品牌id
-	 * @param keywords 关键字
+	 * 优惠卷商品查询
+	 * 
+	 * @param cityId
+	 *            城市id
+	 * @param brandId
+	 *            品牌id
+	 * @param keywords
+	 *            关键字
 	 * @author zp
 	 */
-	public List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId,Long brandId,String keywords){
+	public List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId, Long brandId, String keywords) {
 		return repository.queryCouponGooddsOrderBySortIdAsc(cityId, brandId, keywords);
 	}
-	
+
 	/**
 	 * 优惠卷模板商品查询
-	 * @param cityId 城市id
-	 * @param keywords 关键字
+	 * 
+	 * @param cityId
+	 *            城市id
+	 * @param keywords
+	 *            关键字
 	 * @author zp
 	 */
-	public List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId,String keywords){
+	public List<TdGoods> queryCouponGooddsOrderBySortIdAsc(Long cityId, String keywords) {
 		return repository.queryCouponGooddsOrderBySortIdAsc(cityId, keywords);
 	}
-	
-	public Page<TdGoods> findByCodeContainingOrTitleContainingOrSubTitleContaining(String keywords, int page, int size) {
+
+	public Page<TdGoods> findByCodeContainingOrTitleContainingOrSubTitleContaining(String keywords, int page,
+			int size) {
 		if (null == keywords) {
 			return null;
 		}
 		PageRequest pageRequest = new PageRequest(page, size);
-		return repository.findByCodeContainingOrTitleContainingOrSubTitleContaining(keywords, keywords, keywords, pageRequest);
+		return repository.findByCodeContainingOrTitleContainingOrSubTitleContaining(keywords, keywords, keywords,
+				pageRequest);
 	}
-	
+
 	public List<TdGoods> findByCodeContaining(String keywords) {
 		if (null == keywords) {
 			return null;
 		}
 		return repository.findByCodeContaining(keywords);
+	}
+
+	public List<ClientGoods> getGoodsListByCategoryIdAndSobId(Long categoryId, Long sobId) {
+		if (null == categoryId || null == sobId) {
+			return null;
+		}
+		Map<String, Long> result = this.getPriceListMap(sobId);
+		List<ClientGoods> clientGoodsList = this.getClientGoodsList(categoryId, sobId);
+		List<ClientGoods> validGoods = new ArrayList<>();
+		for (ClientGoods clientGoods : clientGoodsList) {
+			String brandTitle = clientGoods.getBrandTitle();
+			String priceType;
+			switch (brandTitle) {
+			case "华润":
+				priceType = "LS";
+				break;
+			case "莹润":
+				priceType = "YR";
+				break;
+			case "乐易装":
+				priceType = "LYZ";
+				break;
+			default:
+				priceType = null;
+			}
+			TdPriceListItem priceListItem = tdPriceListItemService.getGoodsValidPrice(result.get(priceType),
+					clientGoods.getGoodsSku());
+			if (null != priceListItem) {
+				clientGoods.setSalePrice(priceListItem.getSalePrice());
+				clientGoods.setIsPromotion(priceListItem.getIsPromotion());
+				validGoods.add(clientGoods);
+			}
+		}
+		return validGoods;
+	}
+
+	public List<ClientGoods> getClientGoodsList(Long categoryId, Long sobId) {
+		EntityManager em = emf.createEntityManager();
+		Query query = em.createQuery("select goods.id as goodsId, "
+				+ "goods.title as goodsTitle, goods.code as goodsSku, "
+				+ "goods.brandTitle as brandTitle, goods.brandId as brandId, "
+				+ "goods.isColorful as isColorful, inventory.inventory as inventory, goods.coverImageUri as goodsCoverImageUri "
+				+ "from TdGoods goods, TdDiySiteInventory inventory where " + "goods.categoryId = " + categoryId
+				+ " and goods.isOnSale = true and " + "goods.id = inventory.goodsId and inventory.regionId = " + sobId
+				+ " and " + "inventory.diyCode is null and inventory.inventory > 0 order by goods.sortId asc");
+		List<Object[]> result = query.getResultList();
+		return this.translateResultSet(result);
+	}
+
+	private List<ClientGoods> translateResultSet(List<Object[]> result) {
+		List<ClientGoods> required = new ArrayList<>();
+		for (Object[] objects : result) {
+			ClientGoods clientGoods = new ClientGoods();
+			clientGoods.setGoodsId(null == objects[0] ? null : (Long) objects[0]);
+			clientGoods.setGoodsTitle(null == objects[1] ? null : (String) objects[1]);
+			clientGoods.setGoodsSku(null == objects[2] ? null : (String) objects[2]);
+			clientGoods.setBrandTitle(null == objects[3] ? null : (String) objects[3]);
+			clientGoods.setBrandId(null == objects[4] ? null : (Long) objects[4]);
+			clientGoods.setIsPromotion(null == objects[5] ? null : (Boolean) objects[5]);
+			clientGoods.setInventory(null == objects[6] ? null : (Long) objects[6]);
+			clientGoods.setGoodsCoverImageUri(null == objects[7] ? null : (String) objects[7]);
+			required.add(clientGoods);
+		}
+		return required;
+	}
+
+	/**
+	 * 查询出当前SobId下有效的价目表头
+	 * 
+	 * @return
+	 */
+	private Map<String, Long> getPriceListMap(Long sobId) {
+		if (null == sobId) {
+			return null;
+		}
+		List<TdPriceList> allPriceList = tdPriceListService.findByCityIdAndActiveFlag(sobId);
+		Map<String, Long> result = new HashMap<>();
+		for (TdPriceList priceList : allPriceList) {
+			result.put(priceList.getPriceType(), priceList.getListHeaderId());
+		}
+		return result;
 	}
 }

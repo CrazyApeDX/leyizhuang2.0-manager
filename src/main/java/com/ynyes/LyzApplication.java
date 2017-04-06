@@ -19,7 +19,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 @ComponentScan
 @EnableAutoConfiguration
 @EnableScheduling
-@ImportResource({ "/cxf-servlet.xml" })
+@ImportResource({ "/cxf-servlet.xml", "/dubbo-service.xml" })
 public class LyzApplication extends SpringBootServletInitializer implements
 		CommandLineRunner {
 

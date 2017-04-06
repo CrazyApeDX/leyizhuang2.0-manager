@@ -29,6 +29,7 @@ import com.ynyes.lyz.entity.TdProductCategory;
 import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.TdUserCollect;
 import com.ynyes.lyz.entity.TdUserComment;
+import com.ynyes.lyz.entity.goods.ClientGoods;
 import com.ynyes.lyz.entity.goods.TdUnableSale;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.service.TdActivityService;
@@ -74,13 +75,13 @@ public class TdGoodsController {
 
 	@Autowired
 	private TdOrderService tdOrderService;
-	
+
 	@Autowired
 	private TdProductCategoryService tdProductCategoryService;
-	
+
 	@Autowired
 	private TdDiySiteInventoryService tdDiySiteInventoryService;
-	
+
 	@Autowired
 	private TdUnableSaleService tdUnableSaleService;
 
@@ -125,7 +126,10 @@ public class TdGoodsController {
 			return "redirect:/login";
 		}
 		// 获取指定id分类下的所有商品和其价格
-		tdCommonService.getGoodsAndPrice(req, map, categoryId);
+		List<ClientGoods> clientGoodsList = tdGoodsService.getGoodsListByCategoryIdAndSobId(categoryId,
+				user.getCityId());
+		// tdCommonService.getGoodsAndPrice(req, map, categoryId);
+		map.addAttribute("clientGoodsList", clientGoodsList);
 		return "/client/normal_goods";
 	}
 	/*
@@ -167,8 +171,13 @@ public class TdGoodsController {
 	 */
 	@RequestMapping(value = "/step/get")
 	public String stepGetGoods(HttpServletRequest req, ModelMap map, Long categoryId) {
+		String username = (String) req.getSession().getAttribute("username");
+		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
 		// 获取指定id分类下的所有商品和其价格
-		tdCommonService.getGoodsAndPrice(req, map, categoryId);
+//		tdCommonService.getGoodsAndPrice(req, map, categoryId);
+		List<ClientGoods> clientGoodsList = tdGoodsService.getGoodsListByCategoryIdAndSobId(categoryId,
+				user.getCityId());
+		map.addAttribute("clientGoodsList", clientGoodsList);
 		return "/client/sub_step_goods";
 	}
 
@@ -238,12 +247,12 @@ public class TdGoodsController {
 	}
 
 	/**
-	 * 添加已选调色包的方法
-	 * 增加商品id参数 zp 
+	 * 添加已选调色包的方法 增加商品id参数 zp
+	 * 
 	 * @author dengxiao
 	 */
 	@RequestMapping(value = "/color/add")
-	public String colorAdd(String colorName, Long quantity, ModelMap map, HttpServletRequest req,Long goodsId) {
+	public String colorAdd(String colorName, Long quantity, ModelMap map, HttpServletRequest req, Long goodsId) {
 		// 获取登陆用户的信息
 		String username = (String) req.getSession().getAttribute("username");
 		TdUser user = tdUserService.findByUsername(username);
@@ -259,8 +268,8 @@ public class TdGoodsController {
 		if (null == priceListItem) {
 			priceListItem = new TdPriceListItem();
 		}
-		//调色商品归属商品
-		TdGoods good= tdGoodsService.findOne(goodsId);
+		// 调色商品归属商品
+		TdGoods good = tdGoodsService.findOne(goodsId);
 
 		// 创建一个已选商品实体，用于存储各项已选数据
 		TdCartGoods cartGoods = new TdCartGoods();
@@ -279,7 +288,7 @@ public class TdGoodsController {
 		cartGoods.setUsername(username);
 		cartGoods.setBrandId(goods.getBrandId());
 		cartGoods.setBrandTitle(goods.getBrandTitle());
-		if(good!=null){
+		if (good != null) {
 			cartGoods.setOwnerGoodsSku(good.getCode());
 		}
 		// ********************************设置属性结束*******************************************
@@ -292,8 +301,8 @@ public class TdGoodsController {
 			TdCartGoods cart = selected_goods.get(i);
 			if (null != cart && null != cart.getGoodsId()
 					&& goods.getId().longValue() == cart.getGoodsId().longValue()) {
-				//判断调色商品归属商品sku是否一知
-				if(good!=null && good.getCode().equals(cart.getOwnerGoodsSku())){
+				// 判断调色商品归属商品sku是否一知
+				if (good != null && good.getCode().equals(cart.getOwnerGoodsSku())) {
 					isHave = true;
 					cart.setQuantity(cart.getQuantity() + cartGoods.getQuantity());
 					cart.setPrice(cartGoods.getPrice());
@@ -474,18 +483,18 @@ public class TdGoodsController {
 		if (null != all && all.size() >= 1) {
 			map.addAttribute("phone", all.get(0).getTelephone());
 		}
-		//获取商品单店库存
-		TdDiySiteInventory  diySiteInventory = tdDiySiteInventoryService.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(), diySite.getRegionId());
-		
-		
+		// 获取商品单店库存
+		TdDiySiteInventory diySiteInventory = tdDiySiteInventoryService
+				.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(), diySite.getRegionId());
+
 		map.addAttribute("diySiteInventory", diySiteInventory);
 		map.addAttribute("activity_list", activity_list);
 		map.addAttribute("isCollect", isCollect);
-		//只判断是否有值 有值不刷新
+		// 只判断是否有值 有值不刷新
 		req.getSession().setAttribute("noRefresh", "1");
 		return "/client/goods_detail";
 	}
-	
+
 	/**
 	 * 判断是否刷新(没用)
 	 * 
@@ -493,22 +502,22 @@ public class TdGoodsController {
 	 */
 	@RequestMapping(value = "/listRefresh")
 	@ResponseBody
-	public Map<String, Object> listRefresh(HttpServletRequest req, Long goodsId) {  
+	public Map<String, Object> listRefresh(HttpServletRequest req, Long goodsId) {
 		Map<String, Object> res = new HashMap<>();
-		Object obj= req.getSession().getAttribute("noRefresh");
-		//1 刷新 2 不刷新
-		if(obj==null){
+		Object obj = req.getSession().getAttribute("noRefresh");
+		// 1 刷新 2 不刷新
+		if (obj == null) {
 			res.put("type", 1);
-		}else{
+		} else {
 			res.put("type", 2);
 			req.getSession().removeAttribute("noRefresh");
 		}
 		return res;
 	}
-	
+
 	/**
 	 * 添加收藏的方法
-	 *  
+	 * 
 	 * @author dengxiao
 	 */
 	@RequestMapping(value = "/operate/collection")
@@ -539,8 +548,8 @@ public class TdGoodsController {
 	}
 
 	/**
-	 * 跳转到商品搜索页面的方法
-	 * 修改商品查询方法  按价格查询暂时隐藏 添加单店库存 zp
+	 * 跳转到商品搜索页面的方法 修改商品查询方法 按价格查询暂时隐藏 添加单店库存 zp
+	 * 
 	 * @author dengxiao
 	 */
 	@RequestMapping(value = "/search")
@@ -552,24 +561,25 @@ public class TdGoodsController {
 			return "redirect:/login";
 		}
 		map.addAttribute("user", user);
-		if(StringUtils.isBlank(keywords)){
+		if (StringUtils.isBlank(keywords)) {
 			return "/client/goods_search";
 		}
-		//查询一级分类 
-		List<String> categoryTitle=new ArrayList<String>();
-		TdProductCategory  productCategory= tdProductCategoryService.findByTitle(keywords);
-		if(productCategory!=null){
-			 //分类存在只查找分类
-			 keywords=null;
-			 List<TdProductCategory> productCategoryList= tdProductCategoryService.findByParentIdOrderBySortIdAsc(productCategory.getId());
-			 if(productCategoryList!=null && productCategoryList.size()>0){
-				 for (TdProductCategory tdProductCategory : productCategoryList) {
-					 categoryTitle.add(tdProductCategory.getTitle());
+		// 查询一级分类
+		List<String> categoryTitle = new ArrayList<String>();
+		TdProductCategory productCategory = tdProductCategoryService.findByTitle(keywords);
+		if (productCategory != null) {
+			// 分类存在只查找分类
+			keywords = null;
+			List<TdProductCategory> productCategoryList = tdProductCategoryService
+					.findByParentIdOrderBySortIdAsc(productCategory.getId());
+			if (productCategoryList != null && productCategoryList.size() > 0) {
+				for (TdProductCategory tdProductCategory : productCategoryList) {
+					categoryTitle.add(tdProductCategory.getTitle());
 				}
-			 }
+			}
 		}
-		
-//		// 获取用户的门店
+
+		// // 获取用户的门店
 		TdDiySite diySite = tdCommonService.getDiySite(req);
 
 		if (null == param) {
@@ -582,8 +592,8 @@ public class TdGoodsController {
 		String rule1 = strs[1];
 		String rule2 = strs[2];
 		String rule3 = strs[3];
-		//当期排序规则号
-		int y= Integer.valueOf(sortFiled)+1;
+		// 当期排序规则号
+		int y = Integer.valueOf(sortFiled) + 1;
 
 		// 新建一个集合用于存储用户的搜索结果
 		List<TdGoods> goods_list = new ArrayList<>();
@@ -591,40 +601,46 @@ public class TdGoodsController {
 		// 新建一个集合用于存储显示结果
 		List<TdGoods> visible_list = new ArrayList<>();
 
-//		if ("0".equals(sortFiled)) {
-//			if ("0".equals(rule1)) {
-//				goods_list = tdGoodsService.searchGoodsOrderBySortIdAsc(keywords,cateId);
-//				rule1 = "1";
-//			} else if ("1".equals(rule1)) {
-//				goods_list = tdGoodsService.searchGoodsOrderBySortIdDesc(keywords,cateId);
-//				rule1 = "0";
-//			}
-//		} else if ("1".equals(sortFiled)) {
-//			if ("0".equals(rule2)) {
-//				goods_list = tdGoodsService.searchGoodsOrderBySalePriceAsc(keywords, diySite.getPriceListId(),cateId);
-//				rule2 = "1";
-//			} else if ("1".equals(rule2)) {
-//				goods_list = tdGoodsService.searchGoodsOrderBySalePriceDesc(keywords, diySite.getPriceListId(),cateId);
-//				rule2 = "0";
-//			}
-//		} else if ("2".equals(sortFiled)) {
-//			if ("0".equals(rule3)) {
-//				goods_list = tdGoodsService.searchGoodsOrderBySoldNumberAsc(keywords,cateId);
-//				rule3 = "1";
-//			} else if ("1".equals(rule3)) {
-//				goods_list = tdGoodsService.searchGoodsOrderBySoldNumberDesc(keywords,cateId);
-//				rule3 = "0";
-//			}
-//		}
-		//查询数据
-		goods_list=tdGoodsService.searchGoodsList(keywords, sortFiled, strs[y], categoryTitle);
-		//修改排序规则
-		if(y==1){
-			rule1=( "0".equals(rule1)?"1":"0");
-		}else if(y==2){
-			rule2=( "0".equals(rule2)?"1":"0");
-		}else if(y==3){
-			rule3=( "0".equals(rule3)?"1":"0");
+		// if ("0".equals(sortFiled)) {
+		// if ("0".equals(rule1)) {
+		// goods_list =
+		// tdGoodsService.searchGoodsOrderBySortIdAsc(keywords,cateId);
+		// rule1 = "1";
+		// } else if ("1".equals(rule1)) {
+		// goods_list =
+		// tdGoodsService.searchGoodsOrderBySortIdDesc(keywords,cateId);
+		// rule1 = "0";
+		// }
+		// } else if ("1".equals(sortFiled)) {
+		// if ("0".equals(rule2)) {
+		// goods_list = tdGoodsService.searchGoodsOrderBySalePriceAsc(keywords,
+		// diySite.getPriceListId(),cateId);
+		// rule2 = "1";
+		// } else if ("1".equals(rule2)) {
+		// goods_list = tdGoodsService.searchGoodsOrderBySalePriceDesc(keywords,
+		// diySite.getPriceListId(),cateId);
+		// rule2 = "0";
+		// }
+		// } else if ("2".equals(sortFiled)) {
+		// if ("0".equals(rule3)) {
+		// goods_list =
+		// tdGoodsService.searchGoodsOrderBySoldNumberAsc(keywords,cateId);
+		// rule3 = "1";
+		// } else if ("1".equals(rule3)) {
+		// goods_list =
+		// tdGoodsService.searchGoodsOrderBySoldNumberDesc(keywords,cateId);
+		// rule3 = "0";
+		// }
+		// }
+		// 查询数据
+		goods_list = tdGoodsService.searchGoodsList(keywords, sortFiled, strs[y], categoryTitle);
+		// 修改排序规则
+		if (y == 1) {
+			rule1 = ("0".equals(rule1) ? "1" : "0");
+		} else if (y == 2) {
+			rule2 = ("0".equals(rule2) ? "1" : "0");
+		} else if (y == 3) {
+			rule3 = ("0".equals(rule3) ? "1" : "0");
 		}
 
 		// 遍历集合，获取指定商品的价目表项
@@ -638,26 +654,25 @@ public class TdGoodsController {
 						// 判断该件商品是否参与促销
 						priceListItem.setIsPromotion(tdCommonService.isJoinActivity(req, goods));
 						map.addAttribute("priceListItem" + goods.getId(), priceListItem);
-						
-						List<TdUnableSale> unable = tdUnableSaleService.findByDiySiteIdAndGoodsId(diySite.getId(), goods.getId());
-	
+
+						List<TdUnableSale> unable = tdUnableSaleService.findByDiySiteIdAndGoodsId(diySite.getId(),
+								goods.getId());
+
 						if (null == unable || unable.size() == 0) {
 							visible_list.add(goods);
 						}
-						//设置商品单店库存
-						TdDiySiteInventory diySiteInventory = tdDiySiteInventoryService.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(), diySite.getRegionId());
-						if(diySiteInventory!=null){
+						// 设置商品单店库存
+						TdDiySiteInventory diySiteInventory = tdDiySiteInventoryService
+								.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(), diySite.getRegionId());
+						if (diySiteInventory != null) {
 							map.addAttribute("goodInventory" + goods.getId(), diySiteInventory.getInventory());
 						}
 					}
 				}
-				
-				
+
 			}
 		}
-		
-		
-		
+
 		map.addAttribute("selected_rule", Long.parseLong(sortFiled));
 		map.addAttribute("rule1", rule1);
 		map.addAttribute("rule2", rule2);
@@ -817,9 +832,8 @@ public class TdGoodsController {
 
 						// 获取价目表信息
 						TdPriceListItem priceListItem = tdCommonService.getGoodsPrice(req, goods);
-						
-						if (priceListItem == null)
-						{
+
+						if (priceListItem == null) {
 							continue;
 						}
 

@@ -648,8 +648,8 @@ public class TdCommonService {
 	 * 
 	 * @author dengxiao
 	 */
+	@Deprecated
 	public void getGoodsAndPrice(HttpServletRequest req, ModelMap map, Long cateGoryId) {
-
 		// 获取门店
 		String username = (String) req.getSession().getAttribute("username");
 		TdUser tdUser = tdUserService.findByUsername(username);
@@ -661,6 +661,7 @@ public class TdCommonService {
 		}
 
 		TdDiySite diySite = this.getDiySite(req);
+		
 
 		// 创建一个集合存储有价格的商品
 		List<TdGoods> actual_goods = new ArrayList<>();
@@ -668,6 +669,10 @@ public class TdCommonService {
 		// List<TdGoods> goods_list = tdGoodsService
 		// .findByCategoryIdAndIsOnSaleTrueAndIsCouponNotTrueOrderBySortIdAsc(cateGoryId);
 		List<TdGoods> goods_list = tdGoodsService.findGoodsByCategoryIdWithoutUnSale(cateGoryId, diySite.getId());
+		// 第一次遍历：查找商品集合中包含了哪些brandId
+		
+		
+		
 		if (null != goods_list && goods_list.size() > 0) {
 			for (int i = 0; i < goods_list.size(); i++) {
 				TdGoods goods = goods_list.get(i);

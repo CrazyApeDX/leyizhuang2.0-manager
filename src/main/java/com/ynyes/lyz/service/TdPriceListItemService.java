@@ -167,42 +167,57 @@ public class TdPriceListItemService {
 			return list.get(0);
 		}
 	}
-	
-	public List<TdPriceListItem> findByListHeaderIdAndInventoryItemIdAndStartDateActiveAndEndDateActive(Long lIstHearderId,Long inventoryItemId,Date start,Date end)
-	{
-		if(null == lIstHearderId || null == inventoryItemId || null == start)
-		{
+
+	public List<TdPriceListItem> findByListHeaderIdAndInventoryItemIdAndStartDateActiveAndEndDateActive(
+			Long lIstHearderId, Long inventoryItemId, Date start, Date end) {
+		if (null == lIstHearderId || null == inventoryItemId || null == start) {
 			return null;
 		}
-		
-		return repository.findByPriceListIdAndGoodsIdAndStartDateActiveBeforeAndEndDateActiveIsNullOrPriceListIdAndGoodsIdAndStartDateActiveBeforeAndEndDateActiveAfterOrPriceListIdAndGoodsIdAndStartDateActiveIsNull(
-										lIstHearderId, inventoryItemId, start,
-										lIstHearderId, inventoryItemId, start, end,
-										lIstHearderId,inventoryItemId);
+
+		return repository
+				.findByPriceListIdAndGoodsIdAndStartDateActiveBeforeAndEndDateActiveIsNullOrPriceListIdAndGoodsIdAndStartDateActiveBeforeAndEndDateActiveAfterOrPriceListIdAndGoodsIdAndStartDateActiveIsNull(
+						lIstHearderId, inventoryItemId, start, lIstHearderId, inventoryItemId, start, end,
+						lIstHearderId, inventoryItemId);
 	}
-	
-	public List<TdPriceListItem> findValidItemByPriceListHeaderIdAndGoodsCode(Long priceListHeaderId,String goodsCode)
-	{
-		if (priceListHeaderId == null || goodsCode == null)
-		{
+
+	public List<TdPriceListItem> findValidItemByPriceListHeaderIdAndGoodsCode(Long priceListHeaderId,
+			String goodsCode) {
+		if (priceListHeaderId == null || goodsCode == null) {
 			return null;
 		}
 		Date currentDate = new Date();
-		return repository.findByPriceListIdAndItemNumAndStartDateActiveBeforeAndEndDateActiveIsNullOrPriceListIdAndItemNumAndStartDateActiveBeforeAndEndDateActiveAfterOrPriceListIdAndItemNumAndStartDateActiveIsNull(
-				 priceListHeaderId, goodsCode, currentDate,
-				 priceListHeaderId, goodsCode, currentDate, currentDate,
-				 priceListHeaderId, goodsCode);
+		return repository
+				.findByPriceListIdAndItemNumAndStartDateActiveBeforeAndEndDateActiveIsNullOrPriceListIdAndItemNumAndStartDateActiveBeforeAndEndDateActiveAfterOrPriceListIdAndItemNumAndStartDateActiveIsNull(
+						priceListHeaderId, goodsCode, currentDate, priceListHeaderId, goodsCode, currentDate,
+						currentDate, priceListHeaderId, goodsCode);
 	}
-	
+
+	public TdPriceListItem getGoodsValidPrice(Long priceListHeaderId, String goodsCode) {
+		if (priceListHeaderId == null || goodsCode == null) {
+			return null;
+		}
+		Date currentDate = new Date();
+		List<TdPriceListItem> priceListItemList = repository
+				.findByPriceListIdAndItemNumAndStartDateActiveBeforeAndEndDateActiveIsNullOrPriceListIdAndItemNumAndStartDateActiveBeforeAndEndDateActiveAfterOrPriceListIdAndItemNumAndStartDateActiveIsNull(
+						priceListHeaderId, goodsCode, currentDate, priceListHeaderId, goodsCode, currentDate,
+						currentDate, priceListHeaderId, goodsCode);
+		if (null == priceListItemList || priceListItemList.size() == 0) {
+			return null;
+		} else {
+			return priceListItemList.get(0);
+		}
+	}
+
 	/**
 	 * 根据商品名称和编号查询价格表
+	 * 
 	 * @return
 	 */
-	public Page<TdPriceListItem> findByItemDescContainingOrItemNumContaining(String keywords,int page, int size){
-		if(null == keywords){
+	public Page<TdPriceListItem> findByItemDescContainingOrItemNumContaining(String keywords, int page, int size) {
+		if (null == keywords) {
 			return null;
 		}
 		PageRequest pageRequest = new PageRequest(page, size);
-		return repository.findByItemDescContainingOrItemNumContaining(keywords, keywords,pageRequest);
+		return repository.findByItemDescContainingOrItemNumContaining(keywords, keywords, pageRequest);
 	}
 }
