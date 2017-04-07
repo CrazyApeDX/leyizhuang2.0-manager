@@ -86,45 +86,6 @@
                         </a>
                     </section>
                 </#if>
-                <!-- 送货上门 -->
-                <#if !(order.isCoupon??&&order.isCoupon)>
-	                <section class="delivery">
-	                    <div class="div1">
-	                        <label>配送方式</label>
-	                        <a class="delivery-method" href="/order/delivery">${order.deliverTypeTitle!''}</a>
-	                    </div>
-	                    <div class="div2">${order.deliveryDate!''}  ${order.deliveryDetailId!''}:30-${(order.deliveryDetailId+1)?eval}:30</div>
-	                </section>
-                </#if>
-                <!-- 送货上楼 -->
-                <#if order.deliverTypeTitle??&&order.deliverTypeTitle!='门店自提'>
-	                <section class="pay-method">
-	                    <label>送货上楼</label>
-	                    <a class="target" href="/order/upstairs">
-	                    	${order.upstairsType!''}
-	                    	<#if order.upstairsType??&&order.upstairsType=='步梯'>
-	                    		${order.floor!'1'}楼
-	                    	</#if>
-	                    </a>
-	                </section>
-                </#if>
-                <!-- 支付方式 -->
-                <section class="pay-method">
-                    <label>支付方式</label>
-                    <a class="target" href="/order/paytype">${order.payTypeTitle!''}</a>
-                </section>
-                <!-- 发票信息 -->
-                <section class="invoice-info">
-                    <label>门店信息</label>
-                    <div>${order.diySiteName!''}（${order.diySitePhone!''}）</div>
-                </section>
-                <!-- 发票信息 -->
-                <#if order.sellerRealName??>
-	                <section class="invoice-info">
-	                    <label>服务导购</label>
-	                   	<a class="target" href="/order/delivery">${order.sellerRealName!'暂无'}</a>
-	                </section>
-                </#if>
                 
                 <#if order.isSellerOrder??&&order.isSellerOrder>
                 	<section class="invoice-info">
@@ -187,7 +148,7 @@
 									success : function(res) {
 										close(1);
 										if (0 === res.status) {
-											$("#selectedUser").html(res.content);
+											window.location.reload();
 											win_no();
 										} else {
 											warning("亲，您的网速不给力啊");
@@ -196,6 +157,46 @@
 								});
 							}
 	                   	</script>
+	                </section>
+                </#if>
+                
+                <!-- 送货上门 -->
+                <#if !(order.isCoupon??&&order.isCoupon)>
+	                <section class="delivery">
+	                    <div class="div1">
+	                        <label>配送方式</label>
+	                        <a class="delivery-method" href="/order/delivery">${order.deliverTypeTitle!''}</a>
+	                    </div>
+	                    <div class="div2">${order.deliveryDate!''}  ${order.deliveryDetailId!''}:30-${(order.deliveryDetailId+1)?eval}:30</div>
+	                </section>
+                </#if>
+                <!-- 送货上楼 -->
+                <#if order.deliverTypeTitle??&&order.deliverTypeTitle!='门店自提'>
+	                <section class="pay-method">
+	                    <label>送货上楼</label>
+	                    <a class="target" href="/order/upstairs">
+	                    	${order.upstairsType!''}
+	                    	<#if order.upstairsType??&&order.upstairsType=='步梯'>
+	                    		${order.floor!'1'}楼
+	                    	</#if>
+	                    </a>
+	                </section>
+                </#if>
+                <!-- 支付方式 -->
+                <section class="pay-method">
+                    <label>支付方式</label>
+                    <a class="target" href="/order/paytype">${order.payTypeTitle!''}</a>
+                </section>
+                <!-- 发票信息 -->
+                <section class="invoice-info">
+                    <label>门店信息</label>
+                    <div>${order.diySiteName!''}（${order.diySitePhone!''}）</div>
+                </section>
+                <!-- 发票信息 -->
+                <#if order.sellerRealName??>
+	                <section class="invoice-info">
+	                    <label>服务导购</label>
+	                   	<a class="target" href="/order/delivery">${order.sellerRealName!'暂无'}</a>
 	                </section>
                 </#if>
                 
