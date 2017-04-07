@@ -141,7 +141,9 @@ public class StringTools {
 			return "YR";
 		} else if (orderNumber.contains("LYZ")) {
 			return "LYZ";
-		} else {
+		} else if (orderNumber.contains("YF")) {
+			return "YF";
+		} else{
 			return null;
 		}
 	}
