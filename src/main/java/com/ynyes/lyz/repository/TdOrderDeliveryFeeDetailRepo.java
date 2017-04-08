@@ -32,6 +32,7 @@ public interface TdOrderDeliveryFeeDetailRepo extends PagingAndSortingRepository
 			+" 	odd.consumer_delivery_fee consumer_delivery_fee, "
 			+" 	odd.company_delivery_fee company_delivery_fee, "
 			+" 	odd.company_delivery_fee_adjust company_delivery_fee_adjust, "
+			+"	odd.consumer_delivery_fee_adjust consumer_delivery_fee_adjust,"
 			+" 	odd.consumer_delivery_fee_discount consumer_delivery_fee_discount, "
 			+" 	odd.company_delivery_fee_discount company_delivery_fee_discount, "
 			+" 	odd.consumer_delivery_fee_reduce consumer_delivery_fee_reduce, "

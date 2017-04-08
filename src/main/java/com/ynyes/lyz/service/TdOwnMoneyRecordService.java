@@ -231,4 +231,13 @@ public class TdOwnMoneyRecordService {
 		}
 		return repository.findByOrderNumberAndIsOwnAndIsPayed(mainOrderNumber, isOwn, isPayed);
 	}
+
+	public List<String> findMissedOrderNumbers(Date beginDate) {
+		return repository.findMissedOrderNumbers(beginDate);
+	}
+
+	public List<TdOwnMoneyRecord> findByOrderNumberIn(List<String> missedOrderNumber) {
+		// TODO Auto-generated method stub
+		return repository.findByOrderNumberIn(missedOrderNumber);
+	}
 }

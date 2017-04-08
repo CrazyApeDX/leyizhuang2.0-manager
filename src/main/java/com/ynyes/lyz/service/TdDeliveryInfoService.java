@@ -167,5 +167,10 @@ public class TdDeliveryInfoService {
         
         return (List<TdDeliveryInfo>) repository.save(entities);
     }
+
+	public List<String> findSubOrderNumberByOpUser(String opUser) {
+		
+		return repository.findSubOrderNumberByOpUser(opUser);
+	}
     
 }
