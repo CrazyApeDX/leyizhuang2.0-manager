@@ -1151,9 +1151,11 @@ public class TdDeliveryIndexController {
 	private List<String> queryOrderNumberList(String opUser) {
 
 		List<String> orderNumberList = new ArrayList<String>();
+		
+		orderNumberList = tdDeliveryInfoService.findSubOrderNumberByOpUser(opUser);
 
 		// 根据快递员编号找task_no
-		List<TdDeliveryInfo> deliveryInfoList = tdDeliveryInfoService.findDistinctTaskNoByDriver(opUser);
+		/*List<TdDeliveryInfo> deliveryInfoList = tdDeliveryInfoService.findDistinctTaskNoByDriver(opUser);
 
 		if (null != deliveryInfoList && deliveryInfoList.size() > 0) {
 			List<String> taskNoList = new ArrayList<String>();
@@ -1176,7 +1178,7 @@ public class TdDeliveryIndexController {
 					}
 				}
 			}
-		}
+		}*/
 		return orderNumberList;
 	}
 

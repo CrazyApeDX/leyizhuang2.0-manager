@@ -240,7 +240,7 @@ public class TdGenerationController {
 				Double amount = totalPrice * ownMoneyRecord.getMoney() / (allTotalPay);
 				if(amount>0.0){
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DELIVER_CASH, amount,ownMoneyRecord.getOwnTime());
+							TdCashReciptInf.RECEIPT_TYPE_DELIVER_CASH, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
@@ -252,7 +252,7 @@ public class TdGenerationController {
 				Double amount = totalPrice * ownMoneyRecord.getPos() / allTotalPay;
 				if(amount>0.0){
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DELIVER_POS, amount,ownMoneyRecord.getOwnTime());
+							TdCashReciptInf.RECEIPT_TYPE_DELIVER_POS, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
@@ -264,7 +264,7 @@ public class TdGenerationController {
 				Double amount = totalPrice * money / allTotalPay;
 				if(amount>0.0){
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_CASH, amount,ownMoneyRecord.getOwnTime());
+							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_CASH, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
@@ -276,7 +276,7 @@ public class TdGenerationController {
 				Double amount = totalPrice * pos / allTotalPay;
 				if(amount>0.0){
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_POS, amount,ownMoneyRecord.getOwnTime());
+							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_POS, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
@@ -288,7 +288,7 @@ public class TdGenerationController {
 				Double amount = totalPrice * backOther / allTotalPay;
 				if(amount>0.0){
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_OHTER, amount,ownMoneyRecord.getOwnTime());
+							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_OHTER, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
