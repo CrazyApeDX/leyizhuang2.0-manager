@@ -31,8 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.ynyes.fitment.core.constant.AuditStatus;
 import com.ynyes.fitment.foundation.entity.FitOrderRefund;
 import com.ynyes.fitment.foundation.service.biz.BizOrderRefundService;
-import com.ynyes.lyz.entity.TdDeliveryInfo;
-import com.ynyes.lyz.entity.TdDeliveryInfoDetail;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdGeoInfo;
 import com.ynyes.lyz.entity.TdOrder;
@@ -65,7 +63,7 @@ public class TdDeliveryIndexController {
 
 	@Autowired
 	private TdUserService tdUserService;
-
+	
 	@Autowired
 	private TdOrderService tdOrderService;
 
@@ -123,7 +121,7 @@ public class TdDeliveryIndexController {
 	public String deliveryReturnIndex(String start, String end, Integer days, Integer type, HttpServletRequest req,
 			ModelMap map) {
 		String username = (String) req.getSession().getAttribute("username");
-
+		
 		if (null == username) {
 			return "redirect:/login";
 		}

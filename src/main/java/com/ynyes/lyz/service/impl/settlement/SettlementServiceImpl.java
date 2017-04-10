@@ -1204,6 +1204,11 @@ public class SettlementServiceImpl implements ISettlementService {
 	}
 
 	private void costCredit(TdOrder order) {
+		Long payTypeId = order.getPayTypeId();
+		TdPayType payType = tdPayTypeService.findOne(payTypeId);
+		if (null == payType || null == payType.getIsOnlinePay() || payType.getIsOnlinePay()) {
+			return;
+		}
 		if (!(null != order.getIsOnlinePay() && order.getIsOnlinePay()) && order.getTotalPrice() > 0) {
 			this.tdUserService.useCredit(CreditChangeType.CONSUME, order);
 		}

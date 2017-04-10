@@ -661,7 +661,6 @@ public class TdCommonService {
 		}
 
 		TdDiySite diySite = this.getDiySite(req);
-		
 
 		// 创建一个集合存储有价格的商品
 		List<TdGoods> actual_goods = new ArrayList<>();
@@ -670,9 +669,7 @@ public class TdCommonService {
 		// .findByCategoryIdAndIsOnSaleTrueAndIsCouponNotTrueOrderBySortIdAsc(cateGoryId);
 		List<TdGoods> goods_list = tdGoodsService.findGoodsByCategoryIdWithoutUnSale(cateGoryId, diySite.getId());
 		// 第一次遍历：查找商品集合中包含了哪些brandId
-		
-		
-		
+
 		if (null != goods_list && goods_list.size() > 0) {
 			for (int i = 0; i < goods_list.size(); i++) {
 				TdGoods goods = goods_list.get(i);
@@ -1039,32 +1036,34 @@ public class TdCommonService {
 		String username = (String) req.getSession().getAttribute("username");
 		// 获取已选商品（整合后）
 		List<TdCartGoods> all_selected = tdCartGoodsService.findByUsername(username);
-		for (TdCartGoods cartGoods : all_selected) {
-			// 获取已选的商品
-			if (null != cartGoods) {
-				TdGoods goods = tdGoodsService.findOne(cartGoods.getGoodsId());
-				// 获取已选商品的分类id
-				Long categoryId = goods.getCategoryId();
-				// 获取指定的分类
-				TdProductCategory category = tdProductCategoryService.findOne(categoryId);
-				// 获取指定分类的父类
-				if (null != category) {
-					Long parentId = category.getParentId();
-					if (null != parentId) {
-						// 判断是否已经添加进入到map中
-						if (null == group.get(parentId)) {
-							group.put(parentId, cartGoods.getQuantity());
-						} else {
-							group.put(parentId, (group.get(parentId) + cartGoods.getQuantity()));
+		if (null != all_selected && all_selected.size() > 0) {
+			for (TdCartGoods cartGoods : all_selected) {
+				// 获取已选的商品
+				if (null != cartGoods) {
+					TdGoods goods = tdGoodsService.findOne(cartGoods.getGoodsId());
+					// 获取已选商品的分类id
+					Long categoryId = goods.getCategoryId();
+					// 获取指定的分类
+					TdProductCategory category = tdProductCategoryService.findOne(categoryId);
+					// 获取指定分类的父类
+					if (null != category) {
+						Long parentId = category.getParentId();
+						if (null != parentId) {
+							// 判断是否已经添加进入到map中
+							if (null == group.get(parentId)) {
+								group.put(parentId, cartGoods.getQuantity());
+							} else {
+								group.put(parentId, (group.get(parentId) + cartGoods.getQuantity()));
+							}
 						}
 					}
+					// if (null == group.get(categoryId)) {
+					// group.put(categoryId, cartGoods.getQuantity());
+					// } else {
+					// group.put(categoryId, (group.get(categoryId) +
+					// cartGoods.getQuantity()));
+					// }
 				}
-				// if (null == group.get(categoryId)) {
-				// group.put(categoryId, cartGoods.getQuantity());
-				// } else {
-				// group.put(categoryId, (group.get(categoryId) +
-				// cartGoods.getQuantity()));
-				// }
 			}
 		}
 		return group;
@@ -2306,19 +2305,18 @@ public class TdCommonService {
 					if (null != orderList.get(i)) {
 						orderList.get(i).setRemarkInfo("物流已受理");
 					}
-					if(!(orderList.get(i).getOrderNumber().contains("YF") && orderList.get(i).getDeliverFee()==0.0)){
+					if (!(orderList.get(i).getOrderNumber().contains("YF")
+							&& orderList.get(i).getDeliverFee() == 0.0)) {
 						tdOrderService.save(orderList.get(i));
 					}
 				}
-				/*for (TdOrder subOrder : orderList) {
-					if (null != subOrder) {
-						subOrder.setRemarkInfo("物流已受理");
-					}
-					if(subOrder.getOrderNumber().contains("YF") && subOrder.getDeliverFee() ==0.0){
-						orderList.remove(subOrder);
-					}
-				}
-				tdOrderService.save(orderList);*/
+				/*
+				 * for (TdOrder subOrder : orderList) { if (null != subOrder) {
+				 * subOrder.setRemarkInfo("物流已受理"); }
+				 * if(subOrder.getOrderNumber().contains("YF") &&
+				 * subOrder.getDeliverFee() ==0.0){ orderList.remove(subOrder);
+				 * } } tdOrderService.save(orderList);
+				 */
 			}
 		}
 	}
@@ -2519,11 +2517,11 @@ public class TdCommonService {
 						requisitionGoodsList.add(requisitionGoods);
 					}
 				}
-				
-				if(order.getOrderNumber().contains("YF")){
+
+				if (order.getOrderNumber().contains("YF")) {
 					deliveryFee = order.getDeliverFee();
 				}
-				
+
 			}
 			requisition.setDeliveryFee(deliveryFee);
 			if ("支付宝".equalsIgnoreCase(payTypeTitle) || "银行卡".equalsIgnoreCase(payTypeTitle)

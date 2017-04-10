@@ -78,27 +78,27 @@ public class TdPriceCountService {
 
 	@Autowired
 	private TdCashReciptInfService tdCashReciptInfService;
-	
+
 	@Autowired
 	private TdCommonService tdCommonService;
-	
+
 	@Autowired
 	private TdOrderGoodsService tdOrderGoodsService;
-	
+
 	@Autowired
 	private TdPriceListService tdPriceListService;
-	
+
 	@Autowired
 	private TdPriceListItemService tdPriceListItemService;
-	
+
 	@Autowired
 	private TdUpstairsSettingService tdUpstairSettingService;
-	
+
 	/**
 	 * 计算订单价格和能使用的最大的预存款的方法
 	 * 
 	 * @author dengxiao
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public Map<String, Object> countPrice(TdOrder order, TdUser user) {
 		// 判断传入的参数是否为空，如果为空就没有计算的必要了
@@ -107,7 +107,7 @@ public class TdPriceCountService {
 		}
 
 		Boolean isFixedDeliveryFee = order.getIsFixedDeliveryFee();
-		
+
 		// 创建一个用于存储最后结果的map
 		Map<String, Object> results = new HashMap<>();
 
@@ -152,24 +152,23 @@ public class TdPriceCountService {
 		}
 
 		// 计算订单的运费
-//		order.setDeliverFee(0.00);
-		
-		
+		// order.setDeliverFee(0.00);
 
 		// 获取订单的收货街道
-//		List<TdSubdistrict> subDistrict_list = tdSubDistrictService
-//				.findByDistrictNameAndNameOrderBySortIdAsc(order.getDisctrict(), order.getSubdistrict());
-//		if (null != subDistrict_list && subDistrict_list.size() > 0) {
-//			TdSubdistrict subdistrict = subDistrict_list.get(0);
-//			if (null != subdistrict) {
-//				Double fee = subdistrict.getDeliveryFee();
-//				if (null != fee) {
-//					order.setDeliverFee(fee);
-//				}
-//			}
-//		}
-		
-		//Double fee = 0d;
+		// List<TdSubdistrict> subDistrict_list = tdSubDistrictService
+		// .findByDistrictNameAndNameOrderBySortIdAsc(order.getDisctrict(),
+		// order.getSubdistrict());
+		// if (null != subDistrict_list && subDistrict_list.size() > 0) {
+		// TdSubdistrict subdistrict = subDistrict_list.get(0);
+		// if (null != subdistrict) {
+		// Double fee = subdistrict.getDeliveryFee();
+		// if (null != fee) {
+		// order.setDeliverFee(fee);
+		// }
+		// }
+		// }
+
+		// Double fee = 0d;
 		try {
 			Map<String, Double> depiveryFeeMap = new HashMap<>();
 			depiveryFeeMap = settlementService.countOrderDeliveryFee(user, order);
@@ -178,7 +177,6 @@ public class TdPriceCountService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 
 		// 如果订单的配送方式是到店支付，则不计算运费（新增：电子券订单也不计算运费 —— @Date 2016年4月27日）
 		String title = order.getDeliverTypeTitle();
@@ -262,7 +260,7 @@ public class TdPriceCountService {
 		// 计算上楼费
 		Double upstairsFee = tdUpstairSettingService.countUpstairsFee(order);
 		order.setUpstairsFee(upstairsFee);
-		
+
 		// 计算促销减少的价格
 		Double activitySubPrice = order.getActivitySubPrice();
 		if (null == activitySubPrice) {
@@ -274,7 +272,7 @@ public class TdPriceCountService {
 		}
 
 		order.setIsFixedDeliveryFee(isFixedDeliveryFee);
-		
+
 		// 开始计算最大能使用的预存款的额度
 		if (canUseBalance) {
 			Double balance = user.getBalance();
@@ -307,17 +305,17 @@ public class TdPriceCountService {
 		if (order.getActualPay() > order.getTotalPrice()) {
 			order.setActualPay(order.getTotalPrice());
 		}
-		
+
 		// 判断上楼费是否多收
 		if (order.getUpstairsBalancePayed() > order.getUpstairsFee()) {
 			order.setUpstairsBalancePayed(order.getUpstairsFee());
 		}
-		
+
 		order.setTotalPrice(order.getTotalPrice() - order.getActualPay());
 
 		tdOrderService.save(order);
 
-//		max_use = order.getTotalPrice() + order.getActualPay();
+		// max_use = order.getTotalPrice() + order.getActualPay();
 
 		results.put("result", order);
 		results.put("max", max_use);
@@ -355,14 +353,26 @@ public class TdPriceCountService {
 					// 创建一个变量表示该件商品能够使用优惠券的额度
 					Double permitCash = 0.00;
 
-					Double price = orderGoods.getPrice();
-					if (null == price) {
-						price = 0.00;
+					TdCouponModule couponModule = tdCouponModuleService
+							.findByGoodsIdAndCityTitle(orderGoods.getGoodsId(), order.getCity());
+
+					// 可用通用现金券的金额
+					Double normalPrice = 0d;
+					// 可用优工券的金额
+					Double YGPrice = 0d;
+					
+					// 如果在模板里面配置了通用现金券的金额，则采用模板里配置的数据，否则就为0，表示不能用通用现金券
+					if (null != couponModule) {
+						normalPrice = couponModule.getPrice();
 					}
-					Double realPrice = orderGoods.getRealPrice();
-					if (null == realPrice) {
-						realPrice = 0.00;
-					}
+					
+					// 根据价目表的价差获取差价券的金额
+					Double realPrice = null == orderGoods.getRealPrice() ? 0d : orderGoods.getRealPrice();
+					Double price = null == orderGoods.getPrice() ? 0d : orderGoods.getPrice();
+					
+					YGPrice = price - realPrice;
+					
+					
 					Long quantity = orderGoods.getQuantity();
 					if (null == quantity) {
 						quantity = 0L;
@@ -371,7 +381,7 @@ public class TdPriceCountService {
 					if (null == couponNumber) {
 						couponNumber = 0L;
 					}
-					permitCash = (price - realPrice) * (quantity - couponNumber);
+					permitCash = (YGPrice + normalPrice) * (quantity - couponNumber);
 
 					// 获取指定品牌下的【可使用额度，已使用额度】数组
 					Double[] permits = map.get(brandId);
@@ -619,70 +629,70 @@ public class TdPriceCountService {
 		}
 
 		// 退还门店收取的资金
-//		Double cashPay = order.getCashPay();
-//		Double posPay = order.getPosPay();
-//		Double otherPay = order.getOtherPay();
-//
-//		if (null == cashPay) {
-//			cashPay = 0.00;
-//		}
-//		if (null == posPay) {
-//			posPay = 0.00;
-//		}
-//		if (null == otherPay) {
-//			otherPay = 0.00;
-//		}
-//
-//		Double amount = cashPay + posPay + otherPay;
-//
-//		TdCashRefundInf refundInf = new TdCashRefundInf();
-//		refundInf.setSobId(user.getCityId());
-//		refundInf.setRefundNumber(order.getOrderNumber());
-//		refundInf.setUserid(user.getId());
-//		refundInf.setUsername(user.getUsername());
-//		refundInf.setUserphone(user.getUsername());
-//		refundInf.setDiySiteCode(user.getDiyCode());
-//		if (null != order.getIsCoupon() && order.getIsCoupon()) {
-//			refundInf.setRefundClass("电子券");
-//			refundInf.setDescription("电子券退款");
-//			
-//		} else {
-//			refundInf.setRefundClass("订单");
-//			refundInf.setDescription("订单退款");
-//		}
-//		
-//		refundInf.setRtHeaderId(returnNote.getId());
-//		refundInf.setReturnNumber(returnNote.getReturnNumber());
-//		refundInf.setOrderHeaderId(order.getId());
-//		if (order.getOrderNumber().contains("HR")) {
-//			refundInf.setProductType("HR");
-//		} else if (order.getOrderNumber().contains("YR")) {
-//			refundInf.setProductType("YR");
-//		} else if (order.getOrderNumber().contains("LYZ")) {
-//			refundInf.setProductType("LYZ");
-//		}
-//		
-//		refundInf.setRefundType("门店现金");
-//		refundInf.setRefundDate(new Date());
-//		refundInf.setAmount(amount);
-//		tdCashRefundInfService.save(refundInf);
-//		
-//		// 生成打款记录
-//		TdCashReturnNote new_return_note = new TdCashReturnNote();
-//		new_return_note.setCreateTime(new Date());
-//		new_return_note.setMoney(amount);
-//		new_return_note.setTypeId(-1L);
-//		new_return_note.setTypeTitle("门店现金");
-//		new_return_note.setOrderNumber(order.getOrderNumber());
-//		new_return_note.setMainOrderNumber(order.getMainOrderNumber());
-//		new_return_note.setReturnNoteNumber(returnNote.getReturnNumber());
-//		new_return_note.setUserId(user.getId());
-//		new_return_note.setUsername(user.getUsername());
-//		new_return_note.setIsOperated(true);
-//		new_return_note.setFinishTime(new Date());
-//		tdCashReturnNoteService.save(new_return_note);
-//		
-//		tdInterfaceService.ebsWithObject(refundInf, INFTYPE.CASHREFUNDINF);
+		// Double cashPay = order.getCashPay();
+		// Double posPay = order.getPosPay();
+		// Double otherPay = order.getOtherPay();
+		//
+		// if (null == cashPay) {
+		// cashPay = 0.00;
+		// }
+		// if (null == posPay) {
+		// posPay = 0.00;
+		// }
+		// if (null == otherPay) {
+		// otherPay = 0.00;
+		// }
+		//
+		// Double amount = cashPay + posPay + otherPay;
+		//
+		// TdCashRefundInf refundInf = new TdCashRefundInf();
+		// refundInf.setSobId(user.getCityId());
+		// refundInf.setRefundNumber(order.getOrderNumber());
+		// refundInf.setUserid(user.getId());
+		// refundInf.setUsername(user.getUsername());
+		// refundInf.setUserphone(user.getUsername());
+		// refundInf.setDiySiteCode(user.getDiyCode());
+		// if (null != order.getIsCoupon() && order.getIsCoupon()) {
+		// refundInf.setRefundClass("电子券");
+		// refundInf.setDescription("电子券退款");
+		//
+		// } else {
+		// refundInf.setRefundClass("订单");
+		// refundInf.setDescription("订单退款");
+		// }
+		//
+		// refundInf.setRtHeaderId(returnNote.getId());
+		// refundInf.setReturnNumber(returnNote.getReturnNumber());
+		// refundInf.setOrderHeaderId(order.getId());
+		// if (order.getOrderNumber().contains("HR")) {
+		// refundInf.setProductType("HR");
+		// } else if (order.getOrderNumber().contains("YR")) {
+		// refundInf.setProductType("YR");
+		// } else if (order.getOrderNumber().contains("LYZ")) {
+		// refundInf.setProductType("LYZ");
+		// }
+		//
+		// refundInf.setRefundType("门店现金");
+		// refundInf.setRefundDate(new Date());
+		// refundInf.setAmount(amount);
+		// tdCashRefundInfService.save(refundInf);
+		//
+		// // 生成打款记录
+		// TdCashReturnNote new_return_note = new TdCashReturnNote();
+		// new_return_note.setCreateTime(new Date());
+		// new_return_note.setMoney(amount);
+		// new_return_note.setTypeId(-1L);
+		// new_return_note.setTypeTitle("门店现金");
+		// new_return_note.setOrderNumber(order.getOrderNumber());
+		// new_return_note.setMainOrderNumber(order.getMainOrderNumber());
+		// new_return_note.setReturnNoteNumber(returnNote.getReturnNumber());
+		// new_return_note.setUserId(user.getId());
+		// new_return_note.setUsername(user.getUsername());
+		// new_return_note.setIsOperated(true);
+		// new_return_note.setFinishTime(new Date());
+		// tdCashReturnNoteService.save(new_return_note);
+		//
+		// tdInterfaceService.ebsWithObject(refundInf, INFTYPE.CASHREFUNDINF);
 	}
 
 	/**
@@ -2363,7 +2373,7 @@ public class TdPriceCountService {
 		}
 		tdCashReciptInfService.save(cashReciptInf);
 	}
-	
+
 	/**
 	 * 修改订单商品的价格为最新价格
 	 */
@@ -2385,7 +2395,7 @@ public class TdPriceCountService {
 			}
 		}
 	}
-	
+
 	public Double getGoodsPrice(Long sobId, TdOrderGoods goods) {
 
 		if (null == goods) {

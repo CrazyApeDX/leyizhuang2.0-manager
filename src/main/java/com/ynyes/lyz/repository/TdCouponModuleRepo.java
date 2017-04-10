@@ -50,6 +50,13 @@ public interface TdCouponModuleRepo
 	 * @author DengXiao
 	 */
 	TdCouponModule findByGoodsIdAndCityId(Long goodsId, Long cityId);
+	
+	/**
+	 * 根据商品id和城市名查找模板
+	 * 
+	 * @author DengXiao
+	 */
+	TdCouponModule findByGoodsIdAndCityTitle(Long goodsId, String cityTitle);
 
 	/**
 	 * 根据商品id和城市sobid和模板类型查找模板

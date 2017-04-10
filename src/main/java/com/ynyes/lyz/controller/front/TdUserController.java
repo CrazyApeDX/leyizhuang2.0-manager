@@ -557,49 +557,25 @@ public class TdUserController {
 
 		// 获取所有已选的商品
 		List<TdCartGoods> all_selected = tdCartGoodsService.findByUserId(user.getId());
+		List<TdCartGoods> visitSelected = new ArrayList<>();
 		for (int i = 0; i < all_selected.size(); i++) {
 			TdCartGoods cartGoods = all_selected.get(i);
 			// 获取已选商品的库存
 			if (null != cartGoods) {
 				TdGoods goods = tdGoodsService.findOne(cartGoods.getGoodsId());
 				if (null != goods) {
-					// // 查询商品单店库存
-					// TdDiySiteInventory diySiteInventory =
-					// tdDiySiteInventoryService
-					// .findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(goods.getCode(),
-					// diySite.getRegionId());
-					// Long inventoryNumber = 0L;
-					// 设置单店库存
-					// if (diySiteInventory != null) {
-					// map.addAttribute("goods" + i,
-					// diySiteInventory.getInventory());
-					// inventoryNumber = diySiteInventory.getInventory();
-					// } else {
-					// map.addAttribute("goods" + i, 0);
-					// }
-
-					// 如果已选数量大于了最大库存，则消减已选数量
-					// if (null != cartGoods.getQuantity() &&
-					// cartGoods.getQuantity() > inventoryNumber) {
-					// // 如果为负库存设置为0
-					// if (inventoryNumber < 0) {
-					// cartGoods.setQuantity(0L);
-					// cartGoods.setTotalPrice(cartGoods.getPrice() *
-					// cartGoods.getQuantity());
-					// } else {
-					// cartGoods.setQuantity(inventoryNumber);
-					// cartGoods.setTotalPrice(cartGoods.getPrice() *
-					// cartGoods.getQuantity());
-					// }
-					//
-					// tdCartGoodsService.save(cartGoods);
-					// }
-					total_price += cartGoods.getTotalPrice();
+					// 2017-04-10修改：判断指定商品是否已经下载，如果已经下架则不会显示
+					if (null != goods.getIsOnSale() && !goods.getIsOnSale()) {
+						this.tdCartGoodsService.delete(cartGoods.getId());
+					} else {
+						visitSelected.add(cartGoods);
+						total_price += cartGoods.getTotalPrice();
+					}
 				}
 
 			}
 		}
-		map.addAttribute("all_selected", all_selected);
+		map.addAttribute("all_selected", visitSelected);
 		map.addAttribute("selected_number", tdCartGoodsService.countByUserId(user.getId()));
 		map.addAttribute("totalPrice", total_price);
 		map.addAttribute("history", history);
@@ -1321,8 +1297,8 @@ public class TdUserController {
 			return "redirect:/login";
 		}
 
-		Page<TdUserCreditLog> logPage = this.tdUserCreditLogService
-				.findBySellerIdOrderByChangeTimeDesc(user.getId(), 0, 20);
+		Page<TdUserCreditLog> logPage = this.tdUserCreditLogService.findBySellerIdOrderByChangeTimeDesc(user.getId(), 0,
+				20);
 		map.addAttribute("logPage", logPage);
 		map.addAttribute("user", user);
 		return "/client/user_credit";

@@ -2110,20 +2110,33 @@ public class TdOrderController {
 		}
 		return "/client/order_user_info";
 	}
-	
+
 	@RequestMapping(value = "/selected/user")
 	@ResponseBody
 	public Map<String, Object> selectedUser(HttpServletRequest request, Long orderId, Long userId) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
-		
+
 		TdOrder order = tdOrderService.findOne(orderId);
 		TdUser user = tdUserService.findOne(userId);
 		order.setRealUserId(user.getId());
 		order.setRealUserRealName(user.getRealName());
 		order.setRealUserUsername(user.getUsername());
+
+		// 查询用户的默认收货地址
+		TdShippingAddress address = tdShippingAddressService.getUserDefaultAddress(user);
+		if (null == address) {
+			order.setShippingName(null);
+			order.setShippingPhone(null);
+			order.setShippingAddress(null);
+		} else {
+			order.setShippingAddress(
+					address.getCity() + address.getDisctrict() + address.getSubdistrict() + address.getDetailAddress());
+			order.setShippingName(address.getReceiverName());
+			order.setShippingPhone(address.getReceiverMobile());
+		}
 		tdOrderService.save(order);
-		
+
 		res.put("content", order.getRealUserRealName());
 		res.put("status", 0);
 		return res;
