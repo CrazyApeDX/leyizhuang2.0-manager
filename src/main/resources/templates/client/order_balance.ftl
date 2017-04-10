@@ -90,7 +90,7 @@
 				<#else>
 					<#assign used=0>
 				</#if>
-				<input placeholder="预存款使用额" type="text" id="used_balance" value="${used?string("0.00")}" />
+				<input placeholder="预存款使用额" onfocus="orderBalance.clearValue();" onblur="orderBalance.setDefaultValue();" type="text" id="used_balance" value="${used?string("0.00")}" />
 			</li>
 		</ul>
 		<input type="button" class="button_by_dx" value="确定" onclick="orderBalance.confirm();">	
@@ -130,7 +130,19 @@
 				}
 				<#-- 跳转页面，保存预存款使用的信息 -->
 				window.location.href = "/order/balance/confirm?used=" + usedBalance;
-			}	
+			},
+			clearValue: function() {
+				var usedBalance = this.getE("used_balance").value;
+				if (isNaN(usedBalance) || Number(usedBalance) == 0) {
+					this.getE("used_balance").value = "";
+				}
+			},
+			setDefaultValue: function() {
+				var usedBalance = this.getE("used_balance").value;
+				if (!usedBalance || isNaN(usedBalance)) {
+					this.getE("used_balance").value = "0.00";
+				}
+			}
 		};
 	</script>
 </html>
