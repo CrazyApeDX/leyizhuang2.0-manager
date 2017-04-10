@@ -63,7 +63,7 @@ public class TdCouponModule {
 	// 价值
 	@Column(scale = 2)
 	private Double price;
-
+	
 	// 排序号
 	@Column(scale = 2)
 	private Double sortId;
@@ -100,6 +100,14 @@ public class TdCouponModule {
 		this.cityTitle = cityTitle;
 	}
 
+	public Long getType() {
+		return type;
+	}
+
+	public void setType(Long type) {
+		this.type = type;
+	}
+
 	public Long getGoodsId() {
 		return goodsId;
 	}
@@ -114,6 +122,14 @@ public class TdCouponModule {
 
 	public void setGoodsTitle(String goodsTitle) {
 		this.goodsTitle = goodsTitle;
+	}
+
+	public String getPicUri() {
+		return picUri;
+	}
+
+	public void setPicUri(String picUri) {
+		this.picUri = picUri;
 	}
 
 	public String getSku() {
@@ -154,21 +170,5 @@ public class TdCouponModule {
 
 	public void setSortId(Double sortId) {
 		this.sortId = sortId;
-	}
-
-	public String getPicUri() {
-		return picUri;
-	}
-
-	public void setPicUri(String picUri) {
-		this.picUri = picUri;
-	}
-
-	public Long getType() {
-		return type;
-	}
-
-	public void setType(Long type) {
-		this.type = type;
 	}
 }

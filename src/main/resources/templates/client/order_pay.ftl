@@ -89,7 +89,7 @@
                 
                 <#if order.isSellerOrder??&&order.isSellerOrder>
                 	<section class="invoice-info">
-	                    <label>下单用户</label>
+	                    <label>会员信息</label>
 	                   	<a class="target" id="selectedUser" href="javascript:seller.getInfo();">${order.realUserRealName!""}</a>
 	                   	<script type="text/javascript">
 	                   		var seller = {};

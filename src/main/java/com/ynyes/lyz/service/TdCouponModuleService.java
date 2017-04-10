@@ -116,9 +116,16 @@ public class TdCouponModuleService {
 	}
 
 	public TdCouponModule findByGoodsIdAndCityIdAndType(Long goodsId, Long cityId, Long type) {
-		if(null == goodsId || null == cityId || null == type){
+		if (null == goodsId || null == cityId || null == type) {
 			return null;
 		}
-		return repository.findByGoodsIdAndCityIdAndType(goodsId,cityId,type);
+		return repository.findByGoodsIdAndCityIdAndType(goodsId, cityId, type);
+	}
+
+	public TdCouponModule findByGoodsIdAndCityTitle(Long goodsId, String cityTitle) {
+		if (null == goodsId || null == cityTitle) {
+			return null;
+		}
+		return repository.findByGoodsIdAndCityTitle(goodsId, cityTitle);
 	}
 }
