@@ -1862,26 +1862,60 @@ public class CallWMSImpl implements ICallWMS {
 						e.printStackTrace();
 					}
 				}
-				tdTbwWholeSepDirection.setcCompanyId(cCompanyId);
+				if (null != cCompanyId) {
+					tdTbwWholeSepDirection.setcCompanyId(cCompanyId);
+				}
+			
+
 				tdTbwWholeSepDirectionService.save(tdTbwWholeSepDirection);
-				if (null == cCompanyId) {
-					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码不存在</MESSAGE></STATUS></RESULTS>";
+				
+				TdDiySiteInventory inventory = null;
+				TdDiySiteInventory dInventory = null;
+				Long cPackQtyTemp = null;
+				Double cInQtyTemp = null;
+				if(null != cPackQty){
+					cPackQtyTemp = cPackQty;
+				}else{
+					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>cPackQty不能为空!</MESSAGE></STATUS></RESULTS>";
+				}
+				if(null != cInQty){
+					cInQtyTemp = cInQty;
+				}else{
+					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>cInQty不能为空!</MESSAGE></STATUS></RESULTS>";
 				}
 				
-				String gcode = tdTbwWholeSepDirection.getcGcode();
-				TdDiySiteInventory inventory = tdDiySiteInventoryService.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(gcode, cCompanyId);
-				if (null == inventory) {
-					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + gcode
-							+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
+				if(null!=cCompanyId){
+					if(null != cGcode){
+						inventory = tdDiySiteInventoryService.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(cGcode, cCompanyId);
+						if (null != inventory) {
+							inventory.setInventory(inventory.getInventory() - cPackQtyTemp);
+						}else{
+							return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + cGcode
+									+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
+						}
+					}else{
+						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>商品编码Gcode不能不为空！</MESSAGE></STATUS></RESULTS>";
+					}
+					if(null != cDGcode){
+						dInventory = tdDiySiteInventoryService.findByGoodsCodeAndRegionIdAndDiySiteIdIsNull(cDGcode,cCompanyId);
+						if(null != dInventory){
+							dInventory.setInventory(dInventory.getInventory() + cInQtyTemp.longValue());
+						}else{
+							return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + cDGcode
+									+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
+						}
+					}else{
+						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>商品编码cDGcode不能不为空！</MESSAGE></STATUS></RESULTS>";
+					}
+					tdDiySiteInventoryService.save(inventory);
+					tdDiySiteInventoryLogService.saveChangeLog(inventory, cPackQtyTemp, null, null,
+							TdDiySiteInventoryLog.CHANGETYPE_TURN_ZERO);
+					tdDiySiteInventoryService.save(dInventory);
+					tdDiySiteInventoryLogService.saveChangeLog(dInventory, cInQtyTemp.longValue(), null, null,
+							TdDiySiteInventoryLog.CHANGETYPE_TURN_ZERO);
+				}else{
+					return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码不能为空！</MESSAGE></STATUS></RESULTS>";
 				}
-				Double cQtyTemp = tdTbwWholeSepDirection.getcQty();
-				cQtyTemp = cQtyTemp * 100;
-				Long recQtyFromDouble = cQtyTemp.longValue();
-				recQtyFromDouble = recQtyFromDouble / 100;
-				inventory.setInventory(inventory.getInventory() + recQtyFromDouble);
-				tdDiySiteInventoryService.save(inventory);
-				tdDiySiteInventoryLogService.saveChangeLog(inventory, recQtyFromDouble, null, null,
-						TdDiySiteInventoryLog.CHANGETYPE_TURN_ZERO);
 			}
 			return "<RESULTS><STATUS><CODE>0</CODE><MESSAGE></MESSAGE></STATUS></RESULTS>";
 		}else if (STRTABLE.equalsIgnoreCase("tbw_back_rec_d"))// 城市采购退货明细
