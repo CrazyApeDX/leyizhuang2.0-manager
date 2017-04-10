@@ -3081,9 +3081,9 @@ public class TdUserController {
 				}
 			}
 			if (all_cash_return > 0) {
-				if (all_cash_return > all_off_line) {
+				/*if (all_cash_return > all_off_line) {
 					all_cash_return = all_off_line;
-				}
+				}*/
 				BigDecimal bd = new BigDecimal(all_cash_return);
 				all_cash_return = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 				infos.add(all_cash_return + "元【现金】");
