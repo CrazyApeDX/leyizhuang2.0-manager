@@ -437,8 +437,7 @@ public class BizOrderServiceImpl implements BizOrderService {
 	}
 
 	private void disminlateCredit(TdOrder mainOrder, Map<Long, TdOrder> subOrderMap) throws Exception {
-		Double totalPrice = mainOrder.getTotalPrice() + mainOrder.getUnCashBalanceUsed()
-				+ mainOrder.getCashBalanceUsed();
+		Double totalPrice = mainOrder.getTotalPrice() + mainOrder.getCredit();
 		for (TdOrder subOrder : subOrderMap.values()) {
 			if (null != subOrder) {
 				Double subPrice = subOrder.getTotalPrice();
