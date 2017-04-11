@@ -15,7 +15,7 @@ import com.tenpay.util.WXUtil;
 
 public class MyWechatPay {
 
-	public static Map<String, String> weixinPrePay(String sn, BigDecimal totalAmount, HttpServletRequest request) {
+	public static Map<String, Object> weixinPrePay(String sn, BigDecimal totalAmount, HttpServletRequest request) {
 		SortedMap<String, Object> parameterMap = new TreeMap<String, Object>();
 		parameterMap.put("appid", MyWechatUtil.APPID);
 		parameterMap.put("mch_id", MyWechatUtil.MCH_ID);
@@ -38,19 +38,27 @@ public class MyWechatPay {
 		parameterMap.put("trade_type", "APP");
 		String sign = MyWechatUtil.createSign("UTF-8", parameterMap);
 		parameterMap.put("sign", sign);
-		System.err.println(sign);
 		String requestXML = MyWechatUtil.getRequestXml(parameterMap);
-		System.err.println(requestXML);
 		String result = MyWechatUtil.httpsRequest("https://api.mch.weixin.qq.com/pay/unifiedorder", "POST", requestXML);
-		System.err.println(result);
 		Map<String, String> map = null;
+		SortedMap<String, Object> secondSignMap = null;
 		try {
 			map = MyWechatUtil.doXMLParse(result);
+
+			secondSignMap = new TreeMap<String, Object>();
+			secondSignMap.put("appid", MyWechatUtil.APPID);
+			secondSignMap.put("partnerid", MyWechatUtil.MCH_ID);
+			secondSignMap.put("prepayid", map.get("prepay_id"));
+			secondSignMap.put("package", "Sign=WXPay");
+			secondSignMap.put("noncestr", MyWechatUtil.getRandomString(32));
+			secondSignMap.put("timestamp", System.currentTimeMillis());
+			secondSignMap.put("sign", MyWechatUtil.createSign("UTF-8", secondSignMap));
+
 		} catch (JDOMException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return map;
+		return secondSignMap;
 	}
 }

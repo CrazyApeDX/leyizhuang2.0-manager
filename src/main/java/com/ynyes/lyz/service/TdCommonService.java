@@ -41,7 +41,6 @@ import com.ynyes.lyz.entity.TdCashReturnNote;
 import com.ynyes.lyz.entity.TdCategoryLimit;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
-import com.ynyes.lyz.entity.TdCouponModule;
 import com.ynyes.lyz.entity.TdDeposit;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdDiySiteInventory;
@@ -183,9 +182,6 @@ public class TdCommonService {
 
 	@Autowired
 	private TdCashRefundInfService tdCashRefundInfService;
-
-	@Autowired
-	private TdCouponModuleService tdCouponModuleService;
 
 	@Autowired
 	private TdPriceCountService tdPriceCountService;
@@ -478,6 +474,63 @@ public class TdCommonService {
 		// 获取sobId
 		Long sobId = diySite.getRegionId();
 
+		if (null == goods) {
+			return null;
+		}
+
+		if (null == goods.getInventoryItemId()) {
+			return null;
+		}
+
+		String productFlag = goods.getBrandTitle();
+
+		if (null == productFlag) {
+			return null;
+		}
+
+		String priceType = null;
+
+		// 零售价
+		if (productFlag.equalsIgnoreCase("华润")) {
+			priceType = "LS";
+		}
+		// 乐意装价
+		else if (productFlag.equalsIgnoreCase("乐易装")) {
+			priceType = "LYZ";
+		}
+		// 莹润价
+		else if (productFlag.equalsIgnoreCase("莹润")) {
+			priceType = "YR";
+		}
+		// 不支持的价格
+		else {
+			return null;
+		}
+
+		List<TdPriceList> priceList_list = tdPriceListService
+				.findBySobIdAndPriceTypeAndStartDateActiveAndEndDateActive(sobId, priceType, new Date(), new Date());
+
+		if (null == priceList_list || priceList_list.size() == 0 || priceList_list.size() > 1) {
+			return null;
+		}
+
+		// 价目表ID
+		Long list_header_id = 0L;
+		list_header_id = priceList_list.get(0).getListHeaderId();
+
+		List<TdPriceListItem> priceItemList = tdPriceListItemService
+				.findByListHeaderIdAndInventoryItemIdAndStartDateActiveAndEndDateActive(list_header_id,
+						goods.getInventoryItemId(), new Date(), new Date());
+
+		if (null == priceItemList || priceItemList.size() == 0 || priceItemList.size() > 1) {
+			return null;
+		}
+
+		return priceItemList.get(0);
+	}
+
+	public TdPriceListItem getGoodsPrice(Long sobId, Long goodsId) {
+		TdGoods goods = tdGoodsService.findOne(goodsId);
 		if (null == goods) {
 			return null;
 		}
@@ -2997,13 +3050,19 @@ public class TdCommonService {
 						}
 						if (i < orderGoods.getCashNumber()) {
 							// 查找出指定产品现金券模板
-							TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
-									user.getCityId(), 1L);
-							if (null != module) {
-								coupon.setBuyPrice(orderGoods.getPrice() - module.getPrice() - shareUnit);
-							} else {
-								coupon.setBuyPrice(orderGoods.getPrice() - shareUnit);
-							}
+							// TdCouponModule module =
+							// tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
+							// user.getCityId(), 1L);
+							TdPriceListItem priceListItem = this.getGoodsPrice(user.getCityId(), goodsId);
+							// if (null != module) {
+							// coupon.setBuyPrice(orderGoods.getPrice() -
+							// module.getPrice() - shareUnit);
+							// } else {
+							// coupon.setBuyPrice(orderGoods.getPrice() -
+							// shareUnit);
+							// }
+							coupon.setBuyPrice(orderGoods.getPrice() - shareUnit
+									- (priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice()));
 						} else {
 							coupon.setBuyPrice(orderGoods.getPrice() - shareUnit);
 						}

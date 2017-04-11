@@ -5,7 +5,7 @@
         <div class="swiper-slide" onclick="seller.selectInfo(${item.id?c});">
             <div class="box">
                 <p>
-                	<#if item??&&item.realName??&&item.realName!="">${item.realName!''}<#else>暂无姓名</#if>
+                	<#if item??&&item.realName??&&item.realName!="">${item.realName!''}(${item.username!''})<#else>暂无姓名</#if>
                 </p>
             </div>
         </div>

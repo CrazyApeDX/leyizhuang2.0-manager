@@ -1786,6 +1786,7 @@ public class TdPriceCountService {
 						// 根据商品id和城市id查找模板
 						TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
 								user.getCityId(), type);
+						TdPriceListItem priceListItem = tdCommonService.getGoodsPrice(user.getCityId(), goodsId);
 						if (null != module) {
 							// 购买的数量为多少就赠送多少
 							for (int i = 0; i < quantity; i++) {
@@ -1800,7 +1801,7 @@ public class TdPriceCountService {
 								coupon.setTypeTitle(module.getSku() + "产品现金券");
 								coupon.setTypeDescription(module.getSku() + "产品现金券");
 								coupon.setTypePicUri(module.getPicUri());
-								coupon.setPrice(module.getPrice());
+								coupon.setPrice(priceListItem.getSalePrice() - priceListItem.getRealSalePrice());
 								coupon.setIsDistributted(true);
 								coupon.setGetTime(new Date());
 								coupon.setUsername(user.getUsername());
