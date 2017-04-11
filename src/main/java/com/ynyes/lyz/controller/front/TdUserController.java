@@ -2749,7 +2749,7 @@ public class TdUserController {
 				backOtherPay = 0.00;
 			}
 
-			Double all_off_line = posPay + cashPay + backOtherPay;
+//			Double all_off_line = posPay + cashPay + backOtherPay;
 
 			// 2016-07-05修改：以现金的方式归还第三方支付的钱，POS和现金
 			Double all_cash_return = 0.00;

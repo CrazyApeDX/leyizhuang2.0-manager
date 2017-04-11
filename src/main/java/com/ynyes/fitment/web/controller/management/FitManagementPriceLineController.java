@@ -17,9 +17,21 @@ public class FitManagementPriceLineController {
 
 	@Autowired
 	private FitPriceLineService fitPriceLineService;
-	
+
 	@RequestMapping(value = "/list/{headerId}", produces = "text/html;charset=utf-8")
-	public String priceLineList(@PathVariable Long headerId, Integer page, Integer size, ModelMap map) {
+	public String priceLineList(@PathVariable Long headerId, Integer page, Integer size, ModelMap map,
+			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE) {
+
+		if (null != __EVENTTARGET) {
+			switch (__EVENTTARGET) {
+			case "btnPage":
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+				break;
+			}
+		}
+
 		Page<FitPriceLine> linePage = null;
 		page = null == page ? Global.DEFAULT_PAGE : page;
 		size = null == size ? Global.DEFAULT_SIZE : size;

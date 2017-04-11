@@ -29,7 +29,19 @@ public class FitManagementGoodsController {
 	private FitCompanyGoodsService fitCompanyGoodsService;
 
 	@RequestMapping(value = "/list/{companyId}", produces = "text/html;chatset=utf-8")
-	public String goodsList(ModelMap map, Integer page, Integer size, @PathVariable("companyId") Long companyId) {
+	public String goodsList(ModelMap map, Integer page, Integer size, @PathVariable("companyId") Long companyId,
+			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE) {
+
+		if (null != __EVENTTARGET) {
+			switch (__EVENTTARGET) {
+			case "btnPage":
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+				break;
+			}
+		}
+
 		Page<FitCompanyGoods> goodsPage = null;
 		page = null == page ? Global.DEFAULT_PAGE : page;
 		size = null == size ? Global.DEFAULT_SIZE : size;
@@ -75,20 +87,23 @@ public class FitManagementGoodsController {
 	@RequestMapping(value = "/init/{companyId}", method = RequestMethod.GET)
 	public String companyGoodsInit(@PathVariable("companyId") Long companyId) {
 		try {
-//			List<TdGoods> goodsList = this.tdGoodsService.findAll();
-//			for (TdGoods goods : goodsList) {
-//				Boolean validate = this.fitCompanyGoodsService.validateRepeatByCompanyIdAndGoodsId(companyId, goods.getId());
-//				if (!validate) {
-//					this.fitCompanyGoodsService.managerAddCompanyGoods(goods, companyId);
-//				}
-//			}
+			// List<TdGoods> goodsList = this.tdGoodsService.findAll();
+			// for (TdGoods goods : goodsList) {
+			// Boolean validate =
+			// this.fitCompanyGoodsService.validateRepeatByCompanyIdAndGoodsId(companyId,
+			// goods.getId());
+			// if (!validate) {
+			// this.fitCompanyGoodsService.managerAddCompanyGoods(goods,
+			// companyId);
+			// }
+			// }
 			this.fitCompanyGoodsService.initCompanyGoodsByPriceLine(companyId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return "redirect:/Verwalter/fitment/goods/list/" + companyId;
 	}
-	
+
 	@RequestMapping(value = "/delete/{id}/{companyId}", method = RequestMethod.GET)
 	public String companyDelete(@PathVariable("id") Long id, @PathVariable("companyId") Long companyId) {
 		try {

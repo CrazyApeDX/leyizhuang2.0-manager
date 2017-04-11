@@ -16,7 +16,6 @@ import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
-import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.interfaces.entity.TdOrderCouponInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderGoodsInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderInf;

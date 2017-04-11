@@ -50,7 +50,19 @@ public class FitManagementCompanyController {
 	private TdManagerService tdManagerService;
 
 	@RequestMapping(value = "/list", produces = "text/html;charset=utf-8")
-	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size) {
+	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size, String __EVENTTARGET,
+			String __EVENTARGUMENT, String __VIEWSTATE) {
+
+		if (null != __EVENTTARGET) {
+			switch (__EVENTTARGET) {
+			case "btnPage":
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+				break;
+			}
+		}
+
 		Page<FitCompany> companyPage = null;
 		page = null == page ? Global.DEFAULT_PAGE : page;
 		size = null == size ? Global.DEFAULT_SIZE : size;
