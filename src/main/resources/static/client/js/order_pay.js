@@ -105,7 +105,21 @@ function pay() {
 							+ res.order_number + "&type=0";
 				} else if ("微信支付" == res.title) {
 					console.log(res);
-					// document.location = "WXAppPay:WX:" + res.order_number;
+					if (md) { // 移动端使用
+						wx.payOrder({
+							orderId : res.wechat.prepayid,
+							mchId : res.wechat.partnerid,
+							nonceStr : res.wechat.noncestr,
+							timeStamp : res.wechat.timestamp,
+							sign : res.wechat.sign
+						}, function(ret, err) {
+							if (ret.status) {
+								// 支付成功
+							} else {// 支付失败
+								alert(ret.code);
+							}
+						});
+					}
 				} else if ("银行卡" === res.title) {
 					window.location.href = "/pay/union?number="
 							+ res.order_number + "&type=0";
