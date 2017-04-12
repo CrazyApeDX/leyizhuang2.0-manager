@@ -219,7 +219,7 @@ public class TdPayController {
 				} else {
 					// 如果是下单的情况
 					TdOrder order = tdOrderService.findByOrderNumber(out_trade_no);
-					if (2L == order.getStatusId().longValue()) {
+					if (null != order && 2L == order.getStatusId().longValue()) {
 						order.setOtherPay(Double.parseDouble(total_fee));
 						Long id = order.getRealUserId();
 						TdUser realUser = tdUserService.findOne(id);
@@ -343,7 +343,7 @@ public class TdPayController {
 				} else {
 					// 如果是下单的情况
 					TdOrder order = tdOrderService.findByOrderNumber(out_trade_no);
-					if (2L == order.getStatusId().longValue()) {
+					if (null != order && 2L == order.getStatusId().longValue()) {
 						order.setOtherPay(Double.parseDouble(total_fee));
 						order.setUpstairsOtherPayed(
 								order.getUpstairsOtherPayed() + Double.parseDouble(total_fee) - order.getTotalPrice());
@@ -506,39 +506,42 @@ public class TdPayController {
 		} else {
 			// 根据指定的订单号查找订单
 			TdOrder order = tdOrderService.findByOrderNumber(ORDERID);
-			if (null == username) {
-				username = order.getUsername();
-				req.getSession().setAttribute("username", username);
-			}
-			// 在能查询到具体订单的情况下进行业务逻辑处理
 			if (null != order) {
-				Double totalPrice = order.getTotalPrice();
-				// 在支付金额和实际金额相匹配的情况下再进行业务逻辑的处理
-				if (null != totalPrice && totalPrice.longValue() == PAYMENT.longValue()) {
-					// 判断是否支付成功
-					if (null != SUCCESS && SUCCESS.charValue() == 'Y') {
-						if (order.getStatusId().longValue() == 2L) {
-							req.getSession().setAttribute("order_temp", order);
-							order.setOtherPay(PAYMENT);
-							Long id = order.getRealUserId();
-							TdUser realUser = tdUserService.findOne(id);
-							order.setUpstairsOtherPayed(order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
-							try {
-								settlementService.mainOrderDataAction(order, realUser);
-							} catch (Exception e1) {
-								e1.printStackTrace();
-							}
-							if (ORDERID.contains("XN")) {
-								if (!"门店自提".equals(order.getDeliverTypeTitle())) {
-									// 拆单钱先去扣减库存
-									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
-								}
+				if (null == username) {
+					username = order.getUsername();
+					req.getSession().setAttribute("username", username);
+				}
+				// 在能查询到具体订单的情况下进行业务逻辑处理
+				if (null != order) {
+					Double totalPrice = order.getTotalPrice();
+					// 在支付金额和实际金额相匹配的情况下再进行业务逻辑的处理
+					if (null != totalPrice && totalPrice.longValue() == PAYMENT.longValue()) {
+						// 判断是否支付成功
+						if (null != SUCCESS && SUCCESS.charValue() == 'Y') {
+							if (order.getStatusId().longValue() == 2L) {
+								req.getSession().setAttribute("order_temp", order);
+								order.setOtherPay(PAYMENT);
+								Long id = order.getRealUserId();
+								TdUser realUser = tdUserService.findOne(id);
+								order.setUpstairsOtherPayed(
+										order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
 								try {
-									settlementService.disminlate(req, order, null);
-								} catch (Exception e) {
-									e.printStackTrace();
+									settlementService.mainOrderDataAction(order, realUser);
+								} catch (Exception e1) {
+									e1.printStackTrace();
 								}
-								// tdCommonService.dismantleOrder(req);
+								if (ORDERID.contains("XN")) {
+									if (!"门店自提".equals(order.getDeliverTypeTitle())) {
+										// 拆单钱先去扣减库存
+										tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
+									}
+									try {
+										settlementService.disminlate(req, order, null);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+									// tdCommonService.dismantleOrder(req);
+								}
 							}
 						}
 					}
@@ -679,7 +682,8 @@ public class TdPayController {
 							order.setOtherPay(PAYMENT);
 							Long id = order.getRealUserId();
 							TdUser realUser = tdUserService.findOne(id);
-							order.setUpstairsOtherPayed(order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
+							order.setUpstairsOtherPayed(
+									order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
 							settlementService.mainOrderDataAction(order, realUser);
 							if (out_trade_no.contains("XN")) {
 								if (!"门店自提".equals(order.getDeliverTypeTitle())) {
