@@ -3102,7 +3102,7 @@ public class TdUserController {
 				backOtherPay = 0.00;
 			}
 
-			Double all_off_line = posPay + cashPay + backOtherPay;
+			/*Double all_off_line = posPay + cashPay + backOtherPay;*/
 
 			// 2016-07-05修改：以现金的方式归还第三方支付的钱，POS和现金还有其他
 			Double all_cash_return = 0.00;
@@ -3410,9 +3410,9 @@ public class TdUserController {
 				}
 			}
 			if (all_cash_return > 0) {
-				if (all_cash_return > all_off_line) {
+				/*if (all_cash_return > all_off_line) {
 					all_cash_return = all_off_line;
-				}
+				}*/
 				BigDecimal bd = new BigDecimal(all_cash_return);
 				all_cash_return = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 				sb.append(all_cash_return + "元【现金】");

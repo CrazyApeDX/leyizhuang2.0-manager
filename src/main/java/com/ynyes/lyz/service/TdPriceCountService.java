@@ -1154,7 +1154,7 @@ public class TdPriceCountService {
 				backOtherPay = 0d;
 			}
 
-			Double all_off_line = posPay + cashPay + backOtherPay;
+			/*Double all_off_line = posPay + cashPay + backOtherPay;*/
 
 			// 获取一年后的时间（新的券的有效时间）
 			Calendar cal = Calendar.getInstance();
@@ -1695,9 +1695,9 @@ public class TdPriceCountService {
 					}
 				}
 
-				if (new_return_note.getMoney() > all_off_line) {
+				/*if (new_return_note.getMoney() > all_off_line) {
 					new_return_note.setMoney(all_off_line);
-				}
+				}*/
 
 				// 2016-07-05修改：持久化总的打款记录，当收款现金为零不持久化
 				if (new_return_note.getMoney() != 0) {

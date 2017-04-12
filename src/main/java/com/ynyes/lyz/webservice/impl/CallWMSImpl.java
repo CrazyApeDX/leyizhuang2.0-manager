@@ -1908,7 +1908,7 @@ public class CallWMSImpl implements ICallWMS {
 						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>商品编码cDGcode不能不为空！</MESSAGE></STATUS></RESULTS>";
 					}
 					tdDiySiteInventoryService.save(inventory);
-					tdDiySiteInventoryLogService.saveChangeLog(inventory, cPackQtyTemp, null, null,
+					tdDiySiteInventoryLogService.saveChangeLog(inventory, -cPackQtyTemp, null, null,
 							TdDiySiteInventoryLog.CHANGETYPE_TURN_ZERO);
 					tdDiySiteInventoryService.save(dInventory);
 					tdDiySiteInventoryLogService.saveChangeLog(dInventory, cInQtyTemp.longValue(), null, null,
