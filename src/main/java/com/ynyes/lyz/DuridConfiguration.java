@@ -50,7 +50,8 @@ public class DuridConfiguration implements EnvironmentAware {
 		datasource.setMinIdle(Integer.valueOf(propertyResolver.getProperty("minIdle")));
 		datasource.setMaxWait(Long.valueOf(propertyResolver.getProperty("maxWait")));
 		datasource.setMaxActive(Integer.valueOf(propertyResolver.getProperty("maxActive")));
-		datasource.setTimeBetweenEvictionRunsMillis(Integer.valueOf(propertyResolver.getProperty("timeBetweenEvictionRunsMillis")));
+		datasource.setTimeBetweenEvictionRunsMillis(
+				Integer.valueOf(propertyResolver.getProperty("timeBetweenEvictionRunsMillis")));
 		datasource.setValidationQuery(propertyResolver.getProperty("validationQuery"));
 		datasource.setTestWhileIdle(Boolean.valueOf(propertyResolver.getProperty("testWhileIdle")));
 		datasource.setTestOnBorrow(Boolean.valueOf(propertyResolver.getProperty("testOnBorrow")));
@@ -58,6 +59,9 @@ public class DuridConfiguration implements EnvironmentAware {
 		datasource.setPoolPreparedStatements(Boolean.valueOf(propertyResolver.getProperty("poolPreparedStatements")));
 		datasource.setFilters(propertyResolver.getProperty("filters"));
 		datasource.setConnectionProperties(propertyResolver.getProperty("connectionProperties"));
+		datasource.setRemoveAbandoned(true);
+		datasource.setRemoveAbandonedTimeout(180);
+		datasource.setLogAbandoned(true);
 		return datasource;
 	}
 
