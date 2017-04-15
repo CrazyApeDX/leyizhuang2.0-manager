@@ -1679,7 +1679,6 @@ public class TdGoodsService {
 				+ " and " + "inventory.diyCode is null and inventory.inventory > 0 order by goods.sortId asc");
 		List<Object[]> result = query.getResultList();
 		em.close();
-		
 		return this.translateResultSet(result);
 	}
 

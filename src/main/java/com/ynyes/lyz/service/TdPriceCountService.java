@@ -1791,34 +1791,34 @@ public class TdPriceCountService {
 						TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
 								user.getCityId(), type);
 						TdPriceListItem priceListItem = tdCommonService.getGoodsPrice(user.getCityId(), goodsId);
-						if (null != module) {
-							// 购买的数量为多少就赠送多少
-							for (int i = 0; i < quantity; i++) {
-								TdCoupon coupon = new TdCoupon();
-								coupon.setTypeId(4L);
-								coupon.setTypeCategoryId(2L);
-								coupon.setBrandId(module.getBrandId());
-								coupon.setBrandTitle(module.getBrandTitle());
-								coupon.setGoodsId(module.getGoodsId());
-								coupon.setPicUri(module.getPicUri());
-								coupon.setGoodsName(module.getGoodsTitle());
-								coupon.setTypeTitle(module.getSku() + "产品现金券");
-								coupon.setTypeDescription(module.getSku() + "产品现金券");
-								coupon.setTypePicUri(module.getPicUri());
-								coupon.setPrice(priceListItem.getSalePrice() - priceListItem.getRealSalePrice());
-								coupon.setIsDistributted(true);
-								coupon.setGetTime(new Date());
-								coupon.setUsername(user.getUsername());
-								coupon.setIsUsed(false);
-								coupon.setIsOutDate(false);
-								coupon.setExpireTime(expiredTime);
-								coupon.setMobile(user.getUsername());
-								coupon.setSku(module.getSku());
-								coupon.setCityId(city.getId());
-								coupon.setCityName(city.getCityName());
-								tdCouponService.save(coupon);
-							}
+						// if (null != module) {
+						// 购买的数量为多少就赠送多少
+						for (int i = 0; i < quantity; i++) {
+							TdCoupon coupon = new TdCoupon();
+							coupon.setTypeId(4L);
+							coupon.setTypeCategoryId(2L);
+							coupon.setBrandId(module.getBrandId());
+							coupon.setBrandTitle(module.getBrandTitle());
+							coupon.setGoodsId(module.getGoodsId());
+							coupon.setPicUri(module.getPicUri());
+							coupon.setGoodsName(module.getGoodsTitle());
+							coupon.setTypeTitle(module.getSku() + "产品现金券");
+							coupon.setTypeDescription(module.getSku() + "产品现金券");
+							coupon.setTypePicUri(module.getPicUri());
+							coupon.setPrice(priceListItem.getSalePrice() - priceListItem.getRealSalePrice());
+							coupon.setIsDistributted(true);
+							coupon.setGetTime(new Date());
+							coupon.setUsername(user.getUsername());
+							coupon.setIsUsed(false);
+							coupon.setIsOutDate(false);
+							coupon.setExpireTime(expiredTime);
+							coupon.setMobile(user.getUsername());
+							coupon.setSku(module.getSku());
+							coupon.setCityId(city.getId());
+							coupon.setCityName(city.getCityName());
+							tdCouponService.save(coupon);
 						}
+						// }
 					}
 				}
 			}
