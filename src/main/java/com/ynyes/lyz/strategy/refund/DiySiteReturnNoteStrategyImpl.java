@@ -1,21 +1,23 @@
 package com.ynyes.lyz.strategy.refund;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.lyz.entity.TdReturnNote;
 
-@Service
+@Service("diySiteReturnNoteStrategy")
 @Transactional
 public class DiySiteReturnNoteStrategyImpl implements TdReturnNoteStrategy {
 
 	@Autowired
-	private TdReturnNoteStrategyImpl origin;
+	@Qualifier("tdReturnNoteStrategy")
+	private TdReturnNoteStrategy tdReturnNoteStrategyImpl;
 	
 	@Override
 	public Boolean doAction(TdReturnNote returnNote) throws Exception {
-		return origin.doAction(returnNote);
+		return tdReturnNoteStrategyImpl.doAction(returnNote);
 	}
 
 }

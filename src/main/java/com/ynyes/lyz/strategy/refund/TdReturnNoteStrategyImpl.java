@@ -9,7 +9,7 @@ import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdReturnNoteService;
 
-@Service
+@Service("tdReturnNoteStrategy")
 @Transactional
 public class TdReturnNoteStrategyImpl implements TdReturnNoteStrategy  {
 
