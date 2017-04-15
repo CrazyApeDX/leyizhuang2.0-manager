@@ -1678,6 +1678,8 @@ public class TdGoodsService {
 				+ " and goods.isOnSale = true and " + "goods.id = inventory.goodsId and inventory.regionId = " + sobId
 				+ " and " + "inventory.diyCode is null and inventory.inventory > 0 order by goods.sortId asc");
 		List<Object[]> result = query.getResultList();
+		em.close();
+		
 		return this.translateResultSet(result);
 	}
 

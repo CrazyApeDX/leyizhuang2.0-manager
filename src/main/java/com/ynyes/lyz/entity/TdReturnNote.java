@@ -34,14 +34,14 @@ public class TdReturnNote {
 	@Column
 	private String orderNumber;
 
-	// 退货单状态 1:待通知物流 2:待取货 3: 待确认收货  4 待退款（物流确认） 5 已完成
+	// 退货单状态 1:待通知物流 2:待取货 3: 待确认收货 4 待退款（物流确认） 5 已完成 6 退货取消
 	@Column
 	private Long statusId;
 
-	//状态名称 zp
+	// 状态名称 zp
 	@SuppressWarnings("unused")
 	private String statusName;
-	
+
 	// 支付方式
 	@Column
 	private Long payTypeId;
@@ -83,12 +83,11 @@ public class TdReturnNote {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date orderTime;
 
-
 	// 配送员从门店取到货的时间
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date recvTime;
-	
+
 	// 取消时间
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -103,7 +102,7 @@ public class TdReturnNote {
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date returnTime;
-	
+
 	// 通知物流时间
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -117,46 +116,51 @@ public class TdReturnNote {
 	// 排序号
 	@Column
 	private Double sortId;
-	
+
 	// 退货方式 1 到店退货， 2 物流取货
 	@Column
 	private Long turnType;
-	
+
 	@SuppressWarnings("unused")
 	private String turnTypeName;
-	
+
 	// 原订单配送方式
 	@Column
 	private String deliverTypeTitle;
-	
+
 	// 原订单配送地址
 	@Column
 	private String shoppingAddress;
-	
+
 	// 销售顾问名字
-    @Column
-    private String sellerRealName;
-    
+	@Column
+	private String sellerRealName;
+
 	// 退货金额
-	@Column(scale=2)
+	@Column(scale = 2)
 	private Double turnPrice;
-	
+
 	// 快递员
 	@Column
 	private String driver;
-	
-	//  门店编码
+
+	// 门店编码
 	@Column
 	private String diyCode;
-	
+
 	// 退款明细
 	@Lob
 	private String returnDetail;
-	
+
 	// 是否是退券单
 	@Column
 	private Boolean isCoupon;
-	
+
+	// 取消退货申请的时间
+	@Column
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date cancelReturnTime;
+
 	public String getReturnDetail() {
 		return returnDetail;
 	}
@@ -404,34 +408,33 @@ public class TdReturnNote {
 	public void setRecvTime(Date recvTime) {
 		this.recvTime = recvTime;
 	}
-	
+
 	public String getStatusName() {
-		//1:待通知物流 2:待取货 3: 待确认收货  4 待退款（物流确认） 5 已完成
-		if(this.statusId==1L){
+		// 1:待通知物流 2:待取货 3: 待确认收货 4 待退款（物流确认） 5 已完成
+		if (this.statusId == 1L) {
 			return "待通知物流";
-		}else if(this.statusId==2L){
+		} else if (this.statusId == 2L) {
 			return "待取货";
-		}else if(this.statusId==3L){
+		} else if (this.statusId == 3L) {
 			return "待退款";
-		}else if(this.statusId==4L){
+		} else if (this.statusId == 4L) {
 			return "待退款";
-		}else if(this.statusId==5L){
+		} else if (this.statusId == 5L) {
 			return "已完成";
 		}
-		
+
 		return "";
 	}
 
 	public String getTurnTypeName() {
-		//1 到店退货， 2 物流取货
-		if(this.turnType==1L){
+		// 1 到店退货， 2 物流取货
+		if (this.turnType == 1L) {
 			return "到店退货";
-		}else if(this.turnType==2L){
+		} else if (this.turnType == 2L) {
 			return "物流取货";
 		}
 		return "";
 	}
-
 
 	public Boolean getIsCoupon() {
 		return isCoupon;
@@ -439,6 +442,14 @@ public class TdReturnNote {
 
 	public void setIsCoupon(Boolean isCoupon) {
 		this.isCoupon = isCoupon;
+	}
+
+	public Date getCancelReturnTime() {
+		return cancelReturnTime;
+	}
+
+	public void setCancelReturnTime(Date cancelReturnTime) {
+		this.cancelReturnTime = cancelReturnTime;
 	}
 
 	@Override
