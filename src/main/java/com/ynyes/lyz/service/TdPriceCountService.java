@@ -353,26 +353,29 @@ public class TdPriceCountService {
 					// 创建一个变量表示该件商品能够使用优惠券的额度
 					Double permitCash = 0.00;
 
+					// TdCouponModule couponModule = tdCouponModuleService
+					// .findByGoodsIdAndCityTitle(orderGoods.getGoodsId(),
+					// order.getCity());
+
 					TdCouponModule couponModule = tdCouponModuleService
-							.findByGoodsIdAndCityTitle(orderGoods.getGoodsId(), order.getCity());
+							.findByGoodsIdAndCityTitleAndType(orderGoods.getGoodsId(), order.getCity(), 0L);
 
 					// 可用通用现金券的金额
 					Double normalPrice = 0d;
 					// 可用优工券的金额
 					Double YGPrice = 0d;
-					
+
 					// 如果在模板里面配置了通用现金券的金额，则采用模板里配置的数据，否则就为0，表示不能用通用现金券
 					if (null != couponModule) {
 						normalPrice = couponModule.getPrice();
 					}
-					
+
 					// 根据价目表的价差获取差价券的金额
 					Double realPrice = null == orderGoods.getRealPrice() ? 0d : orderGoods.getRealPrice();
 					Double price = null == orderGoods.getPrice() ? 0d : orderGoods.getPrice();
-					
+
 					YGPrice = price - realPrice;
-					
-					
+
 					Long quantity = orderGoods.getQuantity();
 					if (null == quantity) {
 						quantity = 0L;
@@ -1154,7 +1157,7 @@ public class TdPriceCountService {
 				backOtherPay = 0d;
 			}
 
-			/*Double all_off_line = posPay + cashPay + backOtherPay;*/
+			/* Double all_off_line = posPay + cashPay + backOtherPay; */
 
 			// 获取一年后的时间（新的券的有效时间）
 			Calendar cal = Calendar.getInstance();
@@ -1695,9 +1698,10 @@ public class TdPriceCountService {
 					}
 				}
 
-				/*if (new_return_note.getMoney() > all_off_line) {
-					new_return_note.setMoney(all_off_line);
-				}*/
+				/*
+				 * if (new_return_note.getMoney() > all_off_line) {
+				 * new_return_note.setMoney(all_off_line); }
+				 */
 
 				// 2016-07-05修改：持久化总的打款记录，当收款现金为零不持久化
 				if (new_return_note.getMoney() != 0) {

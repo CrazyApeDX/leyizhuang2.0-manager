@@ -57,6 +57,8 @@ public interface TdCouponModuleRepo
 	 * @author DengXiao
 	 */
 	TdCouponModule findByGoodsIdAndCityTitle(Long goodsId, String cityTitle);
+	
+	TdCouponModule findByGoodsIdAndCityTitleAndType(Long goodsId, String cityTitle, Long type);
 
 	/**
 	 * 根据商品id和城市sobid和模板类型查找模板
