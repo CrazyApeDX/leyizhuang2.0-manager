@@ -19,7 +19,7 @@ public class FitOrderCancelGoods extends TableEntity {
 	@Column(length = 50, nullable = false, updatable = false)
 	private String goodsSku;
 
-	@Column(length = 100, nullable = false, updatable = false)
+	@Column(length = 100, updatable = false)
 	private String goodsCoverImageUri;
 
 	@Column(length = 5, nullable = false, updatable = false)

@@ -392,11 +392,11 @@ function quantityChange(goodsId){
 	// 获取当前商品的库存量
 	var inventory = $(inventoryId).val();
 	
-	if(parseInt(quantity)>parseInt(inventory)){
-		warning("亲，库存只有这么多啦");
-		$(quantityElementId).val(inventory);
-		return;
-	}
+//	if(parseInt(quantity)>parseInt(inventory)){
+//		warning("亲，库存只有这么多啦");
+//		$(quantityElementId).val(inventory);
+//		return;
+//	}
 	
 }
 //限制输入 只能输入数字
