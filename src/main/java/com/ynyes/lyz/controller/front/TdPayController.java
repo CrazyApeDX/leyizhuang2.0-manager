@@ -624,7 +624,7 @@ public class TdPayController {
 					response.getWriter().write(MyWechatUtil.setXML("SUCCESS", "OK"));
 
 					String out_trade_no = map.get("out_trade_no").toString();
-					String total_fee = map.get("out_trade_no").toString();
+					String total_fee = map.get("total_fee").toString();
 					if (out_trade_no.contains("CZ")) {
 						// 如果是充值的情况下
 						TdRecharge recharge = tdRechargeService.findByNumber(out_trade_no);
@@ -671,7 +671,7 @@ public class TdPayController {
 						// 如果是下单的情况
 						TdOrder order = tdOrderService.findByOrderNumber(out_trade_no);
 						if (null != order && 2L == order.getStatusId().longValue()) {
-							order.setOtherPay(Double.parseDouble(total_fee));
+							order.setOtherPay(Double.parseDouble(total_fee) / 100);
 							order.setUpstairsOtherPayed(order.getUpstairsOtherPayed() + Double.parseDouble(total_fee)
 									- order.getTotalPrice());
 							Long id = order.getRealUserId();
