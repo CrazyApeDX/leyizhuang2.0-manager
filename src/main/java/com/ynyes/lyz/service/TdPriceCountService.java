@@ -1773,10 +1773,10 @@ public class TdPriceCountService {
 					return;
 				}
 
-				Long type = 0L;
-				if (null != order.getIsCoupon() && order.getIsCoupon()) {
-					type = 1L;
-				}
+//				Long type = 0L;
+//				if (null != order.getIsCoupon() && order.getIsCoupon()) {
+//					type = 1L;
+//				}
 
 				for (TdOrderGoods orderGoods : goodsList) {
 					// 如果买的商品本身就是券，则不赠送
@@ -1788,8 +1788,8 @@ public class TdPriceCountService {
 						}
 
 						// 根据商品id和城市id查找模板
-						TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
-								user.getCityId(), type);
+//						TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
+//								user.getCityId(), type);
 						TdPriceListItem priceListItem = tdCommonService.getGoodsPrice(user.getCityId(), goodsId);
 						TdGoods goods = tdGoodsService.findOne(goodsId);
 						// if (null != module) {
@@ -1814,7 +1814,7 @@ public class TdPriceCountService {
 							coupon.setIsOutDate(false);
 							coupon.setExpireTime(expiredTime);
 							coupon.setMobile(user.getUsername());
-							coupon.setSku(module.getSku());
+							coupon.setSku(goods.getCode());
 							coupon.setCityId(city.getId());
 							coupon.setCityName(city.getCityName());
 							tdCouponService.save(coupon);
