@@ -354,11 +354,6 @@
 			</exclusions>
 		</dependency>
 
-		<dependency>
-			<groupId>cn.com.leyizhuang</groupId>
-			<artifactId>lyz-member-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 
 		<dependency>
 			<groupId>com.aliyun.oss</groupId>
