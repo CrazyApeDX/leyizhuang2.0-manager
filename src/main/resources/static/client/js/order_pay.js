@@ -114,9 +114,9 @@ function pay() {
 							sign : res.wechat.sign
 						}, function(ret, err) {
 							if (ret.status) {
-								// 支付成功
+								window.location.href = "/pay/wait";
 							} else {// 支付失败
-								alert(ret.code);
+								warning("启动微信客户端失败");
 							}
 						});
 					}

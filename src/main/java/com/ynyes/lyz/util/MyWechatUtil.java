@@ -63,6 +63,15 @@ public class MyWechatUtil {
 		return sb.toString();
 	}
 
+	public static String setXML(String return_code, String return_msg) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<xml>");
+		sb.append("<return_code>" + "<![CDATA[" + return_code + "]]></return_code>");
+		sb.append("<return_msg>" + "<![CDATA[" + return_msg + "]]></return_msg>");
+		sb.append("</xml>");
+		return sb.toString();
+	}
+
 	// 生成签名
 	public static String createSign(String characterEncoding, SortedMap<String, Object> parameters) {
 		StringBuffer sb = new StringBuffer();

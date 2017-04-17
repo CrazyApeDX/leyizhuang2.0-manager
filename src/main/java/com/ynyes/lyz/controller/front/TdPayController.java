@@ -1,5 +1,7 @@
 package com.ynyes.lyz.controller.front;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -8,6 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,12 +21,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alipay.config.AlipayConfig;
 import com.alipay.util.AlipayNotify;
 import com.alipay.util.AlipaySubmit;
-import com.tencent.common.Signature;
 import com.tencent.common.TdWXPay;
 import com.ynyes.lyz.entity.TdBalanceLog;
 import com.ynyes.lyz.entity.TdOrder;
@@ -35,6 +39,7 @@ import com.ynyes.lyz.service.TdPriceCountService;
 import com.ynyes.lyz.service.TdReChargeService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
+import com.ynyes.lyz.util.MyWechatUtil;
 import com.ynyes.lyz.util.SiteMagConstant;
 
 @Controller
@@ -62,6 +67,11 @@ public class TdPayController {
 	@Autowired
 	@Qualifier("settlementService")
 	private ISettlementService settlementService;
+
+	@RequestMapping(value = "/wait", method = RequestMethod.GET)
+	public String payWait() {
+		return "/client/pay_wait";
+	}
 
 	@RequestMapping(value = "/alipay")
 	public String alipay(HttpServletRequest req, ModelMap map, String number, Long type) {
@@ -594,108 +604,98 @@ public class TdPayController {
 		return resultMap;
 	}
 
-	@RequestMapping(value = "/wx_notify")
-	public void wxPayNotify(HttpServletResponse response, HttpServletRequest request, HttpServletRequest req) {
+	@RequestMapping(value = "/wechat/return/async")
+	public void wechatReturnAsync(HttpServletRequest req, HttpServletResponse response) {
 		try {
-			String username = (String) req.getSession().getAttribute("username");
-			Map<String, Object> map = TdWXPay.parseXml(request);
-			// Map<String, Object> map = new HashMap<>();
-			// map.put("is_subscribe", "N");
-			// map.put("appid", "wxe9bbe828a4573b95");
-			// map.put("fee_type", "CNY");
-			// map.put("nonce_str", "gz2c4wfxwsr4xbvi29hhizqzz24w4vxa");
-			// map.put("out_trade_no", "XN20160803235532616232");
-			// map.put("device_info", "APP");
-			// map.put("transaction_id", "4009372001201608030506210998");
-			// map.put("trade_type", "APP");
-			// map.put("sign", "352CA1B86C62823D825EC3F0C4C291F6");
-			// map.put("result_code", "SUCCESS");
-			// map.put("mch_id", "1323382001");
-			// map.put("total_fee", "1");
-			// map.put("time_end", "20160803235554");
-			// map.put("openid", "ovuB1s-fS8yuY5KQyGOi8LUF329w");
-			// map.put("bank_type", "CFT");
-			// map.put("return_code", "SUCCESS");
-			// map.put("cash_fee", "1");
-
-			System.err.println("wx_notify -------------->" + map);
-
-			if (!wxNotifyCheak(map))
-				return;
-
-			Double PAYMENT = Double.parseDouble((String) map.get("total_fee")) / 100;
-			String out_trade_no = (String) map.get("out_trade_no");
-			System.out.println(out_trade_no);
-			TdOrder order = tdOrderService.findByOrderNumber(out_trade_no);
-			if (null == username) {
-				username = order.getUsername();
-				req.getSession().setAttribute("username", username);
+			InputStream inStream = req.getInputStream();
+			ByteArrayOutputStream outSteam = new ByteArrayOutputStream();
+			byte[] buffer = new byte[1024];
+			int len = 0;
+			while ((len = inStream.read(buffer)) != -1) {
+				outSteam.write(buffer, 0, len);
 			}
-			if (out_trade_no.contains("CZ")) {
-				// 如果是充值的情况下
-				TdRecharge recharge = tdRechargeService.findByNumber(out_trade_no);
-				if (null != recharge && null != recharge.getStatusId() && 1L == recharge.getStatusId().longValue()) {
-					recharge.setStatusId(2L);
-					TdUser user = tdUserService.findOne(recharge.getUserId());
-					Double cashBalance = user.getCashBalance();
-					if (null == cashBalance) {
-						cashBalance = 0.00;
-					}
-					Double balance = user.getBalance();
-					if (null == balance) {
-						balance = 0.00;
-					}
+			outSteam.close();
+			inStream.close();
+			String result = new String(outSteam.toByteArray(), "utf-8");
+			Map<Object, Object> map = MyWechatUtil.doXMLParse(result);
 
-					recharge.setFinishTime(new Date());
-					user.setCashBalance(cashBalance + recharge.getTotalPrice());
-					user.setBalance(balance + recharge.getTotalPrice());
-					tdUserService.save(user);
-					tdRechargeService.save(recharge);
-					tdPriceCountService.saveCashReceiptAndSendToEBS(recharge, user);
+			if (map.get("result_code").toString().equalsIgnoreCase("SUCCESS")) {
+				if (verifyWeixinNotify(map)) {
+					response.getWriter().write(MyWechatUtil.setXML("SUCCESS", "OK"));
 
-					TdBalanceLog log = new TdBalanceLog();
-					log.setUserId(user.getId());
-					log.setUsername(user.getUsername());
-					log.setMoney(recharge.getTotalPrice());
-					log.setType(0L);
-					log.setBalanceType(1L);
-					log.setCreateTime(new Date());
-					log.setFinishTime(new Date());
-					log.setIsSuccess(true);
-					log.setReason("微信充值");
-					log.setBalance(user.getCashBalance());
-					log.setOrderNumber(out_trade_no);
-					log.setDiySiteId(user.getUpperDiySiteId());
-					log.setCityId(user.getCityId());
-					log.setCashLeft(user.getCashBalance());
-					log.setUnCashLeft(user.getUnCashBalance());
-					log.setAllLeft(user.getBalance());
-					tdBalanceLogService.save(log);
-				}
-			} else {
-				if (null != order && order.getStatusId() == 2L) {
-					Double totalPrice = order.getTotalPrice();
-					// 在支付金额和实际金额相匹配的情况下再进行业务逻辑的处理
-					if (null != totalPrice && totalPrice.equals(PAYMENT)) {
-						if (order.getStatusId().longValue() == 2L) {
-							req.getSession().setAttribute("order_temp", order);
-							order.setOtherPay(PAYMENT);
+					String out_trade_no = map.get("out_trade_no").toString();
+					String total_fee = map.get("out_trade_no").toString();
+					if (out_trade_no.contains("CZ")) {
+						// 如果是充值的情况下
+						TdRecharge recharge = tdRechargeService.findByNumber(out_trade_no);
+						if (null != recharge && null != recharge.getStatusId()
+								&& 1L == recharge.getStatusId().longValue()) {
+							recharge.setStatusId(2L);
+							TdUser user = tdUserService.findOne(recharge.getUserId());
+							Double cashBalance = user.getCashBalance();
+							if (null == cashBalance) {
+								cashBalance = 0.00;
+							}
+							Double balance = user.getBalance();
+							if (null == balance) {
+								balance = 0.00;
+							}
+
+							recharge.setFinishTime(new Date());
+							user.setCashBalance(cashBalance + recharge.getTotalPrice());
+							user.setBalance(balance + recharge.getTotalPrice());
+							tdUserService.save(user);
+							tdRechargeService.save(recharge);
+							tdPriceCountService.saveCashReceiptAndSendToEBS(recharge, user);
+
+							TdBalanceLog log = new TdBalanceLog();
+							log.setUserId(user.getId());
+							log.setUsername(user.getUsername());
+							log.setMoney(recharge.getTotalPrice());
+							log.setType(0L);
+							log.setBalanceType(1L);
+							log.setCreateTime(new Date());
+							log.setFinishTime(new Date());
+							log.setIsSuccess(true);
+							log.setReason("支付宝充值");
+							log.setBalance(user.getCashBalance());
+							log.setOrderNumber(out_trade_no);
+							log.setDiySiteId(user.getUpperDiySiteId());
+							log.setCityId(user.getCityId());
+							log.setCashLeft(user.getCashBalance());
+							log.setUnCashLeft(user.getUnCashBalance());
+							log.setAllLeft(user.getBalance());
+							tdBalanceLogService.save(log);
+						}
+					} else {
+						// 如果是下单的情况
+						TdOrder order = tdOrderService.findByOrderNumber(out_trade_no);
+						if (null != order && 2L == order.getStatusId().longValue()) {
+							order.setOtherPay(Double.parseDouble(total_fee));
+							order.setUpstairsOtherPayed(order.getUpstairsOtherPayed() + Double.parseDouble(total_fee)
+									- order.getTotalPrice());
 							Long id = order.getRealUserId();
 							TdUser realUser = tdUserService.findOne(id);
-							order.setUpstairsOtherPayed(
-									order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
-							settlementService.mainOrderDataAction(order, realUser);
-							if (out_trade_no.contains("XN")) {
-								if (!"门店自提".equals(order.getDeliverTypeTitle())) {
-									// 拆单钱先去扣减库存
-									tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
-								}
+							if (null != order) {
+								req.getSession().setAttribute("order_temp", order);
 								try {
-									settlementService.disminlate(req, order, null);
+									settlementService.mainOrderDataAction(order, realUser);
 								} catch (Exception e) {
 									e.printStackTrace();
 								}
-								// tdCommonService.dismantleOrder(req);
+								// 虚拟订单需要分单
+								if (out_trade_no.contains("XN")) {
+									if (!"门店自提".equals(order.getDeliverTypeTitle())) {
+										// 拆单钱先去扣减库存
+										tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
+									}
+									try {
+										settlementService.disminlate(req, order, null);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+									// tdCommonService.dismantleOrder(req);
+								}
 							}
 						}
 					}
@@ -706,23 +706,156 @@ public class TdPayController {
 		}
 	}
 
-	public Boolean wxNotifyCheak(Map<String, Object> map) {
+	private boolean verifyWeixinNotify(Map<Object, Object> map) {
+		SortedMap<String, Object> parameterMap = new TreeMap<String, Object>();
 		String sign = (String) map.get("sign");
-		String result_code = (String) map.get("result_code");
-		String return_code = (String) map.get("return_code");
-		String out_trade_no = (String) map.get("out_trade_no");
-		String total_fee = (String) map.get("total_fee");
-		if (result_code == null || !result_code.equalsIgnoreCase("SUCCESS")) {
+		for (Object keyValue : map.keySet()) {
+			if (!keyValue.toString().equals("sign")) {
+				parameterMap.put(keyValue.toString(), map.get(keyValue));
+			}
+
+		}
+		String createSign = MyWechatUtil.createSign("UTF-8", parameterMap);
+		if (createSign.equals(sign)) {
+			return true;
+		} else {
 			return false;
 		}
-		if (return_code == null || !return_code.equalsIgnoreCase("SUCCESS")) {
-			return false;
-		}
-		if (sign == null || out_trade_no == null || total_fee == null) {
-			return false;
-		}
-		map.remove("sign");
-		String comfrimSign = Signature.getSign(map);
-		return sign.equalsIgnoreCase(comfrimSign) ? true : false;
+
 	}
+
+	// @RequestMapping(value = "/wx_notify")
+	// public void wxPayNotify(HttpServletResponse response, HttpServletRequest
+	// request, HttpServletRequest req) {
+	// try {
+	// String username = (String) req.getSession().getAttribute("username");
+	// Map<String, Object> map = TdWXPay.parseXml(request);
+	// // Map<String, Object> map = new HashMap<>();
+	// // map.put("is_subscribe", "N");
+	// // map.put("appid", "wxe9bbe828a4573b95");
+	// // map.put("fee_type", "CNY");
+	// // map.put("nonce_str", "gz2c4wfxwsr4xbvi29hhizqzz24w4vxa");
+	// // map.put("out_trade_no", "XN20160803235532616232");
+	// // map.put("device_info", "APP");
+	// // map.put("transaction_id", "4009372001201608030506210998");
+	// // map.put("trade_type", "APP");
+	// // map.put("sign", "352CA1B86C62823D825EC3F0C4C291F6");
+	// // map.put("result_code", "SUCCESS");
+	// // map.put("mch_id", "1323382001");
+	// // map.put("total_fee", "1");
+	// // map.put("time_end", "20160803235554");
+	// // map.put("openid", "ovuB1s-fS8yuY5KQyGOi8LUF329w");
+	// // map.put("bank_type", "CFT");
+	// // map.put("return_code", "SUCCESS");
+	// // map.put("cash_fee", "1");
+	//
+	// System.err.println("wx_notify -------------->" + map);
+	//
+	// if (!wxNotifyCheak(map))
+	// return;
+	//
+	// Double PAYMENT = Double.parseDouble((String) map.get("total_fee")) / 100;
+	// String out_trade_no = (String) map.get("out_trade_no");
+	// System.out.println(out_trade_no);
+	// TdOrder order = tdOrderService.findByOrderNumber(out_trade_no);
+	// if (null == username) {
+	// username = order.getUsername();
+	// req.getSession().setAttribute("username", username);
+	// }
+	// if (out_trade_no.contains("CZ")) {
+	// // 如果是充值的情况下
+	// TdRecharge recharge = tdRechargeService.findByNumber(out_trade_no);
+	// if (null != recharge && null != recharge.getStatusId() && 1L ==
+	// recharge.getStatusId().longValue()) {
+	// recharge.setStatusId(2L);
+	// TdUser user = tdUserService.findOne(recharge.getUserId());
+	// Double cashBalance = user.getCashBalance();
+	// if (null == cashBalance) {
+	// cashBalance = 0.00;
+	// }
+	// Double balance = user.getBalance();
+	// if (null == balance) {
+	// balance = 0.00;
+	// }
+	//
+	// recharge.setFinishTime(new Date());
+	// user.setCashBalance(cashBalance + recharge.getTotalPrice());
+	// user.setBalance(balance + recharge.getTotalPrice());
+	// tdUserService.save(user);
+	// tdRechargeService.save(recharge);
+	// tdPriceCountService.saveCashReceiptAndSendToEBS(recharge, user);
+	//
+	// TdBalanceLog log = new TdBalanceLog();
+	// log.setUserId(user.getId());
+	// log.setUsername(user.getUsername());
+	// log.setMoney(recharge.getTotalPrice());
+	// log.setType(0L);
+	// log.setBalanceType(1L);
+	// log.setCreateTime(new Date());
+	// log.setFinishTime(new Date());
+	// log.setIsSuccess(true);
+	// log.setReason("微信充值");
+	// log.setBalance(user.getCashBalance());
+	// log.setOrderNumber(out_trade_no);
+	// log.setDiySiteId(user.getUpperDiySiteId());
+	// log.setCityId(user.getCityId());
+	// log.setCashLeft(user.getCashBalance());
+	// log.setUnCashLeft(user.getUnCashBalance());
+	// log.setAllLeft(user.getBalance());
+	// tdBalanceLogService.save(log);
+	// }
+	// } else {
+	// if (null != order && order.getStatusId() == 2L) {
+	// Double totalPrice = order.getTotalPrice();
+	// // 在支付金额和实际金额相匹配的情况下再进行业务逻辑的处理
+	// if (null != totalPrice && totalPrice.equals(PAYMENT)) {
+	// if (order.getStatusId().longValue() == 2L) {
+	// req.getSession().setAttribute("order_temp", order);
+	// order.setOtherPay(PAYMENT);
+	// Long id = order.getRealUserId();
+	// TdUser realUser = tdUserService.findOne(id);
+	// order.setUpstairsOtherPayed(
+	// order.getUpstairsOtherPayed() + PAYMENT - order.getTotalPrice());
+	// settlementService.mainOrderDataAction(order, realUser);
+	// if (out_trade_no.contains("XN")) {
+	// if (!"门店自提".equals(order.getDeliverTypeTitle())) {
+	// // 拆单钱先去扣减库存
+	// tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货",
+	// null);
+	// }
+	// try {
+	// settlementService.disminlate(req, order, null);
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// // tdCommonService.dismantleOrder(req);
+	// }
+	// }
+	// }
+	// }
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
+	//
+	// public Boolean wxNotifyCheak(Map<String, Object> map) {
+	// String sign = (String) map.get("sign");
+	// String result_code = (String) map.get("result_code");
+	// String return_code = (String) map.get("return_code");
+	// String out_trade_no = (String) map.get("out_trade_no");
+	// String total_fee = (String) map.get("total_fee");
+	// if (result_code == null || !result_code.equalsIgnoreCase("SUCCESS")) {
+	// return false;
+	// }
+	// if (return_code == null || !return_code.equalsIgnoreCase("SUCCESS")) {
+	// return false;
+	// }
+	// if (sign == null || out_trade_no == null || total_fee == null) {
+	// return false;
+	// }
+	// map.remove("sign");
+	// String comfrimSign = Signature.getSign(map);
+	// return sign.equalsIgnoreCase(comfrimSign) ? true : false;
+	// }
 }
