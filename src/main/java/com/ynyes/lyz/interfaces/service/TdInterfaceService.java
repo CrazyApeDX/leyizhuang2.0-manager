@@ -322,6 +322,7 @@ public class TdInterfaceService {
 		orderInf.setDisctrict(tdOrder.getDisctrict());
 		orderInf.setShippingName(tdOrder.getShippingName());
 		orderInf.setShippingPhone(tdOrder.getShippingPhone());
+		orderInf.setShippingAddress(tdOrder.getShippingAddress());
 		orderInf.setSellerPhone(tdOrder.getSellerUsername());
 		orderInf.setSellerName(tdOrder.getSellerRealName());
 		orderInf.setDeliverTypeTitle(tdOrder.getDeliverTypeTitle());
@@ -714,13 +715,15 @@ public class TdInterfaceService {
 			cashReciptInf.setUserphone(tdUser.getUsername());
 			cashReciptInf.setReceiptNumber(StringTools.getUniqueNoWithHeader("RC"));
 			cashReciptInf.setDiySiteCode(storeCode);
-			if(tdRecharge.getTypeTitle().equals("信用额度")){
+			if (tdRecharge.getTypeTitle().equals("信用额度")) {
 				cashReciptInf.setReceiptClass("信用额度");
 				cashReciptInf.setProductType("CREDIT");
-			/*}else if(tdRecharge.getTypeTitle().equals("CRM积分")){
-				cashReciptInf.setReceiptClass("CRM积分");
-				cashReciptInf.setProductType("CRM");*/
-			}else{
+				/*
+				 * }else if(tdRecharge.getTypeTitle().equals("CRM积分")){
+				 * cashReciptInf.setReceiptClass("CRM积分");
+				 * cashReciptInf.setProductType("CRM");
+				 */
+			} else {
 				cashReciptInf.setReceiptClass("预收款");
 				cashReciptInf.setProductType("PREPAY");
 			}
@@ -978,7 +981,7 @@ public class TdInterfaceService {
 		returnOrderInf.setPrepayAmt(returnBalance);
 		returnOrderInf.setAuditDate(new Date());
 		if (type == INFConstants.INF_RETURN_ORDER_CANCEL_INT) {
-			
+
 			returnOrderInf.setPrepayAmt(tdOrderInf.getPayAmt());
 			returnOrderInf.setStatus("订单取消");
 		} else if (type == INFConstants.INF_RETURN_ORDER_SUB_INT) {
@@ -1370,7 +1373,8 @@ public class TdInterfaceService {
 					+ object.getDiySitePhone() + "</DIY_SITE_PHONE>" + "<PROVINCE>" + object.getProvince()
 					+ "</PROVINCE>" + "<CITY>" + object.getCity() + "</CITY>" + "<DISCTRICT>" + object.getDisctrict()
 					+ "</DISCTRICT>" + "<SHIPPING_NAME>" + object.getShippingName() + "</SHIPPING_NAME>"
-					+ "<SHIPPING_PHONE>" + object.getShippingPhone() + "</SHIPPING_PHONE>" + "<DELIVER_TYPE_TITLE>"
+					+ "<SHIPPING_PHONE>" + object.getShippingPhone() + "</SHIPPING_PHONE>" + "<SHIPPING_ADDRESS>"
+					+ object.getShippingAddress() + "</SHIPPING_ADDRESS>" + "<DELIVER_TYPE_TITLE>"
 					+ object.getDeliverTypeTitle() + "</DELIVER_TYPE_TITLE>" + "<ISONLINEPAY>" + object.getIsonlinepay()
 					+ "</ISONLINEPAY>" + "<PAY_TYPE>" + object.getPayType() + "</PAY_TYPE>" + "<PAY_DATE>" + payDate
 					+ "</PAY_DATE>" + "<PAY_AMT>" + object.getPayAmt() + "</PAY_AMT>" + "<PREPAY_AMT>"
@@ -1379,9 +1383,9 @@ public class TdInterfaceService {
 					+ object.getAttribute2() + "</ATTRIBUTE2>" + "<ATTRIBUTE3>" + object.getAttribute3()
 					+ "</ATTRIBUTE3>" + "<ATTRIBUTE4>" + object.getAttribute4() + "</ATTRIBUTE4>" + "<ATTRIBUTE5>"
 					+ object.getAttribute5() + "</ATTRIBUTE5>" + "<COUPON_FLAG>" + object.getCouponFlag()
-					+ "</COUPON_FLAG>" + "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>"+
-					"<COMPANY_DELIVERY_FEE>"+object.getCompanyDeliveryFee()+"</COMPANY_DELIVERY_FEE>" + "<CREDIT_AMT>"
-					+ object.getCreditAmt() + "</CREDIT_AMT>" + "</TABLE>";
+					+ "</COUPON_FLAG>" + "<DELIVERY_FEE>" + object.getDeliveryFee() + "</DELIVERY_FEE>"
+					+ "<COMPANY_DELIVERY_FEE>" + object.getCompanyDeliveryFee() + "</COMPANY_DELIVERY_FEE>"
+					+ "<CREDIT_AMT>" + object.getCreditAmt() + "</CREDIT_AMT>" + "</TABLE>";
 			break;
 		}
 		case ORDERGOODSINF: {
@@ -1691,8 +1695,8 @@ public class TdInterfaceService {
 		String enPass = "2XiQj1";
 		String userName = "cd001";
 
-		String url = "http://115.28.146.248:6070/interface/Send.aspx?enCode=" + enCode + "&enPass=" + enPass + "&userName="
-				+ userName + "&mob=" + phone + "&msg=" + content;
+		String url = "http://115.28.146.248:6070/interface/Send.aspx?enCode=" + enCode + "&enPass=" + enPass
+				+ "&userName=" + userName + "&mob=" + phone + "&msg=" + content;
 
 		try {
 			URL u = new URL(url);

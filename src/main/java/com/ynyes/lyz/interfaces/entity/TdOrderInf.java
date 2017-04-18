@@ -101,6 +101,10 @@ public class TdOrderInf extends TdInfBaseEntity {
 	// 收货电话
 	@Column
 	private String shippingPhone;
+	
+	//收货地址
+	@Column
+	private String shippingAddress;
 
 	// 配送方式名称
 	@Column
@@ -462,6 +466,14 @@ public class TdOrderInf extends TdInfBaseEntity {
 
 	public void setSellerName(String sellerName) {
 		this.sellerName = sellerName;
+	}
+
+	public String getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(String shippingAddress) {
+		this.shippingAddress = shippingAddress;
 	}
 
 	@Override
