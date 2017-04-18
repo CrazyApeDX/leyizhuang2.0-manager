@@ -60,6 +60,14 @@ public class TdGoods {
 	@Column
 	private Double coverImageHeight;
 
+	// 封面图片阿里云地址
+	@Column
+	private String coverImageUrl;
+
+	// 封面图片阿里云路径
+	@Column
+	private String coverImagePath;
+
 	// 视频
 	@Column
 	private String videoUri;
@@ -600,6 +608,22 @@ public class TdGoods {
 
 	public void setCoverImageHeight(Double coverImageHeight) {
 		this.coverImageHeight = coverImageHeight;
+	}
+
+	public String getCoverImageUrl() {
+		return coverImageUrl;
+	}
+
+	public void setCoverImageUrl(String coverImageUrl) {
+		this.coverImageUrl = coverImageUrl;
+	}
+
+	public String getCoverImagePath() {
+		return coverImagePath;
+	}
+
+	public void setCoverImagePath(String coverImagePath) {
+		this.coverImagePath = coverImagePath;
 	}
 
 	public String getVideoUri() {

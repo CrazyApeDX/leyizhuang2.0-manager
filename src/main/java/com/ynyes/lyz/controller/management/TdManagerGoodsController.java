@@ -1448,8 +1448,37 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 
 		return "";
 	}
-	
-	
+
+	/**
+	 * 将商品的封面图片进行压缩，并上传到阿里云OSS
+	 * 
+	 * @param req
+	 * @return
+	 */
+	@RequestMapping(value = "/pic/process", method = RequestMethod.GET)
+	@ResponseBody
+	public Map<String, Object> coverImgUriProcess(HttpServletRequest req) {
+		Map<String, Object> res = new HashMap<String, Object>();
+		String username = (String) req.getSession().getAttribute("manager");
+
+		if (null == username) {
+			res.put("code", 1);
+			res.put("message", "请重新登录");
+			return res;
+		}
+
+		try{
+			int successCount = tdGoodsService.coverImgUriProcess(100);
+			res.put("code", 0);
+			res.put("successCount", successCount);
+		}catch(Exception e){
+			e.printStackTrace();
+			res.put("code", 1);
+			res.put("message", e.getMessage());
+		}
+		return res;
+	}
+
 	private void btnChangeInventory(Integer listCheckId[],Long[] ids,Long[] listInventory,HttpServletRequest req)
 	{
 		if (null == ids || null == listInventory || ids.length < 1 || listInventory.length < 1 || ids.length != listInventory.length || listCheckId == null || listCheckId.length < 1)
