@@ -1013,7 +1013,7 @@ public class TdOrderService {
 	 *            当前登录的用户
 	 * @return
 	 */
-	public Page<TdOrder> findByOrderTypeAndUser(Long orderType, TdUser user) {
+	public Page<TdOrder> findByOrderTypeAndUser(Long orderType, TdUser user, Integer page) {
 		// 先判断用户的身份
 		Long userType = user.getUserType();
 		Long upperDiySiteId = user.getUpperDiySiteId();
@@ -1021,51 +1021,51 @@ public class TdOrderService {
 		Page<TdOrder> orderPage = null;
 		if (orderType.equals(0L)) {
 			if (userType.equals(0L)) {
-				orderPage = this.findByUsernameAndStatusIdNotOrderByOrderTimeDesc(user.getUsername(), 0,
+				orderPage = this.findByUsernameAndStatusIdNotOrderByOrderTimeDesc(user.getUsername(), page,
 						this.orderPageSize);
 			} else if (userType.equals(1L)) {
-				orderPage = this.findBySellerIdAndStatusIdNotOrderByOrderTimeDesc(user.getId(), 0, this.orderPageSize);
+				orderPage = this.findBySellerIdAndStatusIdNotOrderByOrderTimeDesc(user.getId(), page, this.orderPageSize);
 			} else if (userType.equals(2L)) {
-				orderPage = this.findByDiySiteIdAndStatusIdNotOrderByOrderTimeDesc(diySite.getId(), 0,
+				orderPage = this.findByDiySiteIdAndStatusIdNotOrderByOrderTimeDesc(diySite.getId(), page,
 						this.orderPageSize);
 			}
 		} else if (orderType.equals(1L)) {
 			if (userType.equals(0L)) {
-				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 2L, 0, this.orderPageSize);
+				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 2L, page, this.orderPageSize);
 			} else if (userType.equals(1L)) {
-				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 2L, 0, this.orderPageSize);
+				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 2L, page, this.orderPageSize);
 			} else if (userType.equals(2L)) {
-				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 2L, 0,
+				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 2L, page,
 						this.orderPageSize);
 			}
 		} else if (orderType.equals(2L)) {
 			if (userType.equals(0L)) {
-				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 3L, 0, this.orderPageSize);
+				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 3L, page, this.orderPageSize);
 			} else if (userType.equals(1L)) {
-				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 3L, 0, this.orderPageSize);
+				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 3L, page, this.orderPageSize);
 			} else if (userType.equals(2L)) {
-				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 3L, 0,
+				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 3L, page,
 						this.orderPageSize);
 			}
 		} else if (orderType.equals(3L)) {
 			if (userType.equals(0L)) {
-				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 4L, 0, this.orderPageSize);
+				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 4L, page, this.orderPageSize);
 			} else if (userType.equals(1L)) {
-				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 4L, 0, this.orderPageSize);
+				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 4L, page, this.orderPageSize);
 			} else if (userType.equals(2L)) {
-				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 4L, 0,
+				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 4L, page,
 						this.orderPageSize);
 			}
 		} else if (orderType.equals(4L)) {
 			if (userType.equals(0L)) {
 				orderPage = this.findByUsernameAndStatusIdOrUsernameAndStatusIdOrderByIdDesc(user.getUsername(), 5L, 6L,
-						0, this.orderPageSize);
+						page, this.orderPageSize);
 			} else if (userType.equals(1L)) {
-				orderPage = this.findBySellerIdAndStatusIdOrSellerIdAndStatusIdOrderByIdDesc(user.getId(), 5L, 6L, 0,
+				orderPage = this.findBySellerIdAndStatusIdOrSellerIdAndStatusIdOrderByIdDesc(user.getId(), 5L, 6L, page,
 						this.orderPageSize);
 			} else if (userType.equals(2L)) {
 				orderPage = this.findByDiySiteIdAndStatusIdOrDiySiteIdAndStatusIdOrderByIdDesc(diySite.getId(), 5L, 6L,
-						0, this.orderPageSize);
+						page, this.orderPageSize);
 			}
 		}
 		return orderPage;

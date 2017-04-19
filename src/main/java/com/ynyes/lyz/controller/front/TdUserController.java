@@ -351,12 +351,25 @@ public class TdUserController {
 		// map.addAttribute("user_type", 2);
 		// }
 		// }
-		Page<TdOrder> orderPage = this.tdOrderService.findByOrderTypeAndUser(typeId, user);
+		Page<TdOrder> orderPage = this.tdOrderService.findByOrderTypeAndUser(typeId, user, 0);
 		String key = this.tdOrderService.getKey(typeId);
 		map.addAttribute(key, orderPage);
 		map.addAttribute("user_type", user.getUserType());
 		map.addAttribute("typeId", typeId);
 		return "/client/user_order_list";
+	}
+
+	@RequestMapping(value = "/order/load/page")
+	public String orderLoadPage(HttpServletRequest request, ModelMap map, Long currentOrderType,
+			Integer currentPageNumber) {
+		String username = (String) request.getSession().getAttribute("username");
+		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
+		if (null == user) {
+			return "redirect:/login";
+		}
+		Page<TdOrder> orderPage = this.tdOrderService.findByOrderTypeAndUser(currentOrderType, user, currentPageNumber);
+		map.addAttribute("orderPage", orderPage);
+		return "/client/user_order_page_data";
 	}
 
 	/**
