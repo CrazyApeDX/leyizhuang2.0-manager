@@ -142,6 +142,7 @@ public class TdTbwBackMCancelService
 			return false;
 		}
 		TdTbwBackMCancel cancel = new TdTbwBackMCancel();
+		cancel.setWmsId(cancel.generateWmsId());
 		cancel.setInitDate(new Date());
 		cancel.setModifyDate(new Date());
 		if(null != note.getReturnNumber()){
@@ -164,8 +165,9 @@ public class TdTbwBackMCancelService
 			return false;
 		}
 		
+		System.out.println(cancel.toXml());
 		try {
-			objects = WMSClient.invoke(WMSName, "td_return_note", "1", cancel.toXml());
+			objects = WMSClient.invoke(WMSName, "td_tbw_back_m_cancel", "1", cancel.toXml());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

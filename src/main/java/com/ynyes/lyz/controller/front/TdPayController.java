@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alipay.config.AlipayConfig;
 import com.alipay.util.AlipayNotify;
 import com.alipay.util.AlipaySubmit;
-import com.tencent.common.TdWXPay;
 import com.ynyes.lyz.entity.TdBalanceLog;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdRecharge;
@@ -561,48 +560,49 @@ public class TdPayController {
 		return "/client/pay_success";
 	}
 
-	@RequestMapping(value = "/wx/sign")
-	@ResponseBody
-	public Map<String, Object> WxPayReturnSign(String orderId, HttpServletRequest req) {
-		Map<String, Object> resultMap = new HashMap<>();
-		resultMap.put("code", 0);
-		String username = (String) req.getSession().getAttribute("username");
-		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
-
-		if (user == null) {
-			resultMap.put("msg", "请先登录");
-			return resultMap;
-		}
-		if (orderId == null) {
-			resultMap.put("msg", "订单Id不存在");
-			return resultMap;
-		}
-		TdOrder tdOrder = tdOrderService.findByOrderNumber(orderId);
-		if (tdOrder == null) {
-			resultMap.put("msg", "订单不存在");
-			return resultMap;
-		}
-		String orderUsername = tdOrder.getRealUserUsername();
-		if (username == null || !username.equalsIgnoreCase(orderUsername)) {
-			resultMap.put("msg", "请先登录");
-			return resultMap;
-		}
-		if (tdOrder.getStatusId() == null || tdOrder.getStatusId() != 2) {
-			resultMap.put("msg", "参数错误");
-			return resultMap;
-		}
-		String xml = TdWXPay.getUnifiedorderXML(tdOrder);
-		ModelMap modelMap = TdWXPay.sendUnifiedorderRequest(xml);
-
-		if (modelMap != null) {
-			resultMap.put("sign", modelMap);
-		} else {
-			resultMap.put("msg", "签名出错");
-			return resultMap;
-		}
-		resultMap.put("code", 1);
-		return resultMap;
-	}
+	// @RequestMapping(value = "/wx/sign")
+	// @ResponseBody
+	// public Map<String, Object> WxPayReturnSign(String orderId,
+	// HttpServletRequest req) {
+	// Map<String, Object> resultMap = new HashMap<>();
+	// resultMap.put("code", 0);
+	// String username = (String) req.getSession().getAttribute("username");
+	// TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
+	//
+	// if (user == null) {
+	// resultMap.put("msg", "请先登录");
+	// return resultMap;
+	// }
+	// if (orderId == null) {
+	// resultMap.put("msg", "订单Id不存在");
+	// return resultMap;
+	// }
+	// TdOrder tdOrder = tdOrderService.findByOrderNumber(orderId);
+	// if (tdOrder == null) {
+	// resultMap.put("msg", "订单不存在");
+	// return resultMap;
+	// }
+	// String orderUsername = tdOrder.getRealUserUsername();
+	// if (username == null || !username.equalsIgnoreCase(orderUsername)) {
+	// resultMap.put("msg", "请先登录");
+	// return resultMap;
+	// }
+	// if (tdOrder.getStatusId() == null || tdOrder.getStatusId() != 2) {
+	// resultMap.put("msg", "参数错误");
+	// return resultMap;
+	// }
+	// String xml = TdWXPay.getUnifiedorderXML(tdOrder);
+	// ModelMap modelMap = TdWXPay.sendUnifiedorderRequest(xml);
+	//
+	// if (modelMap != null) {
+	// resultMap.put("sign", modelMap);
+	// } else {
+	// resultMap.put("msg", "签名出错");
+	// return resultMap;
+	// }
+	// resultMap.put("code", 1);
+	// return resultMap;
+	// }
 
 	@RequestMapping(value = "/wechat/return/async")
 	public void wechatReturnAsync(HttpServletRequest req, HttpServletResponse response) {

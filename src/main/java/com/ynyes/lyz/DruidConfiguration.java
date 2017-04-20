@@ -30,7 +30,7 @@ import com.alibaba.druid.support.http.WebStatFilter;
  */
 @Configuration
 @EnableTransactionManagement
-public class DuridConfiguration implements EnvironmentAware {
+public class DruidConfiguration implements EnvironmentAware {
 
 	private RelaxedPropertyResolver propertyResolver;
 
@@ -59,9 +59,9 @@ public class DuridConfiguration implements EnvironmentAware {
 		datasource.setPoolPreparedStatements(Boolean.valueOf(propertyResolver.getProperty("poolPreparedStatements")));
 		datasource.setFilters(propertyResolver.getProperty("filters"));
 		datasource.setConnectionProperties(propertyResolver.getProperty("connectionProperties"));
-		datasource.setRemoveAbandoned(true);
-		datasource.setRemoveAbandonedTimeout(180);
-		datasource.setLogAbandoned(true);
+//		datasource.setRemoveAbandoned(true);
+//		datasource.setRemoveAbandonedTimeout(180);
+//		datasource.setLogAbandoned(true);
 		return datasource;
 	}
 
