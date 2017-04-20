@@ -591,7 +591,12 @@ public class TdOrderService {
 			c.add(Restrictions.eq("sellerRealName", sellerRealName, true));
 		}
 		if (null != statusId && !statusId.equals(0L)) {
-			c.add(Restrictions.eq("statusId", statusId, true));
+			if (statusId.equals(6L)) {
+//				c.add(Restrictions.eq("statusId", statusId, true));
+				c.add(Restrictions.or(Restrictions.eq("statusId", 5L, true), Restrictions.eq("statusId", 6L, true)));
+			} else {
+				c.add(Restrictions.eq("statusId", statusId, true));
+			}
 		}
 		if (null != diyCode && !"".equals(diyCode)) {
 			c.add(Restrictions.eq("diySiteCode", diyCode, true));
