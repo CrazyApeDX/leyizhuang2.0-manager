@@ -43,7 +43,6 @@ import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.service.TdCommonService;
-import com.ynyes.lyz.service.TdDeliveryInfoDetailService;
 import com.ynyes.lyz.service.TdDeliveryInfoService;
 import com.ynyes.lyz.service.TdDiySiteInventoryService;
 import com.ynyes.lyz.service.TdDiySiteService;
@@ -73,8 +72,8 @@ public class TdDeliveryIndexController {
 	@Autowired
 	private TdGeoInfoService tdGeoInfoService;
 
-	@Autowired
-	private TdDeliveryInfoDetailService tdDeliveryInfoDetailService;
+	// @Autowired
+	// private TdDeliveryInfoDetailService tdDeliveryInfoDetailService;
 
 	@Autowired
 	private TdDiySiteService tdDiySiteService;

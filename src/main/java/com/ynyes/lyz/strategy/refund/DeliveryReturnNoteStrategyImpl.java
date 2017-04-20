@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.lyz.entity.TdReturnNote;
+import com.ynyes.lyz.interfaces.service.TdTbwBackMCancelService;
 
 @Service("deliveryReturnNoteStrategy")
 @Transactional
@@ -14,6 +15,9 @@ public class DeliveryReturnNoteStrategyImpl implements TdReturnNoteStrategy {
 	@Autowired
 	@Qualifier("tdReturnNoteStrategy")
 	private TdReturnNoteStrategy tdReturnNoteStrategyImpl;
+
+	@Autowired
+	private TdTbwBackMCancelService tdTbwBackMCancelService;
 
 	@Override
 	public Boolean doAction(TdReturnNote returnNote) throws Exception {
@@ -27,7 +31,7 @@ public class DeliveryReturnNoteStrategyImpl implements TdReturnNoteStrategy {
 	protected Boolean sendToWMS(TdReturnNote returnNote) {
 		if (returnNote.getStatusId().equals(2L)) {
 			// send
-			return Boolean.TRUE;
+			return tdTbwBackMCancelService.sendBackCancelToWMS(returnNote);
 		}
 
 		return Boolean.TRUE;

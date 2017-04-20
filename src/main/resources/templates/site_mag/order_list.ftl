@@ -117,7 +117,7 @@
         <#elseif 4==statusId>
             <span>待收货订单</span>
         <#elseif 5==statusId>
-            <span>待评价订单</span>
+            <span>已完成订单</span>
         <#elseif 6==statusId>
             <span>已完成订单</span>
         <#elseif 7==statusId>
@@ -175,7 +175,6 @@
                            <option value="2" >代付款订单</option> 
                            <option value="3" >待发货订单</option>                           
                            <option value="4" >待收货订单</option>
-                           <option value="5" >待评价订单</option>
                            <option value="6" >已完成订单</option>                           
                            <option value="7" >已取消订单</option>
                            <option value="8" >用户删除订单</option>
@@ -308,7 +307,7 @@
                             <#elseif 4==order.statusId>
                                 <span>待收货订单</span>
                             <#elseif 5==order.statusId>
-                                <span>待评价订单</span>
+                                <span>已完成订单</span>
                             <#elseif 6==order.statusId>
                                 <span>已完成订单</span>
                             <#elseif 7==order.statusId>

@@ -116,8 +116,20 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 
 	Page<TdOrder> findByUsernameAndStatusIdOrderByIdDesc(String username, Long statusId, Pageable page);
 
+	Page<TdOrder> findByUsernameAndStatusIdOrUsernameAndStatusIdOrderByIdDesc(String username1, Long statusId1,
+			String username2, Long statusId2, Pageable page);
+
+	Page<TdOrder> findBySellerIdAndStatusIdOrSellerIdAndStatusIdOrderByIdDesc(Long sellerId1, Long statusId1,
+			Long sellerId2, Long statusId2, Pageable page);
+
+	Page<TdOrder> findByDiySiteIdAndStatusIdOrDiySiteIdAndStatusIdOrderByIdDesc(Long diySiteId1, Long statusId1,
+			Long diySiteId2, Long statusId2, Pageable page);
+
 	List<TdOrder> findByUsernameAndStatusIdOrRealUserUsernameAndStatusIdOrderByIdDesc(String username, Long statusId,
 			String username1, Long statusId1);
+
+	Page<TdOrder> findByUsernameAndStatusIdOrRealUserUsernameAndStatusIdOrderByIdDesc(String username, Long statusId,
+			String username1, Long statusId1, Pageable page);
 
 	Page<TdOrder> findByUsernameAndIsCancelTrue(String username, Pageable page); // 取消订单
 																					// zhangji
@@ -203,6 +215,13 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 	List<TdOrder> findBySellerIdAndStatusIdOrderByOrderTimeDesc(Long sellerId, Long statusId);
 
 	/**
+	 * 查询指定归属销顾的指定状态的订单
+	 * 
+	 * @author DengXiao
+	 */
+	Page<TdOrder> findBySellerIdAndStatusIdOrderByOrderTimeDesc(Long sellerId, Long statusId, Pageable page);
+
+	/**
 	 * 根据门店的id查询门店下所有的订单
 	 * 
 	 * @author DengXiao
@@ -215,6 +234,8 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 	 * @author DengXiao
 	 */
 	List<TdOrder> findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(Long diySiteId, Long statusId);
+
+	Page<TdOrder> findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(Long diySiteId, Long statusId, Pageable page);
 
 	/**
 	 * 用户模糊查找订单，参与参数：username，orderNumber
@@ -314,63 +335,29 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 
 	Page<TdOrder> findBySellerUsernameAndStatusIdOrderByOrderTimeDesc(String sellerUsername, Long statusId,
 			Pageable page);
-	
+
 	Page<TdOrder> findByRealUserUsernameOrderByOrderTimeDesc(String sellerUsername, Pageable page);
 
 	Page<TdOrder> findByRealUserUsernameAndStatusIdOrderByOrderTimeDesc(String sellerUsername, Long statusId,
 			Pageable page);
-	
-	@Query(value= " SELECT "
-			+" 	o.* "
-			+" FROM "
-			+" 	td_order o "
-			+" LEFT JOIN td_diy_site diy ON o.diy_site_id = diy.id "
-			+" WHERE "
-			+" 	o.deliver_type_title = '送货上门' "
-			+" AND o.status_id NOT IN (1, 2, 3, 7, 8) "
-			+" AND o.send_time >= ?1 "
-			+" AND o.send_time <= ?2 "
-			+" AND diy.city LIKE ?3 "
-			+" AND o.diy_site_code LIKE ?4 "
-			+" AND diy.id IN ?5 "
-			+" GROUP BY o.main_order_number"
-			+" ORDER BY "
-			+" 	o.send_time DESC ; ",nativeQuery=true)
+
+	@Query(value = " SELECT " + " 	o.* " + " FROM " + " 	td_order o "
+			+ " LEFT JOIN td_diy_site diy ON o.diy_site_id = diy.id " + " WHERE " + " 	o.deliver_type_title = '送货上门' "
+			+ " AND o.status_id NOT IN (1, 2, 3, 7, 8) " + " AND o.send_time >= ?1 " + " AND o.send_time <= ?2 "
+			+ " AND diy.city LIKE ?3 " + " AND o.diy_site_code LIKE ?4 " + " AND diy.id IN ?5 "
+			+ " GROUP BY o.main_order_number" + " ORDER BY " + " 	o.send_time DESC ; ", nativeQuery = true)
 	List<TdOrder> queryDownList(Date begin, Date end, String cityName, String diySiteCode, List<String> roleDiyIds);
-	
-	@Query(value=" SELECT "
-			+" 	* "
-			+" FROM "
-			+" 	td_order o "
-			+" WHERE "
-			+" 	o.main_order_number = ?1 "
-			+" AND o.order_number LIKE '%YF%'; ",nativeQuery=true)
+
+	@Query(value = " SELECT " + " 	* " + " FROM " + " 	td_order o " + " WHERE " + " 	o.main_order_number = ?1 "
+			+ " AND o.order_number LIKE '%YF%'; ", nativeQuery = true)
 	TdOrder findFixedFlagByMainOrderNumber(String mainOrderNumber);
-	
-	@Query(value=" SELECT "
-			+" 	o.* "
-			+" FROM "
-			+" 	td_order o "
-			+" WHERE "
-			+" 	( "
-			+" 		o.is_coupon IS FALSE "
-			+" 		OR o.is_coupon IS NULL "
-			+" 	) "
-			+" AND o.order_number NOT IN ( "
-			+" 	SELECT "
-			+" 		order_number "
-			+" 	FROM "
-			+" 		td_order_inf "
-			+" 	WHERE "
-			+" 		init_date >= ?1 "
-			+"	AND init_date < ?2"
-			+" ) "
-			+" AND o.order_number NOT LIKE '%XN%' "
-			+" AND o.`status_id` NOT IN (1, 2) "
-			+" AND o.`order_time`>= ?1 "
-			+" AND o.`order_time` < ?2	"
-			+" ORDER BY "
-			+" 	o.order_time DESC; ",nativeQuery=true)
-	List<TdOrder> findMissedOrders(Date beginDate,Date endDate);
+
+	@Query(value = " SELECT " + " 	o.* " + " FROM " + " 	td_order o " + " WHERE " + " 	( "
+			+ " 		o.is_coupon IS FALSE " + " 		OR o.is_coupon IS NULL " + " 	) "
+			+ " AND o.order_number NOT IN ( " + " 	SELECT " + " 		order_number " + " 	FROM "
+			+ " 		td_order_inf " + " 	WHERE " + " 		init_date >= ?1 " + "	AND init_date < ?2" + " ) "
+			+ " AND o.order_number NOT LIKE '%XN%' " + " AND o.`status_id` NOT IN (1, 2) " + " AND o.`order_time`>= ?1 "
+			+ " AND o.`order_time` < ?2	" + " ORDER BY " + " 	o.order_time DESC; ", nativeQuery = true)
+	List<TdOrder> findMissedOrders(Date beginDate, Date endDate);
 
 }
