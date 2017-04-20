@@ -4,21 +4,21 @@
 <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
 <script>
 	function cancel(id){
-	    $(".win_yn").hide();
+	  		$(".win_yn").hide();
 			$.ajax({	
-				url:"/return/cancel/{id}",
-				type:"post",
+				url:"/return/cancel/"+id,
+				method:"post",
 				success:function(result){
 					if (0 === result.status) {
+					$(".cancelhide").hide();
+					$(".mas").empty();
+					$(".mas").append("退货取消");
 						// success
 						} else {
 							console.log(result.message);
-							$(".cancelhide").hide();
 					}
-				},
-				 error:function(xhr,status,error){
-						warn("error "+error);
-					 }
+				}
+				
 			}); 
 	}
 </script>
@@ -30,7 +30,7 @@
                 <li class="li1">
                     <label>退货单号：<span>${item.returnNumber!''}</span></label>
                     <div class="species">
-                        ${item.statusName }
+                       <span class="mas"> ${item.statusName }</span>
                     </div>
                 </li>
                 <li class="li1">
@@ -53,7 +53,7 @@
                 </div>
                 <div class="li3">
                 
-               		 <#if item.statusName != "退货取消">
+               		 <#if item.statusName != "退货取消" && item.statusName != "已完成">
                 	     <a href="javascript:win_yes('是否确定取消？','cancel(${item.id?c});');" class="cancelhide">取消退货</a>
                      </#if>
                 
