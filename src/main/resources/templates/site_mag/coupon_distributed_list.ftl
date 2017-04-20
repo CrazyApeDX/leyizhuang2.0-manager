@@ -83,12 +83,17 @@ function failureMsg(msg,objId){
       <div class="menu-list">
       		<div class="rule-single-select">
                         <select name="typeId" onchange="javascript:setTimeout(__doPostBack('changeType',''), 0)">
+                            <!--
                             <option value="0" <#if !typeId?? || typeId==0>selected="selected"</#if>>所有类型</option>
                             <#if couponType_list??>
                                 <#list couponType_list as cou>
                                     <option value="${cou.id?c}" <#if typeId?? && typeId==cou.id>selected="selected"</#if>>${cou.title!''}</option>
                                 </#list>
-                            </#if>                             
+                            </#if> 
+                            -->
+                             <option value="3" <#if !typeId?? || typeId==3>selected="selected"</#if>>产品券</option>                           
+                            <option value="2" <#if !typeId?? || typeId==2>selected="selected"</#if>>产品现金券</option>
+                            <option value="1" <#if !typeId?? || typeId==1>selected="selected"</#if>>通用现金券</option>                                                        
                      	</select>
             </div>
             <div class="rule-single-select">

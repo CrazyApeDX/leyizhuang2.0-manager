@@ -468,6 +468,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 		if (null == isUsed) {
 			isUsed = 0L;
 		}
+		//如果isused未修改那么值isused=0；
 
 		if (null == typeId) {
 			typeId = 0L;
@@ -478,11 +479,13 @@ public class TdManagerCouponController extends TdManagerBaseController {
 		if (typeId.equals(0L)) {
 			if (isUsed.equals(0L)) {
 				if (StringUtils.isNotBlank(keywords)) {
+					// 未输入typeId，未输入isUsed
 					// 模糊查询优惠券名称,已领取的优惠券,根据领取时间排序
 					couponPage = tdCouponService
 							.findByTypeTitleContainingAndIsDistributtedTrueOrUsernameContainingAndIsDistributtedTrueOrderByGetTimeDesc(
 									keywords, page, size);
 				} else {
+					//直接查询
 					// 查询已领取的优惠券,根据领取时间排序
 					couponPage = tdCouponService.findByIsDistributtedTrueOrderByGetTimeDesc(page, size);
 				}
