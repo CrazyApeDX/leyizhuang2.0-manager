@@ -378,6 +378,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 			;
 		}
 
+		
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
 		map.addAttribute("__EVENTTARGET", __EVENTTARGET);

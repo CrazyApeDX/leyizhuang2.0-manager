@@ -152,7 +152,7 @@ function failureMsg(msg,objId){
   <tbody>
   <tr class="odd_bg">
     <th width="8%">选择</th>
-    <th align="left">优惠券名称
+    <th align="left"> 优惠券名称
                     </th>
     <#--<th align="left" width="10%"><div class="rule-single-select">
                         <select name="diysiteId" onchange="javascript:setTimeout(__doPostBack('changeDiysite',''), 0)">
