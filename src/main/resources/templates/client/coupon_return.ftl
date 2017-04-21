@@ -328,7 +328,8 @@
 					</a>
 				</dt>
 				<dd>
-					<p>{{item.title}}（{{item.sku}}）</p>
+					<p>{{item.title}}</p>
+					<p>{{item.sku}}</p>
 					<div class="fen_div01">
 						<a ng-click="delete($index);">-</a>
 						<input type="text" name="" id="{{$index}}" ng-model="item.reQuantity" ng-keyup="change($index,this);">
