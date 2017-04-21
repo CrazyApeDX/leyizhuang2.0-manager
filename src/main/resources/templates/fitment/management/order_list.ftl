@@ -195,7 +195,7 @@
                <div class="odiv" ><span class="span1">中转仓库：</span><input name="tt" type="text" class="input"></div>
  <div class="odiv" ><span class="span1">实际送货时间：</span><input value="${sendTime!"" }" name="sendTime" type="text" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" "></div>
 -->               
-            <#if cityList?? && cityList?size gt 0 >
+            <!-- <#if cityList?? && cityList?size gt 0 >-->
                 <div class="odiv" style="float:left;width:310px;"><span class="span1">城市名称：</span>
                     <div class="rule-single-select">
                         <select name="city" id="city" onchange="javascript:setTimeout(__doPostBack('changeCity',''), 0)" >
@@ -206,7 +206,7 @@
                         </select>
                     </div>
                 </div>
-            </#if>
+           <!--  </#if>-->
 
             <#if diySiteList?? && diySiteList?size gt 0 >
                 <div class="odiv" style="float:left;width:310px;"><span class="span1">门店名称：</span>
@@ -231,14 +231,26 @@
                     </div>
                 </div>
             -->
-
+				
                 <div class="odiv" style="width:350px;float:right"><div style="float:left;"><span class="span1">订单号：</span><input name="keywords" type="text" class="input" value="${orderNumber!"" }">
                 </div>
                     <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>
                     <div>
 
                     </div></div>
-
+                    
+             <#if companyList?? && companyList?size gt 0 >      
+				<div class="odiv" style="float:left;width:310px;"><span class="span1">装饰公司：</span>
+                    <div class="rule-single-select">
+                        <select name="company" id="company" onchange="javascript:setTimeout(__doPostBack('changeCompany',''), 0)" >
+                            <option value="" >请选择</option>
+                            <#list companyList as companys>
+                                <option value="${companys.id?c }" <#if company?? && company?eval==companys.id>selected</#if> >${companys.name }</option>
+                            </#list>
+                        </select>
+                    </div>
+                </div>
+            </#if>
             </div>
         </div>
         <!--/工具栏-->
