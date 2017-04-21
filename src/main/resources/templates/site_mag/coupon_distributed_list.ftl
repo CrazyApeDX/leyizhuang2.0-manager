@@ -91,6 +91,7 @@ function failureMsg(msg,objId){
                                 </#list>
                             </#if> 
                             -->
+                            <option value="0" <#if !typeId?? || typeId==0>selected="selected"</#if>>选择劵类型</option>
                              <option value="3" <#if !typeId?? || typeId==3>selected="selected"</#if>>产品券</option>                           
                             <option value="2" <#if !typeId?? || typeId==2>selected="selected"</#if>>产品现金券</option>
                             <option value="1" <#if !typeId?? || typeId==1>selected="selected"</#if>>通用现金券</option>                                                        
