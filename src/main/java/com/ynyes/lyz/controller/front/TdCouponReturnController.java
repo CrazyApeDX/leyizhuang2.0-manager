@@ -107,10 +107,11 @@ public class TdCouponReturnController {
 		TdOrder order = tdOrderService.findOne(orderId);
 		Map<Long, Long> group = this.getGroup(order);
 		if (null != order) {
+			Map<Long, Double> subMap = this.getSubTotal(order);
 			// List<TdCoupon> coupon_list =
 			// tdCouponService.findByCouponOrderNumberAndIsUsedFalseAndIsOutDateFalse(orderNumber);
-			List<CouponInfo> couponOrderInfo = this.getCouponOrderInfo(group, order);
-			this.getReturnUnit(couponOrderInfo);
+			List<CouponInfo> couponOrderInfo = this.getCouponOrderInfo(group, order, subMap);
+			this.getReturnUnit(couponOrderInfo, subMap);
 			// List<CouponInfo> couponOrderInfo =
 			// returnCouponService.getCouponInfo(order);
 			map.addAttribute("couponInfo_list", couponOrderInfo);
@@ -135,10 +136,8 @@ public class TdCouponReturnController {
 	 * @author 作者：CrazyDX
 	 * @version 版本：2016年8月30日上午11:03:27
 	 */
-	private List<CouponInfo> getCouponOrderInfo(Map<Long, Long> group, TdOrder order) {
+	private List<CouponInfo> getCouponOrderInfo(Map<Long, Long> group, TdOrder order, Map<Long, Double> subMap) {
 		List<CouponInfo> list = new ArrayList<>();
-
-		Map<Long, Double> subMap = this.getSubTotal(order);
 
 		for (Long goodsId : group.keySet()) {
 
@@ -175,7 +174,8 @@ public class TdCouponReturnController {
 
 			Double sub = subMap.get(goodsId);
 			if (null != sub) {
-				couponInf.setTradeTotal(couponInf.getTradeTotal() - sub);
+				// couponInf.setTradeTotal(couponInf.getTradeTotal() - sub);
+				couponInf.setTotalPrice(couponInf.getTotalPrice() + sub);
 			}
 
 			list.add(couponInf);
@@ -184,7 +184,7 @@ public class TdCouponReturnController {
 		return list;
 	}
 
-	private List<CouponInfo> getReturnUnit(List<CouponInfo> couponOrderInfo) {
+	private List<CouponInfo> getReturnUnit(List<CouponInfo> couponOrderInfo, Map<Long, Double> subMap) {
 		// 创建一个变量用于表示订单总价格
 		Double orderTotalPrice = 0d;
 		// 创建一个变量用于表示订单价值
@@ -192,7 +192,7 @@ public class TdCouponReturnController {
 
 		DecimalFormat df = new DecimalFormat("#.00");
 
-		// 第一次循环：获取订单总价和订单实际价值
+		// 第一次循环：获取订单总价值和订单实际价值
 		for (CouponInfo couponInfo : couponOrderInfo) {
 			Double tradeTotal = couponInfo.getTradeTotal();
 			Double totalPrice = couponInfo.getTotalPrice();
@@ -214,6 +214,10 @@ public class TdCouponReturnController {
 				point = tradeTotal / orderTradeTotal;
 			}
 			Double realTotal = orderTotalPrice * point;
+			Double sub = subMap.get(couponInfo.getGoodsId());
+			if (null != sub) {
+				realTotal -= sub;
+			}
 			String format = df.format(realTotal / couponInfo.getTradeQuantity());
 			couponInfo.setReturnUnit(Double.parseDouble(format));
 			// Double tradePrice = couponInfo.getTradePrice() *
