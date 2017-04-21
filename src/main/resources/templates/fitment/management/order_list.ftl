@@ -245,7 +245,7 @@
                         <select name="company" id="company" onchange="javascript:setTimeout(__doPostBack('changeCompany',''), 0)" >
                             <option value="" >请选择</option>
                             <#list companyList as companys>
-                                <option value="${companys.id?c }" <#if company?? && company?eval==companys.id>selected</#if> >${companys.name }</option>
+                                <option value="${companys.id?c }" <#if company?? && company!='' && company?eval==companys.id>selected</#if> >${companys.name }</option>
                             </#list>
                         </select>
                     </div>
