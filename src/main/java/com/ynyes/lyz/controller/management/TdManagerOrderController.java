@@ -48,6 +48,7 @@ import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
+import com.ynyes.lyz.interfaces.service.TdOrderReceiveInfService;
 import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.service.TdArticleService;
@@ -160,8 +161,10 @@ public class TdManagerOrderController {
 
 	@Autowired
 	private TdDiySiteInventoryService tdDiySiteInventoryService;
-
-	/**
+	
+	@Autowired
+	private TdOrderReceiveInfService tdOrderReceiveInfService;
+	/** 
 	 * @author lc
 	 * @注释：下载
 	 */
@@ -1086,6 +1089,18 @@ public class TdManagerOrderController {
 						tdDiySiteInventoryService.changeGoodsInventory(order, 2L, req, "发货", null);
 						order.setStatusId(4L);
 						order.setSendTime(new Date());
+						TdOrderReceiveInf orderReceiveInf = tdInterfaceService.initOrderReceiveByOrder(order);
+						if (orderReceiveInf != null) {
+							String result =tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
+							if (org.apache.commons.lang3.StringUtils.isBlank(result)) {
+								orderReceiveInf.setSendFlag(0);
+							} else {
+								orderReceiveInf.setSendFlag(1);
+								orderReceiveInf.setErrorMsg(result);
+							}
+							
+						}
+						tdOrderReceiveInfService.save(orderReceiveInf);
 					}
 
 				}
@@ -1096,13 +1111,13 @@ public class TdManagerOrderController {
 					order.setStatusId(5L);
 					order.setReceiveTime(new Date());
 
-					if (order.getDeliverTypeTitle().equalsIgnoreCase("门店自提")) {
+					/*if (order.getDeliverTypeTitle().equalsIgnoreCase("门店自提")) {
 						// add send receive time to ebs
 						TdOrderReceiveInf orderReceiveInf = tdInterfaceService.initOrderReceiveByOrder(order);
 						if (orderReceiveInf != null) {
 							tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
 						}
-					}
+					}*/
 				}
 			}
 			// 确认完成
