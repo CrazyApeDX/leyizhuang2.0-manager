@@ -246,6 +246,10 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			String keywords1, String username1, String keywords2, String username2, String keywords3, String username3,
 			String keywords4, String username4, String keywords5, String username5);
 
+	Page<TdOrder> findByUsernameContainingAndUsernameOrOrderNumberContainingAndUsernameOrSellerUsernameContainingAndUsernameOrShippingNameContainingAndUsernameOrShippingAddressContainingAndUsernameOrderByOrderTimeDesc(
+			String keywords1, String username1, String keywords2, String username2, String keywords3, String username3,
+			String keywords4, String username4, String keywords5, String username5, Pageable Page);
+
 	/**
 	 * 销顾模糊查询订单，参与参数：username，orderNumber
 	 * 
@@ -268,6 +272,11 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			String keywords1, Long sellerId1, String keywords2, Long sellerId2, String keywords3, Long sellerId3,
 			String keywords4, Long sellerId4, String keywords5, Long sellerId5, String keywords6, Long sellerId6);
 
+	Page<TdOrder> findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrShippingNameContainingAndSellerIdOrShippingAddressContainingAndSellerIdOrRealUserRealNameContainingAndSellerIdOrRealUserUsernameContainingAndSellerIdOrderByOrderTimeDesc(
+			String keywords1, Long sellerId1, String keywords2, Long sellerId2, String keywords3, Long sellerId3,
+			String keywords4, Long sellerId4, String keywords5, Long sellerId5, String keywords6, Long sellerId6,
+			Pageable page);
+
 	/**
 	 * 店长模糊查询订单，参与参数：username,orderNumber
 	 * 
@@ -276,6 +285,10 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 	List<TdOrder> findByUsernameContainingAndDiySiteIdOrOrderNumberContainingAndDiySiteIdOrShippingNameContainingAndDiySiteIdOrShippingAddressContainingAndDiySiteIdOrderByOrderTimeDesc(
 			String keywords1, Long diySiteId1, String keywords2, Long diySiteId2, String keywords3, Long diySiteId3,
 			String keywords4, Long diySiteId4);
+	
+	Page<TdOrder> findByUsernameContainingAndDiySiteIdOrOrderNumberContainingAndDiySiteIdOrShippingNameContainingAndDiySiteIdOrShippingAddressContainingAndDiySiteIdOrderByOrderTimeDesc(
+			String keywords1, Long diySiteId1, String keywords2, Long diySiteId2, String keywords3, Long diySiteId3,
+			String keywords4, Long diySiteId4, Pageable page);
 
 	/**
 	 * 根据城市名称和订单时间查询订单

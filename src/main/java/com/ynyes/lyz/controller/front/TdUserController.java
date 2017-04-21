@@ -361,13 +361,18 @@ public class TdUserController {
 
 	@RequestMapping(value = "/order/load/page")
 	public String orderLoadPage(HttpServletRequest request, ModelMap map, Long currentOrderType,
-			Integer currentPageNumber) {
+			Integer currentPageNumber, String keywords) {
 		String username = (String) request.getSession().getAttribute("username");
 		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
 		if (null == user) {
 			return "redirect:/login";
 		}
-		Page<TdOrder> orderPage = this.tdOrderService.findByOrderTypeAndUser(currentOrderType, user, currentPageNumber);
+		Page<TdOrder> orderPage = null;
+		if (null == keywords) {
+			orderPage = this.tdOrderService.findByOrderTypeAndUser(currentOrderType, user, currentPageNumber);
+		} else {
+			orderPage = this.tdOrderService.orderSearch(user, keywords, currentPageNumber);
+		}
 		map.addAttribute("orderPage", orderPage);
 		return "/client/user_order_page_data";
 	}
@@ -382,27 +387,9 @@ public class TdUserController {
 		String username = (String) req.getSession().getAttribute("username");
 		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
 		if (null != user) {
+			Page<TdOrder> all_order_list = this.tdOrderService.orderSearch(user, keywords, 0);
 			// 获取用户的身份
-			Long userType = user.getUserType();
-			if (null != userType && userType.longValue() == 0L) {
-				List<TdOrder> all_order_list = tdOrderService
-						.findByUsernameContainingAndUsernameOrOrderNumberContainingAndUsernameOrderByOrderTimeDesc(
-								keywords, user.getUsername());
-				map.addAttribute("all_order_list", all_order_list);
-			} else if (null != userType && userType.longValue() == 1L) {
-				List<TdOrder> all_order_list = tdOrderService
-						.findByUsernameContainingAndSellerIdOrOrderNumberContainingAndSellerIdOrderByOrderTimeDesc(
-								keywords, user.getId());
-				map.addAttribute("all_order_list", all_order_list);
-			} else if (null != userType && userType.longValue() == 2L) {
-				TdDiySite diySite = tdCommonService.getDiySite(req);
-				if (null != diySite) {
-					List<TdOrder> all_order_list = tdOrderService
-							.findByUsernameContainingAndDiySiteIdOrOrderNumberContainingAndDiySiteIdOrderByOrderTimeDesc(
-									keywords, diySite.getId());
-					map.addAttribute("all_order_list", all_order_list);
-				}
-			}
+			map.addAttribute("all_order_list", all_order_list);
 		}
 		return "/client/user_all_order";
 	}

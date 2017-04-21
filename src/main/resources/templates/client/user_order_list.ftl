@@ -47,7 +47,8 @@
      		"unpayed": 0,
      		"undelivery": 0,
      		"unsigned": 0,
-     		"uncommend": 0
+     		"uncommend": 0,
+     		"search": 0
      	}
      }
      
@@ -72,6 +73,7 @@
             footer();
         }
         
+        
         <#-- 模糊查询订单的方法 -->
         function searchOrder(){
             <#-- 获取查询关键词 -->
@@ -93,9 +95,14 @@
                     warning("亲，您的网速不给力啊");
                 },
                 success:function(res){
-                    $("#user_all_order").html(res);
-                    $("#all").click();
-                    close(1);
+                	if (!res.trim()) {
+                		warning("未查询到相关订单");
+                	} else {
+                		$(".order-nav li").removeClass("current");
+                		userOrderData.currentOrderType = 5;
+	                    $("#user_all_order").html(res);
+	                    close(1);
+                    }
                 }
             });
         }

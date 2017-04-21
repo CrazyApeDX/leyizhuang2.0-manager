@@ -7,6 +7,9 @@ $(function() {
 		if ("all" == li_id) {
 			$(".some_orders").css("display", "none");
 			$("#all_orders").css("display", "block");
+			if (5 == userOrderData.currentOrderType) {
+				$("#all_orders").html("");	
+			}
 			userOrderData.currentOrderType = 0;
 			if (!($("#all_orders").html().trim())) {
 				loadData(0);
@@ -65,18 +68,25 @@ function loadMore() {
 		page = userOrderData.pages.unsigned + 1;
 	} else if (4 == userOrderData.currentOrderType) {
 		page = userOrderData.pages.uncommend + 1;
+	} else if (5 == userOrderData.currentOrderType) {
+		page = userOrderData.pages.search + 1;
 	}
 	loadData(page);
 }
 
 function loadData(page) {
 	wait();
+	var keywords = null;
+	if (5 == userOrderData.currentOrderType) {
+		keywords = $("#keywords").val();
+	}
 	$.ajax({
 		url : "/user/order/load/page",
 		method : "POST",
 		data : {
 			"currentOrderType" : userOrderData.currentOrderType,
-			"currentPageNumber" : page
+			"currentPageNumber" : page,
+			"keywords": keywords
 		},
 		error : function() {
 			warning("亲，您的网速不给力啊");
@@ -107,6 +117,10 @@ function loadData(page) {
 					var html = $("#uncomment_orders").html();
 					$("#uncomment_orders").html(html + res);
 					userOrderData.pages.uncommend = page;
+				} else if (5 == userOrderData.currentOrderType) {
+					var html = $("#all_orders").html();
+					$("#all_orders").html(html + res);
+					userOrderData.pages.search = page;
 				}
 			}
 		}
