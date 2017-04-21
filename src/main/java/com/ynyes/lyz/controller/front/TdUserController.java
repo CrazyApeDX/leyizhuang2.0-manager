@@ -369,9 +369,9 @@ public class TdUserController {
 		}
 		Page<TdOrder> orderPage = null;
 		if (null == keywords) {
-			orderPage = this.tdOrderService.findByOrderTypeAndUser(currentOrderType, user, currentPageNumber);
-		} else {
 			orderPage = this.tdOrderService.orderSearch(user, keywords, currentPageNumber);
+		} else {
+			orderPage = this.tdOrderService.findByOrderTypeAndUser(currentOrderType, user, currentPageNumber);
 		}
 		map.addAttribute("orderPage", orderPage);
 		return "/client/user_order_page_data";
