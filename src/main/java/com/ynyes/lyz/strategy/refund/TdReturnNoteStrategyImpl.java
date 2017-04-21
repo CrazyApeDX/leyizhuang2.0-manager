@@ -1,5 +1,7 @@
 package com.ynyes.lyz.strategy.refund;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,8 +29,10 @@ public class TdReturnNoteStrategyImpl implements TdReturnNoteStrategy  {
 			throw new IllegalArgumentException("查询不到退单对应的订单");
 		}
 		returnNote.setStatusId(6L);
+		returnNote.setCancelReturnTime(new Date());
 		tdReturnNoteService.save(returnNote);
 		order.setStatusId(6L);
+		order.setIsRefund(false);
 		tdOrderService.save(order);
 		return Boolean.TRUE;
 	}
