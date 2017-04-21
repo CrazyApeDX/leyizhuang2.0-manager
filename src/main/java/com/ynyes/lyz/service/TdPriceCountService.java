@@ -1773,10 +1773,10 @@ public class TdPriceCountService {
 					return;
 				}
 
-//				Long type = 0L;
-//				if (null != order.getIsCoupon() && order.getIsCoupon()) {
-//					type = 1L;
-//				}
+				// Long type = 0L;
+				// if (null != order.getIsCoupon() && order.getIsCoupon()) {
+				// type = 1L;
+				// }
 
 				for (TdOrderGoods orderGoods : goodsList) {
 					// 如果买的商品本身就是券，则不赠送
@@ -1788,36 +1788,40 @@ public class TdPriceCountService {
 						}
 
 						// 根据商品id和城市id查找模板
-//						TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
-//								user.getCityId(), type);
+						// TdCouponModule module =
+						// tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
+						// user.getCityId(), type);
 						TdPriceListItem priceListItem = tdCommonService.getGoodsPrice(user.getCityId(), goodsId);
 						TdGoods goods = tdGoodsService.findOne(goodsId);
 						// if (null != module) {
 						// 购买的数量为多少就赠送多少
-						for (int i = 0; i < quantity; i++) {
-							TdCoupon coupon = new TdCoupon();
-							coupon.setTypeId(4L);
-							coupon.setTypeCategoryId(2L);
-							coupon.setBrandId(goods.getBrandId());
-							coupon.setBrandTitle(goods.getBrandTitle());
-							coupon.setGoodsId(goods.getId());
-							coupon.setPicUri(goods.getCoverImageUri());
-							coupon.setGoodsName(goods.getTitle());
-							coupon.setTypeTitle(goods.getCode() + "产品现金券");
-							coupon.setTypeDescription(goods.getCode() + "产品现金券");
-							coupon.setTypePicUri(goods.getCoverImageUri());
-							coupon.setPrice(priceListItem.getSalePrice() - priceListItem.getRealSalePrice());
-							coupon.setIsDistributted(true);
-							coupon.setGetTime(new Date());
-							coupon.setUsername(user.getUsername());
-							coupon.setIsUsed(false);
-							coupon.setIsOutDate(false);
-							coupon.setExpireTime(expiredTime);
-							coupon.setMobile(user.getUsername());
-							coupon.setSku(goods.getCode());
-							coupon.setCityId(city.getId());
-							coupon.setCityName(city.getCityName());
-							tdCouponService.save(coupon);
+						if (null != priceListItem
+								&& priceListItem.getSalePrice() - priceListItem.getRealSalePrice() > 0) {
+							for (int i = 0; i < quantity; i++) {
+								TdCoupon coupon = new TdCoupon();
+								coupon.setTypeId(4L);
+								coupon.setTypeCategoryId(2L);
+								coupon.setBrandId(goods.getBrandId());
+								coupon.setBrandTitle(goods.getBrandTitle());
+								coupon.setGoodsId(goods.getId());
+								coupon.setPicUri(goods.getCoverImageUri());
+								coupon.setGoodsName(goods.getTitle());
+								coupon.setTypeTitle(goods.getCode() + "产品现金券");
+								coupon.setTypeDescription(goods.getCode() + "产品现金券");
+								coupon.setTypePicUri(goods.getCoverImageUri());
+								coupon.setPrice(priceListItem.getSalePrice() - priceListItem.getRealSalePrice());
+								coupon.setIsDistributted(true);
+								coupon.setGetTime(new Date());
+								coupon.setUsername(user.getUsername());
+								coupon.setIsUsed(false);
+								coupon.setIsOutDate(false);
+								coupon.setExpireTime(expiredTime);
+								coupon.setMobile(user.getUsername());
+								coupon.setSku(goods.getCode());
+								coupon.setCityId(city.getId());
+								coupon.setCityName(city.getCityName());
+								tdCouponService.save(coupon);
+							}
 						}
 						// }
 					}

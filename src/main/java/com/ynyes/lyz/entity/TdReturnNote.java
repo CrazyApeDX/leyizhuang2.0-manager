@@ -410,7 +410,7 @@ public class TdReturnNote {
 	}
 
 	public String getStatusName() {
-		// 1:待通知物流 2:待取货 3: 待确认收货 4 待退款（物流确认） 5 已完成
+		// 1:待通知物流 2:待取货 3: 待确认收货 4 待退款（物流确认） 5 已完成   6退货取消
 		if (this.statusId == 1L) {
 			return "待通知物流";
 		} else if (this.statusId == 2L) {
@@ -421,6 +421,8 @@ public class TdReturnNote {
 			return "待退款";
 		} else if (this.statusId == 5L) {
 			return "已完成";
+		}else if (this.statusId == 6L) {
+			return "退货取消";
 		}
 
 		return "";

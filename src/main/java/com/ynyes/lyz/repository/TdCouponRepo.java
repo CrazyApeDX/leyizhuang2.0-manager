@@ -18,6 +18,7 @@ import com.ynyes.lyz.entity.TdCoupon;
  */
 
 public interface TdCouponRepo extends PagingAndSortingRepository<TdCoupon, Long>, JpaSpecificationExecutor<TdCoupon> {
+	
 	List<TdCoupon> findByUsernameAndExpireTimeAfterAndIsDistributtedTrueAndIsUsedFalse(String username, Date current);
 
 	List<TdCoupon> findByMobileAndExpireTimeAfterAndIsDistributtedTrueAndIsUsedFalse(String mobile, Date current);
@@ -255,5 +256,7 @@ public interface TdCouponRepo extends PagingAndSortingRepository<TdCoupon, Long>
 	List<TdCoupon> findByCouponOrderNumberAndGoodsId(String couponOrderNumber, Long goodsId);
 	
 	List<TdCoupon> findByOrderNumberAndSkuAndIsUsedTrueAndIsBuyTrue(String orderNumber, String sku);
+
+	List<TdCoupon> findByIsUsedAndTypeCategoryIdOrderByGetTimeDesc(Boolean isUsed ,Long typeCategoryId);
 	
 }

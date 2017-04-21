@@ -764,11 +764,12 @@ public class TdManagerOrderController {
 					}
 				}
 
-				map.addAttribute("order_page",
-						tdOrderService.findAllAddConditionDeliveryType(keywords, orderStartTime, orderEndTime,
-								usernameList, sellerRealName, shippingAddress, shippingPhone, deliveryTime, userPhone,
-								shippingName, sendTime, statusId, diyCode, city, deliveryType, cityDiyCodes,
-								roleDiyCodes, size, page, false));
+				Page<TdOrder> orderPage = tdOrderService.findAllAddConditionDeliveryType(keywords, orderStartTime,
+						orderEndTime, usernameList, sellerRealName, shippingAddress, shippingPhone, deliveryTime,
+						userPhone, shippingName, sendTime, statusId, diyCode, city, deliveryType, cityDiyCodes,
+						roleDiyCodes, size, page, false);
+
+				map.addAttribute("order_page", orderPage);
 			}
 		}
 

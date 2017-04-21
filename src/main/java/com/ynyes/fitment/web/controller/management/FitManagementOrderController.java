@@ -29,10 +29,17 @@ public class FitManagementOrderController {
 	public String fitmentOrderList(String company,String keywords, String orderStartTime, String orderEndTime, Integer page,
 			Integer size, Long statusId, String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
 			Long[] listId, Integer[] listChkId, ModelMap map, HttpServletRequest request) {
+		
 		if (null == page || page < 0) {
 			page = 0;
 		}
-
+		if (null != __EVENTTARGET) {
+			if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+			} 
+		}
 		if (null == size || size <= 0) {
 			size = SiteMagConstant.pageSize;
 		}

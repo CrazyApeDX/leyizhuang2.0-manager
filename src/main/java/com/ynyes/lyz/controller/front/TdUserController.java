@@ -265,85 +265,111 @@ public class TdUserController {
 		 * 
 		 * @date 2016年3月29日
 		 */
-		if (0L == user.getUserType().longValue()) {
-			// 查找所有的订单
-			Page<TdOrder> all_order_page = tdOrderService.findByUsernameAndStatusIdNotOrderByOrderTimeDesc(username, 0,
-					20);
-			map.addAttribute("all_order_list", all_order_page.getContent());
-
-			// 查找所有待支付的订单
-			List<TdOrder> unpayed_order_list = tdOrderService.findByUsernameAndStatusId(username, 2L);
-			map.addAttribute("unpayed_order_list", unpayed_order_list);
-
-			// 查找所有待发货的订单
-			List<TdOrder> undeliver_order_list = tdOrderService.findByUsernameAndStatusId(username, 3L);
-			map.addAttribute("undeliver_order_list", undeliver_order_list);
-
-			// 查找所有待收货的订单
-			List<TdOrder> unsignin_order_list = tdOrderService.findByUsernameAndStatusId(username, 4L);
-			map.addAttribute("unsignin_order_list", unsignin_order_list);
-
-			// 查找所有待评价的订单
-			List<TdOrder> uncomment_order_list = tdOrderService.findByUsernameAndStatusId(username, 5L);
-			map.addAttribute("user_type", 0);
-			map.addAttribute("uncomment_order_list", uncomment_order_list);
-		} else if (1L == user.getUserType().longValue()) {
-
-			// 查询所有的归属销顾为自己的订单
-			Page<TdOrder> all_order_page = tdOrderService.findBySellerIdAndStatusIdNotOrderByOrderTimeDesc(user.getId(),
-					0, 20);
-			map.addAttribute("all_order_list", all_order_page.getContent());
-
-			// 查询指定销顾下待支付的订单
-			List<TdOrder> unpayed_order_list = tdOrderService
-					.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 2L);
-			map.addAttribute("unpayed_order_list", unpayed_order_list);
-
-			// 查询指定销顾待发货的订单
-			List<TdOrder> undeliver_order_list = tdOrderService
-					.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 3L);
-			map.addAttribute("undeliver_order_list", undeliver_order_list);
-
-			// 查询所有待收货的订单
-			List<TdOrder> unsignin_order_list = tdOrderService
-					.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 4L);
-			map.addAttribute("unsignin_order_list", unsignin_order_list);
-
-			// 查找所有未评价的订单
-			List<TdOrder> uncomment_order_list = tdOrderService
-					.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 5L);
-			map.addAttribute("user_type", 1);
-			map.addAttribute("uncomment_order_list", uncomment_order_list);
-		} else if (2L == user.getUserType().longValue()) {
-			// 获取用户的门店
-			TdDiySite diySite = tdCommonService.getDiySite(req);
-			if (null != diySite) {
-				// 获取门店所有的订单
-				Page<TdOrder> all_order_page = tdOrderService
-						.findByDiySiteIdAndStatusIdNotOrderByOrderTimeDesc(diySite.getId(), 0, 20);
-				map.addAttribute("all_order_list", all_order_page.getContent());
-				// 获取门店所有待支付的订单
-				List<TdOrder> unpayed_order_list = tdOrderService
-						.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 2L);
-				map.addAttribute("unpayed_order_list", unpayed_order_list);
-				// 获取门店所有待发货的订单
-				List<TdOrder> undeliver_order_list = tdOrderService
-						.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 3L);
-				map.addAttribute("undeliver_order_list", undeliver_order_list);
-				// 获取门店所有待收货的订单
-				List<TdOrder> unsign_order_list = tdOrderService
-						.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 4L);
-				map.addAttribute("unsign_order_list", unsign_order_list);
-				// 获取门店所有未评价的订单
-				List<TdOrder> uncomment_order_list = tdOrderService
-						.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 5L);
-				map.addAttribute("user_type", 2);
-				map.addAttribute("uncomment_order_list", uncomment_order_list);
-			}
-		}
-
+		// if (0L == user.getUserType().longValue()) {
+		// // 查找所有的订单
+		// Page<TdOrder> all_order_page =
+		// tdOrderService.findByUsernameAndStatusIdNotOrderByOrderTimeDesc(username,
+		// 0,
+		// 20);
+		// map.addAttribute("all_order_list", all_order_page.getContent());
+		//
+		// // 查找所有待支付的订单
+		// List<TdOrder> unpayed_order_list =
+		// tdOrderService.findByUsernameAndStatusId(username, 2L);
+		// map.addAttribute("unpayed_order_list", unpayed_order_list);
+		//
+		// // 查找所有待发货的订单
+		// List<TdOrder> undeliver_order_list =
+		// tdOrderService.findByUsernameAndStatusId(username, 3L);
+		// map.addAttribute("undeliver_order_list", undeliver_order_list);
+		//
+		// // 查找所有待收货的订单
+		// List<TdOrder> unsignin_order_list =
+		// tdOrderService.findByUsernameAndStatusId(username, 4L);
+		// map.addAttribute("unsignin_order_list", unsignin_order_list);
+		//
+		// // 查找所有待评价的订单
+		// List<TdOrder> uncomment_order_list =
+		// tdOrderService.findByUsernameAndStatusId(username, 5L);
+		//
+		// map.addAttribute("uncomment_order_list", uncomment_order_list);
+		// map.addAttribute("user_type", 0);
+		// } else if (1L == user.getUserType().longValue()) {
+		//
+		// // 查询所有的归属销顾为自己的订单
+		// Page<TdOrder> all_order_page =
+		// tdOrderService.findBySellerIdAndStatusIdNotOrderByOrderTimeDesc(user.getId(),
+		// 0, 20);
+		// map.addAttribute("all_order_list", all_order_page.getContent());
+		//
+		// // 查询指定销顾下待支付的订单
+		// List<TdOrder> unpayed_order_list = tdOrderService
+		// .findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 2L);
+		// map.addAttribute("unpayed_order_list", unpayed_order_list);
+		//
+		// // 查询指定销顾待发货的订单
+		// List<TdOrder> undeliver_order_list = tdOrderService
+		// .findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 3L);
+		// map.addAttribute("undeliver_order_list", undeliver_order_list);
+		//
+		// // 查询所有待收货的订单
+		// List<TdOrder> unsignin_order_list = tdOrderService
+		// .findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 4L);
+		// map.addAttribute("unsignin_order_list", unsignin_order_list);
+		//
+		// // 查找所有未评价的订单
+		// List<TdOrder> uncomment_order_list = tdOrderService
+		// .findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 5L);
+		// map.addAttribute("uncomment_order_list", uncomment_order_list);
+		// map.addAttribute("user_type", 1);
+		// } else if (2L == user.getUserType().longValue()) {
+		// // 获取用户的门店
+		// TdDiySite diySite = tdCommonService.getDiySite(req);
+		// if (null != diySite) {
+		// // 获取门店所有的订单
+		// Page<TdOrder> all_order_page = tdOrderService
+		// .findByDiySiteIdAndStatusIdNotOrderByOrderTimeDesc(diySite.getId(),
+		// 0, 20);
+		// map.addAttribute("all_order_list", all_order_page.getContent());
+		// // 获取门店所有待支付的订单
+		// List<TdOrder> unpayed_order_list = tdOrderService
+		// .findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 2L);
+		// map.addAttribute("unpayed_order_list", unpayed_order_list);
+		// // 获取门店所有待发货的订单
+		// List<TdOrder> undeliver_order_list = tdOrderService
+		// .findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 3L);
+		// map.addAttribute("undeliver_order_list", undeliver_order_list);
+		// // 获取门店所有待收货的订单
+		// List<TdOrder> unsign_order_list = tdOrderService
+		// .findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 4L);
+		// map.addAttribute("unsign_order_list", unsign_order_list);
+		// // 获取门店所有未评价的订单
+		// List<TdOrder> uncomment_order_list = tdOrderService
+		// .findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 5L);
+		//
+		// map.addAttribute("uncomment_order_list", uncomment_order_list);
+		// map.addAttribute("user_type", 2);
+		// }
+		// }
+		Page<TdOrder> orderPage = this.tdOrderService.findByOrderTypeAndUser(typeId, user, 0);
+		String key = this.tdOrderService.getKey(typeId);
+		map.addAttribute(key, orderPage);
+		map.addAttribute("user_type", user.getUserType());
 		map.addAttribute("typeId", typeId);
 		return "/client/user_order_list";
+	}
+
+	@RequestMapping(value = "/order/load/page")
+	public String orderLoadPage(HttpServletRequest request, ModelMap map, Long currentOrderType,
+			Integer currentPageNumber) {
+		String username = (String) request.getSession().getAttribute("username");
+		TdUser user = tdUserService.findByUsernameAndIsEnableTrue(username);
+		if (null == user) {
+			return "redirect:/login";
+		}
+		Page<TdOrder> orderPage = this.tdOrderService.findByOrderTypeAndUser(currentOrderType, user, currentPageNumber);
+		map.addAttribute("orderPage", orderPage);
+		return "/client/user_order_page_data";
 	}
 
 	/**
@@ -2749,7 +2775,7 @@ public class TdUserController {
 				backOtherPay = 0.00;
 			}
 
-//			Double all_off_line = posPay + cashPay + backOtherPay;
+			// Double all_off_line = posPay + cashPay + backOtherPay;
 
 			// 2016-07-05修改：以现金的方式归还第三方支付的钱，POS和现金
 			Double all_cash_return = 0.00;
@@ -3057,9 +3083,10 @@ public class TdUserController {
 				}
 			}
 			if (all_cash_return > 0) {
-				/*if (all_cash_return > all_off_line) {
-					all_cash_return = all_off_line;
-				}*/
+				/*
+				 * if (all_cash_return > all_off_line) { all_cash_return =
+				 * all_off_line; }
+				 */
 				BigDecimal bd = new BigDecimal(all_cash_return);
 				all_cash_return = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 				infos.add(all_cash_return + "元【现金】");
@@ -3102,7 +3129,7 @@ public class TdUserController {
 				backOtherPay = 0.00;
 			}
 
-			/*Double all_off_line = posPay + cashPay + backOtherPay;*/
+			/* Double all_off_line = posPay + cashPay + backOtherPay; */
 
 			// 2016-07-05修改：以现金的方式归还第三方支付的钱，POS和现金还有其他
 			Double all_cash_return = 0.00;
@@ -3410,9 +3437,10 @@ public class TdUserController {
 				}
 			}
 			if (all_cash_return > 0) {
-				/*if (all_cash_return > all_off_line) {
-					all_cash_return = all_off_line;
-				}*/
+				/*
+				 * if (all_cash_return > all_off_line) { all_cash_return =
+				 * all_off_line; }
+				 */
 				BigDecimal bd = new BigDecimal(all_cash_return);
 				all_cash_return = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 				sb.append(all_cash_return + "元【现金】");

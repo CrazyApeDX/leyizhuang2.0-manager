@@ -559,4 +559,15 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			+ "goods.id = inventory.goodsId and inventory.regionId = :sobId and "
 			+ "inventory.diyCode is null and inventory.inventory > 0")
 	List<ClientGoodsResult> findGoodsByInventoryByCategoryId(@Param("categoryId") Long categoryId, @Param("sobId") Long sobId);
+	
+
+
+	/**
+	 * 查询封面图片为空并且无阿里云路径的商品列表
+	 * 
+	 * @param page
+	 * @return
+	 */
+	@Query("select goods from TdGoods goods where goods.coverImageUri is not null and goods.coverImagePath is null")
+	List<TdGoods> findGoodsOfOldImgUrl(Pageable page);
 }
