@@ -83,7 +83,7 @@ function failureMsg(msg,objId){
       <div class="menu-list">
       		<div class="rule-single-select">
                         <select name="typeId" onchange="javascript:setTimeout(__doPostBack('changeType',''), 0)">
-                            <!--
+                            <!-- 修改前
                             <option value="0" <#if !typeId?? || typeId==0>selected="selected"</#if>>所有类型</option>
                             <#if couponType_list??>
                                 <#list couponType_list as cou>
