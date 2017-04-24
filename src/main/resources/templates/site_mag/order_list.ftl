@@ -175,7 +175,7 @@
                            <option value="2" >代付款订单</option> 
                            <option value="3" >待发货订单</option>                           
                            <option value="4" >待收货订单</option>
-                           <option value="6" >已完成订单</option>                           
+                           <option value="6" >已完成</option>                           
                            <option value="7" >已取消订单</option>
                            <option value="8" >用户删除订单</option>
                            <option value="9" >订单退货中</option>                           

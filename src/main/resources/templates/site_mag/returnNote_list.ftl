@@ -91,6 +91,7 @@ function downloaddateurl(type,url){
 	                       	<option value="3" <#if statusId?? && statusId==3>selected</#if> >待确认收货</option>-->
 	                       	<option value="4" <#if statusId?? && statusId==4>selected</#if> >待退款</option>
 	                       	<option value="5" <#if statusId?? && statusId==5>selected</#if> >已完成</option>
+	                       	<option value="6" <#if statusId?? && statusId==6>selected</#if> >退货取消</option>
 	                       </select>
 	           		</div>
 	           	</div>
