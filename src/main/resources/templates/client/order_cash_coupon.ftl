@@ -91,7 +91,7 @@
                                             <div class="floatbox">
                                                 <div class="pro-price">￥<span><#if item??&&item.price??>${item.price?string("0")}<#else>0.00</#if></span></div>
                                                 <div class="tips"  style="margin-left:80px;float: none;overflow: hidden;">
-                                                    <div class="div1">现金劵</div>
+                                                    <div class="div1"><#if item.typeCategoryId==2>优工</#if>现金劵</div>
                                                     <span class="div2" id="name${item.id?c }" style="font-size:1.2em">${item.goodsName!""}</span>
                                                     <script type="text/javascript">
                                                         if(parseInt(($('#name${item.id?c}').width()+15))>=parseInt($('#name${item.id?c}').parent().width())){
