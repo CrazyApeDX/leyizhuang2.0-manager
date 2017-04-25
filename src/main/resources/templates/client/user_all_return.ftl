@@ -53,7 +53,7 @@
                 </div>
                 <div class="li3">
                 
-               		 <#if item.statusName != "退货取消" && item.statusName != "已完成">
+               		 <#if item.statusName != "退货取消" && item.statusName != "已完成" && item.statusName != "待退款">
                 	     <a href="javascript:win_yes('是否确定取消？','cancel(${item.id?c});');" class="cancelhide">取消退货</a>
                      </#if>
                 

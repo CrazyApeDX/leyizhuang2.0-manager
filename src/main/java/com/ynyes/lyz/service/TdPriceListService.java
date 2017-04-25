@@ -146,5 +146,12 @@ public class TdPriceListService {
 		}
 		return repository.findByCityIdAndActiveFlag(sobId, "Y");
 	}
+	
+	public List<TdPriceList> findByCityIdAndActiveFlag(Long sobId,String flag) {
+		if (sobId == null || null == flag) {
+			return null;
+		}
+		return repository.findByCityIdAndActiveFlag(sobId, flag);
+	}
 
 }

@@ -651,7 +651,7 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 			//查询选择的城市
 			TdCity city= tdCityService.findOne(cityId);
 			if(city!=null){
-				List<TdPriceList> priceList= tdPriceListService.findByCityId(city.getSobIdCity());
+				List<TdPriceList> priceList= tdPriceListService.findByCityIdAndActiveFlag(city.getSobIdCity(),"Y");
 				if(priceList!=null && priceList.size()>0){
 					//循环价目表头添加到查询条件中
 					for (TdPriceList tdPriceList : priceList) {

@@ -140,7 +140,7 @@ public interface TdSalesDetailRepo extends PagingAndSortingRepository<TdSalesDet
 			+" 	FROM "
 			+" 		td_return_note rn "
 			+" 	INNER JOIN td_order o ON o.order_number = rn.order_number "
-			+" 	AND o.status_id NOT IN (1, 2, 7, 8) "
+			+" 	AND o.status_id NOT IN (1, 2,6, 7, 8) "
 			+" 	LEFT JOIN td_user u ON u.username = o.username "
 			+" 	LEFT JOIN td_delivery_info di ON di.order_number = o.main_order_number "
 			+" 	LEFT JOIN td_user u1 ON u1.op_user = rn.driver "
