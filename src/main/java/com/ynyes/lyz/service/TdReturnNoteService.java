@@ -386,6 +386,9 @@ public class TdReturnNoteService {
 
 	public Boolean doCancel(Long id) throws Exception {
 		TdReturnNote returnNote = this.findOne(id);
+		if(returnNote.getStatusId()>=4){
+			return Boolean.FALSE;
+		}
 		return factory.build(returnNote).doAction(returnNote);
 	}
 }
