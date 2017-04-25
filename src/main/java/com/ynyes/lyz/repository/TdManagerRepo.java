@@ -26,4 +26,8 @@ public interface TdManagerRepo extends
 			Pageable page);
     
     List<TdManager> findByRoleId(Long roleId);
+    
+    TdManager findByUsername(String username);
+
+	TdManager findByUsernameAndIdNot(String username, Long id);
 }
