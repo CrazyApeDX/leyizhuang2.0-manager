@@ -154,4 +154,14 @@ public class TdManagerService {
         
         return (List<TdManager>) repository.save(entities);
     }
+    /**
+     * 通过用户查找用户名是否存在
+     */
+    public TdManager findByUsername(String username){
+    	return repository.findByUsername(username);
+    }
+
+	public Object findByUsernameAndIdNot(String username, Long id) {
+		return repository.findByUsernameAndIdNot(username,id);
+	}
 }

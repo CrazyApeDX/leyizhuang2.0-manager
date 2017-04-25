@@ -135,6 +135,9 @@ public class TdReturnNote {
 	// 销售顾问名字
 	@Column
 	private String sellerRealName;
+	
+	@Column
+	private String sellerUsername;
 
 	// 退货金额
 	@Column(scale = 2)
@@ -453,16 +456,15 @@ public class TdReturnNote {
 	public void setCancelReturnTime(Date cancelReturnTime) {
 		this.cancelReturnTime = cancelReturnTime;
 	}
-
-	@Override
-	public String toString() {
-		return "TdReturnNote [id=" + id + ", returnNumber=" + returnNumber + ", returnGoodsList=" + returnGoodsList
-				+ ", orderNumber=" + orderNumber + ", statusId=" + statusId + ", payTypeId=" + payTypeId
-				+ ", payTypeTitle=" + payTypeTitle + ", diySiteId=" + diySiteId + ", diySiteTitle=" + diySiteTitle
-				+ ", diySiteAddress=" + diySiteAddress + ", diySiteTel=" + diySiteTel + ", remarkInfo=" + remarkInfo
-				+ ", managerRemarkInfo=" + managerRemarkInfo + ", username=" + username + ", orderTime=" + orderTime
-				+ ", cancelTime=" + cancelTime + ", checkTime=" + checkTime + ", returnTime=" + returnTime + ", sortId="
-				+ sortId + ", turnType=" + turnType + ", deliverTypeTitle=" + deliverTypeTitle + ", turnPrice="
-				+ turnPrice + "]";
+	
+	public String getSellerUsername() {
+		return sellerUsername;
 	}
+
+	public void setSellerUsername(String sellerUsername) {
+		this.sellerUsername = sellerUsername;
+	}
+
+	
+	
 }
