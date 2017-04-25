@@ -2057,6 +2057,7 @@ public class TdUserController {
 
 			// add MDJ
 			returnNote.setShoppingAddress(order.getShippingAddress());
+			returnNote.setSellerUsername(order.getSellerUsername());
 			returnNote.setSellerRealName(order.getSellerRealName());
 			// end add MDJ
 
@@ -2590,7 +2591,7 @@ public class TdUserController {
 		}
 
 		// 分页查询退货单
-		Page<TdReturnNote> returnNoteList = tdReturnNoteService.findByUsername(username, "用户取消订单，退货", page, size);
+		Page<TdReturnNote> returnNoteList = tdReturnNoteService.findByUsernameAndRemarkInfoNotOrSellerUsernameAndRemarkInfoNot(username, "用户取消订单，退货", page, size);
 		// List<TdReturnNote>
 		// returnNoteList=tdReturnNoteService.findByUsername(username);
 
