@@ -147,6 +147,44 @@ public class TdGenerationController {
 		
 	}
 	
+	
+	/**
+	 * 生成单条退货单信息
+	 * @param returnNumber
+	 * @return
+	 * @throws ParseException
+	 */
+	@RequestMapping(value = "/return/{returnNumber}", produces = "application/json;charset=utf8")
+	@ResponseBody
+	public String generateReturn(@PathVariable String returnNumber ) throws ParseException{
+		TdReturnNote  note = tdReturnNoteService.findByReturnNumber(returnNumber);
+		if(null != note){
+			TdOrder order = tdOrderService.findByOrderNumber(note.getOrderNumber());
+			switch (note.getRemarkInfo()) {
+			case "用户取消订单，退货":
+				tdInterfaceService.initReturnOrder(note, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
+				tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
+				tdInterfaceService.sendReturnOrderByAsyn(note);
+				break;
+			case "拒签退货":
+				tdInterfaceService.initReturnOrder(note, INFConstants.INF_RETURN_ORDER_SUB_INT);
+				tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
+				tdInterfaceService.sendReturnOrderByAsyn(note);
+				break;		
+			default:
+				tdInterfaceService.initReturnOrder(note, INFConstants.INF_RETURN_ORDER_SUB_INT);
+				tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_SUB_INT);
+				tdInterfaceService.sendReturnOrderByAsyn(note);
+				break;
+			}
+			return "处理成功!";
+		}else{
+			return "该退货单号不存在";
+		}
+	}
+	
+	
+	
 	/**
 	 * 生成收款接口表信息
 	 * @param beginDate

@@ -93,10 +93,10 @@ public class TdEbsResendController {
 					continue;
 				}
 				String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-				if (StringUtils.isBlank(resultStr)) {
+				if (StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 					cashReciptInf.setSendFlag(0);
 				} else {
-					cashReciptInf.setSendFlag(0);
+					cashReciptInf.setSendFlag(1);
 					cashReciptInf.setErrorMsg(resultStr);
 				}
 			}
@@ -121,7 +121,7 @@ public class TdEbsResendController {
 				TdCashReciptInf cashReciptInf = cashReciptInfs.get(i);
 				
 				String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-				if (StringUtils.isBlank(resultStr)) {
+				if (StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 					cashReciptInf.setSendFlag(0);
 				} else {
 					cashReciptInf.setSendFlag(1);
@@ -153,10 +153,10 @@ public class TdEbsResendController {
 					continue;
 				}
 				String resultStr = tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-				if (StringUtils.isBlank(resultStr)) {
+				if (StringUtils.isBlank(resultStr) ||resultStr.contains("已存在") || resultStr.contains("已传输")) {
 					cashRefundInf.setSendFlag(0);
 				} else {
-					cashRefundInf.setSendFlag(0);
+					cashRefundInf.setSendFlag(1);
 					cashRefundInf.setErrorMsg(resultStr);
 				}
 			}
@@ -165,9 +165,10 @@ public class TdEbsResendController {
 	}
 	
 	
+	
 	/**
-	 * 退款重传
-	 * 
+	 * 重传全部退款
+	 * @return
 	 */
 	@RequestMapping(value = "/cashRefundAll")
 	public String resendCashRefundAll() {
@@ -179,7 +180,7 @@ public class TdEbsResendController {
 					continue;
 				}
 				String resultStr = tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-				if (StringUtils.isBlank(resultStr)) {
+				if (StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 					cashRefundInf.setSendFlag(0);
 				} else {
 					cashRefundInf.setSendFlag(1);
@@ -193,7 +194,7 @@ public class TdEbsResendController {
 	
 	
 	/**
-	 * 重传订单
+	 * 重传单条订单
 	 * 
 	 * @param orderNumber
 	 *            分单号
@@ -209,7 +210,7 @@ public class TdEbsResendController {
 		String orderInfXML = tdInterfaceService.XmlWithObject(orderInf, INFTYPE.ORDERINF);
 		Object[] orderInfObject = { INFConstants.INF_ORDER_STR, "1", orderInfXML };
 		String resultStr = tdInterfaceService.ebsWsInvoke(orderInfObject);
-		if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+		if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 			isOrderInfSucceed = true;
 			orderInf.setSendFlag(0);
 		} else {
@@ -224,7 +225,7 @@ public class TdEbsResendController {
 			Object[] orderGoodsInf = { INFConstants.INF_ORDER_GOODS_STR, "1", orderGoodsInfXML };
 			String resultStr1 = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
 			for (int i = 0; i < goodsInfs.size(); i++) {
-				if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1)) {
+				if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1) || resultStr1.contains("已存在") || resultStr1.contains("已传输")) {
 					goodsInfs.get(i).setSendFlag(0);
 				} else {
 					goodsInfs.get(i).setSendFlag(1);
@@ -241,7 +242,7 @@ public class TdEbsResendController {
 			Object[] orderCouponInf = { INFConstants.INF_ORDER_COUPON_STR, "1", orderCouponInfXML };
 			String result = tdInterfaceService.ebsWsInvoke(orderCouponInf);
 			for (int i = 0; i < couponInfs.size(); i++) {
-				if (org.apache.commons.lang3.StringUtils.isBlank(result)) {
+				if (org.apache.commons.lang3.StringUtils.isBlank(result) || result.contains("已存在") || result.contains("已传输")) {
 					couponInfs.get(i).setSendFlag(0);
 				} else {
 					couponInfs.get(i).setSendFlag(1);
@@ -281,7 +282,7 @@ public class TdEbsResendController {
 			String orderInfXML = tdInterfaceService.XmlWithObject(orderInf, INFTYPE.ORDERINF);
 			Object[] orderInfObject = { INFConstants.INF_ORDER_STR, "1", orderInfXML };
 			String resultStr = tdInterfaceService.ebsWsInvoke(orderInfObject);
-			if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+			if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 				isOrderInfSucceed = true;
 				orderInf.setSendFlag(0);
 			} else {
@@ -296,7 +297,7 @@ public class TdEbsResendController {
 				Object[] orderGoodsInf = { INFConstants.INF_ORDER_GOODS_STR, "1", orderGoodsInfXML };
 				String resultStr1 = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
 				for (int i = 0; i < goodsInfs.size(); i++) {
-					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1)) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1) || resultStr1.contains("已存在")|| resultStr1.contains("已传输")) {
 						goodsInfs.get(i).setSendFlag(0);
 					} else {
 						goodsInfs.get(i).setSendFlag(1);
@@ -313,7 +314,7 @@ public class TdEbsResendController {
 				Object[] orderCouponInf = { INFConstants.INF_ORDER_COUPON_STR, "1", orderCouponInfXML };
 				String result = tdInterfaceService.ebsWsInvoke(orderCouponInf);
 				for (int i = 0; i < couponInfs.size(); i++) {
-					if (org.apache.commons.lang3.StringUtils.isBlank(result)) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(result) || result.contains("已存在") || result.contains("已传输")) {
 						couponInfs.get(i).setSendFlag(0);
 					} else {
 						couponInfs.get(i).setSendFlag(1);
@@ -348,7 +349,7 @@ public class TdEbsResendController {
 			Object[] orderGoodsInf = { INFConstants.INF_ORDER_GOODS_STR, "1", orderGoodsInfXML };
 			String resultStr1 = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
 			for (int i = 0; i < goodsInfs.size(); i++) {
-				if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1)) {
+				if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1) || resultStr1.contains("已存在")|| resultStr1.contains("已传输")) {
 					goodsInfs.get(i).setSendFlag(0);
 				} else {
 					goodsInfs.get(i).setSendFlag(1);
@@ -379,7 +380,7 @@ public class TdEbsResendController {
 			Object[] orderCouponInf = { INFConstants.INF_ORDER_COUPON_STR, "1", orderCouponInfXML };
 			String result = tdInterfaceService.ebsWsInvoke(orderCouponInf);
 			for (int i = 0; i < couponInfs.size(); i++) {
-				if (org.apache.commons.lang3.StringUtils.isBlank(result)) {
+				if (org.apache.commons.lang3.StringUtils.isBlank(result) || result.contains("已存在") || result.contains("已传输")) {
 					couponInfs.get(i).setSendFlag(0);
 				} else {
 					couponInfs.get(i).setSendFlag(1);
@@ -403,7 +404,7 @@ public class TdEbsResendController {
 				TdOrderReceiveInf orderReceiveInf = orderReceiveInfs.get(i);
 				if (orderReceiveInf.getSendFlag() == null || orderReceiveInf.getSendFlag() == 1) {
 					String resultStr = tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
-					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						orderReceiveInf.setSendFlag(0);
 					} else {
 						orderReceiveInf.setSendFlag(1);
@@ -428,7 +429,7 @@ public class TdEbsResendController {
 				TdOrderReceiveInf orderReceiveInf = orderReceiveInfs.get(i);
 				if (orderReceiveInf.getSendFlag() == null || orderReceiveInf.getSendFlag() == 1) {
 					String resultStr = tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
-					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						orderReceiveInf.setSendFlag(0);
 					} else {
 						orderReceiveInf.setSendFlag(1);
@@ -459,7 +460,7 @@ public class TdEbsResendController {
 		if (returnOrderInfXml != null) {
 			Object[] orderInf = { INFConstants.INF_RT_ORDER_STR, "1", returnOrderInfXml };
 			String result = tdInterfaceService.ebsWsInvoke(orderInf);
-			if (StringUtils.isBlank(result)) {
+			if (StringUtils.isBlank(result) || result.contains("已存在") || result.contains("已传输")) {
 				isSendSuccess = true;
 				returnOrderInf.setSendFlag(0);
 			} else {
@@ -476,7 +477,7 @@ public class TdEbsResendController {
 			Object[] orderGoodsInf = { INFConstants.INF_RT_ORDER_GOODS_STR, "1", returnGoodsInfXml };
 			String reuslt = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
 			for (int i = 0; i < returnGoodsInfs.size(); i++) {
-				if (StringUtils.isBlank(reuslt)) {
+				if (StringUtils.isBlank(reuslt) || reuslt.contains("已存在") || reuslt.contains("已传输")) {
 					returnGoodsInfs.get(i).setSendFlag(0);
 				} else {
 					returnGoodsInfs.get(i).setSendFlag(1);
@@ -493,7 +494,7 @@ public class TdEbsResendController {
 			Object[] orderInf = { INFConstants.INF_RT_ORDER_COUPONS_STR, "1", returnCouponInfXml };
 			String reuslt = tdInterfaceService.ebsWsInvoke(orderInf);
 			for (int i = 0; i < returnCouponInfs.size(); i++) {
-				if (StringUtils.isBlank(reuslt)) {
+				if (StringUtils.isBlank(reuslt) || reuslt.contains("已存在") || reuslt.contains("已传输")) {
 					returnCouponInfs.get(i).setSendFlag(0);
 				} else {
 					returnCouponInfs.get(i).setSendFlag(1);
@@ -531,7 +532,7 @@ public class TdEbsResendController {
 			if (returnOrderInfXml != null) {
 				Object[] orderInf = { INFConstants.INF_RT_ORDER_STR, "1", returnOrderInfXml };
 				String result = tdInterfaceService.ebsWsInvoke(orderInf);
-				if (StringUtils.isBlank(result)) {
+				if (StringUtils.isBlank(result) ||result.contains("已存在") || result.contains("已传输")) {
 					isSendSuccess = true;
 					returnOrderInf.setSendFlag(0);
 				} else {
@@ -548,9 +549,10 @@ public class TdEbsResendController {
 				Object[] orderGoodsInf = { INFConstants.INF_RT_ORDER_GOODS_STR, "1", returnGoodsInfXml };
 				String reuslt = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
 				for (int i = 0; i < returnGoodsInfs.size(); i++) {
-					if (StringUtils.isBlank(reuslt)) {
+					if (StringUtils.isBlank(reuslt)|| reuslt.contains("已存在")  || reuslt.contains("已传输")) {
 						returnGoodsInfs.get(i).setSendFlag(0);
 					} else {
+						
 						returnGoodsInfs.get(i).setSendFlag(1);
 						returnGoodsInfs.get(i).setErrorMsg(reuslt);
 					}
@@ -565,7 +567,7 @@ public class TdEbsResendController {
 				Object[] orderInf = { INFConstants.INF_RT_ORDER_COUPONS_STR, "1", returnCouponInfXml };
 				String reuslt = tdInterfaceService.ebsWsInvoke(orderInf);
 				for (int i = 0; i < returnCouponInfs.size(); i++) {
-					if (StringUtils.isBlank(reuslt)) {
+					if (StringUtils.isBlank(reuslt) || reuslt.contains("已存在") || reuslt.contains("已传输")) {
 						returnCouponInfs.get(i).setSendFlag(0);
 					} else {
 						returnCouponInfs.get(i).setSendFlag(1);
@@ -600,7 +602,7 @@ public class TdEbsResendController {
 			Object[] orderGoodsInf = { INFConstants.INF_RT_ORDER_GOODS_STR, "1", returnGoodsInfXml };
 			String reuslt = tdInterfaceService.ebsWsInvoke(orderGoodsInf);
 			for (int i = 0; i < returnGoodsInfs.size(); i++) {
-				if (StringUtils.isBlank(reuslt)) {
+				if (StringUtils.isBlank(reuslt) || reuslt.contains("已存在") || reuslt.contains("已传输")) {
 					returnGoodsInfs.get(i).setSendFlag(0);
 				} else {
 					returnGoodsInfs.get(i).setSendFlag(1);
@@ -632,7 +634,7 @@ public class TdEbsResendController {
 			Object[] orderInf = { INFConstants.INF_RT_ORDER_COUPONS_STR, "1", returnCouponInfXml };
 			String reuslt = tdInterfaceService.ebsWsInvoke(orderInf);
 			for (int i = 0; i < returnCouponInfs.size(); i++) {
-				if (StringUtils.isBlank(reuslt)) {
+				if (StringUtils.isBlank(reuslt) || reuslt.contains("已存在") || reuslt.contains("已传输")) {
 					returnCouponInfs.get(i).setSendFlag(0);
 				} else {
 					returnCouponInfs.get(i).setSendFlag(1);
@@ -657,7 +659,7 @@ public class TdEbsResendController {
 				TdReturnTimeInf returnTimeInf = returnTimeInfs.get(i);
 				if (returnTimeInf.getSendFlag() == null || returnTimeInf.getSendFlag() == 1) {
 					String resultStr = tdInterfaceService.ebsWithObject(returnTimeInf, INFTYPE.RETURNTIMEINF);
-					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						returnTimeInf.setSendFlag(0);
 					} else {
 						returnTimeInf.setSendFlag(1);
@@ -683,7 +685,7 @@ public class TdEbsResendController {
 				TdReturnTimeInf returnTimeInf = returnTimeInfs.get(i);
 				if (returnTimeInf.getSendFlag() == null || returnTimeInf.getSendFlag() == 1) {
 					String resultStr = tdInterfaceService.ebsWithObject(returnTimeInf, INFTYPE.RETURNTIMEINF);
-					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr)) {
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						returnTimeInf.setSendFlag(0);
 					} else {
 						returnTimeInf.setSendFlag(1);
