@@ -105,7 +105,9 @@ public interface TdAgencyFundRepo extends PagingAndSortingRepository<TdAgencyFun
 			+" LEFT JOIN td_delivery_info di ON di.order_number = o.main_order_number "
 			+" LEFT JOIN td_user du ON du.op_user = di.driver "
 			+" LEFT JOIN td_ware_house wh ON wh.wh_number = di.wh_no "
-			+" WHERE o.deliver_type_title = '送货上门' "
+			+" WHERE "
+			+" wh.wh_number like ?6 "
+			+" AND o.deliver_type_title = '送货上门' "
 			+" AND o.status_id IN(4,5, 6, 9, 10, 12) "
 			+" AND owd.create_time >= ?1 "
 			+" AND owd.create_time <= ?2 "
@@ -114,6 +116,6 @@ public interface TdAgencyFundRepo extends PagingAndSortingRepository<TdAgencyFun
 			+" AND diy.id in ?5 "
 			+" GROUP BY o.main_order_number "
 			+" order by order_time desc; ",nativeQuery=true)
-	List<TdAgencyFund> queryDownList(Date begin, Date end, String cityName, String diySiteCode, List<String> roleDiyIds);
+	List<TdAgencyFund> queryDownList(Date begin, Date end, String cityName, String diySiteCode, List<String> roleDiyIds,String warehouse);
 	
 }

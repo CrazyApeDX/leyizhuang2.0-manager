@@ -131,7 +131,7 @@ public class TdAgencyFundService {
 	}
 
 	public List<TdAgencyFund> queryDownList(Date begin, Date end, String cityName, String diySiteCode, String username,
-			List<String> roleDiyIds) {
+			List<String> roleDiyIds,String warehouse) {
 
 		// 判断空值
 		if (begin == null) {
@@ -149,7 +149,7 @@ public class TdAgencyFundService {
 		if (roleDiyIds == null || roleDiyIds.size() == 0) {
 			roleDiyIds.add("0");
 		}
-		return repository.queryDownList(begin, end, cityName, diySiteCode, roleDiyIds);
+		return repository.queryDownList(begin, end, cityName, diySiteCode, roleDiyIds,warehouse);
 
 	}
 }
