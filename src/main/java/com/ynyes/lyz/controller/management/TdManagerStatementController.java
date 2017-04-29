@@ -713,7 +713,27 @@ public class TdManagerStatementController extends TdManagerBaseController {
         
         // 修改代收款报表逻辑和呈现方式  ----- 2016-11-14 10:43 ----- 闫乐
         
-        List<TdAgencyFund> agencyFundList = tdAgencyFundService.queryDownList(begin, end, cityName, diyCode,username,roleDiyIds);
+        String warehouse = null;
+        /*if(username.equalsIgnoreCase("dafengcang")||username.equalsIgnoreCase("hangtiancang")||username.equalsIgnoreCase("jitoucang")){
+        	warehouse = 
+        }*/
+        switch (username) {
+		case "dafengcang":
+			warehouse = "1301";
+			break;
+		case "hangtiancang":
+			warehouse = "1302";
+			break;
+		case "jitoucang":
+			warehouse = "1303";
+			break;
+
+		default:
+			warehouse = "%";
+			break;
+		}
+        
+        List<TdAgencyFund> agencyFundList = tdAgencyFundService.queryDownList(begin, end, cityName, diyCode,username,roleDiyIds,warehouse);
   
         
         

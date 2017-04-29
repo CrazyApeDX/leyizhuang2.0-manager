@@ -28,7 +28,7 @@ public class TdReturnNoteController {
 			if (tdReturnNoteService.doCancel(id)) {
 				res.put("status", 0);
 			} else {
-				res.put("message", "操作失败，请稍后重试或联系管理员");
+				res.put("message", "操作失败， 此单不允许取消退货");
 			}
 		} catch (Exception e) {
 			res.put("message", "无法查询到相关订单的信息，请联系管理员");

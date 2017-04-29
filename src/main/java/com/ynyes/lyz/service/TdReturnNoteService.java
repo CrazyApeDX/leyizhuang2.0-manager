@@ -310,6 +310,19 @@ public class TdReturnNoteService {
 		PageRequest pageRequest = new PageRequest(page, size, new Sort(Direction.DESC, "id"));
 		return repository.findByUsernameAndRemarkInfoNot(username, remark, pageRequest);
 	}
+	
+	/**
+	 * 根据用户名查询与用户相关的订单
+	 * @param username
+	 * @param remark
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public Page<TdReturnNote> findByUsernameAndRemarkInfoNotOrSellerUsernameAndRemarkInfoNot(String username, String remark, Integer page, Integer size) {
+		PageRequest pageRequest = new PageRequest(page, size, new Sort(Direction.DESC, "id"));
+		return repository.findByUsernameAndRemarkInfoNotOrSellerUsernameAndRemarkInfoNot(username, remark,username,remark, pageRequest);
+	}
 
 	/**
 	 * 根据退货单号或者订单号查询退货单
@@ -386,6 +399,9 @@ public class TdReturnNoteService {
 
 	public Boolean doCancel(Long id) throws Exception {
 		TdReturnNote returnNote = this.findOne(id);
+		if(returnNote.getStatusId()>=4){
+			return Boolean.FALSE;
+		}
 		return factory.build(returnNote).doAction(returnNote);
 	}
 }

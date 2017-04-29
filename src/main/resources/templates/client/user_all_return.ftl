@@ -15,7 +15,9 @@
 					$(".mas").append("退货取消");
 						// success
 						} else {
-							console.log(result.message);
+						close(-1);
+						warning(result.message);
+						console.log(result.message);
 					}
 				}
 				

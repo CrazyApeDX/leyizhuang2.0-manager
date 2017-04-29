@@ -21,7 +21,7 @@ public interface TdDeliveryInfoRepo
 	
 	List<TdDeliveryInfo> findByOrderNumberOrderByBeginDtDesc(String orderNumber);
 	
-	@Query(value=" SELECT "
+	/*@Query(value=" SELECT "
 			+" 	IFNULL(b.sub_order_number,'NULL') sub_order_number "
 			+" FROM "
 			+" 	td_delivery_info a "
@@ -29,4 +29,15 @@ public interface TdDeliveryInfoRepo
 			+" WHERE "
 			+" 	a.driver = ?1 ; ",nativeQuery=true)
 	List<String> findSubOrderNumberByOpUser(String opUser);
+*/
+	
+	@Query(value=" SELECT "
+			+" 	IFNULL(b.sub_order_number,'NULL') sub_order_number "
+			+" FROM "
+			+" 	td_delivery_info a, "
+			+" 	td_delivery_info_detail b where a.driver = ?1 "
+			+"  and a.task_no = b.task_no "
+			+" 	 ; ",nativeQuery=true)
+	List<String> findSubOrderNumberByOpUser(String opUser);
+
 }

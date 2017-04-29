@@ -519,7 +519,7 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	 * @author zp
 	 */
 	@Query("select g from TdGoods g,TdPriceListItem pli,TdPriceList pl where "
-			+ "g.brandId = ?2 and g.inventoryItemId=pli.goodsId and pli.priceListId =pl.listHeaderId and pl.cityId=?1 "
+			+ "g.brandId = ?2 and g.inventoryItemId=pli.goodsId and pli.priceListId =pl.listHeaderId and pl.cityId=?1 and pl.activeFlag = 'Y' "
 			+ "and (g.title like %?3% or g.subTitle like %?3% or g.detail like %?3% or g.code like %?3% ) "
 			+ "and pli.startDateActive<=SYSDATE() and (pli.endDateActive>=SYSDATE() "
 			+ "or pli.endDateActive is null ) and g.isOnSale =1 and (g.isCoupon=0 or g.isCoupon is null)")
