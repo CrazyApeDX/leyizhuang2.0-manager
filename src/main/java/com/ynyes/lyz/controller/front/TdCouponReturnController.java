@@ -166,7 +166,9 @@ public class TdCouponReturnController {
 				if (null == buyPrice) {
 					buyPrice = 0d;
 				}
-				totalPrice += buyPrice;
+				if (!coupon.getTypeTitle().contains("退货")) {
+					totalPrice += buyPrice;
+				}
 			}
 
 			couponInf.setTotalPrice(totalPrice);

@@ -30,7 +30,6 @@ import com.ynyes.lyz.entity.TdActivityGiftList;
 import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
-import com.ynyes.lyz.entity.TdCouponModule;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdOrder;
@@ -50,7 +49,6 @@ import com.ynyes.lyz.service.TdActivityService;
 import com.ynyes.lyz.service.TdBrandService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
-import com.ynyes.lyz.service.TdCouponModuleService;
 import com.ynyes.lyz.service.TdCouponService;
 import com.ynyes.lyz.service.TdDiySiteService;
 import com.ynyes.lyz.service.TdGoodsService;
@@ -84,8 +82,8 @@ public class TdManagerBuyCouponBySellerController {
 	@Autowired
 	private TdPriceListItemService tdPriceListItemService;
 
-	@Autowired
-	private TdCouponModuleService tdCouponModuleService;
+//	@Autowired
+//	private TdCouponModuleService tdCouponModuleService;
 
 	@Autowired
 	private TdOrderGoodsService tdOrderGoodsService;

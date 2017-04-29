@@ -1375,10 +1375,15 @@ public class TdPriceCountService {
 														proCoupon.setSellerRealName(tdCoupon.getSellerRealName());
 														proCoupon.setSellerUsername(tdCoupon.getSellerUsername());
 														proCoupon.setCouponOrderNumber(tdCoupon.getCouponOrderNumber());
+														proCoupon.setPrice(tdCoupon.getPrice());
+														proCoupon.setTypeDescription(tdCoupon.getTypeDescription());
+														proCoupon.setTypePicUri(tdCoupon.getTypePicUri());
+														proCoupon.setTradePrice(tdCoupon.getTradePrice());
+														proCoupon.setSign(tdCoupon.getSign());
 														buy_list.remove(tdCoupon);
 														buy_pro_coupon_condition.put(goodsId, buy_list);
 													}
-
+													
 													tdCouponService.save(proCoupon);
 													total -= unit;
 													number--;

@@ -42,7 +42,7 @@
                         <dt><img src="/client/images/index_nav_icon08.png"></dt>
                         <dd>
                             <h3>咨询与回复</h3>
-                            <span>3</span>
+                            <span></span>
                             <span></span>
                         </dd>
                     </dl>

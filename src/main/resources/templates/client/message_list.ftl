@@ -45,9 +45,7 @@
                     </#list>
                 </#if>
                 <#if suggestions??>
-                    
                         <dl>
-                           
                             <dd>
                                 <h3>咨询投诉</h3>
                                 <div>
@@ -64,7 +62,6 @@
                                 </#list>
                             </dd>
                         </dl>
-                    
                 </#if>
             </section>
         </div>		
