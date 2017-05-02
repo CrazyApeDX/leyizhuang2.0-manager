@@ -13,7 +13,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.repository.TdOrderRepo;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
@@ -32,6 +34,11 @@ import com.ynyes.lyz.util.Utils;
 public class TdOrderService {
 	@Autowired
 	TdOrderRepo repository;
+
+	@Autowired
+	private TdDiySiteService tdDiySiteService;
+
+	private final Integer orderPageSize = 10;
 
 	/**
 	 * 删除
@@ -584,7 +591,12 @@ public class TdOrderService {
 			c.add(Restrictions.eq("sellerRealName", sellerRealName, true));
 		}
 		if (null != statusId && !statusId.equals(0L)) {
-			c.add(Restrictions.eq("statusId", statusId, true));
+			if (statusId.equals(6L)) {
+//				c.add(Restrictions.eq("statusId", statusId, true));
+				c.add(Restrictions.or(Restrictions.eq("statusId", 5L, true), Restrictions.eq("statusId", 6L, true)));
+			} else {
+				c.add(Restrictions.eq("statusId", statusId, true));
+			}
 		}
 		if (null != diyCode && !"".equals(diyCode)) {
 			c.add(Restrictions.eq("diySiteCode", diyCode, true));
@@ -731,6 +743,15 @@ public class TdOrderService {
 		return repository.findBySellerIdAndStatusIdOrderByOrderTimeDesc(sellerId, statusId);
 	}
 
+	public Page<TdOrder> findBySellerIdAndStatusIdOrderByOrderTimeDesc(Long sellerId, Long statusId, Integer page,
+			Integer size) {
+		if (null == sellerId || null == statusId) {
+			return null;
+		}
+		return repository.findBySellerIdAndStatusIdOrderByOrderTimeDesc(sellerId, statusId,
+				new PageRequest(page, size));
+	}
+
 	/**
 	 * 根据门店的id查询门店下所有的订单
 	 * 
@@ -754,6 +775,15 @@ public class TdOrderService {
 			return null;
 		}
 		return repository.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySiteId, statusId);
+	}
+
+	public Page<TdOrder> findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(Long diySiteId, Long statusId, Integer page,
+			Integer size) {
+		if (null == diySiteId || null == statusId) {
+			return null;
+		}
+		return repository.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySiteId, statusId,
+				new PageRequest(page, size));
 	}
 
 	/**
@@ -956,7 +986,109 @@ public class TdOrderService {
 		return repository.findFixedFlagByMainOrderNumber(mainOrderNumber);
 	}
 
-	public List<TdOrder> findMissedOrders(Date beginDate,Date endDate) {
-		return repository.findMissedOrders(beginDate,endDate);
+	public List<TdOrder> findMissedOrders(Date beginDate, Date endDate) {
+		return repository.findMissedOrders(beginDate, endDate);
+	}
+
+	Page<TdOrder> findByUsernameAndStatusIdOrUsernameAndStatusIdOrderByIdDesc(String username, Long statusId1,
+			Long statusId2, Integer page, Integer size) {
+		return repository.findByUsernameAndStatusIdOrUsernameAndStatusIdOrderByIdDesc(username, statusId1, username,
+				statusId2, new PageRequest(page, size));
+
+	}
+
+	Page<TdOrder> findBySellerIdAndStatusIdOrSellerIdAndStatusIdOrderByIdDesc(Long sellerId, Long statusId1,
+			Long statusId2, Integer page, Integer size) {
+		return repository.findBySellerIdAndStatusIdOrSellerIdAndStatusIdOrderByIdDesc(sellerId, statusId1, sellerId,
+				statusId2, new PageRequest(page, size));
+	}
+
+	Page<TdOrder> findByDiySiteIdAndStatusIdOrDiySiteIdAndStatusIdOrderByIdDesc(Long diySiteId, Long statusId1,
+			Long statusId2, Integer page, Integer size) {
+		return repository.findByDiySiteIdAndStatusIdOrDiySiteIdAndStatusIdOrderByIdDesc(diySiteId, statusId1, diySiteId,
+				statusId2, new PageRequest(page, size));
+	}
+
+	/**
+	 * 特殊方法，特定用于在会员中心中查看订单列表
+	 * 
+	 * @param orderType
+	 *            当前需要查看的订单订单类型
+	 * @param user
+	 *            当前登录的用户
+	 * @return
+	 */
+	public Page<TdOrder> findByOrderTypeAndUser(Long orderType, TdUser user, Integer page) {
+		// 先判断用户的身份
+		Long userType = user.getUserType();
+		Long upperDiySiteId = user.getUpperDiySiteId();
+		TdDiySite diySite = tdDiySiteService.findOne(upperDiySiteId);
+		Page<TdOrder> orderPage = null;
+		if (orderType.equals(0L)) {
+			if (userType.equals(0L)) {
+				orderPage = this.findByUsernameAndStatusIdNotOrderByOrderTimeDesc(user.getUsername(), page,
+						this.orderPageSize);
+			} else if (userType.equals(1L)) {
+				orderPage = this.findBySellerIdAndStatusIdNotOrderByOrderTimeDesc(user.getId(), page, this.orderPageSize);
+			} else if (userType.equals(2L)) {
+				orderPage = this.findByDiySiteIdAndStatusIdNotOrderByOrderTimeDesc(diySite.getId(), page,
+						this.orderPageSize);
+			}
+		} else if (orderType.equals(1L)) {
+			if (userType.equals(0L)) {
+				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 2L, page, this.orderPageSize);
+			} else if (userType.equals(1L)) {
+				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 2L, page, this.orderPageSize);
+			} else if (userType.equals(2L)) {
+				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 2L, page,
+						this.orderPageSize);
+			}
+		} else if (orderType.equals(2L)) {
+			if (userType.equals(0L)) {
+				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 3L, page, this.orderPageSize);
+			} else if (userType.equals(1L)) {
+				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 3L, page, this.orderPageSize);
+			} else if (userType.equals(2L)) {
+				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 3L, page,
+						this.orderPageSize);
+			}
+		} else if (orderType.equals(3L)) {
+			if (userType.equals(0L)) {
+				orderPage = this.findByUsernameAndStatusId(user.getUsername(), 4L, page, this.orderPageSize);
+			} else if (userType.equals(1L)) {
+				orderPage = this.findBySellerIdAndStatusIdOrderByOrderTimeDesc(user.getId(), 4L, page, this.orderPageSize);
+			} else if (userType.equals(2L)) {
+				orderPage = this.findByDiySiteIdAndStatusIdOrderByOrderTimeDesc(diySite.getId(), 4L, page,
+						this.orderPageSize);
+			}
+		} else if (orderType.equals(4L)) {
+			if (userType.equals(0L)) {
+				orderPage = this.findByUsernameAndStatusIdOrUsernameAndStatusIdOrderByIdDesc(user.getUsername(), 5L, 6L,
+						page, this.orderPageSize);
+			} else if (userType.equals(1L)) {
+				orderPage = this.findBySellerIdAndStatusIdOrSellerIdAndStatusIdOrderByIdDesc(user.getId(), 5L, 6L, page,
+						this.orderPageSize);
+			} else if (userType.equals(2L)) {
+				orderPage = this.findByDiySiteIdAndStatusIdOrDiySiteIdAndStatusIdOrderByIdDesc(diySite.getId(), 5L, 6L,
+						page, this.orderPageSize);
+			}
+		}
+		return orderPage;
+	}
+
+	public String getKey(Long orderType) {
+		if (orderType.equals(0L)) {
+			return "all_order_list";
+		} else if (orderType.equals(1L)) {
+			return "unpayed_order_list";
+		} else if (orderType.equals(2L)) {
+			return "undeliver_order_list";
+		} else if (orderType.equals(3L)) {
+			return "unsignin_order_list";
+		} else if (orderType.equals(4L)) {
+			return "uncomment_order_list";
+		} else {
+			return null;
+		}
 	}
 }

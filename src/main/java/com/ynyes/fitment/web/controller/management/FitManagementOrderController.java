@@ -21,16 +21,22 @@ public class FitManagementOrderController {
 	public String fitmentOrderList(String keywords, String orderStartTime, String orderEndTime, Integer page,
 			Integer size, Long statusId, String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
 			Long[] listId, Integer[] listChkId, ModelMap map, HttpServletRequest request) {
+		
 		if (null == page || page < 0) {
 			page = 0;
 		}
-
+		if (null != __EVENTTARGET) {
+			if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+			} 
+		}
 		if (null == size || size <= 0) {
 			size = SiteMagConstant.pageSize;
 		}
 
 		statusId = null == statusId ? 0L : statusId;
-
 		map.addAttribute("order_page",
 				tdOrderService.findAllAddConditionDeliveryType(keywords, orderStartTime, orderEndTime, null, null, null,
 						null, null, null, null, null, statusId, null, null, null, null, null, size, page, true));

@@ -54,6 +54,7 @@
                     <li class="li5">服务导购：${returnNote.sellerRealName!''}</li>
                     <li class="li5">导购电话：<#if sellerUser?? && sellerUser.username??> ${sellerUser.username!''} </#if></li>
                     <li class="li5">退货时间： ${returnNote.orderTime!''} </li>
+                    <li class="li5">取消退货时间： ${returnNote.cancelReturnTime!''} </li>
                     <style type="text/css">
                         .li6 {
                             height: auto;

@@ -1,3 +1,27 @@
+<script src="/client/js/jquery-1.11.0.js" type="text/javascript"></script>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
+<script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/localization/messages_zh.js"></script>
+<script>
+	function cancel(id){
+	  		$(".win_yn").hide();
+			$.ajax({	
+				url:"/return/cancel/"+id,
+				method:"post",
+				success:function(result){
+					if (0 === result.status) {
+					$(".cancelhide").hide();
+					$(".mas").empty();
+					$(".mas").append("退货取消");
+						// success
+						} else {
+							console.log(result.message);
+					}
+				}
+				
+			}); 
+	}
+</script>
 <!-- 订单列表 -->
 <#if all_return_list??>
     <div id="all_orders" class="some_orders" style="background: #f3f4f6">
@@ -6,7 +30,7 @@
                 <li class="li1">
                     <label>退货单号：<span>${item.returnNumber!''}</span></label>
                     <div class="species">
-                        ${item.statusName }
+                       <span class="mas"> ${item.statusName }</span>
                     </div>
                 </li>
                 <li class="li1">
@@ -28,6 +52,11 @@
                     <div>退货单时间：<#if item.orderTime??>${item.orderTime?string("yyyy-MM-dd HH:mm:ss")}</#if></div>
                 </div>
                 <div class="li3">
+                
+               		 <#if item.statusName != "退货取消" && item.statusName != "已完成">
+                	     <a href="javascript:win_yes('是否确定取消？','cancel(${item.id?c});');" class="cancelhide">取消退货</a>
+                     </#if>
+                
                      <a href="/user/return/detail/${item.id?c}">退货单详情</a>
                 </div>
             </ol>

@@ -675,14 +675,15 @@
                             <div class="order-flow-arrive">
                                 <a class="order-flow-input"></a>
                                 <span>
-                                    <p class="name">待评价</p>
+                                    <p class="name">已评价</p>
+                                    <p>${order.finishTime!''}</p>
                                 </span>
                             </div>
-                            <div class="order-flow-right-wait">
+                            <div class="order-flow-right-arrive">
                                 <a class="order-flow-input"></a>
                                 <span>
-                                    <p class="name">未完成</p>
-                                    <p></p>
+                                    <p class="name">已完成</p>
+                                    <p>${order.finishTime!''}</p>
                                 </span>
                             </div>
                     <#elseif order.statusId == 6>
@@ -1224,7 +1225,9 @@
                 <input type="button" id="btnOrderReceive" value="确认收货" class="btn green">
                 </#if>
             <#elseif order.statusId==5>
+        		<#--
                 <input type="button" id="btnOrderComplete" value="确认完成" class="btn">
+                -->
             </#if>
             <#if order.statusId != 7>
                 <input type="button" id= "btnPrint" value="打印订单" class="btn violet">
