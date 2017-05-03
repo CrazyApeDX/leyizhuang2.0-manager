@@ -1,8 +1,5 @@
 package com.ynyes.lyz.util;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-
 /**
  * 后台常用常量
  * 
@@ -29,26 +26,26 @@ public class SiteMagConstant {
 	public static String wechatReturnUrl;
 	public static String wechatReturnUrlAsnyc;
 
-	static {
-		String ip;
-		try {
-			ip = InetAddress.getLocalHost().getHostAddress();
-		} catch (UnknownHostException e) {
-			ip = "localhost";
-			e.printStackTrace();
-		}
-		if (ip.contains("10.27.190.171")) {
-			backupPath = "/mnt/root/backup/";
-			imagePath = "/mnt/root/images/goods";
-			alipayReturnUrl = "http://www.leyizhuang.com.cn/pay/alipay/return";
-			alipayReturnUrlAsnyc = "http://www.leyizhuang.com.cn/pay/alipay/return/async";
-			wechatReturnUrlAsnyc = "http://www.leyizhuang.com.cn/pay/wechat/return/async";
-		} else {
-			backupPath = "src/main/resources/backup/";
-			imagePath = "src/main/resources/static/images";
-			alipayReturnUrl = "http://test.leyizhuang.com.cn/pay/alipay/return";
-			alipayReturnUrlAsnyc = "http://test.leyizhuang.com.cn/pay/alipay/return/async";
-			wechatReturnUrlAsnyc = "http://test.leyizhuang.com.cn/pay/wechat/return/async";
-		}
-	}
+//	static {
+//		String ip;
+//		try {
+//			ip = InetAddress.getLocalHost().getHostAddress();
+//		} catch (UnknownHostException e) {
+//			ip = "localhost";
+//			e.printStackTrace();
+//		}
+//		if (ip.contains("10.27.190.171")) {
+//			backupPath = "/mnt/root/backup/";
+//			imagePath = "/mnt/root/images/goods";
+//			alipayReturnUrl = "http://www.leyizhuang.com.cn/pay/alipay/return";
+//			alipayReturnUrlAsnyc = "http://www.leyizhuang.com.cn/pay/alipay/return/async";
+//			wechatReturnUrlAsnyc = "http://www.leyizhuang.com.cn/pay/wechat/return/async";
+//		} else {
+//			backupPath = "src/main/resources/backup/";
+//			imagePath = "src/main/resources/static/images";
+//			alipayReturnUrl = "http://test.leyizhuang.com.cn/pay/alipay/return";
+//			alipayReturnUrlAsnyc = "http://test.leyizhuang.com.cn/pay/alipay/return/async";
+//			wechatReturnUrlAsnyc = "http://test.leyizhuang.com.cn/pay/wechat/return/async";
+//		}
+//	}
 }

@@ -108,11 +108,8 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-cypher-compiler-2.1</artifactId>
-			<version>2.1.2</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.neo4j</groupId> <artifactId>neo4j-cypher-compiler-2.1</artifactId> 
+			<version>2.1.2</version> </dependency> -->
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpcore</artifactId>
@@ -188,11 +185,8 @@
 			<artifactId>poi</artifactId>
 			<version>3.6</version>
 		</dependency>
-		<dependency>
-			<groupId>org.neo4j</groupId>
-			<artifactId>neo4j-cypher-compiler-2.0</artifactId>
-			<version>2.0.3</version>
-		</dependency>
+		<!-- <dependency> <groupId>org.neo4j</groupId> <artifactId>neo4j-cypher-compiler-2.0</artifactId> 
+			<version>2.0.3</version> </dependency> -->
 		<dependency>
 			<groupId>com.thoughtworks.xstream</groupId>
 			<artifactId>xstream</artifactId>
@@ -374,19 +368,20 @@
 			<artifactId>tinify</artifactId>
 			<version>RELEASE</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>
 		<plugins>
-		<plugin>
-			<groupId>org.apache.maven.plugins</groupId>
-			<artifactId>maven-compiler-plugin</artifactId>
-			<configuration>
-				<source>1.7</source>
-				<target>1.7</target>
-				<encoding>UTF-8</encoding>
-			</configuration>
-		</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+					<encoding>UTF-8</encoding>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

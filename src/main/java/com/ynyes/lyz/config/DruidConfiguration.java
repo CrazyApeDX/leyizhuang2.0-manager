@@ -1,4 +1,4 @@
-package com.ynyes.lyz;
+package com.ynyes.lyz.config;
 
 import java.sql.SQLException;
 

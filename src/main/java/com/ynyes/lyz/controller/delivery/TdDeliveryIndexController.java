@@ -904,11 +904,12 @@ public class TdDeliveryIndexController {
 		if (null != order.getMainOrderNumber()) {
 			List<TdOwnMoneyRecord> recList = tdOwnMoneyRecordService
 					.findByOrderNumberIgnoreCase(order.getMainOrderNumber());
-			TdOwnMoneyRecord rec = new TdOwnMoneyRecord();
+			TdOwnMoneyRecord rec;
 			if (null != recList && recList.size() > 0) {
 				// 如果存在修改欠款申请
 				rec = recList.get(0);
 			} else {
+				rec = new TdOwnMoneyRecord();
 				rec.setCreateTime(new Date());
 			}
 
@@ -921,9 +922,6 @@ public class TdDeliveryIndexController {
 			rec.setUsername(order.getUsername());
 			if (owned != null && owned.equals(0d)) {
 				rec.setIsOwn(false);
-				TdUser seller = tdUserService.findOne(order.getSellerId());
-				tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
-
 			} else {
 				rec.setIsOwn(true);
 			}
@@ -934,6 +932,8 @@ public class TdDeliveryIndexController {
 
 			// 全额收款
 			if (rec.getIsOwn() == false) {
+				TdUser seller = tdUserService.findOne(order.getSellerId());
+				tdUserService.repayCredit(CreditChangeType.REPAY, seller, payed, order.getMainOrderNumber());
 				// 修改订单收款金额
 				tdOrderService.modifyOrderPay(rec.getMoney(), rec.getPos(), 0.00, rec.getOrderNumber());
 				tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DELIVER_INT);
