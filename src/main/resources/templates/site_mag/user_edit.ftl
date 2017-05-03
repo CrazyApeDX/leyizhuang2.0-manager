@@ -276,7 +276,7 @@ $(function () {
             <#if user??>
                 <span>${user.username!""}</span>
             <#else>
-                <input name="name" type="text" maxlength="200" class="input normal" datatype="m|/^(0|86|17951)?(13[0-9]|15[0-9]|17[0-9]|18[0-9]|14[57])[0-9]{8}$/" ajaxurl="/Verwalter/user/check<#if user??>?id=${user.id?c}</#if>" sucmsg=" " minlength="2">
+                <input name="username" type="text" maxlength="200" class="input normal" datatype="m|/^(0|86|17951)?(13[0-9]|15[0-9]|17[0-9]|18[0-9]|14[57])[0-9]{8}$/" ajaxurl="/Verwalter/user/check<#if user??>?id=${user.id?c}</#if>" sucmsg=" " minlength="2">
             </#if>
        <dd>
     </dl>
