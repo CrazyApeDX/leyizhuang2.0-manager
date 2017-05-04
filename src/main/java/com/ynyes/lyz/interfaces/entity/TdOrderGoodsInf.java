@@ -44,6 +44,9 @@ public class TdOrderGoodsInf extends TdInfBaseEntity {
 	//其它情况不传价格
 	@Column(scale = 2)
 	private Double jxPrice;
+	
+	@Column(scale = 2)
+	private Double hyPrice;
 
 	//零售价
 	//①会员下单传零售价，
@@ -206,6 +209,14 @@ public class TdOrderGoodsInf extends TdInfBaseEntity {
 
 	public void setAttribute5(String attribute5) {
 		this.attribute5 = attribute5;
+	}
+	
+	public Double getHyPrice() {
+		return hyPrice;
+	}
+
+	public void setHyPrice(Double hyPrice) {
+		this.hyPrice = hyPrice;
 	}
 
 	@Override
