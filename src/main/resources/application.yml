@@ -3,7 +3,7 @@ server:
   
 spring:
   profiles:
-    default: dev
+    active: dev
   datasource:
     initialSize: 10
     minIdle: 10
