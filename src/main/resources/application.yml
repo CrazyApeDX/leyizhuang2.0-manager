@@ -35,7 +35,7 @@ spring:
     hibernate:
       naming:
         strategy: org.hibernate.cfg.ImprovedNamingStrategy
-  datasource: 
+  datasource:
     url: jdbc:mysql://localhost:3306/lyz?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
     username: root
     password: root
@@ -61,7 +61,7 @@ spring:
     hibernate:
       naming:
         strategy: org.hibernate.cfg.ImprovedNamingStrategy
-  datasource: 
+  datasource:
     url: jdbc:mysql://localhost:3306/lyz?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false
     username: root
     password: root
@@ -79,7 +79,7 @@ deploy:
       
 ---
 
-#正式环境
+#生产环境
 spring:
   profiles: prod
   jpa:
@@ -87,7 +87,7 @@ spring:
     hibernate:
       naming:
         strategy: org.hibernate.cfg.ImprovedNamingStrategy
-  datasource: 
+  datasource:
     url: jdbc:mysql://rm-wz9805x7ngck809dg.mysql.rds.aliyuncs.com:3306/lyz?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=true
     username: magpie
     password: LEyizhuang2017
