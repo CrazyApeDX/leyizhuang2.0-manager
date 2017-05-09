@@ -6,6 +6,9 @@ public class ApplicationConstant {
 	public String alipayReturnUrl;
 	public String alipayReturnUrlAsnyc;
 	public String wechatReturnUrlAsnyc;
+	private String[] cdnHosts;
+	private String ossFolder;
+	private String ossBucket;
 	
 	public String getImagePath() {
 		return imagePath;
@@ -34,5 +37,26 @@ public class ApplicationConstant {
 	public void setWechatReturnUrlAsnyc(String wechatReturnUrlAsnyc) {
 		this.wechatReturnUrlAsnyc = wechatReturnUrlAsnyc;
 		SiteMagConstant.wechatReturnUrlAsnyc = wechatReturnUrlAsnyc;
+	}
+	public String[] getCdnHosts() {
+		return cdnHosts;
+	}
+	public void setCdnHosts(String[] cdnHosts) {
+		this.cdnHosts = cdnHosts;
+		SiteMagConstant.cdnHosts = cdnHosts;
+	}
+	public String getOssFolder() {
+		return ossFolder;
+	}
+	public void setOssFolder(String ossFolder) {
+		this.ossFolder = ossFolder;
+		SiteMagConstant.ossFolder = ossFolder;
+	}
+	public String getOssBucket() {
+		return ossBucket;
+	}
+	public void setOssBucket(String ossBucket) {
+		this.ossBucket = ossBucket;
+		SiteMagConstant.ossBucket = ossBucket;
 	}
 }

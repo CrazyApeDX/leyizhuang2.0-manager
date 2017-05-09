@@ -25,6 +25,9 @@ public class SiteMagConstant {
 	public static String alipayReturnUrlAsnyc;
 	public static String wechatReturnUrl;
 	public static String wechatReturnUrlAsnyc;
+	public static String[] cdnHosts;
+	public static String ossFolder;
+	public static String ossBucket;
 
 //	static {
 //		String ip;

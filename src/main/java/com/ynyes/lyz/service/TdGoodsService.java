@@ -1,6 +1,5 @@
 package com.ynyes.lyz.service;
 
-import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,12 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.ModelMap;
 
-import com.common.oss.utils.ImageClientUtils;
-import com.common.util.ImageCompressUtil;
 import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdPriceList;
@@ -1688,38 +1684,6 @@ public class TdGoodsService {
 		List<Object[]> result = query.getResultList();
 		em.close();
 		return this.translateResultSet(result);
-	}
-	
-	/**
-	 * 进行图片压缩，并且上传到阿里云，将新地址会写到数据库中
-	 * 
-	 * @param limit
-	 */
-	@Transactional(propagation = Propagation.NOT_SUPPORTED)
-	public int coverImgUriProcess(int limit) {
-		int successCount = 0;
-		PageRequest pageRequest = new PageRequest(0, limit);
-		List<TdGoods> goods = repository.findGoodsOfOldImgUrl(pageRequest);
-		for (TdGoods good : goods) {
-			String oldUrl = good.getCoverImageUri();
-			if (StringUtils.isNotBlank(oldUrl)) {
-				try {
-					String fileName = oldUrl.substring(oldUrl.lastIndexOf('/') + 1);
-					byte[] compressFile = ImageCompressUtil.compressFile(IMG_FOLDER + fileName);
-					String path = ImageClientUtils.getInstance().uploadImage(new ByteArrayInputStream(compressFile),
-							compressFile.length, fileName);
-					String url = ImageClientUtils.getInstance().getAbsProjectImagePath(path);
-					good.setCoverImageUrl(url);
-					good.setCoverImagePath(path);
-					repository.save(good);
-					successCount++;
-				} catch (Exception e) {
-					System.out.println("err:" + e.getMessage());
-					continue;
-				}
-			}
-		}
-		return successCount;
 	}
 
 	private List<ClientGoods> translateResultSet(List<Object[]> result) {

@@ -27,15 +27,16 @@
             width: '98%',
             height: '350px',
             resizeType: 1,
-            uploadJson: '/Verwalter/editor/upload?action=EditorFile',
-            fileManagerJson: '/Verwalter/editor/upload?action=EditorFile',
+            uploadJson: '/Verwalter/editor/uploadPic?action=EditorFile&source=article',
+            fileManagerJson: '/Verwalter/editor/uploadPic?action=EditorFile&source=article',
             allowFileManager: true
         });
         
         //初始化上传控件
         $(".upload-img").each(function () {
             $(this).InitSWFUpload({ 
-                sendurl: "/Verwalter/upload", 
+                sendurl: "/Verwalter/uploadPic", 
+            	params : {"source": "article"},
                 flashurl: "/mag/js/swfupload.swf"
             });
         });

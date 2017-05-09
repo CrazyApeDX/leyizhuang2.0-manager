@@ -1,5 +1,7 @@
 package com.ynyes.lyz.config;
 
+import java.util.Arrays;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,17 +27,32 @@ public class DeployConfiguration {
 	@Value("${deploy.wechat.async.url}")
 	private String wechatReturnUrlAsnyc;
 	
+	@Value("${deploy.oss.cdnHosts}")
+	private String[] cdnHosts;
+
+	@Value("${deploy.oss.folder}")
+	private String ossFolder;
+
+	@Value("${deploy.oss.bucket}")
+	private String ossBucket;
+	
 	@Bean
 	public ApplicationConstant applicationConstant() {
 		LOG.info("imagePath : {}", imagePath);
 		LOG.info("alipayReturnUrl : {}", alipayReturnUrl);
 		LOG.info("alipayReturnUrlAsync : {}", alipayReturnUrlAsync);
 		LOG.info("wechatReturnUrlAsnyc : {}", wechatReturnUrlAsnyc);
+		LOG.info("cdnHosts : {}", Arrays.toString(cdnHosts));
+		LOG.info("ossFolder : {}", ossFolder);
+		LOG.info("ossBucket : {}", ossBucket);
 		ApplicationConstant constant = new ApplicationConstant();
 		constant.setImagePath(imagePath);
 		constant.setAlipayReturnUrl(alipayReturnUrl);
 		constant.setAlipayReturnUrlAsnyc(alipayReturnUrlAsync);
 		constant.setWechatReturnUrlAsnyc(wechatReturnUrlAsnyc);
+		constant.setCdnHosts(cdnHosts);
+		constant.setOssFolder(ossFolder);
+		constant.setOssBucket(ossBucket);
 		return constant;
 	}
 
@@ -69,5 +86,29 @@ public class DeployConfiguration {
 
 	public void setWechatReturnUrlAsnyc(String wechatReturnUrlAsnyc) {
 		this.wechatReturnUrlAsnyc = wechatReturnUrlAsnyc;
+	}
+
+	public String[] getCdnHosts() {
+		return cdnHosts;
+	}
+
+	public void setCdnHosts(String[] cdnHosts) {
+		this.cdnHosts = cdnHosts;
+	}
+
+	public String getOssFolder() {
+		return ossFolder;
+	}
+
+	public void setOssFolder(String ossFolder) {
+		this.ossFolder = ossFolder;
+	}
+
+	public String getOssBucket() {
+		return ossBucket;
+	}
+
+	public void setOssBucket(String ossBucket) {
+		this.ossBucket = ossBucket;
 	}
 }

@@ -24,6 +24,11 @@ $(function () {
         var btnAction = SWFUpload.BUTTON_ACTION.SELECT_FILES; //多文件上传
 
         p.sendurl += "?action=UpLoadFile";
+        if(p.params){
+        	for(var key in p.params){
+        		p.sendurl += '&' + key + '=' + p.params[key];	
+        	}
+        }
         if (p.single) {
             btnAction = SWFUpload.BUTTON_ACTION.SELECT_FILE; //单文件上传
         }
@@ -78,6 +83,11 @@ $(function () {
         var btnAction = SWFUpload.BUTTON_ACTION.SELECT_FILES; //多文件上传
 
         p.sendurl += "?action=UpLoadFile";
+        if(p.params){
+        	for(var key in p.params){
+        		p.sendurl += '&' + key + '=' + p.params[key];	
+        	}
+        }
         if (p.single) {
             btnAction = SWFUpload.BUTTON_ACTION.SELECT_FILE; //单文件上传
         }

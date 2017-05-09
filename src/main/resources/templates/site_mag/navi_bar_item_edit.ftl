@@ -19,7 +19,8 @@ $(function () {
     //初始化上传控件
     $(".upload-img").each(function () {
         $(this).InitSWFUpload({ 
-            sendurl: "/Verwalter/upload", 
+            sendurl: "/Verwalter/uploadPic", 
+            params : {"source": "ui"},
             flashurl: "/mag/js/swfupload.swf"
         });
     });
