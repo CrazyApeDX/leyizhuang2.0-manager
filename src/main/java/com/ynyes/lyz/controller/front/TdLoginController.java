@@ -82,7 +82,7 @@ public class TdLoginController {
 	@RequestMapping(value = "/check")
 	@ResponseBody
 	public Map<String, Object> loginCheck(HttpServletRequest req, String username, String password) {
-		LOGGER.info("loginCheck, username=" + username + ", password=" + password);
+		LOGGER.info("loginCheck, username=" + username);
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 		TdUser user = tdUserService.findByUsernameAndPasswordAndIsEnableTrue(username, MD5.md5(password, 32));

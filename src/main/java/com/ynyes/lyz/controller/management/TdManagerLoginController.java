@@ -37,7 +37,7 @@ public class TdManagerLoginController {
     
     @RequestMapping(value="/login")
     public String login(String username, String password, ModelMap map, HttpServletRequest request){
-		LOGGER.info("login, username=" + username + ", password=" + password);
+		LOGGER.info("login, username=" + username);
         
         if (null == username || null == password || username.isEmpty() || password.isEmpty())
         {
