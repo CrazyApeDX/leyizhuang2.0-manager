@@ -368,7 +368,7 @@ public class TdUserController {
 			return "redirect:/login";
 		}
 		Page<TdOrder> orderPage = null;
-		if (null == keywords) {
+		if (null != keywords) {
 			orderPage = this.tdOrderService.orderSearch(user, keywords, currentPageNumber);
 		} else {
 			orderPage = this.tdOrderService.findByOrderTypeAndUser(currentOrderType, user, currentPageNumber);
