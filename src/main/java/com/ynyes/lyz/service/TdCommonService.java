@@ -23,6 +23,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 import org.apache.geronimo.mail.util.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +88,8 @@ public class TdCommonService {
 	private JaxWsDynamicClientFactory WMSDcf = JaxWsDynamicClientFactory.newInstance();
 	private org.apache.cxf.endpoint.Client WMSClient = WMSDcf.createClient(wmsUrl);
 	private QName WMSName = new QName("http://tempuri.org/", "GetErpInfo");
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TdCommonService.class);
 
 	@Autowired
 	private TdUserService tdUserService;
@@ -2220,6 +2224,7 @@ public class TdCommonService {
 
 	// 传销售单给EBS
 	private void sendOrderToEBS(List<TdOrder> orderList) {
+		LOGGER.info("sendOrderToEBS, orderList=" + orderList);
 		for (TdOrder tdOrder : orderList) {
 
 			// 单头是否传成功：默认失败
@@ -2296,11 +2301,12 @@ public class TdCommonService {
 				tdCashReciptInfService.save(cashReciptInfs);
 			}
 		}
+		LOGGER.info("sendOrderToEBS, OUT");
 	}
 
 	// TODO 要货单
 	private void sendMsgToWMS(List<TdOrder> orderList, String mainOrderNumber, Double deliveryFee) {
-
+		LOGGER.info("sendMsgToWMS, mainOrderNumber=" + mainOrderNumber);
 		if (orderList.size() <= 0) {
 			return;
 		}
@@ -2373,6 +2379,7 @@ public class TdCommonService {
 				 */
 			}
 		}
+		LOGGER.info("sendMsgToWMS, OUT");
 	}
 
 	/**

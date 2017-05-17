@@ -17,6 +17,8 @@ import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -149,6 +151,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	
 	@Autowired
 	TdSettingService tdSettingService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerStatementController.class);
 	 
 	
 	
@@ -159,9 +163,11 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	@ResponseBody
 	public String dowmDataGoodsInOut(HttpServletRequest req,ModelMap map,String begindata,String enddata,HttpServletResponse response,String diyCode,String cityName,Long statusId) throws Exception
 	{
+		LOGGER.info("dowmDataGoodsInOut, begindata=" + begindata + ", enddata=" + enddata + ", diyCode=" + diyCode + ", cityName=" + cityName + ", statusId=" + statusId);
 		//检查登录
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
+			LOGGER.warn("dowmDataGoodsInOut, no login!");
 			return "redirect:/Verwalter/login";
 		}
 		
@@ -174,6 +180,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}
 		if (tdManagerRole == null)
 		{
+			LOGGER.warn("dowmDataGoodsInOut, permission denied!");
 			return "redirect:/Verwalter/login";
 		}
 		
@@ -199,10 +206,11 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        	diyCode=tdManager.getDiyCode();
 	        	cityName=null;
 			}
-		
+
+		LOGGER.info("dowmDataGoodsInOut, start export excel...");
 		//获取到导出的excel
 		HSSFWorkbook wb=acquireHSSWorkBook(statusId, begin, end, diyCode, cityName, username,tdDiySiteRoleService.userRoleDiyId(tdManagerRole, tdManager));
-		
+		LOGGER.info("dowmDataGoodsInOut, start download excel...");
 
 		String exportAllUrl = SiteMagConstant.backupPath;
 		if (statusId==7) {
@@ -210,6 +218,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}else{
 			 download(wb, exportAllUrl, response,acquireFileName(statusId));
 		}
+		LOGGER.info("dowmDataGoodsInOut, download complete!");
         return "";
 	}
 	
