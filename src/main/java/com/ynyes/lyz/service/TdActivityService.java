@@ -123,7 +123,7 @@ public class TdActivityService {
 			for (TdDiySiteList siteList : e.getSiteList()) {
 				diySiteIdStr += siteList.getSiteId() + ",";
 			}
-			e.setDiySiteIds(diySiteIdStr);
+			e.setDiySiteIds("," + diySiteIdStr);
 		}
 		e = repository.save(e);
 
@@ -144,6 +144,9 @@ public class TdActivityService {
 			// 遍历参加活动的门店
 			for (String siteId : ids) {
 				// 查找到指定id的门店
+				if (null == siteId || siteId.equals("")) {
+					break;
+				}
 				TdDiySite site = tdDiySiteService.findOne(Long.parseLong(siteId));
 				// 查找到指定的价目表
 				TdPriceListItem priceListItem = tdPriceListItemService
