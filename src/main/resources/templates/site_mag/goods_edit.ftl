@@ -21,21 +21,24 @@
 $(function () {
     //初始化表单验证
     $("#form1").initValidform();
+    
+    var goodId = $("#good_id").val();
 
     //初始化编辑器
     var editor = KindEditor.create('.editor', {
         width: '98%',
         height: '350px',
         resizeType: 1,
-        uploadJson: '/Verwalter/editor/upload?action=EditorFile',
-        fileManagerJson: '/Verwalter/editor/upload?action=EditorFile',
+        uploadJson: '/Verwalter/editor/uploadGoodPic?action=EditorFile&goodId=' + goodId,
+        fileManagerJson: '/Verwalter/editor/uploadGoodPic?action=EditorFile&goodId=' + goodId,
         allowFileManager: true
     });
     
     //初始化上传控件
     $(".upload-img").each(function () {
         $(this).InitSWFUpload({ 
-            sendurl: "/Verwalter/upload", 
+            sendurl: "/Verwalter/uploadGoodPic",
+            params : {"goodId": goodId},
             flashurl: "/mag/js/swfupload.swf"
         });
     });
@@ -48,7 +51,8 @@ $(function () {
             water: true, 
             thumbnail: true, 
             filesize: "5120", 
-            sendurl: "/Verwalter/upload", 
+            sendurl: "/Verwalter/uploadGoodPic",
+            params : {"goodId": goodId},
             flashurl: "/mag/js/swfupload.swf", 
             filetypes: "*.jpg;*.jpge;*.png;*.gif;" 
         });
@@ -271,7 +275,7 @@ function del_goods_comb(obj) {
 </div>
 <input name="menuId" type="text" value='${mid!""}' style="display:none;">
 <input name="channelId" type="text" value='${cid!""}' style="display:none">
-<input name="id" type="text" value='<#if goods??>${goods.id?c}</#if>' style="display:none">
+<input name="id" type="text" id="good_id" value='<#if goods??>${goods.id?c}</#if>' style="display:none">
 <!--导航栏-->
 <div class="location">
     <a href="/Verwalter/goods/list?__VIEWSTATE=${__VIEWSTATE!""}" class="back"><i></i><span>

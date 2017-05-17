@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -22,6 +24,8 @@ public class TdLoginController {
 
 	@Autowired
 	private TdUserService tdUserService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TdLoginController.class);
 
 	@RequestMapping
 	public String index() {
@@ -78,6 +82,7 @@ public class TdLoginController {
 	@RequestMapping(value = "/check")
 	@ResponseBody
 	public Map<String, Object> loginCheck(HttpServletRequest req, String username, String password) {
+		LOGGER.info("loginCheck, username=" + username);
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 		TdUser user = tdUserService.findByUsernameAndPasswordAndIsEnableTrue(username, MD5.md5(password, 32));
@@ -124,6 +129,7 @@ public class TdLoginController {
 					res.put("message", "您输入的密码有误");
 				}
 			}
+
 		return res;
 	}
 

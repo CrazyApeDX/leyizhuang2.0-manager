@@ -48,6 +48,11 @@ public class ImageCompressUtil {
 		Source source = Tinify.fromFile(sourceFile);
 		return source.toBuffer();
 	}
+	
+	public static byte[] compressFile(byte[] sourceFile) throws IOException {
+		Source source = Tinify.fromBuffer(sourceFile);
+		return source.toBuffer();
+	}
 
 	public static void main(String[] args) {
 		compressFileToFile();

@@ -55,11 +55,9 @@
                     <div class="swiper-container" style="width: 100%;height: 100%;">
                         <div class="swiper-wrapper">
                             <#list goods.showPictures?split(",") as pic>
-	                            <#if pic_has_next>
-	                                <div class="swiper-slide orange-slide">
-	                               		<img src="${pic!''}">
-	                                </div>
-	                             </#if>
+                                <div class="swiper-slide orange-slide">
+                               		<img src="${pic!''}">
+                                </div>
                             </#list>
                         </div>
                    	 	<div class="swiper-pagination"></div>

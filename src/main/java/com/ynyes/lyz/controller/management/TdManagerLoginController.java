@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -30,9 +32,12 @@ public class TdManagerLoginController {
     
     @Autowired
     TdManagerService tdManagerService;
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerLoginController.class);
     
     @RequestMapping(value="/login")
     public String login(String username, String password, ModelMap map, HttpServletRequest request){
+		LOGGER.info("login, username=" + username);
         
         if (null == username || null == password || username.isEmpty() || password.isEmpty())
         {
