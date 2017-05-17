@@ -5,12 +5,14 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.ynyes.lyz.util.ApplicationConstant;
 
 @Configuration
+@AutoConfigureBefore(WebServiceConfiguration.class)
 public class DeployConfiguration {
 	
 	private final Logger LOG = LoggerFactory.getLogger(DeployConfiguration.class);
@@ -45,6 +47,7 @@ public class DeployConfiguration {
 		LOG.info("cdnHosts : {}", Arrays.toString(cdnHosts));
 		LOG.info("ossFolder : {}", ossFolder);
 		LOG.info("ossBucket : {}", ossBucket);
+
 		ApplicationConstant constant = new ApplicationConstant();
 		constant.setImagePath(imagePath);
 		constant.setAlipayReturnUrl(alipayReturnUrl);

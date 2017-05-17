@@ -1,5 +1,7 @@
 package com.ynyes.lyz.util;
 
+import com.ynyes.lyz.interfaces.utils.InterfaceConfigure;
+
 public class ApplicationConstant {
 
 	public String imagePath;
@@ -9,6 +11,8 @@ public class ApplicationConstant {
 	private String[] cdnHosts;
 	private String ossFolder;
 	private String ossBucket;
+	private String wmsUrl;
+	private String ebsUrl;
 	
 	public String getImagePath() {
 		return imagePath;
@@ -58,5 +62,19 @@ public class ApplicationConstant {
 	public void setOssBucket(String ossBucket) {
 		this.ossBucket = ossBucket;
 		SiteMagConstant.ossBucket = ossBucket;
+	}
+	public String getWmsUrl() {
+		return wmsUrl;
+	}
+	public void setWmsUrl(String wmsUrl) {
+		this.wmsUrl = wmsUrl;
+		InterfaceConfigure.WMS_WS_URL = wmsUrl;
+	}
+	public String getEbsUrl() {
+		return ebsUrl;
+	}
+	public void setEbsUrl(String ebsUrl) {
+		this.ebsUrl = ebsUrl;
+		InterfaceConfigure.EBS_WS_URL = ebsUrl;
 	}
 }

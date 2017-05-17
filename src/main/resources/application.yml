@@ -54,6 +54,10 @@ deploy:
     cdnHosts: img-dev.leyizhuang.com.cn
     folder: app/images/
     bucket: leyizhuang-dev
+  wms:
+    url: http://120.76.214.99:8199/WmsInterServer.asmx?wsdl
+  ebs: 
+    url: http://erptest.zghuarun.com:8030/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl
       
 ---
 
@@ -84,6 +88,10 @@ deploy:
     cdnHosts: img-dev.leyizhuang.com.cn
     folder: app/images/
     bucket: leyizhuang-dev
+  wms: 
+    url: http://120.76.214.99:8199/WmsInterServer.asmx?wsdl
+  ebs: 
+    url: http://erptest.zghuarun.com:8030/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl
       
 ---
 
@@ -114,5 +122,9 @@ deploy:
     cdnHosts: img1.leyizhuang.com.cn,img2.leyizhuang.com.cn,img3.leyizhuang.com.cn,img4.leyizhuang.com.cn,img5.leyizhuang.com.cn
     folder: app/images/
     bucket: leyizhuang
+  wms: 
+    url: http://120.76.23.226:8999/WmsInterServer.asmx?wsdl
+  ebs: 
+    url: http://erpap.zghuarun.com:8008/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl
 
  

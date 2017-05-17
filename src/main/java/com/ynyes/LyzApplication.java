@@ -39,15 +39,6 @@ public class LyzApplication extends SpringBootServletInitializer implements
 		return factory.createMultipartConfig();
 	}
 
-	@Bean
-	public ServletRegistrationBean cxfServlet() {
-		org.apache.cxf.transport.servlet.CXFServlet cxfServlet = new org.apache.cxf.transport.servlet.CXFServlet();
-		ServletRegistrationBean servletDef = new ServletRegistrationBean(
-				cxfServlet, "/services/*");
-		servletDef.setLoadOnStartup(1);
-		return servletDef;
-	}
-
 	public static void main(String[] args) {
 //		Runtime runtime = Runtime.getRuntime();
 //		long freeMemory = runtime.freeMemory();
