@@ -201,7 +201,7 @@
                     </div>
                     
                     <div id="undeliver_orders" class="some_orders">
-                        <#if undeliver_order_list??>
+                        <#if undeliver_order_list??&&undeliver_order_list?size gt 0>
                             <#list undeliver_order_list as item>
                                 <ol class="order-list">
                                     <li class="li1">

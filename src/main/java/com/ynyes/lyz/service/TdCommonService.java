@@ -468,6 +468,7 @@ public class TdCommonService {
 	 * 
 	 * @author dengxiao
 	 */
+	@Deprecated
 	public TdPriceListItem getGoodsPrice(HttpServletRequest req, TdGoods goods) {
 		// 获取登陆用户的门店
 		TdDiySite diySite = this.getDiySite(req);
