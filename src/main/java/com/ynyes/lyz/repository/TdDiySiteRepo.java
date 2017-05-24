@@ -93,4 +93,8 @@ public interface TdDiySiteRepo
 	List<TdDiySite> findByCityId(Long cityId);
 	
 	List<TdDiySite> findByRegionIdAndStatusAndIsEnableTrue(Long regionId, Long status);
+	
+	
+	Page<TdDiySite> findByCustTypeNameAndTitleContainingOrderBySortIdAsc(String custTypeName, String keywords, Pageable page);
+	
 }

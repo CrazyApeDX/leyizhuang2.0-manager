@@ -454,4 +454,20 @@ public class TdUserService {
 			tdUserCreditService.createLogByCondition(type, seller, orderNumber, amount);
 		}
 	}
+	
+	
+	/**
+	 * @title 根据门店ID查询用户列表
+	 * @describe 
+	 * @author Generation Road
+	 * @date 2017年5月23日
+	 * @param upperDiySiteId
+	 * @return
+	 */
+	public List<TdUser> findByUpperDiySiteIdAndIsEnableTrue(Long upperDiySiteId){
+		if (upperDiySiteId == null) {
+			return null;
+		}
+		return repository.findByUpperDiySiteIdAndIsEnableTrue(upperDiySiteId);
+	}
 }
