@@ -150,4 +150,15 @@ public interface TdUserRepo extends PagingAndSortingRepository<TdUser, Long>, Jp
 //	@Query("update TdUser set opUser = (?1).opUser where id = (?1).id")
 //	TdUser saveWithOutBalance(TdUser user);
 	
+	
+	/**
+	 * @title 根据门店ID查询用户列表
+	 * @describe 
+	 * @author Generation Road
+	 * @date 2017年5月23日
+	 * @param upperDiySiteId
+	 * @return
+	 */
+	List<TdUser> findByUpperDiySiteIdAndIsEnableTrue(Long upperDiySiteId);
+	
 }

@@ -134,6 +134,12 @@ public class TdDiySiteService {
 
 		return repository.findByTitleContainingOrderBySortIdAsc(keywords, pageRequest);
 	}
+	
+	public Page<TdDiySite> findByCustTypeName(String custTypeName, String keywords, int page, int size) {
+		PageRequest pageRequest = new PageRequest(page, size);
+
+		return repository.findByCustTypeNameAndTitleContainingOrderBySortIdAsc(custTypeName, keywords, pageRequest);
+	}
 
 	/**
 	 * 保存
