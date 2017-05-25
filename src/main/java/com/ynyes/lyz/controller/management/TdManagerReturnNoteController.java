@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ynyes.lyz.entity.TdCashReturnNote;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDiySite;
+import com.ynyes.lyz.entity.TdDiySiteAccount;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
@@ -37,6 +38,7 @@ import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.service.TdCashReturnNoteService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
+import com.ynyes.lyz.service.TdDiySiteAccountService;
 import com.ynyes.lyz.service.TdDiySiteInventoryService;
 import com.ynyes.lyz.service.TdDiySiteRoleService;
 import com.ynyes.lyz.service.TdDiySiteService;
@@ -94,9 +96,9 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 
 	@Autowired
 	private TdCashReturnNoteService tdCashReturnNoteService;
-	
-//	@Autowired
-//	private TdDiysite
+
+	@Autowired
+	private TdDiySiteAccountService tdDiySiteAccountService;
 
 	// 列表
 	@RequestMapping(value = "/{type}/list")
@@ -131,7 +133,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					try {
 						page = Integer.parseInt(__EVENTARGUMENT);
 					} catch (Exception e) {
-						// TODO: handle exception
+						e.printStackTrace();
 						page = 0;
 					}
 				}
@@ -392,13 +394,34 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 				if (order != null && order.getStatusId() != null && order.getStatusId() == 9L) {
 
 					// 2017-05-24修改，如果是经销商的订单，确认退款之前需要收回对应的经销差价
-					// this is my code
 					// 判断是否是经销商门店的单据
 					Long diySiteId = order.getDiySiteId();
 					TdDiySite diySite = tdDiySiteService.findOne(diySiteId);
 					if (null != diySite && null != diySite.getCustTypeName()
 							&& "经销商".equalsIgnoreCase(diySite.getCustTypeName())) {
-						
+
+						TdDiySiteAccount diySiteAccount = tdDiySiteAccountService.findByDiySiteId(diySite.getId());
+						if (null == diySiteAccount) {
+							res.put("message", "严重错误：未查询到经销商货款账号，请联系管理员");
+							return res;
+						}
+
+						TdUser user = tdUserService.findOne(diySiteAccount.getUserId());
+						Boolean result = this.checkBalance(user, returnNote);
+						if (null == result) {
+							res.put("message", "严重错误：未查询到经销商货款账号，请联系管理员");
+							return res;
+						} else if (!result) {
+							res.put("message", "经销商货款账号金额不足（需要返回" + returnNote.getJxReturn() + "元经销差价）");
+							return res;
+						} else {
+							// 返还经销差价
+							List<TdCashRefundInf> cashRefundList = tdReturnNoteService
+									.doActionWithReturnCash(returnNote, user, diySite);
+							for (TdCashRefundInf cashRefundInf : cashRefundList) {
+								tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+							}
+						}
 					}
 
 					List<TdCashReturnNote> cashReturnNotes = tdPriceCountService.actAccordingWMS(returnNote,
@@ -482,7 +505,14 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 		}
 	}
 
-	private Boolean checkBalance(TdDiySite diySite) {
-	
+	private Boolean checkBalance(TdUser user, TdReturnNote returnNote) {
+		if (null == user) {
+			return null;
+		}
+		if (user.getBalance() >= returnNote.getJxReturn()) {
+			return Boolean.TRUE;
+		}
+		return Boolean.FALSE;
 	}
+
 }

@@ -1,5 +1,7 @@
 package com.ynyes.lyz.service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,7 +14,14 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ynyes.lyz.entity.TdBalanceLog;
+import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdReturnNote;
+import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
+import com.ynyes.lyz.interfaces.entity.TdOrderInf;
+import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
+import com.ynyes.lyz.interfaces.service.TdOrderInfService;
 import com.ynyes.lyz.repository.TdReturnNoteRepo;
 import com.ynyes.lyz.strategy.refund.ReturnNoteStrategyFactory;
 import com.ynyes.lyz.util.Criteria;
@@ -26,7 +35,21 @@ public class TdReturnNoteService {
 	TdReturnNoteRepo repository;
 
 	@Autowired
+	private TdUserService tdUserService;
+
+	@Autowired
 	private ReturnNoteStrategyFactory factory;
+
+	@Autowired
+	private TdBalanceLogService tdBalanceLogService;
+
+	@Autowired
+	private TdOrderInfService tdOrderInfService;
+
+	@Autowired
+	private TdCashRefundInfService tdCashRefundService;
+
+	private final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	/**
 	 * 删除
@@ -310,18 +333,21 @@ public class TdReturnNoteService {
 		PageRequest pageRequest = new PageRequest(page, size, new Sort(Direction.DESC, "id"));
 		return repository.findByUsernameAndRemarkInfoNot(username, remark, pageRequest);
 	}
-	
+
 	/**
 	 * 根据用户名查询与用户相关的订单
+	 * 
 	 * @param username
 	 * @param remark
 	 * @param page
 	 * @param size
 	 * @return
 	 */
-	public Page<TdReturnNote> findByUsernameAndRemarkInfoNotOrSellerUsernameAndRemarkInfoNot(String username, String remark, Integer page, Integer size) {
+	public Page<TdReturnNote> findByUsernameAndRemarkInfoNotOrSellerUsernameAndRemarkInfoNot(String username,
+			String remark, Integer page, Integer size) {
 		PageRequest pageRequest = new PageRequest(page, size, new Sort(Direction.DESC, "id"));
-		return repository.findByUsernameAndRemarkInfoNotOrSellerUsernameAndRemarkInfoNot(username, remark,username,remark, pageRequest);
+		return repository.findByUsernameAndRemarkInfoNotOrSellerUsernameAndRemarkInfoNot(username, remark, username,
+				remark, pageRequest);
 	}
 
 	/**
@@ -399,9 +425,117 @@ public class TdReturnNoteService {
 
 	public Boolean doCancel(Long id) throws Exception {
 		TdReturnNote returnNote = this.findOne(id);
-		if(returnNote.getStatusId()>=4){
+		if (returnNote.getStatusId() >= 4) {
 			return Boolean.FALSE;
 		}
 		return factory.build(returnNote).doAction(returnNote);
+	}
+
+	public List<TdCashRefundInf> doActionWithReturnCash(TdReturnNote returnNote, TdUser user, TdDiySite diySite) {
+		Double jxReturn = returnNote.getJxReturn();
+		Double unCashBalance = user.getUnCashBalance();
+		Double unCashCost = 0d;
+		Double cashCost = 0d;
+		if (unCashBalance >= jxReturn) {
+			user.setUnCashBalance(user.getUnCashBalance() - jxReturn);
+			unCashCost = jxReturn;
+			tdUserService.save(user);
+		} else {
+			unCashCost = user.getUnCashBalance();
+			user.setUnCashBalance(0d);
+			cashCost = jxReturn - unCashCost;
+			user.setCashBalance(user.getCashBalance() - cashCost);
+			tdUserService.save(user);
+		}
+
+		TdOrderInf tdOrderInf = tdOrderInfService.findByOrderNumber(returnNote.getOrderNumber());
+
+		List<TdCashRefundInf> result = new ArrayList<>();
+		Date now = new Date();
+		if (unCashCost > 0d) {
+			TdBalanceLog log = new TdBalanceLog();
+			log.setUserId(user.getId());
+			log.setUsername(user.getUsername());
+			log.setMoney(unCashCost);
+			log.setType(5L);
+			log.setCreateTime(now);
+			log.setFinishTime(now);
+			log.setIsSuccess(Boolean.TRUE);
+			log.setBalance(user.getBalance() + cashCost);
+			log.setBalanceType(7L);
+			log.setOrderNumber(returnNote.getOrderNumber());
+			log.setDiySiteId(returnNote.getDiySiteId());
+			log.setCityId(diySite.getRegionId());
+			log.setCashLeft(user.getCashBalance() + cashCost);
+			log.setUnCashLeft(user.getUnCashBalance());
+			log.setAllLeft(user.getBalance() + cashCost);
+			log.setReason("退货经销差价扣除");
+			tdBalanceLogService.save(log);
+
+			TdCashRefundInf cashRefund = new TdCashRefundInf();
+			cashRefund.setSobId(diySite.getRegionId());
+			cashRefund.setRefundNumber(this.createRefundNumber());
+			cashRefund.setUserid(tdOrderInf.getUserid());
+			cashRefund.setUsername(tdOrderInf.getUsername());
+			cashRefund.setUserphone(tdOrderInf.getUserphone());
+			cashRefund.setDiySiteCode(tdOrderInf.getDiySiteCode());
+			cashRefund.setRefundClass("经销差价");
+			cashRefund.setRtHeaderId(tdOrderInf.getHeaderId());
+			cashRefund.setReturnNumber(tdOrderInf.getOrderNumber());
+			cashRefund.setProductType("JXDIF");
+			cashRefund.setRefundType("预收款");
+			cashRefund.setRefundDate(now);
+			cashRefund.setAmount(unCashCost);
+			tdCashRefundService.save(cashRefund);
+			result.add(cashRefund);
+		}
+
+		if (cashCost > 0d) {
+			TdBalanceLog log = new TdBalanceLog();
+			log.setUserId(user.getId());
+			log.setUsername(user.getUsername());
+			log.setMoney(cashCost);
+			log.setType(5L);
+			log.setCreateTime(now);
+			log.setFinishTime(now);
+			log.setIsSuccess(Boolean.TRUE);
+			log.setBalance(user.getBalance());
+			log.setBalanceType(7L);
+			log.setOrderNumber(returnNote.getOrderNumber());
+			log.setDiySiteId(returnNote.getDiySiteId());
+			log.setCityId(diySite.getRegionId());
+			log.setCashLeft(user.getCashBalance());
+			log.setUnCashLeft(user.getUnCashBalance());
+			log.setAllLeft(user.getBalance());
+			log.setReason("退货经销差价扣除");
+			tdBalanceLogService.save(log);
+
+			TdCashRefundInf cashRefund = new TdCashRefundInf();
+			cashRefund.setSobId(diySite.getRegionId());
+			cashRefund.setRefundNumber(this.createRefundNumber());
+			cashRefund.setUserid(tdOrderInf.getUserid());
+			cashRefund.setUsername(tdOrderInf.getUsername());
+			cashRefund.setUserphone(tdOrderInf.getUserphone());
+			cashRefund.setDiySiteCode(tdOrderInf.getDiySiteCode());
+			cashRefund.setRefundClass("经销差价");
+			cashRefund.setRtHeaderId(tdOrderInf.getHeaderId());
+			cashRefund.setReturnNumber(tdOrderInf.getOrderNumber());
+			cashRefund.setProductType("JXDIF");
+			cashRefund.setRefundType("预收款");
+			cashRefund.setRefundDate(now);
+			cashRefund.setAmount(cashCost);
+			tdCashRefundService.save(cashRefund);
+			result.add(cashRefund);
+		}
+
+		return result;
+	}
+
+	private String createRefundNumber() {
+		Date now = new Date();
+		String middle = sdf.format(now);
+
+		int i = (int) (Math.random() * 900) + 100;
+		return "RT" + middle + i;
 	}
 }
