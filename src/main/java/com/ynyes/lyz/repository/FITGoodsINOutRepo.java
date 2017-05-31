@@ -36,7 +36,8 @@ public interface FITGoodsINOutRepo extends
 	 * @return
 	 */
 	@Query(value =" SELECT"
-			+ " og.id id, "
+			+" 	og.id id, "
+			+"	o.diy_site_name diy_site_name, "
 			+" 	o.main_order_number main_order_number, "
 			+" 	o.order_number order_number, "
 			+" 	o.order_time order_time, "

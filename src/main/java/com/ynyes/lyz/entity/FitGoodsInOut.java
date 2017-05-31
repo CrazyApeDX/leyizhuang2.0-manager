@@ -20,6 +20,10 @@ public class FitGoodsInOut {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 	
+	//装饰公司名称
+	@Column
+	private String diySiteName;
+	
 	//主单号（订单显示XN开头，退单显示T开头）
 	@Column
 	private String mainOrderNumber;
@@ -119,6 +123,15 @@ public class FitGoodsInOut {
 	}
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	
+	
+	public String getDiySiteName() {
+		return diySiteName;
+	}
+	public void setDiySiteName(String diySiteName) {
+		this.diySiteName = diySiteName;
 	}
 	public String getMainOrderNumber() {
 		return mainOrderNumber;
