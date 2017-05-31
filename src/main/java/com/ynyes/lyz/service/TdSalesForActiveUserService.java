@@ -40,7 +40,7 @@ public class TdSalesForActiveUserService {
 	
 	private static Log myLog = LogFactory.getLog(TdSalesForActiveUser.class);
 	
-	@Scheduled(cron="0 0 1 * * ?")
+	/*@Scheduled(cron="0 0 1 * * ?")*/
 	public void insertDataToSales() {
 		
 		myLog.info("开始执行销量抓取定时任务:"+new Date());
