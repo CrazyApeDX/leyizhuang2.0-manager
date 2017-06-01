@@ -3,6 +3,8 @@ package com.ynyes.fitment.web.controller.management;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -27,6 +29,8 @@ public class FitManagementGoodsController {
 
 	@Autowired
 	private FitCompanyGoodsService fitCompanyGoodsService;
+	
+	private final Logger LOG = LoggerFactory.getLogger(FitManagementGoodsController.class);
 
 	@RequestMapping(value = "/list/{companyId}", produces = "text/html;chatset=utf-8")
 	public String goodsList(ModelMap map, Integer page, Integer size, @PathVariable("companyId") Long companyId,
@@ -79,6 +83,8 @@ public class FitManagementGoodsController {
 			} catch (Exception e) {
 				res.put("message", "出现了意外的错误，请稍后重试或联系管理员");
 				e.printStackTrace();
+				LOG.error(e.getMessage());;
+				
 			}
 			return res;
 		}
