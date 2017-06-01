@@ -27,7 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.lyz.entity.DeliveryCheckReport;
+import com.ynyes.lyz.entity.FitGoodsInOut;
 import com.ynyes.lyz.entity.GarmentFranchisorReport;
 import com.ynyes.lyz.entity.TdActiveUser;
 import com.ynyes.lyz.entity.TdAgencyFund;
@@ -52,6 +55,7 @@ import com.ynyes.lyz.entity.TdWareHouse;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
 import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
 import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.service.FitGoodsInOutService;
 import com.ynyes.lyz.service.TdActiveUserService;
 import com.ynyes.lyz.service.TdAgencyFundService;
 import com.ynyes.lyz.service.TdCityService;
@@ -151,6 +155,12 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	
 	@Autowired
 	TdSettingService tdSettingService;
+	
+	@Autowired
+	FitGoodsInOutService fitGoodsInOutService;
+	
+	@Autowired 
+	FitCompanyService fitCompanyService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerStatementController.class);
 	 
@@ -161,7 +171,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 */
 	@RequestMapping(value = "/downdata",method = RequestMethod.GET)
 	@ResponseBody
-	public String dowmDataGoodsInOut(HttpServletRequest req,ModelMap map,String begindata,String enddata,HttpServletResponse response,String diyCode,String cityName,Long statusId) throws Exception
+	public String dowmDataGoodsInOut(HttpServletRequest req,ModelMap map,String begindata,String enddata,HttpServletResponse response,String diyCode,String cityName,Long statusId,String code) throws Exception
 	{
 		LOGGER.info("dowmDataGoodsInOut, begindata=" + begindata + ", enddata=" + enddata + ", diyCode=" + diyCode + ", cityName=" + cityName + ", statusId=" + statusId);
 		//检查登录
@@ -209,7 +219,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 
 		LOGGER.info("dowmDataGoodsInOut, start export excel...");
 		//获取到导出的excel
-		HSSFWorkbook wb=acquireHSSWorkBook(statusId, begin, end, diyCode, cityName, username,tdDiySiteRoleService.userRoleDiyId(tdManagerRole, tdManager));
+		HSSFWorkbook wb=acquireHSSWorkBook(statusId, begin, end, diyCode, cityName, username,tdDiySiteRoleService.userRoleDiyId(tdManagerRole, tdManager),code);
 		LOGGER.info("dowmDataGoodsInOut, start download excel...");
 
 		String exportAllUrl = SiteMagConstant.backupPath;
@@ -244,7 +254,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	public String goodsListDialog(String keywords,@PathVariable Long statusId, Integer page, Integer size,
 			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
 			ModelMap map, HttpServletRequest req,String orderStartTime,String orderEndTime,String diyCode,String cityName,
-			String oldOrderStartTime,String oldOrderEndTime) {
+			String oldOrderStartTime,String oldOrderEndTime,String code,Long sobId) {
 		
 		String username = (String) req.getSession().getAttribute("manager");
 		//判断是否登陆
@@ -273,6 +283,28 @@ public class TdManagerStatementController extends TdManagerBaseController {
     	
     	//管理员获取管辖的城市和门店
     	tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, diySiteRole, tdManagerRole, tdManager);
+    	List<Long> sobIdList = new ArrayList<>();
+    	if(null !=cityName && !"".equals(cityName)){
+    		for (int i = 0; i < cityList.size(); i++) {
+				if(cityList.get(i).getCityName().equals(cityName)){
+					sobIdList.add(cityList.get(i).getSobIdCity());
+				}
+			}
+    	}else{
+    		for (TdCity city : cityList) {
+    			sobIdList.add(city.getSobIdCity());
+    		}
+    	}
+    	List<FitCompany> companyList = new ArrayList<>(); 
+    	if(statusId==16){
+    		try {
+				companyList = fitCompanyService.findFitCompanyBySobId(sobIdList);
+				System.out.println(companyList);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
     	
     	
 		if (null == page || page < 0) {
@@ -348,6 +380,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
     	//城市和门店信息
     	map.addAttribute("diySiteList",diyList);
 		map.addAttribute("cityList", cityList);
+		map.addAttribute("fit_company_ist",companyList);
 		
 		// 参数注回
 		map.addAttribute("orderNumber", keywords);
@@ -365,9 +398,12 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
 		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		map.addAttribute("code",code);
 
 		if(statusId==9){
 			return "/site_mag/statement_list_reserve_order";
+		}else if(statusId==16){
+			return "/site_mag/fit_goods_in_out";
 		}
 		return "/site_mag/statement_list";
 	}
@@ -522,6 +558,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="乐易装运费报表";
 		}else if(statusId==15){
 			fileName="乐易装运费报表(备用)";
+		}else if(statusId==16){
+			fileName="装饰公司销售明细报表";
 		}
 		return fileName;
 	}
@@ -536,7 +574,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 * @return
 	 * @throws Exception 
 	 */
-	private HSSFWorkbook acquireHSSWorkBook(Long statusId,Date begin,Date end,String diyCode,String cityName,String username,List<String> roleDiyIds) throws Exception{
+	private HSSFWorkbook acquireHSSWorkBook(Long statusId,Date begin,Date end,String diyCode,String cityName,String username,List<String> roleDiyIds,String code) throws Exception{
 		HSSFWorkbook wb= new HSSFWorkbook();  
 		if(statusId==0){//配送单出退货明细报表
 			wb=goodsInOutWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
@@ -568,12 +606,299 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=LyzHrDeliveryFeeBook(begin,end,diyCode,cityName,username,roleDiyIds);
 		}else if(statusId==15){//乐易装华润运费报表（备用）
 			wb=LyzHrDeliveryFeeBookBackUp(begin,end,diyCode,cityName,username,roleDiyIds);
+		}else if(statusId==16){//装饰公司出退货报表
+			wb=fitGoodsInOutBook(begin,end,code,cityName,username);
 		}
 		return wb;
 	}
 	
 	
 	
+
+	private HSSFWorkbook fitGoodsInOutBook(Date begin, Date end, String code, String cityName, String username) {
+		
+		// 第一步，创建一个webbook，对应一个Excel文件 
+        HSSFWorkbook wb = new HSSFWorkbook();  
+        
+        List<FitGoodsInOut> goodsInOutList=fitGoodsInOutService.queryDownList(begin, end, cityName, code);
+        
+        int maxRowNum = 60000;
+        int maxSize=0;
+        if(goodsInOutList!=null){
+        	maxSize=goodsInOutList.size();
+        }
+        int sheets = maxSize/maxRowNum+1;
+        
+    	//写入excel文件数据信息
+		for(int i=0;i<sheets;i++){
+			
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet  
+	        HSSFSheet sheet = wb.createSheet("第"+(i+1)+"页");  
+	        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short  
+	        //列宽
+	        int[] widths={25,25,25,20,20,15,15,15,15,15,15,15,15,10,10,10,10,10,15,15,15,15,15,15,15,15,15,30,50};
+	        sheetColumnWidth(sheet,widths);
+	        
+	        // 第四步，创建单元格，并设置值表头 设置表头居中  
+	        HSSFCellStyle style = wb.createCellStyle();  
+	        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+	        style.setWrapText(true);
+
+
+	       	//设置标题
+	        HSSFRow row = sheet.createRow((int) 0); 
+	        
+	        String[] cellValues={"装饰公司名称","主单号","分单号","下单日期","出&退货日期","配送状态","订单状态","采购经理","客户编号","工头姓名","工头电话","产品编号",
+	        		"产品名称","数量","零售单价","零售总价","结算单价","结算总价","品牌","商品父分类","商品子分类","配送方式","中转仓",
+	        		"配送人员","配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
+			cellDates(cellValues, style, row);
+			
+			for(int j=0;j<maxRowNum;j++)
+	        {
+				if(j+i*maxRowNum>=maxSize){
+					break;
+				}
+				FitGoodsInOut fitGoodsInOut= goodsInOutList.get(j+i*maxRowNum);
+	        	row = sheet.createRow((int) j + 1);
+	        	//门店名称
+	        	row.createCell(0).setCellValue(objToString(fitGoodsInOut.getDiySiteName()));
+	        	//主单号
+	        	if(null != fitGoodsInOut.getMainOrderNumber()){
+	        		row.createCell(1).setCellValue(objToString(fitGoodsInOut.getMainOrderNumber()));
+	        	}else{
+	        		row.createCell(1).setCellValue("");
+	        	}
+	        	
+	            //分单号
+	        	if(null != fitGoodsInOut.getOrderNumber()){
+	        		row.createCell(2).setCellValue(objToString(fitGoodsInOut.getOrderNumber()));
+	        	}else{
+	        		row.createCell(2).setCellValue("");
+	        	}
+	            
+	            //下单日期
+	            if(null != fitGoodsInOut.getOrderTime()){
+	            	row.createCell(3).setCellValue(objToString(fitGoodsInOut.getOrderTime()));
+	            }else{
+	            	row.createCell(3).setCellValue("");
+	            }
+	            
+	            //出&退货日期
+	            if(null != fitGoodsInOut.getSalesTime()){
+	            	row.createCell(4).setCellValue(objToString(fitGoodsInOut.getSalesTime()));
+	            }else{
+	            	row.createCell(4).setCellValue("");
+	            }
+	            
+	            //配送状态
+	            if(fitGoodsInOut.getStatusId()>=4){
+	            	row.createCell(5).setCellValue("已出货");	
+	            }else{
+	            	row.createCell(5).setCellValue("未出货");	
+	            }
+	            //订单状态
+	            if(null != fitGoodsInOut.getStatusId()){
+	            	switch (fitGoodsInOut.getStatusId()) {
+		            case 1:
+		            	row.createCell(6).setCellValue("待审核");
+		            	break;
+		            case 2:
+		            	row.createCell(6).setCellValue("待付款");
+		            	break;
+		            case 3:
+		            	row.createCell(6).setCellValue("待出库");
+		            	break;
+					case 4:
+						row.createCell(6).setCellValue("待签收");
+						break;
+					case 5:
+						row.createCell(6).setCellValue("待评价");
+					case 6:
+						row.createCell(6).setCellValue("已完成");
+						break;
+					case 7:
+						row.createCell(6).setCellValue("已取消");
+						break;
+					case 8:
+						row.createCell(6).setCellValue("已删除");
+						break;
+					case 9:
+						row.createCell(6).setCellValue("退货中");
+						break;
+					case 10:
+						row.createCell(6).setCellValue("退货确认");
+						break;
+					case 11:
+						row.createCell(6).setCellValue("退货取消");
+						break;
+					case 12:
+						row.createCell(6).setCellValue("退货完成");
+						break;
+					default:
+						break;
+					}
+	            }else{
+	            	row.createCell(6).setCellValue("");
+	            }
+	            
+	            
+	            //采购经理	
+	            if(null != fitGoodsInOut.getSellerRealName()){
+	            	row.createCell(7).setCellValue(objToString(fitGoodsInOut.getSellerRealName()));
+	            }else{
+	            	row.createCell(7).setCellValue("");
+	            }
+	            
+	            //客户编号
+	            if(null != fitGoodsInOut.getRealUserUsername()){
+	            	row.createCell(8).setCellValue(objToString(fitGoodsInOut.getRealUserUsername()));
+	            }else{
+	            	row.createCell(8).setCellValue("");
+	            }
+	           
+	            //工头姓名
+	            if(null != fitGoodsInOut.getRealUserRealName()){
+	            	row.createCell(9).setCellValue(objToString(fitGoodsInOut.getRealUserRealName()));
+	            }else{
+	            	row.createCell(9).setCellValue("");
+	            }
+	            
+	            //工头电话
+	            if(null != fitGoodsInOut.getRealUserUsername()){
+	            	row.createCell(10).setCellValue(objToString(fitGoodsInOut.getRealUserUsername()));
+	            }else{
+	            	row.createCell(10).setCellValue("");
+	            }
+	            
+	            //产品编号
+	            if(null != fitGoodsInOut.getSku()){
+	            	row.createCell(11).setCellValue(objToString(fitGoodsInOut.getSku()));
+	            }else{
+	            	row.createCell(11).setCellValue("");
+	            }
+	            
+	            //产品名称
+	            if(null != fitGoodsInOut.getGoodsTitle()){
+	            	row.createCell(12).setCellValue(objToString(fitGoodsInOut.getGoodsTitle()));
+	            }else{
+	            	row.createCell(12).setCellValue("");
+	            }
+	            
+	            //数量
+	            if(null != fitGoodsInOut.getQuantity()){
+	            	row.createCell(13).setCellValue(objToString(fitGoodsInOut.getQuantity()));
+	            }else{
+	            	row.createCell(13).setCellValue("");
+	            }
+	            
+	            
+	            //零售单价
+	            if(null != fitGoodsInOut.getPrice()){
+	            	row.createCell(14).setCellValue(objToString(fitGoodsInOut.getPrice()));
+	            }else{
+	            	row.createCell(14).setCellValue("");
+	            }
+	           
+	            //零售总价
+	            if(null != fitGoodsInOut.getPrice() && null != fitGoodsInOut.getQuantity()){
+	            	row.createCell(15).setCellValue(objToString(fitGoodsInOut.getPrice()*fitGoodsInOut.getQuantity()));
+	            }else{
+	            	row.createCell(15).setCellValue("");
+	            }
+	            
+	            //结算单价
+	            if(null != fitGoodsInOut.getRealPrice()){
+	            	row.createCell(16).setCellValue(objToString(fitGoodsInOut.getRealPrice()));
+	            }else{
+	            	row.createCell(16).setCellValue("");
+	            }
+	            
+	            
+	            //结算总价
+	            if(null !=fitGoodsInOut.getRealPrice() && null != fitGoodsInOut.getQuantity() ){
+	            	row.createCell(17).setCellValue(objToString(fitGoodsInOut.getRealPrice()*fitGoodsInOut.getQuantity()));
+	            }else{
+	            	row.createCell(17).setCellValue("");
+	            }
+	            
+	            //品牌
+	            if(null != fitGoodsInOut.getBrandTitle()){
+	            	row.createCell(18).setCellValue(objToString(fitGoodsInOut.getBrandTitle()));
+	            }else{
+	            	row.createCell(18).setCellValue("");
+	            }
+	            
+	            //商品父分类
+	            if(null != fitGoodsInOut.getGoodsParentTypeTitle()){
+	            	row.createCell(19).setCellValue(objToString(fitGoodsInOut.getGoodsParentTypeTitle()));
+	            }else{
+	            	row.createCell(19).setCellValue("");
+	            }
+	            
+	            //商品子分类
+	            if(null != fitGoodsInOut.getGoodsTypeTitle()){
+	            	row.createCell(20).setCellValue(objToString(fitGoodsInOut.getGoodsTypeTitle()));
+	            }else{
+	            	row.createCell(20).setCellValue("");
+	            }
+	            
+	            //配送方式	　
+	            if(null != fitGoodsInOut.getDeliverTypeTitle()){
+	            	row.createCell(21).setCellValue(objToString(fitGoodsInOut.getDeliverTypeTitle()));
+	            }else{
+	            	row.createCell(21).setCellValue("");
+	            }
+	            
+	            //中转仓
+	            if(null != fitGoodsInOut.getWhName()){
+	            	row.createCell(22).setCellValue(objToString(fitGoodsInOut.getWhName()));
+	            }else{
+	            	row.createCell(22).setCellValue("");
+	            }
+	            
+	            //配送人员
+	            if(null != fitGoodsInOut.getDeliverRealName()){
+	            	row.createCell(23).setCellValue(objToString(fitGoodsInOut.getDeliverRealName()));
+	            }else{
+	            	row.createCell(23).setCellValue("");
+	            }
+	            
+	            //配送人员电话
+	            if(null != fitGoodsInOut.getDeliverUsername()){
+	            	row.createCell(24).setCellValue(objToString(fitGoodsInOut.getDeliverUsername()));
+	            }else{
+	            	row.createCell(24).setCellValue(objToString(""));
+	            }
+	            //收货人姓名
+	            if(null != fitGoodsInOut.getShippingName()){
+	            	row.createCell(25).setCellValue(objToString(fitGoodsInOut.getShippingName()));
+	            }else{
+	            	row.createCell(25).setCellValue(objToString(""));
+	            }
+	            //收货人电话
+	            if(null != fitGoodsInOut.getShippingPhone()){
+	            	row.createCell(26).setCellValue(objToString(fitGoodsInOut.getShippingPhone()));
+	            }else{
+	            	row.createCell(26).setCellValue(objToString(""));
+	            }
+	            //收货人地址
+	            if(null != fitGoodsInOut.getShippingAddress()){
+	            	row.createCell(27).setCellValue(objToString(fitGoodsInOut.getShippingAddress()));
+	            }else{
+	            	row.createCell(27).setCellValue(objToString(""));
+	            }
+	            
+	            //订单备注
+	            if(null != fitGoodsInOut.getRemark()){
+	            	row.createCell(28).setCellValue(objToString(fitGoodsInOut.getRemark()));
+	            }else{
+	            	row.createCell(28).setCellValue(objToString(""));
+	            }
+	        	
+			}
+		}
+		return wb;
+	}
 
 	/**
 	 * 出退货明细报表

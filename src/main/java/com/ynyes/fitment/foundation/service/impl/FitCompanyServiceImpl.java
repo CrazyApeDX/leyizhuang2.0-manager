@@ -69,4 +69,12 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 			return this.fitCompanyRepo.findByCode(code);
 		}
 	}
+
+	@Override
+	public List<FitCompany> findFitCompanyBySobId(List<Long> sobIdList) {
+		if(null != sobIdList && sobIdList.size()>0 ){
+			return this.fitCompanyRepo.findFitCompanyBySobId(sobIdList);
+		}
+		return null;
+	}
 }
