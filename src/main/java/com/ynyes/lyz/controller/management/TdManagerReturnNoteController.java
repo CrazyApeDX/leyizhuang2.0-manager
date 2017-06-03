@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ynyes.lyz.entity.TdCashReturnNote;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDiySite;
-import com.ynyes.lyz.entity.TdDiySiteAccount;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
@@ -389,40 +388,52 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 				// 取消状态判断
 				// if (returnNote.getStatusId().equals(3L))
 				// {
+
+				// 判断退货单是否已经取消
+				if (returnNote.getStatusId().equals(6L)) {
+					res.put("message", "该退货单已经被取消，不能退款");
+					return res;
+				}
+
 				// 查找订单
 				TdOrder order = tdOrderService.findByOrderNumber(returnNote.getOrderNumber());
 				if (order != null && order.getStatusId() != null && order.getStatusId() == 9L) {
 
 					// 2017-05-24修改，如果是经销商的订单，确认退款之前需要收回对应的经销差价
 					// 判断是否是经销商门店的单据
-//					Long diySiteId = order.getDiySiteId();
-//					TdDiySite diySite = tdDiySiteService.findOne(diySiteId);
-//					if (null != diySite && null != diySite.getCustTypeName()
-//							&& "经销商".equalsIgnoreCase(diySite.getCustTypeName())) {
-//
-//						TdDiySiteAccount diySiteAccount = tdDiySiteAccountService.findByDiySiteId(diySite.getId());
-//						if (null == diySiteAccount) {
-//							res.put("message", "严重错误：未查询到经销商货款账号，请联系管理员");
-//							return res;
-//						}
-//
-//						TdUser user = tdUserService.findOne(diySiteAccount.getUserId());
-//						Boolean result = this.checkBalance(user, returnNote);
-//						if (null == result) {
-//							res.put("message", "严重错误：未查询到经销商货款账号，请联系管理员");
-//							return res;
-//						} else if (!result) {
-//							res.put("message", "经销商货款账号金额不足（需要返回" + returnNote.getJxReturn() + "元经销差价）");
-//							return res;
-//						} else {
-//							// 返还经销差价
-//							List<TdCashRefundInf> cashRefundList = tdReturnNoteService
-//									.doActionWithReturnCash(returnNote, user, diySite);
-//							for (TdCashRefundInf cashRefundInf : cashRefundList) {
-//								tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-//							}
-//						}
-//					}
+					// Long diySiteId = order.getDiySiteId();
+					// TdDiySite diySite = tdDiySiteService.findOne(diySiteId);
+					// if (null != diySite && null != diySite.getCustTypeName()
+					// && "经销商".equalsIgnoreCase(diySite.getCustTypeName())) {
+					//
+					// TdDiySiteAccount diySiteAccount =
+					// tdDiySiteAccountService.findByDiySiteId(diySite.getId());
+					// if (null == diySiteAccount) {
+					// res.put("message", "严重错误：未查询到经销商货款账号，请联系管理员");
+					// return res;
+					// }
+					//
+					// TdUser user =
+					// tdUserService.findOne(diySiteAccount.getUserId());
+					// Boolean result = this.checkBalance(user, returnNote);
+					// if (null == result) {
+					// res.put("message", "严重错误：未查询到经销商货款账号，请联系管理员");
+					// return res;
+					// } else if (!result) {
+					// res.put("message", "经销商货款账号金额不足（需要返回" +
+					// returnNote.getJxReturn() + "元经销差价）");
+					// return res;
+					// } else {
+					// // 返还经销差价
+					// List<TdCashRefundInf> cashRefundList =
+					// tdReturnNoteService
+					// .doActionWithReturnCash(returnNote, user, diySite);
+					// for (TdCashRefundInf cashRefundInf : cashRefundList) {
+					// tdInterfaceService.ebsWithObject(cashRefundInf,
+					// INFTYPE.CASHREFUNDINF);
+					// }
+					// }
+					// }
 
 					List<TdCashReturnNote> cashReturnNotes = tdPriceCountService.actAccordingWMS(returnNote,
 							order.getId());
