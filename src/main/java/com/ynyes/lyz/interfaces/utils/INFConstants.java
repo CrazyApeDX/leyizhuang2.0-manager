@@ -48,10 +48,25 @@ public class INFConstants
 	public static final String	INF_CASH_RECEIPTS_STR		= "TD_CASH_RECEIPTS";
 	
 	public static final String INF_CASH_REFUND_STR		= "TD_CASH_REFUND";
+	
+	/**
+	 * 调拨单头表
+	 */
+	public static final String	INF_TD_ALLOT_ORDER				= "TD_ALLOT_ORDER";
+
+	/**
+	 * 调拨单产品表
+	 */
+	public static final String	INF_TD_ALLOT_GOODS		= "TD_ALLOT_GOODS";
+
+	/**
+	 * 调拨单入库表
+	 */
+	public static final String	INF_TD_ALLOT_RECEIVE		= "TD_ALLOT_RECEIVE";
 
 
 	/**
-	 * 取消订单退货
+	 * 调拨收货表
 	 */
 	public static final Integer INF_RETURN_ORDER_CANCEL_INT	= 0;
 

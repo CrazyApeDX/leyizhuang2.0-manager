@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.testng.collections.Lists;
 
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
@@ -228,6 +229,10 @@ public class TdDiySiteService {
 		return (List<TdDiySite>) repository.findAll();
 	}
 	
+	public List<TdDiySite> findAllDirect(){
+		return (List<TdDiySite>) repository.findByIsDirect(true);
+	}
+	
 	public List<TdDiySite> findByCityId(Long cityId){
 		if(null == cityId){
 			return null;
@@ -269,5 +274,23 @@ public class TdDiySiteService {
 			return null;
 		}
 		return repository.findByRegionIdAndStatusAndIsEnableTrue(regionId, status);
+	}
+    
+    /**
+     * 获取管理员城市下自营门店，不包括自己所在门店
+     * 
+	 * @param cityId
+	 * @param diyId
+	 * @return
+	 */
+	public List<TdDiySite> getTdDiySites(Long cityId, Long diyId) {
+		List<TdDiySite> tdDiySites = Lists.newArrayList();
+		List<TdDiySite> diySites = repository.findByCityIdAndIsDirect(cityId, true);
+		for (TdDiySite diySite : diySites) {
+			if (diySite.getIsEnable() && !diySite.getId().equals(diyId)) {
+				tdDiySites.add(diySite);
+			}
+		}
+		return tdDiySites;
 	}
 }
