@@ -160,6 +160,16 @@ public class TdOrderGoods {
 	@Column(nullable = false)
 	private Boolean isWallAccessory = false;
 
+	// order表id
+	private Long tdOrderId;
+
+	// returnNote表id
+	private Long tdReturnId;
+
+	// 经销价
+	@Column(scale = 2)
+	private Double jxPrice = 0d;
+
 	public String getSubOrderNumber() {
 		return subOrderNumber;
 	}
@@ -446,6 +456,30 @@ public class TdOrderGoods {
 
 	public void setIsWallAccessory(Boolean isWallAccessory) {
 		this.isWallAccessory = isWallAccessory;
+	}
+
+	public Long getTdOrderId() {
+		return tdOrderId;
+	}
+
+	public void setTdOrderId(Long tdOrderId) {
+		this.tdOrderId = tdOrderId;
+	}
+
+	public Long getTdReturnId() {
+		return tdReturnId;
+	}
+
+	public void setTdReturnId(Long tdReturnId) {
+		this.tdReturnId = tdReturnId;
+	}
+
+	public Double getJxPrice() {
+		return jxPrice;
+	}
+
+	public void setJxPrice(Double jxPrice) {
+		this.jxPrice = jxPrice;
 	}
 
 }

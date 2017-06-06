@@ -424,6 +424,10 @@ public class TdOrder {
 	@Column(scale = 2, nullable = false)
 	private Double credit = 0d;
 	
+	// 经销总价
+	@Column(scale = 2)
+	private Double jxTotalPrice = 0d;
+	
 	public Double getRefund() {
 		return refund;
 	}
@@ -1198,6 +1202,14 @@ public class TdOrder {
 
 	public void setCredit(Double credit) {
 		this.credit = credit;
+	}
+
+	public Double getJxTotalPrice() {
+		return jxTotalPrice;
+	}
+
+	public void setJxTotalPrice(Double jxTotalPrice) {
+		this.jxTotalPrice = jxTotalPrice;
 	}
 
 }

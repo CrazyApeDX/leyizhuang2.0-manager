@@ -48,6 +48,7 @@ import com.ynyes.lyz.entity.TdReserveOrder;
 import com.ynyes.lyz.entity.TdReturnReport;
 import com.ynyes.lyz.entity.TdSales;
 import com.ynyes.lyz.entity.TdSalesDetail;
+import com.ynyes.lyz.entity.TdSalesDetailForFranchiser;
 import com.ynyes.lyz.entity.TdSalesForContinuousBuy;
 import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.TdSubOwn;
@@ -75,6 +76,7 @@ import com.ynyes.lyz.service.TdOwnService;
 import com.ynyes.lyz.service.TdReceiptService;
 import com.ynyes.lyz.service.TdReserveOrderService;
 import com.ynyes.lyz.service.TdReturnReportService;
+import com.ynyes.lyz.service.TdSalesDetailForFranchiserService;
 import com.ynyes.lyz.service.TdSalesDetailService;
 import com.ynyes.lyz.service.TdSalesForActiveUserService;
 import com.ynyes.lyz.service.TdSalesForContinuousBuyService;
@@ -161,6 +163,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	
 	@Autowired 
 	FitCompanyService fitCompanyService;
+	
+	@Autowired
+	TdSalesDetailForFranchiserService tdSalesDetailForFranchiserService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerStatementController.class);
 	 
@@ -560,6 +565,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="乐易装运费报表(备用)";
 		}else if(statusId==16){
 			fileName="装饰公司销售明细报表";
+		}else if(statusId==17){
+			fileName="加盟商销售明细报表";
 		}
 		return fileName;
 	}
@@ -608,11 +615,15 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=LyzHrDeliveryFeeBookBackUp(begin,end,diyCode,cityName,username,roleDiyIds);
 		}else if(statusId==16){//装饰公司出退货报表
 			wb=fitGoodsInOutBook(begin,end,code,cityName,username);
+		}else if(statusId==17){//加盟商销售明细报表
+			wb=salesDetailForFranchiser(begin, end, diyCode, cityName, username,roleDiyIds);
 		}
 		return wb;
 	}
 	
 	
+	
+
 	
 
 	private HSSFWorkbook fitGoodsInOutBook(Date begin, Date end, String code, String cityName, String username) {
@@ -3492,6 +3503,191 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}
 
 		return wb;
+	}
+	
+	private HSSFWorkbook salesDetailForFranchiser(Date begin,Date end,String diyCode,String cityName,String username,List<String> roleDiyIds) {
+		// TODO Auto-generated method stub
+		
+
+		// 第一步，创建一个webbook，对应一个Excel文件 
+        HSSFWorkbook wb = new HSSFWorkbook();  
+        
+ 
+        // 第五步，设置值  
+        List<TdSalesDetailForFranchiser> salesDetailList= tdSalesDetailForFranchiserService.queryDownList(begin, end, cityName, diyCode, roleDiyIds);
+//      long startTimne = System.currentTimeMillis();
+
+        //excel单表最大行数是65535
+        int maxRowNum = 60000;
+        int maxSize=0;
+        if(salesDetailList!=null){
+        	maxSize=salesDetailList.size();
+        }
+        int sheets = maxSize/maxRowNum+1;
+        
+		//写入excel文件数据信息
+		for(int i=0;i<sheets;i++){
+			
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet  
+	        HSSFSheet sheet = wb.createSheet("第"+(i+1)+"页");  
+	        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short  
+	        //列宽
+	        int[] widths={13,30,30,25,13,13,13,13,18,18,13,
+	        		9,9,9,9,9,13,13,13,18,13,
+	        		13,13,13,20,30,30};
+	        sheetColumnWidth(sheet,widths);
+	        
+	        // 第四步，创建单元格，并设置值表头 设置表头居中  
+	        HSSFCellStyle style = wb.createCellStyle();  
+	        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+	        style.setWrapText(true);
+
+
+	       	//设置标题
+	        HSSFRow row = sheet.createRow((int) 0); 
+	        
+	        String[] cellValues={"门店名称","主单号","分单号","预存款变更时间","导购","客户编号","客户名称","客户电话","产品编号","产品名称",
+	        		"数量","单价","总价","经销单价","经销总价","品牌","商品父分类","商品子分类","配送状态","配送方式","中转仓","配送人员",
+	        		"配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
+			cellDates(cellValues, style, row);
+			
+			for(int j=0;j<maxRowNum;j++)
+	        {
+				if(j+i*maxRowNum>=maxSize){
+					break;
+				}
+				TdSalesDetailForFranchiser salesDetail= salesDetailList.get(j+i*maxRowNum);
+	        	row = sheet.createRow((int) j + 1);
+	        	//门店名称
+	        	row.createCell(0).setCellValue(objToString(salesDetail.getDiySiteName()));
+
+	        	//主单号
+	        	row.createCell(1).setCellValue(objToString(salesDetail.getMainOrderNumber()));
+	        	
+	        	//分单号
+	        	row.createCell(2).setCellValue(objToString(salesDetail.getOrderNumber()));
+	        	
+	        	
+	        	//预存款变更时间
+	        	if(null != salesDetail.getOrderTime()){
+	        		row.createCell(3).setCellValue(objToString(salesDetail.getOrderTime()));
+	        	}else{
+	        		row.createCell(3).setCellValue("");
+	        	}
+	        	
+	        	//导购
+				row.createCell(4).setCellValue(objToString(salesDetail.getSellerRealName()));
+				//客户编号
+				row.createCell(5).setCellValue(objToString(salesDetail.getUserId()));
+				//客户名称
+				row.createCell(6).setCellValue(objToString(salesDetail.getRealName()));
+				//客户电话
+				row.createCell(7).setCellValue(objToString(replacePhoneNumberWithStar(salesDetail.getUsername())));
+				//产品编号
+				row.createCell(8).setCellValue(objToString(salesDetail.getSku()));
+				//产品名称
+				row.createCell(9).setCellValue(objToString(salesDetail.getGoodsTitle()));
+				//产品数量
+				row.createCell(10).setCellValue(objToString(salesDetail.getQuantity()));
+				//产品价格
+				row.createCell(11).setCellValue(objToString(salesDetail.getPrice()));
+				//产品总价
+				row.createCell(12).setCellValue(objToString((salesDetail.getTotalPrice()*100)/100));
+				
+				if(null != salesDetail.getJxPrice()){
+					//经销单价
+					row.createCell(13).setCellValue(objToString(salesDetail.getJxPrice()));
+					//经销总价
+					if(null != salesDetail.getQuantity()){
+						row.createCell(14).setCellValue(objToString(salesDetail.getJxPrice() * salesDetail.getQuantity()));
+					}else{
+						row.createCell(14).setCellValue(objToString(0L));
+					}
+					
+				}else{
+					row.createCell(13).setCellValue(objToString(0L));
+					row.createCell(14).setCellValue(objToString(0L));
+				}
+				
+	          	//品牌
+				row.createCell(15).setCellValue(objToString(salesDetail.getBrandTitle()));
+	    		//商品父分类
+				if(null != salesDetail.getGoodsParentTypeTitle()){
+					row.createCell(16).setCellValue(objToString(salesDetail.getGoodsParentTypeTitle()));
+				}else{
+					row.createCell(16).setCellValue("");
+				}
+				//商品子分类
+				if(null != salesDetail.getGoodsTypeTitle()){
+					row.createCell(17).setCellValue(objToString(salesDetail.getGoodsTypeTitle()));
+				}else{
+					row.createCell(17).setCellValue("");
+				}
+	        	//配送状态
+	        	if(null != salesDetail.getMainOrderNumber()){
+	        		if(salesDetail.getMainOrderNumber().contains("T") ){
+	        			if(salesDetail.getRemark().equals("用户取消订单，退货")){
+	        				row.createCell(18).setCellValue("订单取消");
+	        			}else{
+	        				row.createCell(18).setCellValue("已收货");
+	        			}
+	        		}else{
+	        			if(salesDetail.getStatusId()>3 && salesDetail.getStatusId() != 7 && salesDetail.getStatusId() !=8 ){
+	        				row.createCell(18).setCellValue("已出货");
+	        			}else{
+	        				row.createCell(18).setCellValue("未出货");
+	        			}
+	        		}
+	        	}
+				//配送方式
+	        	row.createCell(19).setCellValue(objToString(salesDetail.getDeliverTypeTitle()));
+				//中转仓
+	        	if(null != salesDetail.getWhName()){
+	        		row.createCell(20).setCellValue(objToString(salesDetail.getWhName()));
+	        	}else{
+	        		row.createCell(20).setCellValue("");
+	        	}
+	        	//配送人员
+	            if(null != salesDetail.getDeliverRealName()){
+	            	row.createCell(21).setCellValue(objToString(salesDetail.getDeliverRealName()));
+	            }else{
+	            	row.createCell(21).setCellValue("");
+	            }
+	        	//配送人员电话
+	            if(null != salesDetail.getDeliverUsername()){
+	            	row.createCell(22).setCellValue(objToString(salesDetail.getDeliverUsername()));
+	            }else{
+	            	row.createCell(22).setCellValue("");
+	            }
+	        	//收货人姓名
+	        	if(null != salesDetail.getShippingName()){
+	        		row.createCell(23).setCellValue(objToString(salesDetail.getShippingName()));
+	        	}else{
+	        		row.createCell(23).setCellValue("");
+	        	}
+	        	//收货人电话
+	        	if(null != salesDetail.getShippingPhone()){
+	        		row.createCell(24).setCellValue(objToString(salesDetail.getShippingPhone()));
+	        	}else{
+	        		row.createCell(24).setCellValue("");
+	        	}
+	        	//收货人地址
+	        	if(null != salesDetail.getShippingAddress()){
+	        		row.createCell(25).setCellValue(objToString(salesDetail.getShippingAddress()));
+	        	}else{
+	        		row.createCell(25).setCellValue("");
+	        	}
+	        	//订单备注
+	        	if(null != salesDetail.getRemark()){
+	        		row.createCell(26).setCellValue(objToString(salesDetail.getRemark()));
+	        	}else{
+	        		row.createCell(26).setCellValue("");
+	        	}
+	        	
+				
+			}
+		}
+        return wb;
 	}
 
 	
