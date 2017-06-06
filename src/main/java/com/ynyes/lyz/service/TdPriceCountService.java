@@ -169,37 +169,7 @@ public class TdPriceCountService {
 		// }
 
 		// Double fee = 0d;
-		try {
-			Map<String, Double> depiveryFeeMap = new HashMap<>();
-			depiveryFeeMap = settlementService.countOrderDeliveryFee(user, order);
-			order.setDeliverFee(depiveryFeeMap.get("user_delivery_fee"));
-			order.setCompanyDeliveryFee(depiveryFeeMap.get("company_delivery_fee"));
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		// 如果订单的配送方式是到店支付，则不计算运费（新增：电子券订单也不计算运费 —— @Date 2016年4月27日）
-		String title = order.getDeliverTypeTitle();
-		if ((null != title && "门店自提".equals(title)) || (null != order.getIsCoupon() && order.getIsCoupon())) {
-			order.setDeliverFee(0.00);
-			// 同时判断能否使用券和预存款
-			Long payTypeId = order.getPayTypeId();
-			if (null != payTypeId) {
-				TdPayType type = tdPayTypeService.findOne(payTypeId);
-				// 如果支付方式属于线下支付，则不能够使用预存款和券
-				if (null != type && null != type.getIsOnlinePay() && !type.getIsOnlinePay()) {
-					// 到店支付可以使用预存款和优惠卷
-					if (!"到店支付".equals(type.getTitle())) {
-						order.setCashCouponId("");
-						order.setProductCouponId("");
-						canUseBalance = false;
-					}
-
-				}
-			}
-		}
-		// 将运费的费用添加到订单总额中
-		order.setTotalPrice(order.getTotalPrice() + order.getDeliverFee());
+		
 
 		// // 判断能否使用预存款和优惠券（支付方式为到店支付的情况下不能够使用预存款和优惠券）
 		// String payTypeTitle = order.getPayTypeTitle();
@@ -270,6 +240,38 @@ public class TdPriceCountService {
 		if (0 > order.getTotalPrice()) {
 			order.setTotalPrice(0.00);
 		}
+		
+		try {
+			Map<String, Double> depiveryFeeMap = new HashMap<>();
+			depiveryFeeMap = settlementService.countOrderDeliveryFee(user, order);
+			order.setDeliverFee(depiveryFeeMap.get("user_delivery_fee"));
+			order.setCompanyDeliveryFee(depiveryFeeMap.get("company_delivery_fee"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// 如果订单的配送方式是到店支付，则不计算运费（新增：电子券订单也不计算运费 —— @Date 2016年4月27日）
+		String title = order.getDeliverTypeTitle();
+		if ((null != title && "门店自提".equals(title)) || (null != order.getIsCoupon() && order.getIsCoupon())) {
+			order.setDeliverFee(0.00);
+			// 同时判断能否使用券和预存款
+			Long payTypeId = order.getPayTypeId();
+			if (null != payTypeId) {
+				TdPayType type = tdPayTypeService.findOne(payTypeId);
+				// 如果支付方式属于线下支付，则不能够使用预存款和券
+				if (null != type && null != type.getIsOnlinePay() && !type.getIsOnlinePay()) {
+					// 到店支付可以使用预存款和优惠卷
+					if (!"到店支付".equals(type.getTitle())) {
+						order.setCashCouponId("");
+						order.setProductCouponId("");
+						canUseBalance = false;
+					}
+
+				}
+			}
+		}
+		// 将运费的费用添加到订单总额中
+		order.setTotalPrice(order.getTotalPrice() + order.getDeliverFee());
 
 		order.setIsFixedDeliveryFee(isFixedDeliveryFee);
 

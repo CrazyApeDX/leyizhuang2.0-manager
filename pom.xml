@@ -369,6 +369,13 @@
 			<artifactId>tinify</artifactId>
 			<version>RELEASE</version>
 		</dependency>
+		
+		<!-- json -->
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.32</version>
+		</dependency>
 
 	</dependencies>
 
