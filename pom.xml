@@ -376,6 +376,11 @@
 			<artifactId>fastjson</artifactId>
 			<version>1.2.32</version>
 		</dependency>
+		<dependency>
+			<groupId>cn.com.leyizhuang</groupId>
+			<artifactId>ebs-common</artifactId>
+			<version>1.0.0</version>
+		</dependency>
 
 	</dependencies>
 
