@@ -51,6 +51,7 @@ import com.ynyes.lyz.entity.TdSubOwn;
 import com.ynyes.lyz.entity.TdWareHouse;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
 import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
+import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetailStatement;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.service.TdActiveUserService;
 import com.ynyes.lyz.service.TdAgencyFundService;
@@ -65,6 +66,7 @@ import com.ynyes.lyz.service.TdGoodsInOutService;
 import com.ynyes.lyz.service.TdManagerRoleService;
 import com.ynyes.lyz.service.TdManagerService;
 import com.ynyes.lyz.service.TdOrderDeliveryFeeDetailService;
+import com.ynyes.lyz.service.TdOrderDeliveryFeeDetailStatementService;
 import com.ynyes.lyz.service.TdOrderGoodsService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdOwnService;
@@ -151,6 +153,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	
 	@Autowired
 	TdSettingService tdSettingService;
+	
+	@Autowired
+	TdOrderDeliveryFeeDetailStatementService tdOrderDeliveryFeeDetailStatementService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerStatementController.class);
 	 
@@ -2542,7 +2547,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		return wb;
 	}
 	
-	private HSSFWorkbook LyzHrDeliveryFeeBook(Date begin, Date end, String diyCode, String cityName, String username,
+	/*private HSSFWorkbook LyzHrDeliveryFeeBook(Date begin, Date end, String diyCode, String cityName, String username,
 			List<String> roleDiyIds) {
 		// 创建工作簿
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -2766,7 +2771,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			}
 		}
 		return wb;
-	}
+	}*/
 	
 	/**
 	 * 乐易装华润基础运费报表（备用）
@@ -3238,5 +3243,216 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}
 		return "";
 	}
+	
+	/**
+	 * 涂料基础运费报表
+	 * @param begin
+	 * @param end
+	 * @param diyCode
+	 * @param cityName
+	 * @param username
+	 * @param roleDiyIds
+	 * @return
+	 */
+	
+	private HSSFWorkbook LyzHrDeliveryFeeBook(Date begin, Date end, String diyCode, String cityName, String username,
+			List<String> roleDiyIds) {
+		// 创建工作簿
+		HSSFWorkbook wb = new HSSFWorkbook();
+
+		List<TdOrderDeliveryFeeDetailStatement> detailList = tdOrderDeliveryFeeDetailStatementService.queryDownOrderList(begin, end, cityName,
+				diyCode, roleDiyIds);
+		int maxRowNum = 60000;
+		int maxSize = 0;
+		if (detailList != null) {
+			maxSize = detailList.size();
+		}
+		int sheets = maxSize / maxRowNum + 1;
+
+		// 写入excel文件数据信息
+		for (int i = 0; i < sheets; i++) {
+
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+			HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
+			// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+			// 列宽
+			int[] widths = { 20, 30, 20, 20, 15, 15, 20, 18, 18, 18, 25, 25, 18, 18, 18, 18, 18, 18, 18, 18, 18 };
+			sheetColumnWidth(sheet, widths);
+
+			// 第四步，创建单元格，并设置值表头 设置表头居中
+			HSSFCellStyle style = wb.createCellStyle();
+			style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+			style.setWrapText(true);
+
+			// 设置标题
+			HSSFRow row = sheet.createRow((int) 0);
+
+			String[] cellValues = { "门店名称", "主单号", "下单日期", "封车日期", "订单状态", "导购", "客户名称", "客户电话", "大桶漆配送费", "硝基漆10L配送费",
+					"小桶漆/木器漆配送费", "4kg以下漆类配送费", "订单总金额", "客户实际运费", "商户应承担运费","打折减免商户运费", "商户实际运费" };
+			cellDates(cellValues, style, row);
+
+			for (int j = 0; j < maxRowNum; j++) {
+				if (j + i * maxRowNum >= maxSize) {
+					break;
+				}
+				
+				TdOrderDeliveryFeeDetailStatement detail = (TdOrderDeliveryFeeDetailStatement)detailList.get(j + i * maxRowNum);
+				row = sheet.createRow((int) j + 1);
+
+				// 门店名称0
+				if (null != detail.getDiySiteName()) {
+					row.createCell(0).setCellValue(objToString(detail.getDiySiteName()));
+				} else {
+					row.createCell(0).setCellValue(" ");
+				}
+
+				// 主单号1
+
+				if (null != detail.getMainOrderNumber()) {
+					row.createCell(1).setCellValue(objToString(detail.getMainOrderNumber()));
+				} else {
+					row.createCell(1).setCellValue(" ");
+				}
+
+				// 下单日期2
+				if (null != detail.getOrderTime()) {
+					row.createCell(2).setCellValue(objToString(detail.getOrderTime()));
+				} else {
+					row.createCell(2).setCellValue(objToString(" "));
+				}
+
+				// 封车日期3
+				if (null != detail.getSendTime()) {
+					row.createCell(3).setCellValue(objToString(detail.getSendTime()));
+				} else {
+					row.createCell(3).setCellValue(objToString(" "));
+				}
+
+				// 订单状态4
+				if (null != detail.getStatusId()) {
+					switch (detail.getStatusId()) {
+					case 4:
+						row.createCell(4).setCellValue("待签收");
+						break;
+					case 5:
+						row.createCell(4).setCellValue("待评价");
+						break;
+					case 6:
+						row.createCell(4).setCellValue("已完成");
+						break;
+					case 7:
+						row.createCell(4).setCellValue("已取消");
+						break;
+					case 8:
+						row.createCell(4).setCellValue("已删除");
+						break;
+					case 9:
+						row.createCell(4).setCellValue("退货中");
+						break;
+					case 10:
+						row.createCell(4).setCellValue("退货确认");
+						break;
+					case 11:
+						row.createCell(4).setCellValue("退货取消");
+						break;
+					case 12:
+						row.createCell(4).setCellValue("退货完成");
+						break;
+					default:
+						break;
+					}
+				} else {
+					row.createCell(4).setCellValue(objToString(" "));
+				}
+
+				// 导购5
+				if (null != detail.getSellerRealName()) {
+					row.createCell(5).setCellValue(objToString(detail.getSellerRealName()));
+				} else {
+					row.createCell(5).setCellValue(objToString(" "));
+				}
+
+				// 客户名称6
+				if (null != detail.getUserRealName()) {
+					row.createCell(6).setCellValue(objToString(detail.getUserRealName()));
+				} else {
+					row.createCell(6).setCellValue(objToString(" "));
+				}
+
+				// 客户电话7
+				if (null != detail.getUsername()) {
+					row.createCell(7).setCellValue(objToString(replacePhoneNumberWithStar(detail.getUsername())));
+				} else {
+					row.createCell(7).setCellValue(objToString(" "));
+				}
+
+				// 大桶漆配送费8
+				if (null != detail.getBucketsOfPaintFee()) {
+					row.createCell(8).setCellValue(objToString(detail.getBucketsOfPaintFee()));
+				} else {
+					row.createCell(8).setCellValue(objToString("0.00 "));
+				}
+
+				// 硝基漆10L配送费9
+				if (null != detail.getNitrolacquerFee()) {
+					row.createCell(9).setCellValue(objToString(detail.getNitrolacquerFee()));
+				} else {
+					row.createCell(9).setCellValue(objToString("0.00 "));
+				}
+
+				// 小桶漆/木器漆配送费10
+				if (null != detail.getCarpentryPaintFee()) {
+					row.createCell(10).setCellValue(objToString(detail.getCarpentryPaintFee()));
+				} else {
+					row.createCell(10).setCellValue(objToString("0.00"));
+				}
+
+				// 4kg以下漆类配送费11
+				if (null != detail.getBelowFourKiloFee()) {
+					row.createCell(11).setCellValue(objToString(detail.getBelowFourKiloFee()));
+				} else {
+					row.createCell(11).setCellValue(objToString("0.00"));
+				}
+
+				//订单总金额12
+				if(null != detail.getOrderTotalMoney()){
+					row.createCell(12).setCellValue(objToString(detail.getOrderTotalMoney()));
+				}else{
+					row.createCell(12).setCellValue(objToString("0.00"));
+				}
+
+				// 客户实际运费13
+				if (null != detail.getConsumerDeliveryFeeFinal()) {
+					row.createCell(13).setCellValue(objToString(detail.getConsumerDeliveryFeeFinal()));
+				} else {
+					row.createCell(13).setCellValue(objToString("0.00"));
+				}
+
+				// 公司应承担运费14
+				if (null != detail.getCompanyDeliveryFee()) {
+					row.createCell(14).setCellValue(objToString(detail.getCompanyDeliveryFee()));
+				} else {
+					row.createCell(14).setCellValue(objToString("0.00"));
+				}
+
+				// 打折减免公司运费15
+				if (null != detail.getCompanyDeliveryFeeDiscount()) {
+					row.createCell(15).setCellValue(objToString(detail.getCompanyDeliveryFeeDiscount()));
+				} else {
+					row.createCell(15).setCellValue(objToString("0.00"));
+				}
+				
+				// 公司实际运费16
+				if (null != detail.getCompanyDeliveryFeeFinal()) {
+					row.createCell(16).setCellValue(objToString(detail.getCompanyDeliveryFeeFinal()));
+				} else {
+					row.createCell(16).setCellValue(objToString("0.00"));
+				}
+
+			}
+		}
+		return wb;
+	}
+	
 	
 }
