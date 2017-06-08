@@ -170,10 +170,13 @@ function del_goods_comb(obj) {
                 <table border="0" cellspacing="0" cellpadding="0" class="border-table" width="98%">
                     <thead>
                         <tr>
-                            <th width="20%">
+                            <th width="10%">
                                产品编码
                             </th>
-                            <th width="60%">
+                            <th width="20%">
+                               产品SKU
+                            </th>
+                            <th width="50%">
                                 产品名称
                             </th>
                             <th width="10%">
