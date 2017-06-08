@@ -714,6 +714,8 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 			return "/site_mag/dialog_price_list";
 		}else if (null != type && type.equalsIgnoreCase("module")){
 			return "/site_mag/dialog_module_list";
+		}else if (null != type && type.equalsIgnoreCase("allocation")){
+			return "/site_mag/dialog_goods_allocation_list";
 		}
 
 		return "/site_mag/dialog_goods_combination_list";

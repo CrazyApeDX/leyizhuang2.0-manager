@@ -160,9 +160,15 @@ function downloaddate()
                 		<#case 4>
                 			退款
                 		<#break>
+                		<#case 5>
+                			经销差价返还
+                		<#break>
+                		<#case 6>
+                			经销差价扣除
+                		<#break>
                 	</#switch>
                 </td>
-                <td align="left"><#if item.type==1 || item.type==3>-</#if><#if item.money??>${item.money?string("0.00")}</#if></td>
+                <td align="left"><#if item.type==1 || item.type==3 || item.type==6>-</#if><#if item.money??>${item.money?string("0.00")}</#if></td>
                 <td align="left"><#if item.cashLeft??>${item.cashLeft?string("0.00")}<#else>暂无</#if></td>
                 <td align="left"><#if item.unCashLeft??>${item.unCashLeft?string("0.00")}<#else>暂无</#if></td>
                 <td align="left"><#if item.allLeft??>${item.allLeft?string("0.00")}<#else>暂无</#if></td>

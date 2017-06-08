@@ -93,4 +93,17 @@ public interface TdDiySiteRepo
 	List<TdDiySite> findByCityId(Long cityId);
 	
 	List<TdDiySite> findByRegionIdAndStatusAndIsEnableTrue(Long regionId, Long status);
+	
+	
+	Page<TdDiySite> findByCustTypeNameAndTitleContainingOrderBySortIdAsc(String custTypeName, String keywords, Pageable page);
+	
+	/**
+	 * 查询所有直营/非直营门店
+	 */
+	List<TdDiySite> findByIsDirect(Boolean isDirect);
+	
+	/**
+	 * 根据城市id查询城市下面的所有直营/非直营门店
+	 */
+	List<TdDiySite> findByCityIdAndIsDirect(Long cityId, Boolean isDirect);
 }

@@ -163,6 +163,9 @@ public class TdReturnNote {
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date cancelReturnTime;
+	
+	@Column(scale = 2)
+	private Double jxReturn;
 
 	public String getReturnDetail() {
 		return returnDetail;
@@ -465,6 +468,11 @@ public class TdReturnNote {
 		this.sellerUsername = sellerUsername;
 	}
 
-	
-	
+	public Double getJxReturn() {
+		return jxReturn;
+	}
+
+	public void setJxReturn(Double jxReturn) {
+		this.jxReturn = jxReturn;
+	}
 }
