@@ -58,6 +58,7 @@ deploy:
     url: http://120.76.214.99:8199/WmsInterServer.asmx?wsdl
   ebs: 
     url: http://erptest.zghuarun.com:8030/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl
+    newUrl: http://ebs.leyizhuang.com.cn:10001/ebs
       
 ---
 
@@ -92,6 +93,7 @@ deploy:
     url: http://120.76.214.99:8199/WmsInterServer.asmx?wsdl
   ebs: 
     url: http://erptest.zghuarun.com:8030/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl
+    newUrl: http://ebs.leyizhuang.com.cn:10001/ebs
       
 ---
 
@@ -126,5 +128,6 @@ deploy:
     url: http://120.76.23.226:8999/WmsInterServer.asmx?wsdl
   ebs: 
     url: http://erpap.zghuarun.com:8008/webservices/SOAProvider/plsql/cux_app_webservice_pkg/?wsdl
+    newUrl: http://ebs.leyizhuang.com.cn/ebs
 
  

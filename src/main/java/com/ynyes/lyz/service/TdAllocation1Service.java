@@ -13,6 +13,7 @@ import javax.transaction.Transactional.TxType;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -23,6 +24,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.testng.collections.Maps;
 
@@ -57,9 +59,12 @@ public class TdAllocation1Service {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TdAllocation1Service.class);
 
-	private final String EBS_ALLOCATION_SEND_URL = "http://localhost:10000/ebs/callAllocation";
+	// 配置请求的超时设置
+	private final RequestConfig REQUEST_CONFIG = RequestConfig.custom().setConnectionRequestTimeout(5000).setConnectTimeout(1000)
+			.setSocketTimeout(5000).build();
 
-	private final String EBS_ALLOCATION_RECEIVE_URL = "http://localhost:10000/ebs/callAllocationRecieve";
+	@Value("${deploy.ebs.newUrl}")
+	private String ebsUrl;
 
 	@Autowired
 	private TdAllocationRepo tdAllocationRepo;
@@ -371,7 +376,8 @@ public class TdAllocation1Service {
 		LOGGER.info("sendAllocationToEBS, allocation=" + allocation);
 		Map<String, Object> result = Maps.newHashMap();
 
-		HttpPost httppost = new HttpPost(this.EBS_ALLOCATION_SEND_URL);
+		HttpPost httppost = new HttpPost(this.ebsUrl + "callAllocation");
+		httppost.setConfig(REQUEST_CONFIG);
 		String header = this.genHeaderJson(allocation);
 		String details = this.genDetailJson(allocation);
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
@@ -391,20 +397,22 @@ public class TdAllocation1Service {
 				if ("0".equals(ebsResult.getString("code"))) {
 					result.put("success", true);
 				} else {
-					JSONObject content = new JSONObject();
-					content.put("allcationHeaderJson", header);
-					content.put("allocationDetailsJson", details);
 					result.put("success", false);
 					result.put("msg", ebsResult.getString("message"));
-					result.put("content", JSON.toJSONString(content));
 				}
+			} else {
+				result.put("success", false);
+				result.put("msg", "Http code:" + response.getStatusLine().getStatusCode());
 			}
 		} catch (Exception e) {
+			result.put("success", false);
+			result.put("msg", e.getMessage());
+		}
+
+		if (!(Boolean) result.get("success")) {
 			JSONObject content = new JSONObject();
 			content.put("allcationHeaderJson", header);
 			content.put("allocationDetailsJson", details);
-			result.put("success", false);
-			result.put("msg", e.getMessage());
 			result.put("content", JSON.toJSONString(content));
 		}
 
@@ -422,7 +430,8 @@ public class TdAllocation1Service {
 		LOGGER.info("sendAllocationReceivedToEBS, allocation=" + allocation);
 		Map<String, Object> result = Maps.newHashMap();
 
-		HttpPost httppost = new HttpPost(this.EBS_ALLOCATION_RECEIVE_URL);
+		HttpPost httppost = new HttpPost(this.ebsUrl + "callAllocationRecieve");
+		httppost.setConfig(REQUEST_CONFIG);
 		String allocationReceiveJson = this.genReceiveJson(allocation);
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("allocationReceiveJson", allocationReceiveJson));
@@ -440,18 +449,21 @@ public class TdAllocation1Service {
 				if ("0".equals(ebsResult.getString("code"))) {
 					result.put("success", true);
 				} else {
-					JSONObject content = new JSONObject();
-					content.put("allocationReceiveJson", allocationReceiveJson);
 					result.put("success", false);
 					result.put("msg", ebsResult.getString("message"));
-					result.put("content", JSON.toJSONString(content));
 				}
+			} else {
+				result.put("success", false);
+				result.put("msg", "Http code:" + response.getStatusLine().getStatusCode());
 			}
 		} catch (Exception e) {
-			JSONObject content = new JSONObject();
-			content.put("allocationReceiveJson", allocationReceiveJson);
 			result.put("success", false);
 			result.put("msg", e.getMessage());
+		}
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("allocationReceiveJson", allocationReceiveJson);
 			result.put("content", JSON.toJSONString(content));
 		}
 
@@ -469,13 +481,14 @@ public class TdAllocation1Service {
 		LOGGER.info("sendFaildAllocationToEBS, record=" + record);
 		Map<String, Object> result = Maps.newHashMap();
 
-		String url = this.EBS_ALLOCATION_SEND_URL;
+		String url;
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		JSONObject jsonParams = JSON.parseObject(record.getContent());
 		if (record.getType() == 3) {
-			url = this.EBS_ALLOCATION_RECEIVE_URL;
+			url = this.ebsUrl + "callAllocationRecieve";
 			parameters.add(new BasicNameValuePair("allocationReceiveJson", jsonParams.getString("allocationReceiveJson")));
 		} else {
+			url = this.ebsUrl + "callAllocation";
 			parameters.add(new BasicNameValuePair("allcationHeaderJson", jsonParams.getString("allcationHeaderJson")));
 			parameters.add(new BasicNameValuePair("allocationDetailsJson", jsonParams.getString("allocationDetailsJson")));
 		}
@@ -497,13 +510,14 @@ public class TdAllocation1Service {
 				} else {
 					result.put("success", false);
 					result.put("msg", ebsResult.getString("message"));
-					result.put("content", JSON.toJSONString(parameters.toArray()));
 				}
+			} else {
+				result.put("success", false);
+				result.put("msg", "Http code:" + response.getStatusLine().getStatusCode());
 			}
 		} catch (Exception e) {
 			result.put("success", false);
 			result.put("msg", e.getMessage());
-			result.put("content", JSON.toJSONString(parameters.toArray()));
 		}
 
 		LOGGER.info("sendFaildAllocationToEBS, result=" + result);

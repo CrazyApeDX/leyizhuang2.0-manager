@@ -718,7 +718,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	            }
 	            
 	            //配送状态
-	            if(fitGoodsInOut.getStatusId()>=4){
+	            if(fitGoodsInOut.getStatusId()>=4 && fitGoodsInOut.getStatusId() !=7 && fitGoodsInOut.getStatusId() !=8){
 	            	row.createCell(5).setCellValue("已出货");	
 	            }else{
 	            	row.createCell(5).setCellValue("未出货");	

@@ -1672,7 +1672,7 @@ public class TdManagerOrderController {
 					List<TdOrder> orderList = tdOrderService.findByMainOrderNumberIgnoreCase(orderNumber);
 					if (null != orderList && orderList.size() > 0) {
 						TdOrder order = orderList.get(0);
-						if (order.getIsSellerOrder()) {
+						if ( null != order.getIsSellerOrder() && order.getIsSellerOrder()) {
 							TdUser seller = tdUserService.findOne(order.getSellerId());
 							tdUserService.repayCredit(CreditChangeType.REPAY, seller, ownMoneyRecord.getPayed(),
 									order.getMainOrderNumber());

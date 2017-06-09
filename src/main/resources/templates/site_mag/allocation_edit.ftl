@@ -189,8 +189,11 @@ function receive() {
                 <table border="0" cellspacing="0" cellpadding="0" class="border-table" width="98%">
                     <thead>
                         <tr>
-                            <th width="20%">
+                            <th width="10%">
                                产品编码
+                            </th>
+                            <th width="20%">
+                               产品SKU
                             </th>
                             <th width="50%">
                                 产品名称
@@ -210,6 +213,7 @@ function receive() {
                             <#list allocation.details as detail>
                                 <tr class="td_c">
                                     <td>${detail.goodId?c}</td>
+                                    <td>${detail.goodSku!''}</td>
                                     <td>${detail.goodTitle!''}</td>
                                     <td>${detail.num!''}</td>
                                     <#if allocation.status=1 && allocationFromFlag??>

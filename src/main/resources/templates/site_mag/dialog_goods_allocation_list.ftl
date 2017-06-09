@@ -57,7 +57,8 @@
             parentObj.find("input[id='id']").val($("#txtItemZengPin_Id").val());
         } else {
             var trHtml = '<tr class="td_c">'
-            + '<td><input type="hidden" name="details[${total!'0'}].goodSku" value="' + $("#txtItemZengPin_Code").val() + '"  /><input type="text" id="id" name="details[${total!'0'}].goodId" class="td-input" value="' + $("#txtItemZengPin_Id").val() + '" style="width:90%;border: none;" readonly /></td>'
+            + '<td><input type="text" id="id" name="details[${total!'0'}].goodId" class="td-input" value="' + $("#txtItemZengPin_Id").val() + '" style="width:90%;border: none;" readonly /></td>'
+            + '<td><input type="text" id="goodSku" name="details[${total!'0'}].goodSku" value="' + $("#txtItemZengPin_Code").val() + '" style="width:90%;border: none;" readonly /></td>'
             + '<td><input type="text" id="title" name="details[${total!'0'}].goodTitle" class="td-input" value="' + $("#txtItemZengPin_Title").val() + '" style="width:90%;border: none;" readonly /></td>'
             + '<td><input type="text" id="number" name="details[${total!'0'}].num" class="td-input number" value="' + $("#txtItemZengPin_Num").val() + '" style="width:90%;" /></td>'
             + '<td>'
