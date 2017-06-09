@@ -37,6 +37,7 @@ import com.ynyes.lyz.entity.TdAgencyFund;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdGoodsInOut;
+import com.ynyes.lyz.entity.TdGoodsInOutFranchisees;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
@@ -67,6 +68,7 @@ import com.ynyes.lyz.service.TdDiySiteRoleService;
 import com.ynyes.lyz.service.TdDiySiteService;
 import com.ynyes.lyz.service.TdGarmentFranchisorReportService;
 import com.ynyes.lyz.service.TdGatheringService;
+import com.ynyes.lyz.service.TdGoodsInOutFranchiseesService;
 import com.ynyes.lyz.service.TdGoodsInOutService;
 import com.ynyes.lyz.service.TdManagerRoleService;
 import com.ynyes.lyz.service.TdManagerService;
@@ -172,6 +174,10 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	
 	@Autowired
 	TdSalesDetailForFranchiserService tdSalesDetailForFranchiserService;
+	
+	@Autowired
+	
+	TdGoodsInOutFranchiseesService tdGoodsInOutFranchiseesService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerStatementController.class);
 	 
@@ -573,6 +579,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="装饰公司销售明细报表";
 		}else if(statusId==17){
 			fileName="加盟商销售明细报表";
+		}else if(statusId==18){
+			fileName="加盟商配送单出退货报表";
 		}
 		return fileName;
 	}
@@ -623,6 +631,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=fitGoodsInOutBook(begin,end,code,cityName,username);
 		}else if(statusId==17){//加盟商销售明细报表
 			wb=salesDetailForFranchiser(begin, end, diyCode, cityName, username,roleDiyIds);
+		}else if(statusId==18){//加盟商配送单出退货报表
+			wb=franchiseesGoodsInOutWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
 		}
 		return wb;
 	}
@@ -3974,6 +3984,141 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			}
 		}
 		return wb;
+	}
+	
+	/**
+	 * 加盟商出退货明细报表
+	 * 查询条件增加管理员管辖门店
+	 * @param begin 开始时间
+	 * @param end 结束时间
+	 * @param diyCode 门店编号
+	 * @param cityName 城市编号
+ 	 * @param username 当前用户
+	 * @return
+	 */
+	private HSSFWorkbook  franchiseesGoodsInOutWorkBook(Date begin,Date end,String diyCode,String cityName,String username,List<String> roleDiyIds){
+		// 第一步，创建一个webbook，对应一个Excel文件 
+        HSSFWorkbook wb = new HSSFWorkbook();  
+        
+ 
+        // 第五步，设置值  
+        List<TdGoodsInOutFranchisees> goodsInOutList=tdGoodsInOutFranchiseesService.queryFranchiseesDownList(begin, end, cityName, diyCode, roleDiyIds);
+        
+//        long startTimne = System.currentTimeMillis();
+        
+        //excel单表最大行数是65535
+        int maxRowNum = 60000;
+        int maxSize=0;
+        if(goodsInOutList!=null){
+        	maxSize=goodsInOutList.size();
+        }
+        int sheets = maxSize/maxRowNum+1;
+        
+		//写入excel文件数据信息
+		for(int i=0;i<sheets;i++){
+			
+			// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet  
+	        HSSFSheet sheet = wb.createSheet("第"+(i+1)+"页");  
+	        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short  
+	        //列宽
+	        int[] widths={13,25,25,18,18,13,18,18,13,13,
+	        		18,9,9,9,9,9,13,13,13,18,
+	        		13,13,13,13,20,20,25,30};
+	        sheetColumnWidth(sheet,widths);
+	        
+	        // 第四步，创建单元格，并设置值表头 设置表头居中  
+	        HSSFCellStyle style = wb.createCellStyle();  
+	        style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+	        style.setWrapText(true);
+
+
+	       	//设置标题
+	        HSSFRow row = sheet.createRow((int) 0); 
+	        
+	        String[] cellValues={"门店名称","主单号","分单号","下单日期","出&退货日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号",
+	        		"产品名称","数量","单价","总价","经销单价","经销总价","品牌","商品父分类","商品子分类","配送方式","中转仓",
+	        		"配送人员","配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
+			cellDates(cellValues, style, row);
+			
+			for(int j=0;j<maxRowNum;j++)
+	        {
+				if(j+i*maxRowNum>=maxSize){
+					break;
+				}
+				TdGoodsInOutFranchisees goodsInOut= goodsInOutList.get(j+i*maxRowNum);
+	        	row = sheet.createRow((int) j + 1);
+	        	//门店名称
+	        	row.createCell(0).setCellValue(objToString(goodsInOut.getDiySiteName()));
+
+	        	//代付款订单没有主单号  分单号显示到主单号位置
+	        	if(goodsInOut.getStatusId() != null && goodsInOut.getStatusId().equals(2L)){
+	        		row.createCell(1).setCellValue(objToString(goodsInOut.getOrderNumber()));
+	        	}else{
+	        		row.createCell(1).setCellValue(objToString(goodsInOut.getMainOrderNumber()));
+	        		row.createCell(2).setCellValue(objToString(goodsInOut.getOrderNumber()));
+	        	} 
+	        	//下单时间
+	        	row.createCell(3).setCellValue(objToString(goodsInOut.getOrderTime()));
+	        	//确认时间
+	        	row.createCell(4).setCellValue(objToString(goodsInOut.getSalesTime()));
+	        	//订单状态
+	        	row.createCell(5).setCellValue(orderStatus(goodsInOut.getStatusId()));
+	        	//导购
+				row.createCell(6).setCellValue(objToString(goodsInOut.getSellerRealName()));
+				//会员编号ID
+				row.createCell(7).setCellValue(objToString(goodsInOut.getUserId()));
+				//客户名称
+				row.createCell(8).setCellValue(objToString(goodsInOut.getRealName()));
+				//客户电话
+				row.createCell(9).setCellValue(objToString(replacePhoneNumberWithStar(goodsInOut.getUsername())));
+				//产品编号
+				row.createCell(10).setCellValue(objToString(goodsInOut.getSku()));
+				//产品名称
+				row.createCell(11).setCellValue(objToString(goodsInOut.getGoodsTitle()));
+				//产品数量
+				row.createCell(12).setCellValue(objToString(goodsInOut.getQuantity()));
+				//产品价格
+				row.createCell(13).setCellValue(objToString(goodsInOut.getPrice()));
+				//产品总价
+				row.createCell(14).setCellValue((goodsInOut.getTotalPrice()*100)/100);
+				//经销单价
+	        	row.createCell(15).setCellValue(objToString(goodsInOut.getJxPrice()));
+	        	//经销总价
+	        	row.createCell(16).setCellValue(objToString(goodsInOut.getJxTotalPrice()));
+	        	//现金卷
+	            //row.createCell(15).setCellValue(objToString(goodsInOut.getCashCoupon()));
+	          	//品牌
+				row.createCell(17).setCellValue(objToString(goodsInOut.getBrandTitle()));
+	    		//商品父分类
+				row.createCell(18).setCellValue(objToString(goodsInOut.getGoodsParentTypeTitle()));
+				//商品子分类
+	        	row.createCell(19).setCellValue(objToString(goodsInOut.getGoodsTypeTitle()));
+				//配送方式
+	        	row.createCell(20).setCellValue(objToString(goodsInOut.getDeliverTypeTitle()));
+				//中转仓
+	            row.createCell(21).setCellValue(objToString(goodsInOut.getWhName()));
+	    		//配送人员
+	        	row.createCell(22).setCellValue(objToString(goodsInOut.getDeliverRealName()));
+	        	//配送人员电话
+	        	row.createCell(23).setCellValue(objToString(goodsInOut.getDeliverUsername()));
+	        	//收货人姓名 收货人电话 收货人地址
+	        	if(!"门店自提".equals(goodsInOut.getDeliverTypeTitle())){
+	        		row.createCell(24).setCellValue(objToString(goodsInOut.getShippingName()));
+	        		row.createCell(25).setCellValue(objToString(goodsInOut.getShippingPhone()));
+	        		row.createCell(26).setCellValue(objToString(goodsInOut.getShippingAddress()));
+	        	}
+	        	//订单备注
+	        	row.createCell(27).setCellValue(objToString(goodsInOut.getRemark()));
+//	            System.out.println("正在生成excel文件的 sheet"+(i+1)+"第"+(j+1)+"行");
+			}
+//			System.out.println("正在生成excel文件的 sheet"+(i+1));
+		}
+        
+        
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("用时="+((endTime-startTimne)/1000)+"秒");
+        return wb;
+        
 	}
 	
 	
