@@ -714,6 +714,7 @@ public class TdInterfaceService {
 			cashReciptInf.setUsername(tdUser.getRealName());
 			cashReciptInf.setUserphone(tdUser.getUsername());
 			cashReciptInf.setReceiptNumber(StringTools.getUniqueNoWithHeader("RC"));
+			cashReciptInf.setOrderNumber(tdRecharge.getNumber());
 			cashReciptInf.setDiySiteCode(storeCode);
 			if (tdRecharge.getTypeTitle().equals("信用额度")) {
 				cashReciptInf.setReceiptClass("信用额度");

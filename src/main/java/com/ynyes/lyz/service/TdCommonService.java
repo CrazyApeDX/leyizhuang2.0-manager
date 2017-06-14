@@ -3790,7 +3790,7 @@ public class TdCommonService {
 				cashRefundInf.setRefundClass("预收款");
 			}
 			cashRefundInf.setRtHeaderId(null);
-			cashRefundInf.setReturnNumber(null);
+			cashRefundInf.setReturnNumber(deposit.getNumber());
 			cashRefundInf.setOrderHeaderId(null);
 			cashRefundInf.setProductType(type);
 			cashRefundInf.setRefundType(desc);
