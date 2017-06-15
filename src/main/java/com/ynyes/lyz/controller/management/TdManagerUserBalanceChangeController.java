@@ -408,9 +408,96 @@ public class TdManagerUserBalanceChangeController {
 			if (null == cashBalance) {
 				cashBalance = 0.00;
 			}
+			
+			// 生成单号
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+			Date now = new Date();
+			String sDate = sdf.format(now);
+			Random random = new Random();
+			String orderNum = null;
+			
+			// 在此抛接口
+			String cashBalanceNumber = null;
+			if (cashBalance > 0) {
+				Integer suiji = random.nextInt(900) + 100;
+				orderNum = sDate + suiji;
+				// 生成充值单
+				TdRecharge recharge = new TdRecharge();
+				recharge.setUsername(user.getUsername());
+				recharge.setUserId(user.getId());
+				recharge.setNumber("CZ" + orderNum);
+				recharge.setTotalPrice(cashBalance);
+				recharge.setTypeId(-1L);
+				recharge.setTypeTitle(changeTypeTitle);
+				recharge.setCreateTime(new Date());
+				recharge.setFinishTime(recharge.getCreateTime());
+				recharge.setStatusId(2L);
+				cashBalanceNumber = recharge.getNumber();
+				tdReChargeService.save(recharge);
+				tdPriceCountService.saveCashReceiptAndSendToEBS(recharge,user);
+			} else if (cashBalance < 0) {
+				Integer suiji = random.nextInt(900) + 100;
+				orderNum = sDate + suiji;
+				// 生成提现单
+				TdDeposit deposit = new TdDeposit();
+				deposit.setUsername(user.getUsername());
+				deposit.setUserId(user.getId());
+				deposit.setNumber("TX" + orderNum);
+				deposit.setMoney(cashBalance * (-1));
+				deposit.setIsAgree(true);
+				deposit.setIsRemit(true);
+				deposit.setCreateTime(new Date());
+				deposit.setAgreeTime(deposit.getCreateTime());
+				deposit.setRemitTime(deposit.getRemitTime());
+				cashBalanceNumber = deposit.getNumber();
+				deposit = tdDepositService.save(deposit);
+				
+				TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
+				
+				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+			}
+			
+			String unCashBalanceNumber = null;
+			
+			if (unCashBalance > 0) {
+				Integer suiji = random.nextInt(900) + 100;
+				orderNum = sDate + suiji;
+				// 生成充值单
+				TdRecharge recharge = new TdRecharge();
+				recharge.setUsername(user.getUsername());
+				recharge.setUserId(user.getId());
+				recharge.setNumber("CZ" + orderNum);
+				recharge.setTotalPrice(unCashBalance);
+				recharge.setTypeId(-1L);
+				recharge.setTypeTitle(changeTypeTitle);
+				recharge.setCreateTime(new Date());
+				recharge.setFinishTime(recharge.getCreateTime());
+				recharge.setStatusId(2L);
+				unCashBalanceNumber = recharge.getNumber();
+				tdReChargeService.save(recharge);
+				tdPriceCountService.saveCashReceiptAndSendToEBS(recharge,user);
+			} else if (unCashBalance < 0) {
+				Integer suiji = random.nextInt(900) + 100;
+				orderNum = sDate + suiji;
+				TdDeposit deposit = new TdDeposit();
+				deposit.setUsername(user.getUsername());
+				deposit.setUserId(user.getId());
+				deposit.setNumber("TX" + orderNum);
+				deposit.setMoney(unCashBalance * (-1));
+				deposit.setIsAgree(true);
+				deposit.setIsRemit(true);
+				deposit.setCreateTime(new Date());
+				deposit.setAgreeTime(deposit.getCreateTime());
+				deposit.setRemitTime(deposit.getRemitTime());
+				unCashBalanceNumber = deposit.getNumber();
+				deposit = tdDepositService.save(deposit);
+				TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
+				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+			}
 //			Double subCashBalance = cashBalance - userCashBalance;
 //			Double subUnCashBalance = unCashBalance - userUnCashBalance;
 			user.setCashBalance(userCashBalance + cashBalance);
+			
 			if (cashBalance.doubleValue() != 0.00) {
 				TdBalanceLog log = new TdBalanceLog();
 				log.setUserId(user.getId());
@@ -445,10 +532,14 @@ public class TdManagerUserBalanceChangeController {
 				log.setCashLeft(user.getCashBalance());
 				log.setUnCashLeft(user.getUnCashBalance());
 				log.setAllLeft(user.getBalance());
+				if(null != cashBalanceNumber){
+					log.setOrderNumber(cashBalanceNumber);
+				}
 				tdBalanceLogService.save(log);
 			}
 			
 			user.setUnCashBalance(userUnCashBalance + unCashBalance);
+			
 			if (unCashBalance.doubleValue() != 0.00) {
 				TdBalanceLog log = new TdBalanceLog();
 				log.setUserId(user.getId());
@@ -483,6 +574,9 @@ public class TdManagerUserBalanceChangeController {
 				log.setCashLeft(user.getCashBalance());
 				log.setUnCashLeft(user.getUnCashBalance());
 				log.setAllLeft(user.getBalance());
+				if(null != unCashBalanceNumber){
+					log.setOrderNumber(unCashBalanceNumber);
+				}
 				tdBalanceLogService.save(log);
 			}
 			user.setBalance(user.getCashBalance() + user.getUnCashBalance());
@@ -505,86 +599,6 @@ public class TdManagerUserBalanceChangeController {
 				tdChangeBalanceLogService.save(log);
 			}
 		}
-		
-		// 生成单号
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-		Date now = new Date();
-		String sDate = sdf.format(now);
-		Random random = new Random();
-		String orderNum = null;
-		
-		// 在此抛接口
-		if (cashBalance > 0) {
-			Integer suiji = random.nextInt(900) + 100;
-			orderNum = sDate + suiji;
-			// 生成充值单
-			TdRecharge recharge = new TdRecharge();
-			recharge.setUsername(user.getUsername());
-			recharge.setUserId(user.getId());
-			recharge.setNumber("CZ" + orderNum);
-			recharge.setTotalPrice(cashBalance);
-			recharge.setTypeId(-1L);
-			recharge.setTypeTitle(changeTypeTitle);
-			recharge.setCreateTime(new Date());
-			recharge.setFinishTime(recharge.getCreateTime());
-			recharge.setStatusId(2L);
-			tdReChargeService.save(recharge);
-			tdPriceCountService.saveCashReceiptAndSendToEBS(recharge,user);
-		} else if (cashBalance < 0) {
-			Integer suiji = random.nextInt(900) + 100;
-			orderNum = sDate + suiji;
-			// 生成提现单
-			TdDeposit deposit = new TdDeposit();
-			deposit.setUsername(user.getUsername());
-			deposit.setUserId(user.getId());
-			deposit.setNumber("TX" + orderNum);
-			deposit.setMoney(cashBalance * (-1));
-			deposit.setIsAgree(true);
-			deposit.setIsRemit(true);
-			deposit.setCreateTime(new Date());
-			deposit.setAgreeTime(deposit.getCreateTime());
-			deposit.setRemitTime(deposit.getRemitTime());
-			deposit = tdDepositService.save(deposit);
-			
-			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
-			
-			tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-		}
-		
-		if (unCashBalance > 0) {
-			Integer suiji = random.nextInt(900) + 100;
-			orderNum = sDate + suiji;
-			// 生成充值单
-			TdRecharge recharge = new TdRecharge();
-			recharge.setUsername(user.getUsername());
-			recharge.setUserId(user.getId());
-			recharge.setNumber("CZ" + orderNum);
-			recharge.setTotalPrice(unCashBalance);
-			recharge.setTypeId(-1L);
-			recharge.setTypeTitle(changeTypeTitle);
-			recharge.setCreateTime(new Date());
-			recharge.setFinishTime(recharge.getCreateTime());
-			recharge.setStatusId(2L);
-			tdReChargeService.save(recharge);
-			tdPriceCountService.saveCashReceiptAndSendToEBS(recharge,user);
-		} else if (unCashBalance < 0) {
-			Integer suiji = random.nextInt(900) + 100;
-			orderNum = sDate + suiji;
-			TdDeposit deposit = new TdDeposit();
-			deposit.setUsername(user.getUsername());
-			deposit.setUserId(user.getId());
-			deposit.setNumber("TX" + orderNum);
-			deposit.setMoney(unCashBalance * (-1));
-			deposit.setIsAgree(true);
-			deposit.setIsRemit(true);
-			deposit.setCreateTime(new Date());
-			deposit.setAgreeTime(deposit.getCreateTime());
-			deposit.setRemitTime(deposit.getRemitTime());
-			deposit = tdDepositService.save(deposit);
-			TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
-			tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-		}
-		
 //		this.saveCashReceiptAndSendToEBS(recharge,user);
 		
 		return "redirect:/Verwalter/user/balance/change/list";
