@@ -1696,7 +1696,7 @@ public class TdInterfaceService {
 		String enPass = "2XiQj1";
 		String userName = "cd001";
 
-		String url = "http://115.28.146.248:6070/interface/Send.aspx?enCode=" + enCode + "&enPass=" + enPass
+		String url = "http://www.mob800.com/interface/Send.aspx?enCode=" + enCode + "&enPass=" + enPass
 				+ "&userName=" + userName + "&mob=" + phone + "&msg=" + content;
 
 		try {
