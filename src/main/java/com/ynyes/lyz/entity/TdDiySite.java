@@ -149,6 +149,7 @@ public class TdDiySite {
 	//是否开启门店送货上门的配送方式
 	@Column
 	private Boolean isHomeDelivery;
+	
 
 	public Long getCityId() {
 		return cityId;
@@ -429,6 +430,7 @@ public class TdDiySite {
 	public void setIsHomeDelivery(Boolean isHomeDelivery) {
 		this.isHomeDelivery = isHomeDelivery;
 	}
+
 	
 	
 }
