@@ -1,15 +1,20 @@
 package com.ynyes.lyz.controller.management;
 
+import static org.mockito.Mockito.validateMockitoUsage;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ynyes.fitment.core.constant.Global;
+import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdDiySiteAccount;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.service.TdDiySiteAccountService;
@@ -51,14 +56,23 @@ public class TdManagerDiySiteAccountController {
 		if (null == keywords) {
 			keywords = "";
 		}
-		
-		map.addAttribute("diy_site_page", tdDiySiteService.findByCustTypeName(custTypeName, keywords, page, size));
+		Page<TdDiySite> pageDiySite= tdDiySiteService.findByCustTypeName(custTypeName, keywords, page, size);
+		List<TdDiySite> listDiySite = pageDiySite.getContent();
+		List<TdDiySiteAccount> accountList  = new ArrayList<>();
+		for (TdDiySite tdDiySite : listDiySite) {
+			TdDiySiteAccount diySiteAccount = tdDiySiteAccountService.findByDiySiteId(tdDiySite.getId());
+			if (null != diySiteAccount) {
+				accountList.add(diySiteAccount);
+			}
+		}
+		map.addAttribute("diy_site_page", pageDiySite);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
 		map.addAttribute("keywords", keywords);
 		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
 		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		map.addAttribute("accountList", accountList);
 		// 文字列表模式
 		return "/site_mag/diySite_jx_list";
 	}

@@ -65,6 +65,7 @@ function __doPostBack(eventTarget, eventArgument) {
   <tr class="odd_bg">
     <th width="8%">选择</th>
     <th align="left">门店名称</th>
+    <th align="left">门店收款账号</th>
     <th align="left" width="37%">地理位置</th>
     <th align="left" width="12%">门店类型</th>
     <th width="8%">是否启用</th>
@@ -81,11 +82,18 @@ function __doPostBack(eventTarget, eventArgument) {
                     <input type="hidden" name="listId" id="listId" value="${item.id?c}">
                 </td>
                 <td><a href="/Verwalter/diySiteAccount/setting/edit?id=${item.id?c}&diySiteName=${item.title!''}">${item.title!""}</a></td>
+                <td>
+                	<#if accountList??>
+        			<#list accountList as account>
+						<#if account.diySiteId??&&account.diySiteId==item.id>${account.username}</#if>
+        			</#list>
+    				</#if>
+                </td>
                 <td>${item.address!""}</td>
                 <td>${item.custTypeName!""}</td>
                 <td align="center"><#if item.isEnable?? && item.isEnable>是<#else>否</#if></td>
                 <td align="center">
-                    <a href="/Verwalter/diySiteAccount/setting/edit?id=${item.id?c}">修改</a>
+                    <a href="/Verwalter/diySiteAccount/setting/edit?id=${item.id?c}&diySiteName=${item.title!''}">修改</a>
                 </td>
               </tr>
         </#list>
