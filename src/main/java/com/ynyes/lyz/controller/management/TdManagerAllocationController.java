@@ -34,9 +34,9 @@ import com.ynyes.lyz.util.SiteMagConstant;
 
 @Controller
 @RequestMapping("/Verwalter/allocation")
-public class TdManagerAllocationCotroller {
+public class TdManagerAllocationController {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerAllocationCotroller.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerAllocationController.class);
 
 	@Autowired
 	private TdAllocationService tdAllocationService;
@@ -401,7 +401,7 @@ public class TdManagerAllocationCotroller {
 	private String getAllocationNumber() {
 		StringBuilder number = new StringBuilder();
 		number.append("DB_");
-		number.append(DateUtil.getCurrentTimeStr("yyyyMMddHHmmssSS"));
+		number.append(DateUtil.getCurrentTimeStr("yyyyMMddHHmmssSSS"));
 		number.append(RandomUtil.randomNumCode(3));
 		return number.toString();
 	}
