@@ -52,7 +52,7 @@ deploy:
       url: http://test.leyizhuang.com.cn/pay/wechat/return/async
   oss:
     cdnHosts: img-dev.leyizhuang.com.cn
-    folder: app/images/
+    folder: app/images
     bucket: leyizhuang-dev
   wms:
     url: http://120.76.214.99:8199/WmsInterServer.asmx?wsdl
@@ -87,7 +87,7 @@ deploy:
       url: http://test.leyizhuang.com.cn/pay/wechat/return/async
   oss:
     cdnHosts: img-dev.leyizhuang.com.cn
-    folder: app/images/
+    folder: app/images
     bucket: leyizhuang-dev
   wms: 
     url: http://120.76.214.99:8199/WmsInterServer.asmx?wsdl
@@ -122,7 +122,7 @@ deploy:
       url: http://www.leyizhuang.com.cn/pay/wechat/return/async
   oss:
     cdnHosts: img1.leyizhuang.com.cn,img2.leyizhuang.com.cn,img3.leyizhuang.com.cn,img4.leyizhuang.com.cn,img5.leyizhuang.com.cn
-    folder: app/images/
+    folder: app/images
     bucket: leyizhuang
   wms: 
     url: http://120.76.23.226:8999/WmsInterServer.asmx?wsdl
