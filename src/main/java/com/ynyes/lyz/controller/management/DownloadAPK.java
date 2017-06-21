@@ -27,15 +27,4 @@ public class DownloadAPK {
 		return "/site_mag/download_APk";
 	}
 	
-	@RequestMapping(value = "/download", method = RequestMethod.POST)
-    @ResponseBody
-    public Map<String, Object> upload(HttpServletRequest req, HttpServletResponse response) {
-        Map<String, Object> res = new HashMap<String, Object>();
-        res.put("status", 0);
-        
-
-        return null;
-
-    }
-
 }
