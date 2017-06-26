@@ -85,12 +85,13 @@
   			<tbody>
 				<tr class="odd_bg">
 					<th  width="10%">选择</th>
-					<th align="left" width="17%">名称</th>
-					<th align="left" width="17%">编码</th>
-					<th align="left" width="16%">当前信用额度</th>
-					<th align="left" width="10%">冻结</th>
+					<th align="left" width="14%">名称</th>
+					<th align="left" width="10%">编码</th>
+					<th align="left" width="12%">当前信用额度</th>
+					<th align="left" width="10%">赞助金</th>
+					<th align="left" width="5%">冻结</th>
 					<th align="center" width="10%">操作</th>
-					<th align="center" width="20%">配置</th>
+					<th align="center" width="29%">配置</th>
 				</tr>
 
     			<#if companyPage??>
@@ -108,6 +109,9 @@
 			                <td align="left">${item.code!""}</td>
 			                <td align="left">
 			                	<#if item.credit??>${item.credit?string("0.00")}<#else>0.00</#if>
+			                </td>
+			                <td align="left">
+			                	<#if item.promotionMoney??>${item.promotionMoney?string("0.00")}<#else>0.00</#if>
 			                </td>
 			                <td align="left">
 			                	<#if item.frozen==true>
@@ -132,7 +136,10 @@
 			                <td align="center">
 			                	<a href="/Verwalter/fitment/category/edit/${item.id?c}">分类限购</a>|
 			                	<a href="/Verwalter/fitment/goods/list/${item.id?c}">可售商品</a>|
-			                	<a href="javascript:creditChange(${item.id?c});">信用金变更</a>
+			                	<a href="javascript:creditChange(${item.id?c});">信用金变更</a>|
+			                	<a href="javascript:PromotionChange(${item.id?c});">赞助金变更</a>
+			                	
+			                	
 								<script type="text/javascript">
 									var creditChange = function(id) {
 										$.dialog.prompt("请输入信用金变更值", function(text) {
@@ -158,6 +165,33 @@
 											}
 										});
 									}
+									
+									
+									var PromotionChange = function(id) {
+										$.dialog.prompt("请输入信用金变更值", function(text) {
+											if (isNaN(text)) {
+												$.dialog.alert("请输入一个正确的数字");
+												return;
+											} else {
+												$.ajax({
+													url: "#",
+													method: "POST",
+													data: {
+														id: id,
+														credit: text
+													},
+													success: function(res) {
+														if (res.actionCode === "SUCCESS") {
+															window.location.href = "/Verwalter/fitment/company/list";
+														} else {
+															$.dialog.alert(res.content);
+														}
+													}
+												})
+											}
+										});
+									}
+									
 								</script>			                	
 			                </td>
 			            </tr>

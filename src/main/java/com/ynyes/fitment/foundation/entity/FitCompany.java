@@ -8,6 +8,7 @@ import com.ynyes.fitment.core.entity.persistent.table.TableEntity;
 
 /**
  * 装饰公司实体模型
+ * 
  * @author dengxiao
  */
 @Entity
@@ -25,34 +26,38 @@ public class FitCompany extends TableEntity {
 	// EBS提供的SOB_ID
 	@Column(length = 10, nullable = false)
 	private Long sobId;
-	
+
 	// 额度
 	@Column(scale = 2, nullable = false)
 	private Double creditLimit = 0d;
-	
+
 	// 信用金
 	@Column(scale = 2, nullable = false)
 	private Double credit = 0d;
-	
+
+	// 赞助金
+	@Column(scale = 2)
+	private Double promotionMoney = 0d;
+
 	// 还款日
 	@Column(length = 2, nullable = false)
 	private Integer day = 1;
-	
+
 	// 冻结下单
 	@Column(nullable = false)
 	private Boolean frozen = false;
-	
+
 	/* 各个产品线价目表头id，实际上这种设计师不够灵活的，考虑到时间问题和二期即将开始的情况，可以临时使用这种形式 */
-	
+
 	@Column(nullable = false)
 	private Long lsPriceHeaderId = 0l;
-	
+
 	@Column(nullable = false)
 	private Long yrPriceHeaderId = 0l;
-	
+
 	@Column(nullable = false)
 	private Long lyzPriceHeaderId = 0l;
-	
+
 	public String getName() {
 		return name;
 	}
@@ -76,7 +81,7 @@ public class FitCompany extends TableEntity {
 	public void setSobId(Long sobId) {
 		this.sobId = sobId;
 	}
-	
+
 	public Double getCredit() {
 		return credit;
 	}
@@ -131,5 +136,13 @@ public class FitCompany extends TableEntity {
 
 	public void setDay(Integer day) {
 		this.day = day;
+	}
+
+	public Double getPromotionMoney() {
+		return promotionMoney;
+	}
+
+	public void setPromotionMoney(Double promotionMoney) {
+		this.promotionMoney = promotionMoney;
 	}
 }
