@@ -7,7 +7,7 @@ function changeDistrict() {
 	$.ajax({
 		url : "/order/change/district",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			districtId : districtId
 		},
@@ -85,7 +85,7 @@ function saveAddress() {
 	$.ajax({
 		url : "/order/new/address",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			receiveName : receiveName,
 			receiveMobile : receiveMobile,

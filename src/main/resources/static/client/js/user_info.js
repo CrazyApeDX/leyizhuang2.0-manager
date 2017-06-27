@@ -9,7 +9,7 @@ function changeSex() {
 	$.ajax({
 		url : "/user/change",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			type : 0,
 			param : sex

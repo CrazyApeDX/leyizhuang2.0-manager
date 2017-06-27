@@ -56,7 +56,7 @@ function operate(operation, type, id) {
 	$.ajax({
 		url : "/user/selected/change/quantity",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			operation : operation,
 			type : type,

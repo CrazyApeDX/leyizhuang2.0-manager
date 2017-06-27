@@ -25,7 +25,7 @@ function getDistrict() {
 		// url : "/user/address/get",
 		url : "/fit/order/address/district",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		error : function(XMLHttpRequest, textStatus, errorThrown) {
 			// 关闭等待图标
 			close(1);
@@ -60,7 +60,7 @@ function getRegion(id, name, status) {
 			// url : "/user/address/get",
 			url : "/fit/order/address/subdistrict",
 			type : "post",
-			timeout : 10000,
+//			timeout : 10000,
 			data : {
 				type : 1,
 				id : id
@@ -189,7 +189,7 @@ function saveAddress() {
 		// url : "/user/address/add/save",
 		url : "/fit/order/init",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			receiver : receiverName,
 			receiverMobile : receiverMobile,

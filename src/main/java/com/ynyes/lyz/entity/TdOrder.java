@@ -378,7 +378,7 @@ public class TdOrder {
 
 	// 促销减少的金额
 	@Column(scale = 2)
-	private Double activitySubPrice;
+	private Double activitySubPrice = 0d;
 
 	// 是否以一口价的形式收取运费
 	@Column
@@ -427,6 +427,26 @@ public class TdOrder {
 	// 经销总价
 	@Column(scale = 2)
 	private Double jxTotalPrice = 0d;
+
+	// 产品券优惠券金额
+	@Column(scale = 2)
+	private Double proCouponFee;
+
+	// 调色费
+	@Column(scale = 2)
+	private Double colorFee = 0d;
+
+	// 会员差价金额
+	@Column(scale = 2)
+	private Double difFee = 0d;
+
+	// 代收金额
+	@Column(scale = 2)
+	private Double notPayedFee = 0d;
+
+	// 收货人是否是主家
+	@Column
+	private Boolean receiverIsMember = Boolean.FALSE;
 	
 	public Double getRefund() {
 		return refund;
@@ -1203,13 +1223,66 @@ public class TdOrder {
 	public void setCredit(Double credit) {
 		this.credit = credit;
 	}
-
+	
 	public Double getJxTotalPrice() {
 		return jxTotalPrice;
 	}
 
 	public void setJxTotalPrice(Double jxTotalPrice) {
 		this.jxTotalPrice = jxTotalPrice;
+	}
+
+	public Double getColorFee() {
+		return colorFee;
+	}
+
+	public void setColorFee(Double colorFee) {
+		this.colorFee = colorFee;
+	}
+
+	public Double getDifFee() {
+		return difFee;
+	}
+
+	public void setDifFee(Double difFee) {
+		this.difFee = difFee;
+	}
+
+	public Double getNotPayedFee() {
+		totalGoodsPrice = null == totalGoodsPrice ? 0d : totalGoodsPrice;
+		deliverFee = null == deliverFee ? 0d : deliverFee;
+		upstairsFee = null == upstairsFee ? 0d : upstairsFee;
+		colorFee = null == colorFee ? 0d : colorFee;
+		activitySubPrice = null == activitySubPrice ? 0d : activitySubPrice;
+		cashCoupon = null == cashCoupon ? 0d : cashCoupon;
+		proCouponFee = null == proCouponFee ? 0d : proCouponFee;
+		difFee = null == difFee ? 0d : difFee;
+		cashBalanceUsed = null == cashBalanceUsed ? 0d : cashBalanceUsed;
+		unCashBalanceUsed = null == unCashBalanceUsed ? 0d : unCashBalanceUsed;
+		otherPay = null == otherPay ? 0d : otherPay;
+		notPayedFee = totalGoodsPrice + deliverFee + upstairsFee + colorFee - activitySubPrice - cashCoupon
+				- proCouponFee - difFee - cashBalanceUsed - unCashBalanceUsed - otherPay;
+		return notPayedFee;
+	}
+
+	public void setNotPayedFee(Double notPayedFee) {
+		this.notPayedFee = notPayedFee;
+	}
+
+	public Double getProCouponFee() {
+		return proCouponFee;
+	}
+
+	public void setProCouponFee(Double proCouponFee) {
+		this.proCouponFee = proCouponFee;
+	}
+
+	public Boolean getReceiverIsMember() {
+		return receiverIsMember;
+	}
+
+	public void setReceiverIsMember(Boolean receiverIsMember) {
+		this.receiverIsMember = receiverIsMember;
 	}
 
 }

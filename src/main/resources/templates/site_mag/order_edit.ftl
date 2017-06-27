@@ -1032,6 +1032,14 @@
                          <#if order.otherPay??> ${order.otherPay?string("0.00")}<#else>0.00</#if>元
                         </td>
                     </tr>
+                    <tr>
+                    	<th>会员折扣</th>
+                        <td><#if order.difFee??> ${order.difFee?string("0.00")}<#else>0.00</#if>元</td>
+                    </tr>
+                    <tr>
+                    	<th>收货人是否是主家</th>
+                        <td><#if order.receiverIsMember??&&order.receiverIsMember>是<#else>否</#if></td>
+                    </tr>
                     <#-- <tr>
                         <th>
                     欠款金额                

@@ -24,7 +24,7 @@ function submitTheSuggestion() {
 	$.ajax({
 		url : "/user/suggestion/save",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			categoryId : categoryId,
 			suggestion : suggestion,

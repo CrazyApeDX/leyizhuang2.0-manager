@@ -21,7 +21,7 @@ function clickLevelTwo(elementId,categoryId) {
 	$.ajax({
 		url:"/goods/step/get",
 		type:"post",
-		timeout:10000,
+//		timeout:10000,
 		data:{
 			categoryId:categoryId
 		},

@@ -24,7 +24,7 @@ function getDistrict() {
 	$.ajax({
 		url : "/user/address/get",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			type : 0
 		},
@@ -61,7 +61,7 @@ function getRegion(id, name, status) {
 		$.ajax({
 			url : "/user/address/get",
 			type : "post",
-			timeout : 10000,
+//			timeout : 10000,
 			data : {
 				type : 1,
 				id : id
@@ -87,7 +87,7 @@ function getRegion(id, name, status) {
 		$.ajax({
 			url : "/user/address/get",
 			type : "post",
-			timeout : 10000,
+//			timeout : 10000,
 			data : {
 				type : 2,
 				id : id
@@ -157,7 +157,7 @@ function saveAddress() {
 	$.ajax({
 		url : "/user/address/add/save",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			receiver : receiverName,
 			receiverMobile : receiverMobile,

@@ -77,6 +77,7 @@ function downloaddate()
             <option <#if type?? && type==3>selected="selected"</#if> value="3">消费</option>
             <option <#if type?? && type==4>selected="selected"</#if> value="4">退款</option>
             <option <#if type?? && type==2>selected="selected"</#if> value="2">管理员变更</option>
+            <option <#if type?? && type==5>selected="selected"</#if> value="5">经销差价</option>
         </select>
         </div>
       </div>
@@ -161,14 +162,14 @@ function downloaddate()
                 			退款
                 		<#break>
                 		<#case 5>
-                			经销差价返还
+                			经销差价
                 		<#break>
                 		<#case 6>
-                			经销差价扣除
+                			经销差价
                 		<#break>
                 	</#switch>
                 </td>
-                <td align="left"><#if item.type==1 || item.type==3 || item.type==6>-</#if><#if item.money??>${item.money?string("0.00")}</#if></td>
+                <td align="left"><#if item.type==1 || item.type==3 || (item.type==5&&item.reason!='消费返还经销差价')>-</#if><#if item.money??>${item.money?string("0.00")}</#if></td>
                 <td align="left"><#if item.cashLeft??>${item.cashLeft?string("0.00")}<#else>暂无</#if></td>
                 <td align="left"><#if item.unCashLeft??>${item.unCashLeft?string("0.00")}<#else>暂无</#if></td>
                 <td align="left"><#if item.allLeft??>${item.allLeft?string("0.00")}<#else>暂无</#if></td>

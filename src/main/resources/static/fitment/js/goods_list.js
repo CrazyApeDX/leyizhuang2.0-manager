@@ -51,7 +51,7 @@ function changeColor(goodsId) {
 	$.ajax({
 		url : "/goods/get/color",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			"goodsId" : goodsId,
 		},
@@ -168,7 +168,7 @@ function addColor(goodsId) {
 	// 进行异步请求，存储数据
 	$.ajax({
 		url : "/goods/color/add",
-		timeout : 10000,
+//		timeout : 10000,
 		type : "post",
 		data : {
 			"colorName" : colorName,
@@ -289,7 +289,7 @@ function addCart(isGoHistory) {
 	$.ajax({
 		url: "/fit/cart",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			params : params,
 		},
@@ -323,7 +323,7 @@ function operateCollect(goodsId) {
 	$.ajax({
 		url : "/goods/operate/collection",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			goodsId : goodsId
 		},

@@ -53,7 +53,7 @@ function operate(operation, type, id) {
 		url: "/fit/cart/" + operation + "/" + id ,
 //		url : "/user/selected/change/quantity",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			quantity:quantity
 		},

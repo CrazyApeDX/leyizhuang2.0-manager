@@ -1,7 +1,5 @@
 package com.ynyes.lyz.controller.management;
 
-import static org.mockito.Mockito.validateMockitoUsage;
-
 import java.util.ArrayList;
 import java.util.List;
 

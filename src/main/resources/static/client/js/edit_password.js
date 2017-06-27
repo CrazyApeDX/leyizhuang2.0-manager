@@ -20,7 +20,7 @@ var ctrl = app.controller("ctrl", function($scope, $http, $location) {
 		$.ajax({
 			url : "/user/edit/password/save",
 			type : "post",
-			timeout : 10000,
+//			timeout : 10000,
 			data : {
 				oldPassword : this.param.old_password,
 				newPassword : this.param.new_password
