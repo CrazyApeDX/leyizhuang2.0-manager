@@ -36,7 +36,7 @@ public class TdBalanceLog {
 	@Column(scale = 2)
 	private Double money;
 
-	// 类型（0. 代表充值；1. 代表提现; 2. 管理员修改; 3. 代表支付消费; 4.订单退款； 5. 经销差价返还；6.经销差价扣除）
+	// 类型（0. 代表充值；1. 代表提现; 2. 管理员修改; 3. 代表支付消费; 4.订单退款； 5. 经销差价）
 	@Column
 	private Long type;
 

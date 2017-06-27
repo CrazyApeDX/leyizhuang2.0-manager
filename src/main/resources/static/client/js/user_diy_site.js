@@ -14,7 +14,7 @@ function changeDistrict() {
 	$.ajax({
 		url : "/user/diysite/get",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			districtId : districtId
 		},
@@ -46,7 +46,7 @@ function selectDiySite(id) {
 	$.ajax({
 		url : "/user/select/diysite",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			id : id
 		},

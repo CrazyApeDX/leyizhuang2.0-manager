@@ -11,7 +11,7 @@ $(function() {
 				$.ajax({
 					url : "/order/operate/coupon",
 					type : "post",
-					timeout : 15000,
+//					timeout : 15000,
 					data : {
 						id : id,
 						type : 0,
@@ -36,7 +36,7 @@ $(function() {
 				$.ajax({
 					url : "/order/operate/coupon",
 					type : "post",
-					timeout : 15000,
+//					timeout : 15000,
 					data : {
 						id : id,
 						type : 0,

@@ -5,7 +5,7 @@ function addActivity(activityId) {
 	$.ajax({
 		url : "/promotion/add",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			activityId : activityId
 		},

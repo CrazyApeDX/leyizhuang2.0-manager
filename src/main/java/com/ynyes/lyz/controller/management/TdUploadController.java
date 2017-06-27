@@ -499,7 +499,7 @@ public class TdUploadController {
 			} else {
 				path = ImageClientUtils.getInstance().uploadImage(imgFile.getInputStream(), fileSize, fileName, source);
             }
-           
+			
 			String url = ImageClientUtils.getInstance().getAbsProjectImagePath(path);
 
             res.put("error", 0);

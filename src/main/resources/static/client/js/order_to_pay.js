@@ -38,7 +38,7 @@ function payNow() {
 	// 发送异步请求
 	$.ajax({
 		url : "/user/order/pay/now",
-		timeout : 10000,
+//		timeout : 10000,
 		type : "post",
 		data : {
 			type : type,

@@ -469,7 +469,7 @@ public class TdReturnNoteService {
 			log.setCashLeft(user.getCashBalance() + cashCost);
 			log.setUnCashLeft(user.getUnCashBalance());
 			log.setAllLeft(user.getBalance() + cashCost);
-			log.setReason("退货经销差价扣除");
+			log.setReason("退货扣除经销差价");
 			tdBalanceLogService.save(log);
 
 			TdCashRefundInf cashRefund = new TdCashRefundInf();

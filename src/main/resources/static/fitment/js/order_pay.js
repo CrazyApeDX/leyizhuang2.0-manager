@@ -22,7 +22,7 @@ function userRemark(old_remark) {
 	// 发送异步请求
 	$.ajax({
 		url : "/fit/order/remark",
-		timeout : 10000,
+//		timeout : 10000,
 		type : "post",
 		data : {
 			remark : remark,

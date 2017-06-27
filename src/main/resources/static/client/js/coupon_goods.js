@@ -58,7 +58,7 @@ function checkSeller() {
 	wait();
 	$.ajax({
 		url : "/coupon/check",
-		timeout : 20000,
+//		timeout : 20000,
 		type : "post",
 		error : function() {
 			close(1);
@@ -100,7 +100,7 @@ function addCart() {
 	$.ajax({
 		url : "/coupon/add/cart",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			params : params,
 		},

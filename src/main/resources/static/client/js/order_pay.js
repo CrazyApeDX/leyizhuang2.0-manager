@@ -20,7 +20,7 @@ function userRemark(old_remark) {
 	// 发送异步请求
 	$.ajax({
 		url : "/order/remark/save",
-		timeout : 10000,
+//		timeout : 10000,
 		type : "post",
 		data : {
 			remark : remark
@@ -57,7 +57,7 @@ function getUserInfo() {
 	wait();
 	$.ajax({
 		url : "/order/get/user/infomation",
-		timeout : 20000,
+//		timeout : 20000,
 		type : "post",
 		error : function() {
 			close(1);
@@ -82,7 +82,7 @@ function pay() {
 	// 发起异步请求验证结算
 	$.ajax({
 		type : "post",
-		timeout : 20000,
+//		timeout : 20000,
 		url : "/order/check",
 		error : function() {
 			close(1);
@@ -137,7 +137,7 @@ function confirmPay() {
 	wait();
 	$.ajax({
 		url : "/order/coupon/confirm",
-		timeout : 20000,
+//		timeout : 20000,
 		type : "post",
 		error : function() {
 			$("#buyNow").attr("href", "javascript:confirmPay();");
@@ -206,7 +206,7 @@ function sellerOtherIncome(old_income) {
 	// 发送异步请求
 	$.ajax({
 		url : "/order/otherIncome/save",
-		timeout : 10000,
+//		timeout : 10000,
 		type : "post",
 		data : {
 			otherIncome : income

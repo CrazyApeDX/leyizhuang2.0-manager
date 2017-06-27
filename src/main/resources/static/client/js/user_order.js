@@ -147,7 +147,7 @@ function cancel(id) {
 		// 发送异步请求
 		$.ajax({
 			url : "/user/order/cancel",
-			timeout : 10000,
+//			timeout : 10000,
 			type : "post",
 			data : {
 				orderId : id
@@ -180,7 +180,7 @@ function deleteOrder(id) {
 	// 发送异步请求
 	$.ajax({
 		url : "/user/order/delete",
-		timeout : 10000,
+//		timeout : 10000,
 		type : "post",
 		data : {
 			orderId : id
@@ -212,7 +212,7 @@ function confirmAccipt(id) {
 	$.ajax({
 		url : "/user/confirm/accipt",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			id : id
 		},

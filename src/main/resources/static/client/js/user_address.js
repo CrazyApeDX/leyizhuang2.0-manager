@@ -9,7 +9,7 @@ function operation(id, type) {
 	$.ajax({
 		url : "/user/address/operate",
 		type : "post",
-		timeout : 10000,
+//		timeout : 10000,
 		data : {
 			id : id,
 			type : type

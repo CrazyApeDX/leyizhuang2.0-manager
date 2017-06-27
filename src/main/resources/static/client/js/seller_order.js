@@ -28,7 +28,7 @@ var seller = {
 		wait();
 		$.ajax({
 			url : "/order/check/user/status",
-			timeout : 20000,
+//			timeout : 20000,
 			type : "post",
 			error : function() {
 				close(1);
@@ -54,7 +54,7 @@ var seller = {
 		wait();
 		$.ajax({
 			url : "/order/get/user/infomation",
-			timeout : 20000,
+//			timeout : 20000,
 			type : "post",
 			error : function() {
 				close(1);
@@ -73,7 +73,7 @@ var seller = {
 		wait();
 		$.ajax({
 			url : "/order/change/user/info",
-			timeout : 20000,
+//			timeout : 20000,
 			type : "post",
 			data : {
 				keywords : this.keywords
