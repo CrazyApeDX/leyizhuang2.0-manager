@@ -62,9 +62,7 @@ public class TdGoodsInOut {
 	//单价
 	@Column
 	private Double price;
-	//总价
-	@Column
-	private Double totalPrice;
+	
 	//现金卷
 	@Column
 	private Double cashCoupon;
@@ -194,12 +192,6 @@ public class TdGoodsInOut {
 	}
 	public void setPrice(Double price) {
 		this.price = price;
-	}
-	public Double getTotalPrice() {
-		return totalPrice;
-	}
-	public void setTotalPrice(Double totalPrice) {
-		this.totalPrice = totalPrice;
 	}
 	public Double getCashCoupon() {
 		return cashCoupon;

@@ -558,7 +558,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}else if(statusId==6) {
 			fileName="自提单出退货报表";
 		}else if(statusId==7){
-			fileName="销量报表";
+			fileName="PK销量报表";
 		}else if(statusId==8){
 			fileName="欠款报表";
 		}else if(statusId==9){
@@ -578,9 +578,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
 		}else if(statusId==16){
 			fileName="装饰公司销售明细报表";
 		}else if(statusId==17){
-			fileName="加盟商销售明细报表";
+			fileName="预存款变更商品明细表";
 		}else if(statusId==18){
-			fileName="加盟商配送单出退货报表";
+			fileName="加盟商出退货报表";
 		}
 		return fileName;
 	}
@@ -977,7 +977,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","下单日期","出&退货日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号",
-	        		"产品名称","数量","单价","总价","品牌","商品父分类","商品子分类","配送方式","中转仓",
+	        		"产品名称","数量","结算单价","结算总价","品牌","商品父分类","商品子分类","配送方式","中转仓",
 	        		"配送人员","配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
 			cellDates(cellValues, style, row);
 			
@@ -1021,7 +1021,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//产品价格
 				row.createCell(13).setCellValue(objToString(goodsInOut.getPrice()));
 				//产品总价
-				row.createCell(14).setCellValue((goodsInOut.getTotalPrice()*100)/100);
+				row.createCell(14).setCellValue(objToString((goodsInOut.getPrice()*goodsInOut.getQuantity()*100)/100));
 	        	//现金卷
 	            //row.createCell(15).setCellValue(objToString(goodsInOut.getCashCoupon()));
 	          	//品牌
@@ -1412,7 +1412,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","下单日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号","产品名称",
-	        		"数量","单价","总价","品牌","商品父分类","商品子分类","配送方式","中转仓","配送人员",
+	        		"数量","结算单价","结算总价","品牌","商品父分类","商品子分类","配送方式","中转仓","配送人员",
 	        		"配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
 			cellDates(cellValues, style, row);
 			
@@ -1651,6 +1651,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	}
 	
 	/**
+	 * 自提单出退货报表
 	 * @param begin 开始时间
 	 * @param end 结束时间
 	 * @param diyCode 门店编号
@@ -1699,7 +1700,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","下单日期","确认日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号",
-	        		"产品名称","数量","单价","总价","品牌","商品父分类","商品子分类","订单备注"};
+	        		"产品名称","数量","结算单价","结算总价","品牌","商品父分类","商品子分类","订单备注"};
 			cellDates(cellValues, style, row);
 			
 			for(int j=0;j<maxRowNum;j++)
@@ -1742,7 +1743,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//产品价格
 				row.createCell(13).setCellValue(objToString(goodsInOut.getPrice()));
 				//产品总价
-				row.createCell(14).setCellValue((goodsInOut.getTotalPrice()*100)/100);
+				row.createCell(14).setCellValue(objToString((goodsInOut.getPrice() * goodsInOut.getQuantity() *100)/100));
 	        	//现金卷
 	            //row.createCell(15).setCellValue(objToString(goodsInOut.getCashCoupon()));
 	          	//品牌
@@ -3563,7 +3564,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","预存款变更时间","导购","客户编号","客户名称","客户电话","产品编号","产品名称",
-	        		"数量","单价","总价","经销单价","经销总价","品牌","商品父分类","商品子分类","配送状态","配送方式","中转仓","配送人员",
+	        		"数量","结算单价","结算总价","经销单价","经销总价","品牌","商品父分类","商品子分类","配送状态","配送方式","中转仓","配送人员",
 	        		"配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
 			cellDates(cellValues, style, row);
 			
@@ -3608,7 +3609,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//产品价格
 				row.createCell(11).setCellValue(objToString(salesDetail.getPrice()));
 				//产品总价
-				row.createCell(12).setCellValue(objToString((salesDetail.getTotalPrice()*100)/100));
+				row.createCell(12).setCellValue(objToString((salesDetail.getPrice() * salesDetail.getQuantity() *100)/100));
 				
 				if(null != salesDetail.getJxPrice()){
 					//经销单价
@@ -4036,7 +4037,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","主单号","分单号","下单日期","出&退货日期","订单状态","导购","客户编号","客户名称","客户电话","产品编号",
-	        		"产品名称","数量","单价","总价","经销单价","经销总价","品牌","商品父分类","商品子分类","配送方式","中转仓",
+	        		"产品名称","数量","结算单价","结算总价","经销单价","经销总价","品牌","商品父分类","商品子分类","配送方式","中转仓",
 	        		"配送人员","配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注"};
 			cellDates(cellValues, style, row);
 			
@@ -4080,7 +4081,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//产品价格
 				row.createCell(13).setCellValue(objToString(goodsInOut.getPrice()));
 				//产品总价
-				row.createCell(14).setCellValue((goodsInOut.getTotalPrice()*100)/100);
+				row.createCell(14).setCellValue(objToString((goodsInOut.getPrice() * goodsInOut.getQuantity() *100)/100));
 				//经销单价
 	        	row.createCell(15).setCellValue(objToString(goodsInOut.getJxPrice()));
 	        	//经销总价
