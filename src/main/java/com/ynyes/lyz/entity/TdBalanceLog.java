@@ -230,7 +230,7 @@ public class TdBalanceLog {
 			return "总余额";
 		} else if (this.balanceType == 1L || this.balanceType == 3L) {
 			return "可提现余额";
-		} else if (this.balanceType == 2L || this.balanceType == 4L) {
+		} else if (this.balanceType == 2L || this.balanceType == 4L || this.balanceType == 5L || this.balanceType == 6L || this.balanceType == 7L) {
 			return "不可提现余额";
 		}
 		return "";
@@ -252,7 +252,7 @@ public class TdBalanceLog {
 		this.cityId = cityId;
 	}
 
-	// （type:0. 代表充值；1. 代表提现; 2. 管理员修改; 3. 代表支付消费; 4.订单退款）
+	// （type:0. 代表充值；1. 代表提现; 2. 管理员修改; 3. 代表支付消费; 4.订单退款;5.经销差价）
 	public String getTypeName() {
 		if (this.type == 0L) {
 			return "充值";
@@ -264,6 +264,8 @@ public class TdBalanceLog {
 			return "支付";
 		} else if (this.type == 4L) {
 			return "退款";
+		} else if (this.type == 5L){
+			return "经销差价";
 		}
 		return "";
 	}
