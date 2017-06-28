@@ -20,6 +20,8 @@ import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
 import com.ynyes.fitment.foundation.entity.FitOrderCancel;
 import com.ynyes.fitment.foundation.entity.FitOrderRefund;
+import com.ynyes.fitment.foundation.entity.FitPromotionMoneyLog;
+import com.ynyes.fitment.foundation.repo.FitPromotionMoneyLogRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
@@ -49,6 +51,8 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	
 	@Autowired
 	private TdInterfaceService tdInterfaceService;
+	
+	private FitPromotionMoneyLogRepo fitPromotionMoneyLogRepo;
 
 	@Override
 	public FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception {
@@ -101,6 +105,19 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		} else {
 			this.doReceipt(company, inputCredit);
 		}
+	}
+	
+	@Override
+	public void promotionMoneyAction(TdManager manager, FitCompany company, Double inputPromotionMoney, String remark)
+			throws Exception {
+		this.manageLog(manager, company, inputPromotionMoney, remark);
+
+		//传ebs
+		//		if (inputCredit < 0) {
+//			this.doRefund(company, inputCredit);
+//		} else {
+//			this.doReceipt(company, inputCredit);
+//		}
 	}
 
 	private void doReceipt(FitCompany company, Double inputCredit) {
@@ -171,6 +188,22 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
+	}
+	
+	@Override
+	public FitPromotionMoneyLog managePromotionMoneyLog(TdManager manager, FitCompany company, Double inputPromotionMoney, String remark)
+			throws Exception {
+		company.setPromotionMoney(company.getPromotionMoney() + inputPromotionMoney);
+		this.fitCompanyService.save(company);
+		FitPromotionMoneyLog log = new FitPromotionMoneyLog();
+		log.setCreateOrigin(OriginType.ADD);
+		log.setCreateTime(new Date());
+		log.setBeforeChange(company.getPromotionMoney() - inputPromotionMoney).setAfterChange(company.getPromotionMoney()).setMoney(inputPromotionMoney)
+				.setChangeTime(new Date()).setReferenceNumber(log.initManagerOperateNumber())
+				.setType(inputPromotionMoney < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
+				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)
+				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
+		return this.fitPromotionMoneyLogRepo.save(log);
 	}
 
 	@Override

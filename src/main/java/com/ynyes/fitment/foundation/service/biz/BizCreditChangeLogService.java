@@ -10,6 +10,7 @@ import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
 import com.ynyes.fitment.foundation.entity.FitOrderCancel;
 import com.ynyes.fitment.foundation.entity.FitOrderRefund;
+import com.ynyes.fitment.foundation.entity.FitPromotionMoneyLog;
 import com.ynyes.lyz.entity.TdManager;
 
 public interface BizCreditChangeLogService {
@@ -27,4 +28,8 @@ public interface BizCreditChangeLogService {
 	List<FitCreditChangeLog> employeeGetLog(FitEmployee employee) throws Exception;
 
 	Page<FitCreditChangeLog> employeeGetLog(FitEmployee employee, Integer page, Integer size) throws Exception;
+	
+	void promotionMoneyAction(TdManager manager, FitCompany company, Double inputPromotionMoney, String remark) throws Exception;
+	
+	FitPromotionMoneyLog managePromotionMoneyLog(TdManager manager, FitCompany company, Double inputCredit, String remark) throws Exception;
 }

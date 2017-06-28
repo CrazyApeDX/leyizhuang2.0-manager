@@ -177,4 +177,19 @@ public class FitManagementCompanyController {
 			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请稍后重试或联系管理员");
 		}
 	}
+	
+	@RequestMapping(value = "/promotionMoney", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public ClientResult companyPromotionMoney(HttpServletRequest request, Long id, Double credit) {
+		try {
+			String manageUsername = (String) request.getSession().getAttribute(LoginSign.MANAGER_SIGN.toString());
+			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
+			FitCompany company = this.fitCompanyService.findOne(id);
+			this.bizCreditChangeLogService.managePromotionMoneyLog(manager, company, credit, "");
+			return new ClientResult(ActionCode.SUCCESS, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请稍后重试或联系管理员");
+		}
+	}
 }
