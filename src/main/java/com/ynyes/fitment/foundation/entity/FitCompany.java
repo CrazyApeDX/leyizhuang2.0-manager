@@ -36,7 +36,7 @@ public class FitCompany extends TableEntity {
 	private Double credit = 0d;
 
 	// 赞助金
-	@Column(scale = 2)
+	@Column(scale = 2, nullable = false)
 	private Double promotionMoney = 0d;
 
 	// 还款日

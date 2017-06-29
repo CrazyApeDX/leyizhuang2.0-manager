@@ -52,6 +52,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	@Autowired
 	private TdInterfaceService tdInterfaceService;
 	
+	@Autowired
 	private FitPromotionMoneyLogRepo fitPromotionMoneyLogRepo;
 
 	@Override

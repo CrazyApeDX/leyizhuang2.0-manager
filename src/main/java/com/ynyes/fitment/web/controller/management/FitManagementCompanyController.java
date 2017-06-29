@@ -180,12 +180,12 @@ public class FitManagementCompanyController {
 	
 	@RequestMapping(value = "/promotionMoney", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
 	@ResponseBody
-	public ClientResult companyPromotionMoney(HttpServletRequest request, Long id, Double credit) {
+	public ClientResult companyPromotionMoney(HttpServletRequest request, Long id, Double promotionMoney) {
 		try {
 			String manageUsername = (String) request.getSession().getAttribute(LoginSign.MANAGER_SIGN.toString());
 			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
 			FitCompany company = this.fitCompanyService.findOne(id);
-			this.bizCreditChangeLogService.managePromotionMoneyLog(manager, company, credit, "");
+			this.bizCreditChangeLogService.managePromotionMoneyLog(manager, company, promotionMoney, "");
 			return new ClientResult(ActionCode.SUCCESS, null);
 		} catch (Exception e) {
 			e.printStackTrace();

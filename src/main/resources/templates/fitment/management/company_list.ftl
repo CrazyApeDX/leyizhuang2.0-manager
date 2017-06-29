@@ -174,11 +174,11 @@
 												return;
 											} else {
 												$.ajax({
-													url: "#",
+													url: "/Verwalter/fitment/company/promotionMoney",
 													method: "POST",
 													data: {
 														id: id,
-														credit: text
+														promotionMoney: text
 													},
 													success: function(res) {
 														if (res.actionCode === "SUCCESS") {
