@@ -1594,6 +1594,33 @@ public class TdGoodsService {
 	}
 
 	/**
+	 * 根据门店ID、分类ID、分类ID查询商品
+	 * 
+	 * @param diySiteId
+	 * @param categoryId
+	 * @param keywords
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	public Page<TdGoods> queryAllByDiySiteId(Long diySiteId, Long categoryId, String keywords, int page, int size) {
+		PageRequest pageRequest = new PageRequest(page, size);
+		if (StringUtils.isEmpty(keywords)) {
+			if (null == categoryId) {
+				return repository.queryAllByDiySiteId(diySiteId, pageRequest);
+			} else {
+				return repository.queryAllByDiySiteIdAndCategoryId(diySiteId, categoryId, pageRequest);
+			}
+		} else {
+			if (null == categoryId) {
+				return repository.queryAllByDiySiteIdAndKeywords(diySiteId, keywords, pageRequest);
+			} else {
+				return repository.queryAllByDiySiteIdAndCategoryIdAndKeywords(diySiteId, categoryId, keywords, pageRequest);
+			}
+		}
+	}
+
+	/**
 	 * 优惠卷商品查询
 	 * 
 	 * @param cityId

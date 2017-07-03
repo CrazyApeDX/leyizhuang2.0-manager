@@ -721,6 +721,49 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 		return "/site_mag/dialog_goods_combination_list";
 	}
 
+	@RequestMapping(value = "/list/dialogForAllocation")
+	public String goodsListDialogForAllocation(String keywords, Long categoryId, Long diySiteId, Integer page, Integer size, Integer total,
+			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE, ModelMap map, HttpServletRequest req) {
+		String username = (String) req.getSession().getAttribute("manager");
+		if (null == username) {
+			return "redirect:/Verwalter/login";
+		}
+		if (null != __EVENTTARGET) {
+			if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+			} else if (__EVENTTARGET.equalsIgnoreCase("btnSearch")) {
+
+			} else if (__EVENTTARGET.equalsIgnoreCase("categoryId")) {
+
+			}
+		}
+
+		if (null == page || page < 0) {
+			page = 0;
+		}
+
+		if (null == size || size <= 0) {
+			size = SiteMagConstant.pageSize;
+		}
+
+		if (null != keywords) {
+			keywords = keywords.trim();
+		}
+
+		Page<TdGoods> goodsPage = tdGoodsService.queryAllByDiySiteId(diySiteId, categoryId, keywords, page, size);
+		
+		map.addAttribute("goods_page", goodsPage);
+		map.addAttribute("category_list", tdProductCategoryService.findAll());
+		map.addAttribute("page", page);
+		map.addAttribute("size", size);
+		map.addAttribute("total", total);
+		map.addAttribute("keywords", keywords);
+		map.addAttribute("categoryId", categoryId);
+		return "/site_mag/dialog_goods_allocation_list";
+	}
+
 	@RequestMapping(value = "/edit")
 	public String goodsEdit(Long pid, Long id, String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
 			ModelMap map, HttpServletRequest req) {
