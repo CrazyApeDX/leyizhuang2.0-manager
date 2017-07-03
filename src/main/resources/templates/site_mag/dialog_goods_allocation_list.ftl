@@ -57,10 +57,10 @@
             parentObj.find("input[id='id']").val($("#txtItemZengPin_Id").val());
         } else {
             var trHtml = '<tr class="td_c">'
-            + '<td><input type="text" id="id" name="details[${total!'0'}].goodId" class="td-input" value="' + $("#txtItemZengPin_Id").val() + '" style="width:90%;border: none;" readonly /></td>'
-            + '<td><input type="text" id="goodSku" name="details[${total!'0'}].goodSku" value="' + $("#txtItemZengPin_Code").val() + '" style="width:90%;border: none;" readonly /></td>'
-            + '<td><input type="text" id="title" name="details[${total!'0'}].goodTitle" class="td-input" value="' + $("#txtItemZengPin_Title").val() + '" style="width:90%;border: none;" readonly /></td>'
-            + '<td><input type="text" id="number" name="details[${total!'0'}].num" class="td-input number" value="' + $("#txtItemZengPin_Num").val() + '" style="width:90%;" /></td>'
+            + '<td><input type="text" id="goodId" name="goodId" class="td-input" value="' + $("#txtItemZengPin_Id").val() + '" style="width:90%;border: none;" readonly /></td>'
+            + '<td><input type="text" id="goodSku" name="goodSku" value="' + $("#txtItemZengPin_Code").val() + '" style="width:90%;border: none;" readonly /></td>'
+            + '<td><input type="text" id="goodTitle" name="goodTitle" class="td-input" value="' + $("#txtItemZengPin_Title").val() + '" style="width:90%;border: none;" readonly /></td>'
+            + '<td><input type="text" id="num" name="num" class="td-input number" value="' + $("#txtItemZengPin_Num").val() + '" style="width:90%;" /></td>'
             + '<td>'
             + '<i class="icon"></i>'
             + '<a title="删除" class="img-btn del operator" onclick="del_goods_comb(this);">删除</a>'
@@ -178,10 +178,10 @@ function __doPostBack(eventTarget, eventArgument) {
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ltable">
     <tbody>
         <tr class="odd_bg">
-            <th align="left">标题</th>
-            <th align="left" width="12%">商品编码</th>
-            <th align="left" width="12%">所属类别</th>
-            <th align="left" width="16%">发布时间</th>    
+            <th align="left" width="40%">标题</th>
+            <th align="left" width="20%">商品编码</th>
+            <th align="left" width="20%">所属类别</th>
+            <th align="left" width="20%">发布时间</th>    
         </tr>
         
         <#if goods_page??>
