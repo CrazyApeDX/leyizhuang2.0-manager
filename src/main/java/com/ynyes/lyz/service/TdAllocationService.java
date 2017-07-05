@@ -40,7 +40,6 @@ import com.ynyes.lyz.repository.TdAllocationRepo;
 import com.ynyes.lyz.repository.TdAllocationTrailRepo;
 import com.ynyes.lyz.repository.TdDiySiteInventoryLogRepo;
 import com.ynyes.lyz.repository.TdDiySiteInventoryRepo;
-import com.ynyes.lyz.repository.TdDiySiteRepo;
 import com.ynyes.lyz.repository.TdManagerRepo;
 
 @Service
