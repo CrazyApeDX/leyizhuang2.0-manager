@@ -8,6 +8,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.GenericGenerator;
+
 /**
  * 销售明细报表for加盟商
  * 
@@ -18,8 +20,9 @@ import javax.persistence.Id;
 public class TdSalesDetailForFranchiser {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+	private String id;
+	
 	// 门店名称
 	@Column
 	private String diySiteName;
@@ -112,11 +115,13 @@ public class TdSalesDetailForFranchiser {
 	@Column(scale = 2)
 	private Double jxPrice = 0d;
 
-	public Long getId() {
+	
+
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Long id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
