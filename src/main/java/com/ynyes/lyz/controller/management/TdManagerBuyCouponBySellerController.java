@@ -18,11 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.dubbo.remoting.exchange.Request;
 import com.ibm.icu.math.BigDecimal;
 import com.ynyes.lyz.entity.TdActivity;
 import com.ynyes.lyz.entity.TdActivityGift;
@@ -32,6 +34,8 @@ import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdGoods;
+import com.ynyes.lyz.entity.TdManager;
+import com.ynyes.lyz.entity.TdManagerRole;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdOwnMoneyRecord;
@@ -52,6 +56,8 @@ import com.ynyes.lyz.service.TdCommonService;
 import com.ynyes.lyz.service.TdCouponService;
 import com.ynyes.lyz.service.TdDiySiteService;
 import com.ynyes.lyz.service.TdGoodsService;
+import com.ynyes.lyz.service.TdManagerRoleService;
+import com.ynyes.lyz.service.TdManagerService;
 import com.ynyes.lyz.service.TdOrderGoodsService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdOwnMoneyRecordService;
@@ -123,6 +129,12 @@ public class TdManagerBuyCouponBySellerController {
 	
 	@Autowired
 	private TdCityService tdCityService;
+	
+	@Autowired
+	private TdManagerService tdManagerService;
+	
+	@Autowired
+	private TdManagerRoleService tdManagerRoleService;
 
 	@RequestMapping
 	public String index(HttpServletRequest req, ModelMap map) {
@@ -197,6 +209,84 @@ public class TdManagerBuyCouponBySellerController {
 		}
 		return "/site_mag/buy_coupon_dialog";
 	}
+	
+	@RequestMapping(value = "/dialog/user")
+	public String getDialogUser(String keywords, Integer page, Integer size, ModelMap map, String username) {
+		if (null == page || page < 0) {
+			page = 0;
+		}
+
+		if (null == size || size <= 0) {
+			size = SiteMagConstant.pageSize;
+		}
+
+		if (null != keywords) {
+			keywords = keywords.trim();
+		}
+
+		Page<TdUser> user_page = null;
+		if (null != keywords) {
+			user_page = tdUserService.findByUsernameContainingOrRealNameContainingAndUserType(keywords, page,
+					size,0L);
+		} else {
+			// goods_page = tdGoodsService.findAll(page, size);
+		}
+
+		map.addAttribute("user_page", user_page);
+		return "/site_mag/buy_coupon_dialog_user";
+	}
+	
+	@RequestMapping(value = "/dialog/seller")
+	public String getDialogSeller(HttpServletRequest request,String keywords, Integer page, Integer size, ModelMap map, String username) {
+		
+		String adminUser = (String) request.getSession().getAttribute("manager");
+		TdManager tdManager = tdManagerService.findByUsernameAndIsEnableTrue(adminUser);
+		TdManagerRole tdManagerRole = null;
+		if (null != tdManager && null != tdManager.getRoleId())
+		{
+			tdManagerRole = tdManagerRoleService.findOne(tdManager.getRoleId());
+		}
+		TdUser user = tdUserService.findByUsername(username); 
+		String diyCode = null;
+		if (tdManagerRole.getTitle().equalsIgnoreCase("门店")||tdManagerRole.getTitle().equalsIgnoreCase("郑州门店")) 
+		{
+        	diyCode=tdManager.getDiyCode();
+		}
+		
+		if (null == page || page < 0) {
+			page = 0;
+		}
+
+		if (null == size || size <= 0) {
+			size = SiteMagConstant.pageSize;
+		}
+
+		if (null != keywords) {
+			keywords = keywords.trim();
+		}
+
+		Page<TdUser> seller_page = null;
+		List<Long> userTypeList = new ArrayList<>();
+		userTypeList.add(1L);
+		userTypeList.add(2L);
+		if (null != keywords) {
+			if(null != diyCode){
+				seller_page = tdUserService.findByUsernameContainingOrRealNameContainingAndDiyCodeAndUserTypeIn(keywords, page,
+						size,diyCode,userTypeList);
+			}else{
+				
+				seller_page = tdUserService.findByUsernameContainingOrRealNameContainingAndCityAndUserTypeIn(keywords, page,
+						size,user.getCityName(),userTypeList);
+			}
+			
+		} else {
+			// goods_page = tdGoodsService.findAll(page, size);
+		}
+
+		map.addAttribute("seller_page", seller_page);
+		return "/site_mag/buy_coupon_dialog_seller";
+	}
+
 
 	@RequestMapping(value = "/count", method = RequestMethod.POST)
 	@ResponseBody
@@ -357,6 +447,151 @@ public class TdManagerBuyCouponBySellerController {
 
 		res.put("status", 0);
 		return res;
+	}
+	
+	@RequestMapping(value = "/get/present")
+	public String getPresent(HttpServletRequest req, Model model,String username, String sellerUsername, Long[] ids,
+			Long[] numbers, Long[] coupons, String remark) {
+		String errMsg = null;
+		Double total = 0.00;
+		Double totalGoods = 0.00;
+		Double totalCoupon = 0.00;
+		TdUser user = tdUserService.findByUsername(username);
+		if (null == user || user.getUserType().longValue() != 0L) {
+			errMsg="用户不存在";
+			return "/site_mag/buy_coupon_dialog_present";
+		}
+
+		TdUser seller = tdUserService.findByUsername(sellerUsername);
+		if (null == seller || seller.getUserType().longValue() == 0L || seller.getUserType().longValue() == 5L) {
+			errMsg="销顾不存在";
+			return "/site_mag/buy_coupon_dialog_present";
+		}
+
+		Map<Long, Object[]> param = new HashMap<>();
+
+		Long siteId = seller.getUpperDiySiteId();
+		TdDiySite site = tdDiySiteService.findOne(siteId);
+
+		StringBuffer cashCouponId = new StringBuffer();
+		List<TdOrderGoods> orderGoodsList = new ArrayList<>();
+
+		// 获取用户的城市
+		Long cityId = user.getCityId();
+		TdCity city = tdCityService.findBySobIdCity(cityId);
+
+		String cityShortName = null;
+		switch (city.getCityName()) {
+		case "成都市":
+			cityShortName = "CD_";
+			break;
+		case "郑州市":
+			cityShortName = "ZZ_";
+			break;
+		}
+
+		// 创建订单号
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+		Date now = new Date();
+		String sDate = sdf.format(now);
+		Random random = new Random();
+		Integer suiji = random.nextInt(900) + 100;
+		String orderNum = cityShortName + "XN" + sDate + suiji;
+
+		// 创建订单
+		TdOrder order = new TdOrder();
+		order.setOrderNumber(orderNum);
+		order.setUserId(user.getId());
+		order.setDiySiteId(site.getId());
+		order.setDiySiteCode(site.getStoreCode());
+		order.setDiySiteName(site.getTitle());
+		order.setDiySitePhone(site.getServiceTele());
+		order.setOrderTime(new Date());
+		order.setPayTime(new Date());
+		order.setSendTime(new Date());
+		order.setReceiveTime(new Date());
+		// order.setStatusId(5L);
+		order.setUsername(sellerUsername);
+		order.setRemark(remark);
+
+		for (int i = 0; i < ids.length; i++) {
+			Long id = ids[i];
+			// 获取指定的商品
+			TdGoods goods = tdGoodsService.findOne(id);
+			// 获取商品的价格
+			Double price = tdCommonService.getPrice(goods.getId(), username);
+			if (null == price) {
+				errMsg = "id为" + id + "的商品无法查询到其价格";
+				return "/site_mag/buy_coupon_dialog_present";
+			}
+			// 查找券模板
+//			TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goods.getId(), user.getCityId(),
+//					1L);
+			TdPriceListItem priceListItem = tdCommonService.getGoodsPrice(city.getSobIdCity(), goods.getId());
+			Double subPrice = 0.00;
+//			if (null != module && null != module.getPrice()) {
+//				subPrice = module.getPrice();
+//			}
+			subPrice = priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice();
+			total += (price * numbers[i]) - (subPrice * coupons[i]);
+			totalGoods += (price * numbers[i]);
+			totalCoupon += (subPrice * coupons[i]);
+
+			Object[] var = new Object[2];
+			var[0] = numbers[i];
+			var[1] = (price * numbers[i]) - (subPrice * coupons[i]);
+			param.put(goods.getId(), var);
+
+			// 创建订单商品
+			TdOrderGoods orderGoods = new TdOrderGoods();
+			orderGoods.setGoodsId(goods.getId());
+			orderGoods.setGoodsTitle(goods.getTitle());
+			orderGoods.setGoodsSubTitle(goods.getSubTitle());
+			orderGoods.setGoodsCoverImageUri(goods.getCoverImageUri());
+			orderGoods.setSku(goods.getCode());
+			orderGoods.setPrice(price);
+			orderGoods.setRealPrice(this.getRealPrice(goods, username));
+			orderGoods.setQuantity(numbers[i]);
+			orderGoods.setCashNumber(coupons[i]);
+			orderGoods.setBrandId(goods.getBrandId());
+			orderGoods.setBrandTitle(goods.getBrandTitle());
+			orderGoods.setType(1L);
+			orderGoods.setCouponMoney(subPrice * coupons[i]);
+			orderGoods.setCashNumber(coupons[i]);
+			orderGoods.setIsWallAccessory(goods.getIsWallAccessory());
+			//tdOrderGoodsService.save(orderGoods);
+			orderGoodsList.add(orderGoods);
+		}
+
+		order.setOrderGoodsList(orderGoodsList);
+		order.setTotalGoodsPrice(totalGoods);
+		order.setTotalPrice(total);
+		order.setCashCouponId(cashCouponId.toString());
+		order.setCashCoupon(totalCoupon);
+		order.setIsCoupon(true);
+		order.setSellerId(seller.getId());
+		order.setSellerUsername(sellerUsername);
+		order.setSellerRealName(seller.getRealName());
+		order.setRealUserUsername(user.getUsername());
+		order.setRealUserId(user.getId());
+		order.setRealUserRealName(user.getRealName());
+		order.setUsername(user.getUsername());
+
+		order = this.getPresent(username, order);
+		order = this.getGift(username, order);
+		Double activitySubPrice = null == order.getActivitySubPrice() ? 0d : order.getActivitySubPrice();
+		order.setActivitySubPrice(activitySubPrice);
+		order.setTotalPrice(order.getTotalPrice() - activitySubPrice);
+
+		// 计算满减分摊价
+		if (activitySubPrice > 0d) {
+			this.subActivityPriceShare(order, param);
+		}
+		model.addAttribute("errMsg",errMsg);
+		model.addAttribute("presentList",order.getPresentedList());
+		req.setAttribute("errMsg", errMsg);
+		return "/site_mag/buy_coupon_dialog_present";
+		
 	}
 
 	@RequestMapping(value = "/create/order", method = RequestMethod.POST)
