@@ -52,6 +52,8 @@ function del_goods_gift(obj) {
 }
 
 function checkDetail() {
+	var goodRepeatFlag = false;
+	var repeatMsg = "";
 	var validateFlag = true;
 	var trs = $("#var_box_comb").find("tr");
 	if(trs.length==0) {
@@ -59,20 +61,34 @@ function checkDetail() {
 		return false;
 	}
 	
+	var goodSkus = new Array();
 	var details = new Array();
+	var goodSku;
 	var re = /^[0-9]+.?[0-9]*$/;
 	trs.each(function(i,n){
 		var num = $(n).find("#num").val();
 		if(num=='' || num==0 || !re.test(num)) {
 			validateFlag = false;
 		}
+		goodSku = $(n).find("#goodSku").val();
+		if(!goodRepeatFlag && $.inArray(goodSku, goodSkus) >= 0) {
+			goodRepeatFlag = true;
+			repeatMsg = "亲，【" + goodSku + "】商品重复，请删除！";
+		}
+		goodSkus.push(goodSku);
 		details.push({
 			goodId: $(n).find("#goodId").val(),
 			goodTitle: $(n).find("#goodTitle").val(),
-			goodSku: $(n).find("#goodSku").val(),
+			goodSku: goodSku,
 			num: num
 		});
 	});
+	
+	if(goodRepeatFlag) {
+		alert(repeatMsg);
+		return false;
+	}
+	
 	if(!validateFlag) {
 		alert('亲，数量必须为数字且不能为0');
 	} else {
