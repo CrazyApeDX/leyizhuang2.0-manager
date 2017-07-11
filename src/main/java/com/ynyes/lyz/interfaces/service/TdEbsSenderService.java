@@ -33,12 +33,17 @@ import com.ynyes.lyz.entity.TdAllocation;
 import com.ynyes.lyz.entity.TdAllocationCallRecord;
 import com.ynyes.lyz.entity.TdAllocationDetail;
 import com.ynyes.lyz.entity.TdDiySite;
+import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
+import com.ynyes.lyz.interfaces.entity.TdReturnTimeInf;
 import com.ynyes.lyz.repository.TdAllocationCallRecordRepo;
+import com.ynyes.lyz.repository.TdAllocationRepo;
 import com.ynyes.lyz.repository.TdDiySiteRepo;
 
 import cn.com.leyizhuang.ebs.entity.dto.AllocationDetail;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationHeader;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationReceive;
+import cn.com.leyizhuang.ebs.entity.dto.StorePickUp;
+import cn.com.leyizhuang.ebs.entity.dto.StoreReturn;
 
 @Service
 public class TdEbsSenderService {
@@ -57,7 +62,13 @@ public class TdEbsSenderService {
 
     @Autowired
     private TdDiySiteRepo tdDiySiteRepo;
-
+    
+    @Autowired
+	private TdOrderReceiveInfService tdOrderReceiveInfService;
+    
+    @Autowired
+	private TdReturnTimeInfService tdReturnTimeInfService;
+    
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     /**
@@ -73,7 +84,7 @@ public class TdEbsSenderService {
                     TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
                     Date now = new Date();
                     tdAllocationCallRecord.setAllocationId(allocation.getId());
-                    tdAllocationCallRecord.setContent((String) result.get("xml"));
+                    tdAllocationCallRecord.setContent((String) result.get("content"));
                     tdAllocationCallRecord.setCreatedTime(now);
                     tdAllocationCallRecord.setMsg((String) result.get("msg"));
                     tdAllocationCallRecord.setNumber(allocation.getNumber());
@@ -100,7 +111,7 @@ public class TdEbsSenderService {
                     TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
                     Date now = new Date();
                     tdAllocationCallRecord.setAllocationId(allocation.getId());
-                    tdAllocationCallRecord.setContent((String) result.get("xml"));
+                    tdAllocationCallRecord.setContent((String) result.get("content"));
                     tdAllocationCallRecord.setCreatedTime(now);
                     tdAllocationCallRecord.setMsg((String) result.get("msg"));
                     tdAllocationCallRecord.setNumber(allocation.getNumber());
@@ -113,7 +124,44 @@ public class TdEbsSenderService {
             }
         });
     }
-
+    /**
+	 * 异步发送【门店自提】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdOrderReceiveInf
+	 */
+	public void sendStorePickUpToEbsAndRecord(final TdOrderReceiveInf tdOrderReceiveInf) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendStorePickUpToEbs(tdOrderReceiveInf);
+				if (!(Boolean) result.get("success")) {
+					tdOrderReceiveInf.setSendFlag(1);
+					tdOrderReceiveInf.setErrorMsg((String) result.get("msg"));
+				} else {
+					tdOrderReceiveInf.setSendFlag(0);
+				}
+				tdOrderReceiveInfService.save(tdOrderReceiveInf);
+			}
+		});
+	}
+	/**
+	 * 异步发送【门店退货】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdReturnTimeInf
+	 */
+	public void sendStoreReturnEbsAndRecord(final TdReturnTimeInf tdReturnTimeInf) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendStoreReturnToEbs(tdReturnTimeInf);
+				if (!(Boolean) result.get("success")) {
+					tdReturnTimeInf.setSendFlag(1);
+					tdReturnTimeInf.setErrorMsg((String) result.get("msg"));
+				} else {
+					tdReturnTimeInf.setSendFlag(0);
+				}
+				tdReturnTimeInfService.save(tdReturnTimeInf);
+			}
+		});
+	}
     /**
      * 发送【调拨单(出库)】信息到EBS
      * 
@@ -151,7 +199,7 @@ public class TdEbsSenderService {
         String allocationReceiveJson = this.genReceiveJson(allocation);
         List<NameValuePair> parameters = new ArrayList<NameValuePair>();
         parameters.add(new BasicNameValuePair("allocationReceiveJson", allocationReceiveJson));
-        Map<String, Object> result = this.postToEbs(this.ebsUrl + "callAllocationRecieve", parameters);
+        Map<String, Object> result = this.postToEbs(this.ebsUrl + "callAllocationReceive", parameters);
 
         if (!(Boolean) result.get("success")) {
             JSONObject content = new JSONObject();
@@ -162,7 +210,63 @@ public class TdEbsSenderService {
         LOGGER.info("sendAllocationReceivedToEBS, result=" + result);
         return result;
     }
+    /**
+	 * 发送【到店自提】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdOrderReceiveInf
+	 */
+	public Map<String, Object> sendStorePickUpToEbs(final TdOrderReceiveInf tdOrderReceiveInf) {
+		LOGGER.info("sendStorePickUpToEbs, tdOrderReceiveInf=" + tdOrderReceiveInf);
 
+		StorePickUp storePickUp = new StorePickUp();
+		storePickUp.setOrderHeaderId(toString(tdOrderReceiveInf.getHeaderId()));
+		storePickUp.setOrderNumber(toString(tdOrderReceiveInf.getOrderNumber()));
+		storePickUp.setReceiveDate(DateFormatUtils.format(tdOrderReceiveInf.getReceiveDate(), DateUtil.FORMAT_DATETIME));
+		storePickUp.setSobId(toString(tdOrderReceiveInf.getSobId()));
+	
+		
+		String storePickUpJson = JSON.toJSONString(storePickUp);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("storePickUpJson", storePickUpJson));
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callStorePickUp", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("storePickUpJson", storePickUpJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendStorePickUpToEbs, result=" + result);
+		return result;
+	}
+	/**
+	 * 发送【到店退货】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdReturnTimeInf
+	 */
+	public Map<String, Object> sendStoreReturnToEbs(final TdReturnTimeInf tdReturnTimeInf) {
+		LOGGER.info("sendStoreReturnToEbs, tdReturnTimeInf=" + tdReturnTimeInf);
+
+		StoreReturn storeReturn = new StoreReturn();
+		storeReturn.setRtHeaderId(toString(tdReturnTimeInf.getRtHeaderId()));
+		storeReturn.setReturnNumber(toString(tdReturnTimeInf.getReturnNumber()));
+		storeReturn.setReturnDate(DateFormatUtils.format(tdReturnTimeInf.getReturnDate(), DateUtil.FORMAT_DATETIME));
+		storeReturn.setSobId(toString(tdReturnTimeInf.getSobId()));
+
+		String storeReturnJson = JSON.toJSONString(storeReturn);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("storeReturnJson", storeReturnJson));
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callStoreReturn", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("storeReturnJson", storeReturnJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendStoreReturnToEbs, result=" + result);
+		return result;
+	}
     /**
      * 发送失败调拨单头到EBS
      * 
@@ -177,7 +281,7 @@ public class TdEbsSenderService {
         JSONObject jsonParams = JSON.parseObject(record.getContent());
         if (record.getType() == 3) {
             parameters.add(new BasicNameValuePair("allocationReceiveJson", jsonParams.getString("allocationReceiveJson")));
-            result = this.postToEbs(this.ebsUrl + "callAllocationRecieve", parameters);
+            result = this.postToEbs(this.ebsUrl + "callAllocationReceive", parameters);
 
         } else {
             parameters.add(new BasicNameValuePair("allcationHeaderJson", jsonParams.getString("allcationHeaderJson")));
