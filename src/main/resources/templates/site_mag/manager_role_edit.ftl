@@ -92,7 +92,14 @@ $(function () {
                         </td>
                         <td>
                             <span class="cbllist">
-                                <input type="checkbox" name="permissionlist[${total_index}].isView" <#if tdRole?? && tdRole.permissionList[total_index]?? && tdRole.permissionList[total_index].isView?? && tdRole.permissionList[total_index].isView>checked="checked"</#if>>
+                            	<input type="hidden" name="permissionlist[${total_index}].menuId" value="<#if root_menu?? && root_menu.id?? >${root_menu.id!''}</#if>">
+                                <input type="checkbox" name="permissionlist[${total_index}].isView" 
+									<#if tdRole?? && tdRole.permissionList??>
+                                	<#list tdRole.permissionList as permissionList>
+                                		<#if permissionList?? && permissionList.isView?? && permissionList.isView && permissionList.menuId?? && permissionList.menuId == root_menu.id>checked="checked"</#if>
+                                	</#list>
+                                	</#if>
+								>
                                 <label> 显示 </label>
                             </span>
                             <#assign total_index=total_index+1>
@@ -110,13 +117,21 @@ $(function () {
                                 </td>
                                 <td>
                                     <span class="cbllist">
-                                        <input type="checkbox" name="permissionlist[${total_index}].isView" <#if tdRole?? && tdRole.permissionList[total_index]?? && tdRole.permissionList[total_index].isView?? && tdRole.permissionList[total_index].isView>checked="checked"</#if>>
+                                    	<input type="hidden" name="permissionlist[${total_index}].menuId" value="<#if lOneMenu?? && lOneMenu.id?? >${lOneMenu.id!''}</#if>">
+                                        <input type="checkbox" name="permissionlist[${total_index}].isView" 
+											<#if tdRole?? && tdRole.permissionList??>
+                                        	<#list tdRole.permissionList as permissionList>
+                                        		<#if permissionList?? && permissionList.isView?? && permissionList.isView && permissionList.menuId?? && permissionList.menuId == lOneMenu.id>checked="checked"</#if>
+                                        	</#list>
+                                        	</#if>
+										>
                                         <label> 显示 </label>
                                     </span>
                                     <#assign total_index=total_index+1>
                                 </td>
                                 <td align="center"><input name="checkAll" type="checkbox"></td>
                             </tr>
+                            
                             <#if ("level_"+root_menu_index+lOneMenu_index+"_menu_list")?eval??>
                                 <#list ("level_"+root_menu_index+lOneMenu_index+"_menu_list")?eval as lSecondMenu>
                                     <tr>
@@ -128,7 +143,14 @@ $(function () {
                                         </td>
                                         <td>
                                             <span class="cbllist">
-                                                <input type="checkbox" name="permissionlist[${total_index}].isView" <#if tdRole?? && tdRole.permissionList[total_index]?? && tdRole.permissionList[total_index].isView?? && tdRole.permissionList[total_index].isView>checked="checked"</#if>>
+                                                <input type="hidden" name="permissionlist[${total_index}].menuId" value="<#if lSecondMenu?? && lSecondMenu.id?? >${lSecondMenu.id!''}</#if>">
+                                                <input type="checkbox" name="permissionlist[${total_index}].isView" 
+                                                	<#if tdRole?? && tdRole.permissionList??>
+                                                	<#list tdRole.permissionList as permissionList>
+                                                		<#if permissionList?? && permissionList.isView?? && permissionList.isView && permissionList.menuId?? && permissionList.menuId == lSecondMenu.id>checked="checked"</#if>
+                                                	</#list>
+                                                	</#if>
+                                                >
                                                 <label> 显示 </label>
                                                 <input type="checkbox" name="permissionlist[${total_index}].isAdd" <#if tdRole?? && tdRole.permissionList[total_index]?? && tdRole.permissionList[total_index].isAdd?? && tdRole.permissionList[total_index].isAdd>checked="checked"</#if>>
                                                 <label> 新增 </label>
