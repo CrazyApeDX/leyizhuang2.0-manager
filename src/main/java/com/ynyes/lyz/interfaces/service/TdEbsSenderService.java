@@ -36,7 +36,6 @@ import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
 import com.ynyes.lyz.interfaces.entity.TdReturnTimeInf;
 import com.ynyes.lyz.repository.TdAllocationCallRecordRepo;
-import com.ynyes.lyz.repository.TdAllocationRepo;
 import com.ynyes.lyz.repository.TdDiySiteRepo;
 
 import cn.com.leyizhuang.ebs.entity.dto.AllocationDetail;
@@ -81,18 +80,23 @@ public class TdEbsSenderService {
             public void run() {
                 Map<String, Object> result = sendAllocationToEBS(allocation);
                 if (!(Boolean) result.get("success")) {
-                    TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
-                    Date now = new Date();
-                    tdAllocationCallRecord.setAllocationId(allocation.getId());
-                    tdAllocationCallRecord.setContent((String) result.get("content"));
-                    tdAllocationCallRecord.setCreatedTime(now);
-                    tdAllocationCallRecord.setMsg((String) result.get("msg"));
-                    tdAllocationCallRecord.setNumber(allocation.getNumber());
-                    tdAllocationCallRecord.setStatus(1);
-                    tdAllocationCallRecord.setTimes(1);
-                    tdAllocationCallRecord.setType(1);
-                    tdAllocationCallRecord.setUpdatedTime(now);
-                    tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
+                	//包含unique constraint 说明已经调用成功过
+                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
+                		LOGGER.info("调拨出库重复传输");
+                	}else{
+                		TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
+                        Date now = new Date();
+                        tdAllocationCallRecord.setAllocationId(allocation.getId());
+                        tdAllocationCallRecord.setContent((String) result.get("content"));
+                        tdAllocationCallRecord.setCreatedTime(now);
+                        tdAllocationCallRecord.setMsg((String) result.get("msg"));
+                        tdAllocationCallRecord.setNumber(allocation.getNumber());
+                        tdAllocationCallRecord.setStatus(1);
+                        tdAllocationCallRecord.setTimes(1);
+                        tdAllocationCallRecord.setType(1);
+                        tdAllocationCallRecord.setUpdatedTime(now);
+                        tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
+                	}
                 }
             }
         });
@@ -108,18 +112,23 @@ public class TdEbsSenderService {
             public void run() {
                 Map<String, Object> result = sendAllocationReceivedToEBS(allocation);
                 if (!(Boolean) result.get("success")) {
-                    TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
-                    Date now = new Date();
-                    tdAllocationCallRecord.setAllocationId(allocation.getId());
-                    tdAllocationCallRecord.setContent((String) result.get("content"));
-                    tdAllocationCallRecord.setCreatedTime(now);
-                    tdAllocationCallRecord.setMsg((String) result.get("msg"));
-                    tdAllocationCallRecord.setNumber(allocation.getNumber());
-                    tdAllocationCallRecord.setStatus(1);
-                    tdAllocationCallRecord.setTimes(1);
-                    tdAllocationCallRecord.setType(3);
-                    tdAllocationCallRecord.setUpdatedTime(now);
-                    tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
+                	//包含unique constraint 说明已经调用成功过
+                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
+                		LOGGER.info("调拨入库重复传输");
+                	}else{
+                		TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
+                        Date now = new Date();
+                        tdAllocationCallRecord.setAllocationId(allocation.getId());
+                        tdAllocationCallRecord.setContent((String) result.get("content"));
+                        tdAllocationCallRecord.setCreatedTime(now);
+                        tdAllocationCallRecord.setMsg((String) result.get("msg"));
+                        tdAllocationCallRecord.setNumber(allocation.getNumber());
+                        tdAllocationCallRecord.setStatus(1);
+                        tdAllocationCallRecord.setTimes(1);
+                        tdAllocationCallRecord.setType(3);
+                        tdAllocationCallRecord.setUpdatedTime(now);
+                        tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
+                	}
                 }
             }
         });
@@ -134,8 +143,14 @@ public class TdEbsSenderService {
 			public void run() {
 				Map<String, Object> result = sendStorePickUpToEbs(tdOrderReceiveInf);
 				if (!(Boolean) result.get("success")) {
-					tdOrderReceiveInf.setSendFlag(1);
-					tdOrderReceiveInf.setErrorMsg((String) result.get("msg"));
+					//包含unique constraint 说明已经调用成功过
+                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
+                		LOGGER.info("门店自提重复传输");
+                		tdOrderReceiveInf.setSendFlag(0);
+                	}else{
+                		tdOrderReceiveInf.setSendFlag(1);
+                		tdOrderReceiveInf.setErrorMsg((String) result.get("msg"));
+                	}
 				} else {
 					tdOrderReceiveInf.setSendFlag(0);
 				}
@@ -153,8 +168,14 @@ public class TdEbsSenderService {
 			public void run() {
 				Map<String, Object> result = sendStoreReturnToEbs(tdReturnTimeInf);
 				if (!(Boolean) result.get("success")) {
-					tdReturnTimeInf.setSendFlag(1);
-					tdReturnTimeInf.setErrorMsg((String) result.get("msg"));
+					//包含unique constraint 说明已经调用成功过
+                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
+                		LOGGER.info("门店自提重复传输");
+                		tdReturnTimeInfService.save(tdReturnTimeInf);
+                	}else{
+                		tdReturnTimeInf.setSendFlag(1);
+    					tdReturnTimeInf.setErrorMsg((String) result.get("msg"));
+                	}
 				} else {
 					tdReturnTimeInf.setSendFlag(0);
 				}

@@ -402,7 +402,7 @@ public class TdAllocationService {
         LOGGER.info("Resend allocaton header record, count=" + headerRecords.size());
         for (TdAllocationCallRecord record : headerRecords) {
             Map<String, Object> result = tdEbsSenderService.sendFaildAllocationToEBS(record);
-            if ((Boolean) result.get("success")) {
+            if ((Boolean) result.get("success") || String.valueOf(result.get("msg")).contains("ORA-00001")) {
                 tdAllocationCallRecordRepo.delete(record.getId());
             } else {
                 Date now = new Date();
@@ -420,7 +420,7 @@ public class TdAllocationService {
         for (TdAllocationCallRecord record : receiveRecords) {
             if (!faildIds.contains(record.getAllocationId())) {
                 Map<String, Object> result = tdEbsSenderService.sendFaildAllocationToEBS(record);
-                if ((Boolean) result.get("success")) {
+                if ((Boolean) result.get("success") || String.valueOf(result.get("msg")).contains("ORA-00001")) {
                     tdAllocationCallRecordRepo.delete(record.getId());
                 } else {
                     Date now = new Date();
