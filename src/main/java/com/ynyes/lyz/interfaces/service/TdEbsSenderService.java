@@ -80,23 +80,18 @@ public class TdEbsSenderService {
             public void run() {
                 Map<String, Object> result = sendAllocationToEBS(allocation);
                 if (!(Boolean) result.get("success")) {
-                	//包含unique constraint 说明已经调用成功过
-                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
-                		LOGGER.info("调拨出库重复传输");
-                	}else{
-                		TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
-                        Date now = new Date();
-                        tdAllocationCallRecord.setAllocationId(allocation.getId());
-                        tdAllocationCallRecord.setContent((String) result.get("content"));
-                        tdAllocationCallRecord.setCreatedTime(now);
-                        tdAllocationCallRecord.setMsg((String) result.get("msg"));
-                        tdAllocationCallRecord.setNumber(allocation.getNumber());
-                        tdAllocationCallRecord.setStatus(1);
-                        tdAllocationCallRecord.setTimes(1);
-                        tdAllocationCallRecord.setType(1);
-                        tdAllocationCallRecord.setUpdatedTime(now);
-                        tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
-                	}
+            		TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
+                    Date now = new Date();
+                    tdAllocationCallRecord.setAllocationId(allocation.getId());
+                    tdAllocationCallRecord.setContent((String) result.get("content"));
+                    tdAllocationCallRecord.setCreatedTime(now);
+                    tdAllocationCallRecord.setMsg((String) result.get("msg"));
+                    tdAllocationCallRecord.setNumber(allocation.getNumber());
+                    tdAllocationCallRecord.setStatus(1);
+                    tdAllocationCallRecord.setTimes(1);
+                    tdAllocationCallRecord.setType(1);
+                    tdAllocationCallRecord.setUpdatedTime(now);
+                    tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
                 }
             }
         });
@@ -112,23 +107,18 @@ public class TdEbsSenderService {
             public void run() {
                 Map<String, Object> result = sendAllocationReceivedToEBS(allocation);
                 if (!(Boolean) result.get("success")) {
-                	//包含unique constraint 说明已经调用成功过
-                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
-                		LOGGER.info("调拨入库重复传输");
-                	}else{
-                		TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
-                        Date now = new Date();
-                        tdAllocationCallRecord.setAllocationId(allocation.getId());
-                        tdAllocationCallRecord.setContent((String) result.get("content"));
-                        tdAllocationCallRecord.setCreatedTime(now);
-                        tdAllocationCallRecord.setMsg((String) result.get("msg"));
-                        tdAllocationCallRecord.setNumber(allocation.getNumber());
-                        tdAllocationCallRecord.setStatus(1);
-                        tdAllocationCallRecord.setTimes(1);
-                        tdAllocationCallRecord.setType(3);
-                        tdAllocationCallRecord.setUpdatedTime(now);
-                        tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
-                	}
+            		TdAllocationCallRecord tdAllocationCallRecord = new TdAllocationCallRecord();
+                    Date now = new Date();
+                    tdAllocationCallRecord.setAllocationId(allocation.getId());
+                    tdAllocationCallRecord.setContent((String) result.get("content"));
+                    tdAllocationCallRecord.setCreatedTime(now);
+                    tdAllocationCallRecord.setMsg((String) result.get("msg"));
+                    tdAllocationCallRecord.setNumber(allocation.getNumber());
+                    tdAllocationCallRecord.setStatus(1);
+                    tdAllocationCallRecord.setTimes(1);
+                    tdAllocationCallRecord.setType(3);
+                    tdAllocationCallRecord.setUpdatedTime(now);
+                    tdAllocationCallRecordRepo.save(tdAllocationCallRecord);
                 }
             }
         });
