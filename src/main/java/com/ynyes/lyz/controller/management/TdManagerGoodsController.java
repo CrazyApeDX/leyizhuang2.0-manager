@@ -1395,96 +1395,113 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 	@RequestMapping(value = "/diysiteLogDowndata")
 	@ResponseBody
 	public String diysiteLogDowndata(HttpServletRequest req, ModelMap map,HttpServletResponse response, 
-			Long cityCode, Long diyCode,String keywords,Integer type,String begindata,String enddata) {
+			Long cityCode, Long diyCode, String keywords, Integer type, String begindata, String enddata) {
 
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
-		if(type!=null){
-			Date begin = stringToDate(begindata,null);
-			Date end = stringToDate(enddata,null);
-			//设置默认时间
-			if(null==begin){
-				begin=getStartTime();
+		if (type != null) {
+			Date begin = stringToDate(begindata, null);
+			Date end = stringToDate(enddata, null);
+			// 设置默认时间
+			if (null == begin) {
+				begin = getStartTime();
 			}
-			if(null==end){
-				end=getEndTime();
+			if (null == end) {
+				end = getEndTime();
 			}
-			if(type==1){
-				//报表数据
-		    	List<TdDiySiteInventoryLog> diySiteInventoryList = tdDiySiteInventoryLogService.searchList(cityCode,null,keywords,begin,end,type);
+			if (type == 1) {
+				// 报表数据
+				List<TdDiySiteInventoryLog> diySiteInventoryList = tdDiySiteInventoryLogService.searchList(cityCode,
+						null, keywords, begin, end, type);
 				// 第一步，创建一个webbook，对应一个Excel文件
 				HSSFWorkbook wb = new HSSFWorkbook();
 				// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
-				HSSFSheet sheet = wb.createSheet("城市库存明细报表");
-				// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
-				// 列宽
-				int[] widths = { 13, 26, 10, 10, 10, 22, 24, 16, 20, 11, 15, 25, 13, 13, 13, 40, 40 };
-				sheetColumnWidth(sheet, widths);
-
-				// 第四步，创建单元格，并设置值表头 设置表头居中
-				HSSFCellStyle style = wb.createCellStyle();
-				style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
-				style.setWrapText(true);
-
-				// 优惠券名称、金额、领卷时间、领用用户、是否使用、使用的时间、使用订单号
-				HSSFRow row = sheet.createRow((int) 0);
-
-				String[] cellValues = { "产品编号","产品名称", "所属城市", "变更数量","可用量余额","变更时间","单据号","变更类型"};
-				cellDates(cellValues, style, row);
-				Integer i = 0;
-				for (TdDiySiteInventoryLog diySite : diySiteInventoryList) {
-					row = sheet.createRow((int) i + 1);
-					row.createCell(0).setCellValue(objToString(diySite.getGoodsSku()));
-					row.createCell(1).setCellValue(objToString(diySite.getGoodsTitle()));
-					row.createCell(2).setCellValue(objToString(diySite.getRegionName()));
-					row.createCell(3).setCellValue(objToString(diySite.getChangeValue()));
-					row.createCell(4).setCellValue(objToString(diySite.getAfterChange()));
-					row.createCell(5).setCellValue(objToString(diySite.getChangeDate()));
-					row.createCell(6).setCellValue(objToString(diySite.getOrderNumber()));
-					row.createCell(7).setCellValue(objToString(diySite.getChangeType()));
-					i++;
+				int maxRowNum = 60000;
+				int maxSize = 0;
+				if (diySiteInventoryList != null) {
+					maxSize = diySiteInventoryList.size();
 				}
+				int sheets = maxSize / maxRowNum + 1;
+				// 写入excel文件数据信息
+				for (int j = 0; j < sheets; j++) {
+					HSSFSheet sheet = wb.createSheet("城市库存明细报表");
+					// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+					// 列宽
+					int[] widths = { 13, 26, 10, 10, 10, 22, 24, 16, 20, 11, 15, 25, 13, 13, 13, 40, 40 };
+					sheetColumnWidth(sheet, widths);
 
+					// 第四步，创建单元格，并设置值表头 设置表头居中
+					HSSFCellStyle style = wb.createCellStyle();
+					style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+					style.setWrapText(true);
+
+					// 优惠券名称、金额、领卷时间、领用用户、是否使用、使用的时间、使用订单号
+					HSSFRow row = sheet.createRow((int) 0);
+
+					String[] cellValues = { "产品编号", "产品名称", "所属城市", "变更数量", "可用量余额", "变更时间", "单据号", "变更类型" };
+					cellDates(cellValues, style, row);
+					Integer i = 0;
+					for (TdDiySiteInventoryLog diySite : diySiteInventoryList) {
+						row = sheet.createRow((int) i + 1);
+						row.createCell(0).setCellValue(objToString(diySite.getGoodsSku()));
+						row.createCell(1).setCellValue(objToString(diySite.getGoodsTitle()));
+						row.createCell(2).setCellValue(objToString(diySite.getRegionName()));
+						row.createCell(3).setCellValue(objToString(diySite.getChangeValue()));
+						row.createCell(4).setCellValue(objToString(diySite.getAfterChange()));
+						row.createCell(5).setCellValue(objToString(diySite.getChangeDate()));
+						row.createCell(6).setCellValue(objToString(diySite.getOrderNumber()));
+						row.createCell(7).setCellValue(objToString(diySite.getChangeType()));
+						i++;
+					}
+				}
 				String exportAllUrl = SiteMagConstant.backupPath;
 				download(wb, exportAllUrl, response, "城市库存明细报表");
-			}else if(type==2){
-				//报表数据
-		    	List<TdDiySiteInventoryLog> diySiteInventoryList = tdDiySiteInventoryLogService.searchList(null,diyCode,keywords,begin,end,type);
+			} else if (type == 2) {
+				// 报表数据
+				List<TdDiySiteInventoryLog> diySiteInventoryList = tdDiySiteInventoryLogService.searchList(cityCode,
+						diyCode, keywords, begin, end, type);
 				// 第一步，创建一个webbook，对应一个Excel文件
 				HSSFWorkbook wb = new HSSFWorkbook();
 				// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
-				HSSFSheet sheet = wb.createSheet("门店库存明细报表");
-				// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
-				// 列宽
-				int[] widths = { 13, 18, 13, 13, 13, 15, 24, 11, 19, 11, 15, 25, 13, 13, 13, 40, 40 };
-				sheetColumnWidth(sheet, widths);
-
-				// 第四步，创建单元格，并设置值表头 设置表头居中
-				HSSFCellStyle style = wb.createCellStyle();
-				style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
-				style.setWrapText(true);
-
-				// 优惠券名称、金额、领卷时间、领用用户、是否使用、使用的时间、使用订单号
-				HSSFRow row = sheet.createRow((int) 0);
-
-				String[] cellValues = { "产品编号","产品名称", "所属门店", "变更数量","可用量余额","变更时间","单据号","变更类型"};
-				cellDates(cellValues, style, row);
-				Integer i = 0;
-				for (TdDiySiteInventoryLog diySite : diySiteInventoryList) {
-					row = sheet.createRow((int) i + 1);
-					row.createCell(0).setCellValue(objToString(diySite.getGoodsSku()));
-					row.createCell(1).setCellValue(objToString(diySite.getGoodsTitle()));
-					row.createCell(2).setCellValue(objToString(diySite.getDiySiteTitle()));
-					row.createCell(3).setCellValue(objToString(diySite.getChangeValue()));
-					row.createCell(4).setCellValue(objToString(diySite.getAfterChange()));
-					row.createCell(5).setCellValue(objToString(diySite.getChangeDate()));
-					row.createCell(6).setCellValue(objToString(diySite.getOrderNumber()));
-					row.createCell(7).setCellValue(objToString(diySite.getChangeType()));
-					i++;
+				int maxRowNum = 60000;
+				int maxSize = 0;
+				if (diySiteInventoryList != null) {
+					maxSize = diySiteInventoryList.size();
 				}
+				int sheets = maxSize / maxRowNum + 1;
+				for (int j = 0; j < sheets; j++) {
+					HSSFSheet sheet = wb.createSheet("门店库存明细报表");
+					// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+					// 列宽
+					int[] widths = { 13, 18, 13, 13, 13, 15, 24, 11, 19, 11, 15, 25, 13, 13, 13, 40, 40 };
+					sheetColumnWidth(sheet, widths);
 
+					// 第四步，创建单元格，并设置值表头 设置表头居中
+					HSSFCellStyle style = wb.createCellStyle();
+					style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+					style.setWrapText(true);
+
+					// 优惠券名称、金额、领卷时间、领用用户、是否使用、使用的时间、使用订单号
+					HSSFRow row = sheet.createRow((int) 0);
+
+					String[] cellValues = { "产品编号", "产品名称", "所属门店", "变更数量", "可用量余额", "变更时间", "单据号", "变更类型" };
+					cellDates(cellValues, style, row);
+					Integer i = 0;
+					for (TdDiySiteInventoryLog diySite : diySiteInventoryList) {
+						row = sheet.createRow((int) i + 1);
+						row.createCell(0).setCellValue(objToString(diySite.getGoodsSku()));
+						row.createCell(1).setCellValue(objToString(diySite.getGoodsTitle()));
+						row.createCell(2).setCellValue(objToString(diySite.getDiySiteTitle()));
+						row.createCell(3).setCellValue(objToString(diySite.getChangeValue()));
+						row.createCell(4).setCellValue(objToString(diySite.getAfterChange()));
+						row.createCell(5).setCellValue(objToString(diySite.getChangeDate()));
+						row.createCell(6).setCellValue(objToString(diySite.getOrderNumber()));
+						row.createCell(7).setCellValue(objToString(diySite.getChangeType()));
+						i++;
+					}
+				}
 				String exportAllUrl = SiteMagConstant.backupPath;
 				download(wb, exportAllUrl, response, "门店库存明细报表");
 
