@@ -114,6 +114,7 @@ public class TdDiySiteInventoryLogService {
 	public List<TdDiySiteInventoryLog> searchList(Long regionId, Long diyId, String keywords, Date startTime,
 			Date endDate, Integer type) {
 		Criteria<TdDiySiteInventoryLog> c = new Criteria<TdDiySiteInventoryLog>();
+		String cityName = "";
 		if (type == 1) {
 			if (regionId != null) {
 				c.add(Restrictions.eq("regionId", regionId, true));
@@ -138,6 +139,20 @@ public class TdDiySiteInventoryLogService {
 		if (endDate != null) {
 			c.add(Restrictions.lte("changeDate", endDate, true));
 		}
+		if(type == 1){
+			c.add(Restrictions.notLike("changeType", "门店", true));
+		}
+		if(type == 2){
+			if(regionId == 2033L){
+				cityName = "郑州市";
+			}else if(regionId == 2121L){
+				cityName = "成都市";
+			}else {
+				cityName = "重庆市";
+			}
+			c.add(Restrictions.like("regionName", cityName, true));
+		}
+		
 		c.setOrderByAsc("goodsSku");
 		return repository.findAll(c);
 	}
