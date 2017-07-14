@@ -507,6 +507,30 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	Page<TdGoods> queryAllOrderBySortIdAsc(List<Long> priceListIdList, List<Long> categoryIdList, String keywords,
 			Pageable page);
 
+	@Query("select g from TdDiySiteInventory i, TdGoods g"
+			+ " where i.goodsId=g.id and i.inventory>0"
+			+ " and i.diySiteId=?1"
+			+ " group by g.code")
+	Page<TdGoods> queryAllByDiySiteId(Long diySiteId, Pageable page);
+	
+	@Query("select g from TdDiySiteInventory i, TdGoods g"
+			+ " where i.goodsId=g.id and i.inventory>0"
+			+ " and i.diySiteId=?1 and g.categoryId=?2"
+			+ " group by g.code")
+	Page<TdGoods> queryAllByDiySiteIdAndCategoryId(Long diySiteId, Long categoryId, Pageable page);
+	
+	@Query("select g from TdDiySiteInventory i, TdGoods g"
+			+ " where i.goodsId=g.id and i.inventory>0"
+			+ " and i.diySiteId=?1 and (g.title like %?2% or g.code like %?2% )"
+			+ " group by g.code")
+	Page<TdGoods> queryAllByDiySiteIdAndKeywords(Long diySiteId, String keywords, Pageable page);
+	
+	@Query("select g from TdDiySiteInventory i, TdGoods g"
+			+ " where i.goodsId=g.id and i.inventory>0"
+			+ " and i.diySiteId=?1 and g.categoryId=?2 and (g.title like %?3% or g.code like %?3% )"
+			+ " group by g.code")
+	Page<TdGoods> queryAllByDiySiteIdAndCategoryIdAndKeywords(Long diySiteId, Long categoryId, String keywords, Pageable page);
+
 	/**
 	 * 优惠卷商品查询
 	 * 

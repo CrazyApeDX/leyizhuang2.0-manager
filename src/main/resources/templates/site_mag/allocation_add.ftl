@@ -17,28 +17,26 @@ $(function () {
     
     // 添加产品
     $("#addGoods").click(function(){
-        showDialogCombination();
+    	var diySiteId = $('#allocationFrom').val();
+    	if(diySiteId=="") {
+    		alert('亲，请选择调出门店');
+    	} else {
+        	showDialogCombination(diySiteId);
+        }
     });
     
     //创建商品组合窗口
-    function showDialogCombination(obj) {
-        var objNum = arguments.length;
-        
+    function showDialogCombination(diySiteId) {
         var combinationDialog = $.dialog({
             id: 'combinationDialogId',
             lock: true,
             max: false,
             min: false,
             title: "选择产品",
-            content: 'url:/Verwalter/goods/list/dialog/allocation?total=' + $("#var_box_comb").children("tr").length+'&cityId='+$('#cityId').val(),
+            content: 'url:/Verwalter/goods/list/dialogForAllocation?total=' + $("#var_box_comb").children("tr").length+'&diySiteId='+diySiteId,
             width: 800,
             height: 550
         });
-        
-        //如果是修改状态，将对象传进去
-        if (objNum == 1) {
-            combinationDialog.data = obj;
-        }
     }
     
     //删除商品组合节点
@@ -46,25 +44,6 @@ $(function () {
         $(obj).parent().parent().remove();
     }
 });
-
-//创建商品组合窗口
-function show_goods_comb_dialog(obj) {
-    var objNum = arguments.length;
-    var zengpinDialog = $.dialog({
-        id: 'zengpinhDialogId',
-        lock: true,
-        max: false,
-        min: false,
-        title: "活动赠品",
-        content: 'url:/Verwalter/goods/list/dialog/allocation',
-        width: 800,
-        height: 550
-    });
-    //如果是修改状态，将对象传进去
-    if (objNum == 1) {
-        zengpinDialog.data = obj;
-    }
-}
     
 //删除促销商品节点
 function del_goods_gift(obj) {
@@ -73,6 +52,8 @@ function del_goods_gift(obj) {
 }
 
 function checkDetail() {
+	var goodRepeatFlag = false;
+	var repeatMsg = "";
 	var validateFlag = true;
 	var trs = $("#var_box_comb").find("tr");
 	if(trs.length==0) {
@@ -80,17 +61,58 @@ function checkDetail() {
 		return false;
 	}
 	
+	var goodSkus = new Array();
+	var details = new Array();
+	var goodSku;
 	var re = /^[0-9]+.?[0-9]*$/;
 	trs.each(function(i,n){
-		var num = $(n).find(".number").val();
+		var num = $(n).find("#num").val();
 		if(num=='' || num==0 || !re.test(num)) {
 			validateFlag = false;
 		}
+		goodSku = $(n).find("#goodSku").val();
+		if(!goodRepeatFlag && $.inArray(goodSku, goodSkus) >= 0) {
+			goodRepeatFlag = true;
+			repeatMsg = "亲，【" + goodSku + "】商品重复，请删除！";
+		}
+		goodSkus.push(goodSku);
+		details.push({
+			goodId: $(n).find("#goodId").val(),
+			goodTitle: $(n).find("#goodTitle").val(),
+			goodSku: goodSku,
+			num: num
+		});
 	});
+	
+	if(goodRepeatFlag) {
+		alert(repeatMsg);
+		return false;
+	}
+	
 	if(!validateFlag) {
 		alert('亲，数量必须为数字且不能为0');
+	} else {
+		var tdAllocation = {
+			cityId: $('#cityId').val(),
+			cityName: $('#cityName').val(),
+			allocationFrom: $('#allocationFrom').val(),
+			comment: $("#comment").val(),
+			details: details
+		};
+		$.post("/Verwalter/allocation/save", {
+			"tdAllocationJson" : JSON.stringify(tdAllocation),
+		}, function(result) {
+			alert(result.msg);
+			if(result.code==0) {
+				location.href='/Verwalter/allocation/list';
+			} else if(result.code==1) {
+				location.href='/Verwalter/login';
+			} else {
+			
+			}
+		});
 	}
-	return validateFlag;
+	return false;
 }
 
 //删除商品组合节点
@@ -99,23 +121,17 @@ function del_goods_comb(obj) {
     $("#totalComb").val(parseInt($("#totalComb").val())-1);
 }
 
-  <#if fns??>
-  	$(document).ready(function(){
-  		alert("保存成功");
-  		location.href='/Verwalter/allocation/list';
-  	});
-  </#if>
 </script>
 </head>
 <body class="mainbody">
-<form method="post" action="/Verwalter/allocation/save" id="form1" onsubmit="return checkDetail();">
+<form method="post" action="/Verwalter/allocation/xxx" id="form1" onsubmit="return checkDetail();">
 <div>
 <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}" />
 <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}" />
 <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="${__VIEWSTATE!""}" />
 </div>
 <input id="cityId" name="cityId" type="text" value='${cityId!""}' style="display:none">
-<input name="cityName" type="text" value='${cityName!""}' style="display:none">
+<input id="cityName" name="cityName" type="text" value='${cityName!""}' style="display:none">
 <!--导航栏-->
 <div class="location">
     <a href="/Verwalter/center" class="home">
@@ -141,7 +157,7 @@ function del_goods_comb(obj) {
             <dt>调出门店</dt>
             <dd>
                 <div class="rule-single-select">
-                    <select name="allocationFrom" datatype="*" sucmsg=" ">
+                    <select id="allocationFrom" name="allocationFrom" datatype="*" sucmsg=" ">
 						<option value="">请选择</option>
                         <#list diySites as c>
                             <option value="${c.id?c}" >${c.title!''}</option>
@@ -153,7 +169,7 @@ function del_goods_comb(obj) {
         <dl>
             <dt>备注</dt>
             <dd>
-                <input name="comment" type="text" value="" class="input normal" sucmsg=" ">
+                <input id="comment" name="comment" type="text" value="" class="input normal" sucmsg=" ">
             </dd>
         </dl>
         

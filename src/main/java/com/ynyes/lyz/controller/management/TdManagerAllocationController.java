@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSON;
 import com.beust.jcommander.internal.Lists;
 import com.beust.jcommander.internal.Maps;
 import com.common.util.DateUtil;
@@ -241,22 +242,24 @@ public class TdManagerAllocationController {
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String save(TdAllocation tdAllocation, Long[] diySiteIds, String __EVENTTARGET, String __EVENTARGUMENT,
-			String __VIEWSTATE, String menuId, String channelId, ModelMap map, Boolean isRecommendIndex, Boolean isRecommendType,
-			Boolean isHot, Boolean isNew, Boolean isSpecialPrice, HttpServletRequest req) {
+	@ResponseBody
+	public Map<String, Object> save(String tdAllocationJson, HttpServletRequest req) {
+		Map<String, Object> result = Maps.newHashMap();
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
-			return "redirect:/Verwalter/login";
+			result.put("code", 1);
+			result.put("msg", "登录已过期，请重新登陆！");
+			return result;
 		}
-
-		String type = null;
-		if (null == tdAllocation.getId()) {
-			type = "add";
-			// 获取管理员信息
-			TdManager tdManager = tdManagerService.findByUsernameAndIsEnableTrue(username);
-			if (tdManager == null || tdManager.getDiyCode() == null) {
-				return "redirect:/Verwalter/login";
-			}
+		// 获取管理员信息
+		TdManager tdManager = tdManagerService.findByUsernameAndIsEnableTrue(username);
+		if (tdManager == null || tdManager.getDiyCode() == null) {
+			result.put("code", 1);
+			result.put("msg", "登录已过期，请重新登陆！");
+			return result;
+		}
+		try {
+			TdAllocation tdAllocation = JSON.parseObject(tdAllocationJson, TdAllocation.class);
 			TdDiySite diy = tdDiySiteService.findByStoreCode(tdManager.getDiyCode());
 			tdAllocation.setNumber(this.getAllocationNumber());
 			Long allocationFromId = tdAllocation.getAllocationFrom();
@@ -269,17 +272,17 @@ public class TdManagerAllocationController {
 			tdAllocation.setAllocationTo(diy.getId());
 			tdAllocation.setAllocationToName(diy.getTitle());
 			tdAllocationService.insert(tdAllocation, username);
-		} else {
-			type = "edit";
-			tdAllocationService.update(tdAllocation, username);
+			result.put("code", 0);
+			result.put("msg", "操作成功！");
+		} catch (Exception e) {
+			LOGGER.error("新建调拨单错误, err=" + e.getMessage(), e);
+			result.put("code", -1);
+			result.put("msg", "系统正忙，请稍后重试！");
 		}
 
-		tdManagerLogService.addLog(type, "用户修改调拨单", req);
+		tdManagerLogService.addLog("add", "用户新建调拨单", req);
 
-		// 保存成功提示
-		Long fns = 1L;
-
-		return "redirect:/Verwalter/allocation/add?fns=" + fns + "&id=" + tdAllocation.getId();
+		return result;
 	}
 
 	@RequestMapping(value = "/cancel", method = RequestMethod.POST)
@@ -337,7 +340,7 @@ public class TdManagerAllocationController {
 				result.put("code", 3);
 				result.put("msg", e.getMessage());
 			} else {
-				LOGGER.error("调拨单出库错误, err=" + e.getMessage(), e);
+				LOGGER.error("调拨单出库错误,id=" + id + ", err=" + e.getMessage(), e);
 				result.put("code", -1);
 				result.put("msg", "系统正忙，请稍后重试！");
 			}
@@ -367,7 +370,7 @@ public class TdManagerAllocationController {
 				result.put("msg", "调拨单未出库，不允许入库！");
 			}
 		} catch (Exception e) {
-			LOGGER.error("调拨单入库错误, err=" + e.getMessage(), e);
+			LOGGER.error("调拨单入库错误,id=" + id + ", err=" + e.getMessage(), e);
 			result.put("code", -1);
 			result.put("msg", "系统正忙，请稍后重试！");
 		}
