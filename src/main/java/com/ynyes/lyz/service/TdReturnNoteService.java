@@ -20,8 +20,10 @@ import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderInf;
+import com.ynyes.lyz.interfaces.entity.TdReturnOrderInf;
 import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
 import com.ynyes.lyz.interfaces.service.TdOrderInfService;
+import com.ynyes.lyz.interfaces.service.TdReturnOrderInfService;
 import com.ynyes.lyz.repository.TdReturnNoteRepo;
 import com.ynyes.lyz.strategy.refund.ReturnNoteStrategyFactory;
 import com.ynyes.lyz.util.Criteria;
@@ -45,6 +47,9 @@ public class TdReturnNoteService {
 
 	@Autowired
 	private TdOrderInfService tdOrderInfService;
+	
+	@Autowired
+	private TdReturnOrderInfService tdReturnOrderInf;
 
 	@Autowired
 	private TdCashRefundInfService tdCashRefundService;
@@ -449,6 +454,7 @@ public class TdReturnNoteService {
 		}
 
 		TdOrderInf tdOrderInf = tdOrderInfService.findByOrderNumber(returnNote.getOrderNumber());
+		TdReturnOrderInf returnOrderInf = tdReturnOrderInf.findByReturnNumber(returnNote.getReturnNumber());
 
 		List<TdCashRefundInf> result = new ArrayList<>();
 		Date now = new Date();
@@ -480,8 +486,9 @@ public class TdReturnNoteService {
 			cashRefund.setUserphone(tdOrderInf.getUserphone());
 			cashRefund.setDiySiteCode(tdOrderInf.getDiySiteCode());
 			cashRefund.setRefundClass("经销差价");
-			cashRefund.setRtHeaderId(tdOrderInf.getHeaderId());
-			cashRefund.setReturnNumber(tdOrderInf.getOrderNumber());
+			cashRefund.setOrderHeaderId(tdOrderInf.getHeaderId());
+			cashRefund.setRtHeaderId(returnOrderInf.getRtHeaderId());
+			cashRefund.setReturnNumber(returnOrderInf.getReturnNumber());
 			cashRefund.setProductType("JXDIF");
 			cashRefund.setRefundType("预收款");
 			cashRefund.setRefundDate(now);
