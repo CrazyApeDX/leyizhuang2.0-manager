@@ -1283,96 +1283,111 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 	@RequestMapping(value = "/diysiteDowndata")
 	@ResponseBody
 	public String diysiteDowndata(HttpServletRequest req, ModelMap map,HttpServletResponse response, 
-			Long cityCode, Long diyCode,String keywords,Integer type) {
+			Long cityCode, Long diyCode, String keywords, Integer type) {
 
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
-		
-		Map<Long, String> brandMap = new HashMap<>();
-		
-		List<TdGoods> goodsList=tdGoodsService.findAll();
-		
-		for (TdGoods tdGoods : goodsList)
-		{
-			brandMap.put(tdGoods.getId(), tdGoods.getBrandTitle());
-		}
-		
-		
-		if(type!=null){
-			
-			if(type==1){
-				//报表数据
-		    	List<TdDiySiteInventory> diySiteInventoryList = tdDiySiteInventoryService.searchList(cityCode,null,keywords,type);
+
+		if (type != null) {
+
+			if (type == 1) {
+				// 报表数据4
+				List<Object> diySiteInventoryList = tdDiySiteInventoryService.findCityInventoryDownloadList(cityCode,
+						keywords);
 				// 第一步，创建一个webbook，对应一个Excel文件
 				HSSFWorkbook wb = new HSSFWorkbook();
 				// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
-				HSSFSheet sheet = wb.createSheet("城市库存报表");
-				// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
-				// 列宽
-				int[] widths = { 13, 18, 13, 13, 13, 15, 13, 11, 19, 11, 15, 25, 13, 13, 13, 40, 40 };
-				sheetColumnWidth(sheet, widths);
-
-				// 第四步，创建单元格，并设置值表头 设置表头居中
-				HSSFCellStyle style = wb.createCellStyle();
-				style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
-				style.setWrapText(true);
-				
-				HSSFRow row = sheet.createRow((int) 0);
-
-				String[] cellValues = { "城市","品牌","商品编码", "商品名称", "数量"};
-				cellDates(cellValues, style, row);
-				Integer i = 0;
-				
-				for (TdDiySiteInventory diySite : diySiteInventoryList) {
-					row = sheet.createRow((int) i + 1);
-					row.createCell(0).setCellValue(objToString(diySite.getRegionName()));
-					row.createCell(1).setCellValue(objToString(brandMap.get(diySite.getGoodsId())));
-					row.createCell(2).setCellValue(objToString(diySite.getGoodsCode()));
-					row.createCell(3).setCellValue(objToString(diySite.getGoodsTitle()));
-					row.createCell(4).setCellValue(objToString(diySite.getInventory()));
-					i++;
+				int maxRowNum = 60000;
+				int maxSize = 0;
+				if (diySiteInventoryList != null) {
+					maxSize = diySiteInventoryList.size();
 				}
+				int sheets = maxSize / maxRowNum + 1;
+				// 写入excel文件数据信息
+				for (int j = 0; j < sheets; j++) {
+					HSSFSheet sheet = wb.createSheet("城市库存报表"+j);
+					// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+					// 列宽
+					int[] widths = { 15, 15, 18, 25, 10 };
+					sheetColumnWidth(sheet, widths);
 
+					// 第四步，创建单元格，并设置值表头 设置表头居中
+					HSSFCellStyle style = wb.createCellStyle();
+					style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+					style.setWrapText(true);
+
+					HSSFRow row = sheet.createRow((int) 0);
+
+					String[] cellValues = { "城市", "品牌", "商品编码", "商品名称", "数量" };
+					cellDates(cellValues, style, row);
+					for (int k = 0; k < maxRowNum; k++) {
+						if (k + j * maxRowNum >= maxSize) {
+							break;
+						}
+						Object inventory = diySiteInventoryList.get(k);
+						Object[] cells = (Object[]) inventory;
+						row = sheet.createRow((int) k + 1);
+						row.createCell(0).setCellValue(objToString(cells[0]));
+						row.createCell(1).setCellValue(objToString(cells[1]));
+						row.createCell(2).setCellValue(objToString(cells[2]));
+						row.createCell(3).setCellValue(objToString(cells[3]));
+						row.createCell(4).setCellValue(objToString(cells[4]));
+
+					}
+
+				}
 				String exportAllUrl = SiteMagConstant.backupPath;
 				download(wb, exportAllUrl, response, "城市库存报表");
-			}else if(type==2){
-				//报表数据
-				List<TdDiySiteInventory> diySiteInventoryList = tdDiySiteInventoryService.searchList(null,diyCode,keywords,type);
+			} else if (type == 2) {
+				// 报表数据
+				List<Object> diySiteInventoryList = tdDiySiteInventoryService.findStoreInventoryDownList(cityCode,
+						diyCode, keywords);
 				// 第一步，创建一个webbook，对应一个Excel文件
 				HSSFWorkbook wb = new HSSFWorkbook();
-				// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
-				HSSFSheet sheet = wb.createSheet("门店库存报表");
-				// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
-				// 列宽
-				int[] widths = { 13, 18, 13, 13, 13, 15, 13, 11, 19, 11, 15, 25, 13, 13, 13, 40, 40 };
-				sheetColumnWidth(sheet, widths);
-
-				// 第四步，创建单元格，并设置值表头 设置表头居中
-				HSSFCellStyle style = wb.createCellStyle();
-				style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
-				style.setWrapText(true);
-
-				// 优惠券名称、金额、领卷时间、领用用户、是否使用、使用的时间、使用订单号
-				HSSFRow row = sheet.createRow((int) 0);
-
-				String[] cellValues = { "门店名称","品牌","商品编码", "商品名称", "数量"};
-				cellDates(cellValues, style, row);
-				Integer i = 0;
-				for (TdDiySiteInventory diySite : diySiteInventoryList) {
-					row = sheet.createRow((int) i + 1);
-					row.createCell(0).setCellValue(objToString(diySite.getDiySiteName()));
-					row.createCell(1).setCellValue(objToString(brandMap.get(diySite.getGoodsId())));
-					row.createCell(2).setCellValue(objToString(diySite.getGoodsCode()));
-					row.createCell(3).setCellValue(objToString(diySite.getGoodsTitle()));
-					row.createCell(4).setCellValue(objToString(diySite.getInventory()));
-					i++;
+				int maxRowNum = 60000;
+				int maxSize = 0;
+				if (diySiteInventoryList != null) {
+					maxSize = diySiteInventoryList.size();
 				}
+				int sheets = maxSize / maxRowNum + 1;
+				// 写入excel文件数据信息
+				for (int j = 0; j < sheets; j++) {
+					// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+					HSSFSheet sheet = wb.createSheet("门店库存报表"+j);
+					// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+					// 列宽
+					int[] widths = { 15, 15, 18, 25, 10 };
+					sheetColumnWidth(sheet, widths);
 
+					// 第四步，创建单元格，并设置值表头 设置表头居中
+					HSSFCellStyle style = wb.createCellStyle();
+					style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+					style.setWrapText(true);
+
+					// 优惠券名称、金额、领卷时间、领用用户、是否使用、使用的时间、使用订单号
+					HSSFRow row = sheet.createRow((int) 0);
+
+					String[] cellValues = { "门店名称", "品牌", "商品编码", "商品名称", "数量" };
+					cellDates(cellValues, style, row);
+					for (int k = 0; k < maxRowNum; k++) {
+						if (k + j * maxRowNum >= maxSize) {
+							break;
+						}
+						Object diySite = diySiteInventoryList.get(k);
+						Object cells[] = (Object[]) diySite;
+						row = sheet.createRow((int) k + 1);
+						row.createCell(0).setCellValue(objToString(cells[0]));
+						row.createCell(1).setCellValue(objToString(cells[1]));
+						row.createCell(2).setCellValue(objToString(cells[2]));
+						row.createCell(3).setCellValue(objToString(cells[3]));
+						row.createCell(4).setCellValue(objToString(cells[4]));
+
+					}
+				}
 				String exportAllUrl = SiteMagConstant.backupPath;
 				download(wb, exportAllUrl, response, "门店库存报表");
-
 			}
 		}
 
