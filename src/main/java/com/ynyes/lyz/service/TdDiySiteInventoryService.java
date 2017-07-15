@@ -514,6 +514,19 @@ public class TdDiySiteInventoryService {
 		return repository.findAll(c);
 	}
 	
+	public List<Object> findCityInventoryDownloadList(Long regionId,String keywords) {
+		String regiondIdStr = null;
+		if(null == regionId || "".equals(regionId)){
+			regiondIdStr = "%";
+		}else{
+			regiondIdStr = regionId.toString();
+		}
+		if(null == keywords || "".equals(keywords) ){
+			keywords = "%";
+		}
+		return repository.findDownList(regiondIdStr,keywords);
+	}
+	
 	public TdDiySiteInventory findByGoodsIdAndRegionIdAndDiySiteIdIsNull(Long goodsId, Long regionId) {
 		if (null == goodsId || null == regionId) {
 			return null;
@@ -541,5 +554,25 @@ public class TdDiySiteInventoryService {
 		// 日志
 		tdDiySiteInventoryLogService.fitmentCreateLog("订单修改", goods, quantity, orderNumber, regionId, manager,
 				inventory.getInventory(), type);
+	}
+
+	public List<Object> findStoreInventoryDownList(Long cityCode, Long diyCode, String keywords) {
+		String cityCodeStr = null;
+		String diyCodeStr = null;
+		
+		if(null == cityCode || "".equals(cityCode)){
+			cityCodeStr = "%";
+		}else{
+			cityCodeStr = cityCode.toString();
+		}
+		if(null == diyCode || "".equals(diyCode)){
+			diyCodeStr = "%";
+		}else{
+			diyCodeStr = diyCode.toString();
+		}
+		if(null == keywords || "".equals(keywords)){
+			keywords = "%";
+		}
+		return repository.findStoreInventoryDownList(cityCodeStr,diyCodeStr,keywords);
 	}
 }

@@ -58,4 +58,41 @@ public interface TdDiySiteInventoryRepo
 	@Modifying
 	@Query("update TdDiySiteInventory o set o.inventory = o.inventory + ?3 where o.diySiteId = ?1 and o.goodsId = ?2")
 	int updateInventory(Long diySiteId, Long goodId, Long inventory);
+	
+	@Query(value=" SELECT DISTINCT "
+			+" 	i.region_name, "
+			+" 	g.brand_title, "
+			+" 	i.goods_code, "
+			+" 	i.goods_title, "
+			+" 	IFNULL(i.inventory,0) "
+			+" FROM "
+			+" 	td_diy_site_inventory i "
+			+" LEFT JOIN td_goods g ON i.goods_id = g.id "
+			+" WHERE "
+			+" i.region_id LIKE ?1 "
+			+" AND i.diy_site_id IS NULL "
+			+" AND ( "
+			+" 	i.goods_title LIKE ?2 "
+			+" 	OR i.goods_code LIKE ?2 "
+			+" ); ",nativeQuery=true)
+	List<Object> findDownList(String regionId, String keywords);
+	
+	@Query(value=" SELECT DISTINCT "
+			+" 	i.diy_site_name, "
+			+" 	g.brand_title, "
+			+" 	i.goods_code, "
+			+" 	i.goods_title, "
+			+" 	IFNULL(i.inventory, 0) "
+			+" FROM "
+			+" 	td_diy_site_inventory i "
+			+" LEFT JOIN td_goods g ON i.goods_id = g.id "
+			+" WHERE "
+			+" 	i.region_id LIKE ?1 "
+			+" AND i.diy_site_id IS NOT NULL "
+			+" AND i.diy_site_id LIKE ?2 "
+			+" AND ( "
+			+" 	i.goods_title LIKE ?3 "
+			+" 	OR i.goods_code LIKE ?3 "
+			+" ); ",nativeQuery=true)
+	List<Object> findStoreInventoryDownList(String cityCodeStr, String diyCodeStr, String keywords);
 }
