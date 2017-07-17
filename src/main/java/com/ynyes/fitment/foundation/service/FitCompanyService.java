@@ -15,6 +15,8 @@ public interface FitCompanyService {
 	FitCompany findOne(Long companyId);
 
 	Page<FitCompany> findAll(Integer page, Integer size) throws Exception;
+	
+	Page<FitCompany> findAllAddConditionDeliveryType(Integer page, Integer size,String keyWords,String frozen) throws Exception;
 
 	List<FitCompany> findAll() throws Exception;
 

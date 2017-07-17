@@ -1,8 +1,11 @@
 package com.ynyes.fitment.web.controller.management;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,10 +32,30 @@ public class FitManagementEmployeeController {
 
 	@Autowired
 	private FitCompanyService fitCompanyService;
+	
+	
+	
+	@Autowired
+	private TdDiySiteRoleService tdDiySiteRoleService;
 
 	@RequestMapping(value = "/list", produces = "text/html;charset=utf-8")
-	public String employeeList(ModelMap map, Integer page, Integer size, String __EVENTTARGET, String __EVENTARGUMENT,
-			String __VIEWSTATE) {
+	public String employeeList(HttpServletRequest req,ModelMap map, Integer page, Integer size, String __EVENTTARGET, String __EVENTARGUMENT,
+			String __VIEWSTATE,String keyWords,String cityTitle,String companyTitle,String isMain) {
+		String username = (String) req.getSession().getAttribute("manager");
+
+		if (null == username) {
+			return "redirect:/Verwalter/login";
+		}
+		
+		// 获取管理员管辖城市
+		List<TdCity> cityList = tdDiySiteRoleService.getUserRoleCity(username);
+		//获取fit公司
+		List<FitCompany> companyList = new ArrayList<FitCompany>();
+		try {
+			companyList = fitCompanyService.findAll();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
 		
 		if (null != __EVENTTARGET) {
 			switch (__EVENTTARGET) {
@@ -48,13 +71,20 @@ public class FitManagementEmployeeController {
 		page = null == page ? Global.DEFAULT_PAGE : page;
 		size = null == size ? Global.DEFAULT_SIZE : size;
 		try {
-			employeePage = this.fitEmployeeService.findAll(page, size);
+			employeePage = this.fitEmployeeService.findAllAddConditionDeliveryType(page, size, keyWords, cityTitle, companyTitle, isMain);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		map.addAttribute("cityList", cityList);
+		map.addAttribute("companyList", companyList);
 		map.addAttribute("employeePage", employeePage);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
+		map.addAttribute("keyWords", keyWords);
+		map.addAttribute("cityTitle", cityTitle);
+		map.addAttribute("companyTitle", companyTitle);
+		map.addAttribute("isMain", isMain);
+		
 		return "/fitment/management/employee_list";
 	}
 

@@ -75,6 +75,23 @@
 						</li>
 						-->
 					</ul>
+					<div class="menu-list">
+						<div class="odiv" style="float: left; width: 300px;">
+							<span class="span1">是否冻结：</span>
+							<div class="rule-single-select">
+								<select name="frozen" id="frozen" onchange="javascript:setTimeout(__doPostBack('',''), 0)">
+									<option value="">请选择</option>
+									<option value="0" <#if frozen?? && frozen=="0">selected</#if>>否</option>
+									<option value="1" <#if frozen?? && frozen=="1">selected</#if>>是</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="r-list">
+					  <input name="keyWords" type="text" class="keyword" value="${keyWords!"" }">
+					  <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a> 
 				</div>
 			</div>
 		</div>
