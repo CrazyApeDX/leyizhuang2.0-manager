@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,8 @@ import com.ynyes.fitment.core.service.PageableService;
 import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.repo.FitCompanyRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
+import com.ynyes.lyz.util.Criteria;
+import com.ynyes.lyz.util.Restrictions;
 
 @Service
 @Transactional
@@ -76,5 +79,31 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 			return this.fitCompanyRepo.findFitCompanyBySobId(sobIdList);
 		}
 		return null;
+	}
+	
+	/**
+	 * 查询条件分页  == 2017-07-13 == panjie == 包括 ‘名称’、‘编码’、‘是否冻结’等 查询条件
+	 */
+	@Override
+	public Page<FitCompany> findAllAddConditionDeliveryType(Integer page, Integer size, String keyWords,
+			String frozen) throws Exception {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Criteria<FitCompany> c = new Criteria<FitCompany>();
+		
+		if (null != keyWords && !"".equals(keyWords)) {
+			//去掉前后空格
+			keyWords = keyWords.trim();
+			c.add(Restrictions.or(Restrictions.like("name", keyWords, true),Restrictions.like("code", keyWords, true)));
+		}
+		
+		if (null != frozen && !"".equals(frozen)) {
+			boolean b = true;
+			if(frozen.equals("0")){
+				b = false;
+			}
+			c.add(Restrictions.eq("frozen", b, true));
+		}
+		c.setOrderByDesc("createTime");
+		return this.fitCompanyRepo.findAll(c,pageRequest);
 	}
 }
