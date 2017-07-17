@@ -179,6 +179,8 @@ $(function () {
     //创建商品组合窗口
     function showDialogCombination(obj) {
         var objNum = arguments.length;
+        var hidden_username=$("#hidden_username").val();
+        console.log(hidden_username);
         
         var combinationDialog = $.dialog({
             id: 'combinationDialogId',
@@ -186,7 +188,7 @@ $(function () {
             max: false,
             min: false,
             title: "商品组合",
-            content: 'url:/Verwalter/buy/coupon/by/seller/dialog?username=' + $("#username").val(),
+            content: 'url:/Verwalter/buy/coupon/by/seller/dialog?username=' + hidden_username,
             width: 800,
             height: 550
         });
@@ -196,6 +198,8 @@ $(function () {
             combinationDialog.data = obj;
         }
     }
+    
+     
     
     //删除商品组合节点
     function delCombinationNode(obj) {
@@ -310,6 +314,108 @@ function show_goods_comb_dialog(obj) {
         zengpinDialog.data = obj;
     }
 }
+
+//选择买券用户
+    function showUserSelection(obj) {
+    	if(null != $("#realName")){
+    		$("#realName").remove();
+    	}
+    	if(null != $("#username")){
+    		$("#username").remove();
+    	}
+        var objNum = arguments.length;
+        
+        var combinationDialog = $.dialog({
+            id: 'combinationDialogId',
+            lock: true,
+            max: false,
+            min: false,
+            title: "选择会员信息",
+            content: 'url:/Verwalter/buy/coupon/by/seller/dialog/user?username=' + $("#username").val(),
+            width: 800,
+            height: 550
+        });
+        
+        //如果是修改状态，将对象传进去
+        if (objNum == 1) {
+            combinationDialog.data = obj;
+        }
+    }
+    
+//选择代买券导购
+    function showSellerSelection(obj) {
+    	if(null != $("#sellerRealName")){
+    		$("#sellerRealName").remove();
+    	}
+    	if(null != $("#sellerUsername")){
+    		$("#sellerUsername").remove();
+    	}
+        var objNum = arguments.length;
+        
+        var combinationDialog = $.dialog({
+            id: 'combinationDialogId',
+            lock: true,
+            max: false,
+            min: false,
+            title: "选择导购信息",
+            content: 'url:/Verwalter/buy/coupon/by/seller/dialog/seller?username='+$("#hidden_username").val(),
+            width: 800,
+            height: 550
+        });
+        
+        //如果是修改状态，将对象传进去
+        if (objNum == 1) {
+            combinationDialog.data = obj;
+        }
+    }
+
+//查看赠品
+    function showPresents() {
+    	var ids = [];
+	    var numbers = [];
+	    var coupons = [];
+	    var totalPrice = 0.00;
+	    var pos = 0.00;
+	    var cash = 0.00;		
+	    var username = $("#hidden_username").val();
+		var sellerUsername = $("#hidden_seller_username").val();			
+		if (!username || !sellerUsername || username.length != 11 || sellerUsername.length != 11) {
+		   $("#btnSubmit").attr("onclick", "getInfo();");
+		   return; 			
+		 }    		
+		 ids = [];   		
+		 numbers = [];   		
+		 coupons = [];
+		 var idArray = $("input[name='combList[${comb_index!'0'}].goodsId']");
+		 if (!idArray || idArray.length == 0) {
+		    $("#btnSubmit").attr("onclick", "getInfo();");
+		    return;
+		 }   	
+		 var numberArray = $("input[name='combList[${comb_index!'0'}].number']");   		
+		 var couponArray = $("input[name='combList[${comb_index!'0'}].couponNumber']");   		
+		 for(var i = 0; i < idArray.length; i++) {
+		    ids.push(idArray[i].value);
+			numbers.push(numberArray[i].value);
+			if (numberArray[i].value < couponArray[i].value) {
+				coupons.push(numberArray[i].value);
+				couponArray[i].value = numberArray[i].value;
+			} else {
+				coupons.push(couponArray[i].value);
+			}			
+		 }   		
+		 var remark = $("#remark").val();    		
+       	
+       	 var combinationDialog = $.dialog({
+            id: 'combinationDialogId',
+            lock: true,
+            max: false,
+            min: false,
+            title: "查看促销赠品",
+            content: 'url:/Verwalter/buy/coupon/by/seller/get/present?sellerUsername='+sellerUsername+'&username='+username+'&ids='+ids+'&numbers='+numbers+'&coupons='+coupons,
+            width: 800,
+            height: 550
+        });
+    }            
     
 //删除促销商品节点
 function del_goods_gift(obj) {
@@ -340,6 +446,8 @@ function checkDate(){
 <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}" />
 <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}" />
 <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="${__VIEWSTATE!""}" />
+<input type="hidden" id="hidden_username" name="hidden_username" />
+<input type="hidden" id="hidden_seller_username" name="hidden_seller_username" />
 </div>
 <input name="menuId" type="text" value='${mid!""}' style="display:none;">
 <input name="channelId" type="text" value='${cid!""}' style="display:none">
@@ -368,15 +476,19 @@ function checkDate(){
     </div>
     <div id="id-first-tab" class="tab-content" style="display: block;">
         <dl>
-            <dt>用户姓名</dt>
-            <dd id="realName"></dd>
-        </dl>
-        <dl>
-            <dt>用户手机号码</dt>
+            <dt>搜索用户</dt>
             <dd>
-                <input name="username" id="username" type="mobile" class="input normal" onblur="getRealName(0);">
+                <input name="search_user" id="search_user" type="text" class="input normal" onfocus="showUserSelection(this.username)">
                 <span class="Validform_checktip"></span>
             </dd>
+        </dl>
+        <dl id="user_name">
+            <dt>用户姓名:</dt>
+            <#--<dd id="realName"></dd>-->
+        </dl>
+        <dl id="user_phone">
+            <dt>用户手机号码:</dt>
+            <#--<dd id="realName"></dd>-->
         </dl>
         <script>
         	var getRealName = function(type) {
@@ -409,21 +521,28 @@ function checkDate(){
         		}
         	}
         </script>
-        <dl>
-            <dt>销顾姓名</dt>
-            <dd id="sellerName"></dd>
-        </dl>
-        <dl>
-            <dt>销顾手机号码</dt>
+         <dl>
+            <dt>搜索导购</dt>
             <dd>
-                <input name="sellerUsername" id="sellerUsername" type="mobile" class="input normal" onblur="getRealName(1);">
+                <input name="search_seller" id="search_seller" type="text" class="input normal" onfocus="showSellerSelection(this.username)">
                 <span class="Validform_checktip"></span>
             </dd>
         </dl>
+        <dl id="seller_name">
+            <dt>导购姓名:</dt>
+            <#--<dd id="seller"></dd>-->
+        </dl>
+        <dl id="seller_phone">
+            <dt>导购手机号码:</dt>
+            <#--<dd id="realName"></dd>-->
+        </dl>
+       
         <dl>
             <dt>购买产品券</dt>
             <dd>
                 <a id="addGoods" class="icon-btn add"><i></i><span>添加商品</span></a>
+                <span class="Validform_checktip"></span>
+                <a id="queryPresent" class="icon-btn i" onclick="showPresents();"><i></i><span>查看赠品</span></a>
                 <span class="Validform_checktip"></span>
             </dd>
         </dl>
@@ -514,8 +633,8 @@ function checkDate(){
 		    	
 	    			$("#btnSubmit").removeAttr("onclick");
 	    			
-		    		var username = $("#username").val();
-		    		var sellerUsername = $("#sellerUsername").val();
+		    		var username = $("#hidden_username").val();
+		    		var sellerUsername = $("#hidden_seller_username").val();
 		    		
 		    		if (!username || !sellerUsername || username.length != 11 || sellerUsername.length != 11) {
 		    			$("#btnSubmit").attr("onclick", "getInfo();");
@@ -646,8 +765,8 @@ function checkDate(){
 						
 			if (Number(cash) + Number(pos) + Number(other) === Number(money)) {
 			
-				var username = $("#username").val();
-	    		var sellerUsername = $("#sellerUsername").val();
+				var username = $("#hidden_username").val();
+		    	var sellerUsername = $("#hidden_seller_username").val();
 			
 				if (count === 1) {
 					$.ajax({

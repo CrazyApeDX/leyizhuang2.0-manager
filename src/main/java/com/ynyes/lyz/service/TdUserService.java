@@ -470,4 +470,55 @@ public class TdUserService {
 		}
 		return repository.findByUpperDiySiteIdAndIsEnableTrue(upperDiySiteId);
 	}
+
+	public Page<TdUser> findByUsernameContainingOrRealNameContaining(String keywords, Integer page, Integer size) {
+		if (null == keywords) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		return repository.findByUsernameContainingOrRealNameContaining(keywords, keywords,
+				pageRequest);
+	}
+
+
+
+	public Page<TdUser> findByUsernameContainingOrRealNameContainingAndUserTypeIn(String keywords, Integer page,
+			Integer size, List<Long> userTypeList) {
+		if (null == keywords) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		return repository.findByUsernameContainingOrRealNameContainingAndUserTypeIn(keywords, keywords,
+				pageRequest,userTypeList);
+	}
+
+	public Page<TdUser> findByUsernameContainingOrRealNameContainingAndDiyCodeAndUserTypeIn(String keywords,
+			Integer page, Integer size, String diyCode, List<Long> userTypeList) {
+		if (null == keywords) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		return repository.findByUsernameContainingOrRealNameContainingAndDiyCodeAndUserTypeIn(keywords, keywords,
+				pageRequest,diyCode,userTypeList);
+	}
+
+	public Page<TdUser> findByUsernameContainingOrRealNameContainingAndCityAndUserTypeIn(String keywords, Integer page,
+			Integer size, String cityName, List<Long> userTypeList) {
+		if (null == keywords) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		return repository.findByUsernameContainingOrRealNameContainingAndCityNameAndUserTypeIn(keywords, keywords,
+				pageRequest,cityName,userTypeList);
+	}
+
+	public Page<TdUser> findByUsernameContainingOrRealNameContainingAndUserType(String keywords, Integer page,
+			Integer size, long userType) {
+		if (null == keywords) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		return repository.findByUsernameContainingOrRealNameContainingAndUserType(keywords, keywords,
+				pageRequest,userType);
+	}
 }
