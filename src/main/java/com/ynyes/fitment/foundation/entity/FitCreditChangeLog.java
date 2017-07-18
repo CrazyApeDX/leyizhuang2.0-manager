@@ -257,4 +257,12 @@ public class FitCreditChangeLog extends TableEntity {
 		this.totalBalance = totalBalance;
 		return this;
 	}
+
+	public String getOperatorUserName() {
+		return operatorUserName;
+	}
+
+	public void setOperatorUserName(String operatorUserName) {
+		this.operatorUserName = operatorUserName;
+	}
 }
