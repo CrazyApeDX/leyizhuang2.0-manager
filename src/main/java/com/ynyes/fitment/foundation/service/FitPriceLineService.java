@@ -13,4 +13,6 @@ public interface FitPriceLineService {
 	FitPriceLine findByEbsId(Long ebsId);
 
 	FitPriceLine save(FitPriceLine line);
+
+	Page<FitPriceLine> findByGoodsSkuContaining(String keywords, int page, int size);
 }

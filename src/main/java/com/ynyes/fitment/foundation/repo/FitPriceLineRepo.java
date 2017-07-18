@@ -31,4 +31,13 @@ public interface FitPriceLineRepo extends ApplicationRepo<FitPriceLine> {
 			Date startTime2);
 
 	FitPriceLine findByEbsId(Long ebsId);
+
+	/**
+	 *  根据商品SKU模糊查询装饰公司商品价目(分页)
+	 * @param keywords
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	Page<FitPriceLine> findByGoodsSkuContaining(String keywords,Pageable pageable);
 }

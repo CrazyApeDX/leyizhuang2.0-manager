@@ -70,7 +70,7 @@
 	        			<select name="companyId" id="companyId" datatype="n">
 	            			<#if companyList??>
 	                			<#list companyList as item>
-	                    			<option <#if user??&&user.companyId?? && item.id==user.companyId>selected="selected"</#if> value="${item.id?c}">${item.name!''}</option>
+	                    			<option <#if employee?? && employee.companyId?? && item.id == employee.companyId>selected="selected"</#if> value="${item.id?c}">${item.name!''}</option>
 	                			</#list>
 	            			</#if>
 	        			</select>
