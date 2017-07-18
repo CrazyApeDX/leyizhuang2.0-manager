@@ -55,6 +55,10 @@ public class FitPromotionMoneyLog extends TableEntity {
 	// 操作人id
 	@Column(nullable = false, updatable = false)
 	private Long operatorId;
+	
+	// 操作人账号
+	@Column(nullable = false, updatable = false)
+	private String operatorUserName;
 
 	// 操作描述
 	@Column(length = 255, updatable = false, nullable = false)
@@ -252,5 +256,13 @@ public class FitPromotionMoneyLog extends TableEntity {
 	public FitPromotionMoneyLog setTotalBalance(Double totalBalance) {
 		this.totalBalance = totalBalance;
 		return this;
+	}
+	
+	public String getOperatorUserName() {
+		return operatorUserName;
+	}
+
+	public void setOperatorUserName(String operatorUserName) {
+		this.operatorUserName = operatorUserName;
 	}
 }

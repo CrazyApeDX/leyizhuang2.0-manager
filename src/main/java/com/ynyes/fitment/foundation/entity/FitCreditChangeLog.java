@@ -55,6 +55,10 @@ public class FitCreditChangeLog extends TableEntity {
 	// 操作人id
 	@Column(nullable = false, updatable = false)
 	private Long operatorId;
+	
+	// 操作人账号
+	@Column(nullable = false, updatable = false)
+	private String operatorUserName;
 
 	// 操作描述
 	@Column(length = 255, updatable = false, nullable = false)
