@@ -25,7 +25,7 @@ public class FitPromotionMoneyLog extends TableEntity {
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double beforeChange;
 
-	// 变更后余额
+	// 变更后信用余额
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double afterChange;
 
@@ -56,7 +56,7 @@ public class FitPromotionMoneyLog extends TableEntity {
 	@Column(nullable = false, updatable = false)
 	private Long operatorId;
 
-	// 备注
+	// 操作描述
 	@Column(length = 255, updatable = false, nullable = false)
 	private String remark = "";
 
@@ -67,6 +67,31 @@ public class FitPromotionMoneyLog extends TableEntity {
 	// 相关装饰公司ID
 	@Column(nullable = false, updatable = false)
 	private Long companyId;
+	
+	// 相关装饰公司编码
+	@Column(nullable = false, updatable = false)
+	private Long companyCode;
+	
+	// 到账日期
+	@Column(nullable = false, updatable = false)
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date arrivalTime;
+	
+	//手写备注
+	@Column(nullable = false, updatable = false)
+	private String writtenRemarks;
+	
+	//城市
+	@Column(nullable = false, updatable = false)
+	private String city;
+	
+	// 变更后现金返利余额
+	@Column(scale = 2, nullable = false, updatable = false)
+	private Double afterChangePromotion;
+	
+	// 总余额
+	@Column(scale = 2, nullable = false, updatable = false)
+	private Double totalBalance;
 
 	public Double getBeforeChange() {
 		return beforeChange;
@@ -83,6 +108,7 @@ public class FitPromotionMoneyLog extends TableEntity {
 
 	public FitPromotionMoneyLog setAfterChange(Double afterChange) {
 		this.afterChange = afterChange;
+		this.totalBalance = this.afterChangePromotion + this.afterChange;
 		return this;
 	}
 
@@ -171,5 +197,60 @@ public class FitPromotionMoneyLog extends TableEntity {
 		StringBuffer buffer = new StringBuffer("MO").append(FORMATTER.format(new Date()))
 				.append((int) (Math.random() * 900) + 100);
 		return buffer.toString();
+	}
+
+	public Long getCompanyCode() {
+		return companyCode;
+	}
+
+	public FitPromotionMoneyLog setCompanyCode(Long companyCode) {
+		this.companyCode = companyCode;
+		return this;
+	}
+
+	public Date getArrivalTime() {
+		return arrivalTime;
+	}
+
+	public FitPromotionMoneyLog setArrivalTime(Date arrivalTime) {
+		this.arrivalTime = arrivalTime;
+		return this;
+	}
+
+	public String getWrittenRemarks() {
+		return writtenRemarks;
+	}
+
+	public FitPromotionMoneyLog setWrittenRemarks(String writtenRemarks) {
+		this.writtenRemarks = writtenRemarks;
+		return this;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public FitPromotionMoneyLog setCity(String city) {
+		this.city = city;
+		return this;
+	}
+
+	public Double getAfterChangePromotion() {
+		return afterChangePromotion;
+	}
+
+	public FitPromotionMoneyLog setAfterChangePromotion(Double afterChangePromotion) {
+		this.afterChangePromotion = afterChangePromotion;
+		this.totalBalance = this.afterChangePromotion + this.afterChange;
+		return this;
+	}
+
+	public Double getTotalBalance() {
+		return totalBalance;
+	}
+
+	public FitPromotionMoneyLog setTotalBalance(Double totalBalance) {
+		this.totalBalance = totalBalance;
+		return this;
 	}
 }
