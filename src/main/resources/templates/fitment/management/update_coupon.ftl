@@ -57,48 +57,7 @@ $(function () {
     
     $("#btnEditRemark").click(function () { EditOrderRemark(); });    //修改积分备注 
     
-    $("#cityId").change(function(){
-    var cid = $("#cityId").val();
-        $.ajax({
-		url: "/Verwalter/user/change_city", 
-		type: "post",
-		dataType: "json",
-		data: {"cid": cid},
-		error: function (XMLHttpRequest, textStatus, errorThrown) {
-                },
-		success: function(data)
-		{	
-			 $("#upperDiySiteId").empty();
-			 $("#upperDiySiteId").append("<option value=''>请选择门店</option>");
-        	 $.each(data.site_list, function(i,val){
-        	 $("#upperDiySiteId").append("<option value='"+val.id+"'>"+val.title+"</option>");      
-             });
-        	 
-  		}
-	});
-        $("#diySiteId").css("display","block");
-    });
-    $("#diySiteId").change(function(){
-        var diy = $("#upperDiySiteId").val();
-            $.ajax({
-    		url: "/Verwalter/user/change_diy", 
-    		type: "post",
-    		dataType: "json",
-    		data: {"did": diy},
-    		error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    },
-    		success: function(data)
-    		{	
-    			 $("#sellerId").empty();
-    			 $("#sellerId").append("<option value=''>请选择导购</option>");
-            	 $.each(data.user_list, function(i,val){
-            	 $("#sellerId").append("<option value='"+val.id+"'>"+val.realName+"</option>");      
-                 });
-            	 
-      		}
-    	});
-            $("#sellerdl").css("display","block");
-        });
+    
 	    $("input[name='userType']").click(function(){
 	    	var userTypeChecked= $(this).val();
 	    	if(userTypeChecked==5){
@@ -111,68 +70,7 @@ $(function () {
 	    		$("#opUserDl").hide();
 	    	}
         });
-});   
-
- //修改粮草备注
-        function EditOrderRemark() {
-            var dialog = $.dialog({
-                title: '修改积分备注',
-                content: '<input type="checkbox" name="showtype" id="showtype" checked="checked"/><label> 仅后台显示</label> </br><textarea id="pointRemark" name="txtPointRemark" rows="2" cols="20" class="input"></textarea>',
-                min: false,
-                max: false,
-                lock: true,
-                ok: function () {
-                    var showtype = $("#showtype", parent.document).is(':checked');                    
-                    var remark = $("#pointRemark", parent.document).val();                   
-                    if (remark == "") {
-                        $.dialog.alert('对不起，请输入备注内容！', function () { }, dialog);
-                        return false;
-                    }
-                    var userId = eval(document.getElementById("userId")).value;
-                    var point = eval(document.getElementById("totalPoints")).value;
-                    var postData = { "userId": userId, "totalPoints": point, "data": remark, "type":"editPoint", "isBackgroundShow": showtype};
-                    //发送AJAX请求
-                    sendAjaxUrl(dialog, postData, "/Verwalter/user/param/edit");
-                    return false;
-                },
-                cancel: true
-            });
-        }
-    	//发送AJAX请求
-        function sendAjaxUrl(winObj, postData, sendUrl) {
-            $.ajax({
-                type: "post",
-                url: sendUrl,
-                data: postData,
-                dataType: "json",
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    $.dialog.alert('尝试发送失败，错误信息：' + errorThrown, function () { }, winObj);
-                },
-                success: function (data) {
-                    if (data.code == 0) {
-                        winObj.close();
-                        $.dialog.tips(data.msg, 2, '32X32/succ.png', function () { location.reload(); }); //刷新页面
-                    } else {
-                        $.dialog.alert('错误提示：' + data.message, function () { }, winObj);
-                    }
-                }
-            });
-        }   
-    
-        function changeBalance(){
-        	var ocashBalance=$('#ocashBalance').val();
-        	var ounCashBalance=$('#ounCashBalance').val();
-        	if(isNaN(ocashBalance)){
-        		//alert('可提现预存款必须是数字!');
-        		return;
-        	}
-			if(isNaN(ounCashBalance)){
-				//alert('不可提现预存款必须是数字!');
-				return;
-        	}
-			$('#obalance').val(parseFloat(parseFloat(ocashBalance)+parseFloat(ounCashBalance)).toFixed(2));
-        }
-
+	});   
 		</script>
 		</head>
 		
@@ -213,7 +111,6 @@ $(function () {
 				<dt>装饰公司名称</dt>
 				<dd>
 					<#if company??>${company.name!""}</#if>
-					<input name="name" type="text" value="<#if company??>${company.name!""}</#if>">
 				</dd>
 			</dl>
 				
@@ -221,15 +118,14 @@ $(function () {
 				<dt>装饰公司编码</dt>
 				<dd>
 					<#if company??>${company.code!""}</#if>
-					<input name="code" type="text" value="<#if company??>${company.code!""}</#if>">
+					<input name="code" type="hidden" value="<#if company??>${company.code!""}</#if>">
 				</dd>
 			</dl>
 			
 			<dl>
 				<dt>当前现金返利余额</dt>
 				<dd>
-					<#if company??>${company.promotionMoney!0.00}</#if>
-					<input name="promotionMoney" type="text" value="<#if company??>${company.promotionMoney!0.00}</#if>">
+					<#if company??>￥${company.promotionMoney?string("0.00")}</#if>
 				</dd>
 			</dl>
 				
@@ -240,36 +136,34 @@ $(function () {
 			            <option value="现金返利账户充值">现金返利账户充值</option>
 			        </select>
 			   	 </dd>
-			  </dl>
-		  
-		<dl>
-		    <dt>充值金额</dt>
-		    <dd>
-		     <dd><input name="money" id="money" type="text" value="0.00" class="input normal"></dd>
-		    </dd>
-		</dl>
+			</dl>
+			<dl>
+			    <dt>充值金额</dt>
+			    <dd>
+			     <dd><input name="money" id="money" type="number" value="" class="input normal"></dd>
+			    </dd>
+			</dl>
 			
-		  <dl>
-		    <dt>到账时间</dt>
-		    <dd>
-		      <div class="input-date">
-		        <input name="arrivalTime" type="text" value="" class="input date" onfocus="WdatePicker({dateFmt:&#39;yyyy-MM-dd&#39;})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
-		        <i>日期</i>
-		      </div>
-		    </dd>
-		</dl>  
-			
-		<dl>
-			<dt>备注</dt>
-			<dd>
-				<textarea id="writtenRemarks" style="resize:none;" name="writtenRemarks" rows="2" cols="20" class="input"></textarea>
-				<span class="Validform_checktip">255个字符以内</span>
-			</dd>
-		</dl>
-		<dl>
-			<dt>管理员密码</dt>
-			<dd><input name="password" id="password" type="password" class="input normal"></dd>
-		</dl>
+		  	<dl>
+			    <dt>到账时间</dt>
+			    <dd>
+			      <div class="input-date">
+			        <input name="arrivalTime" id="arrivalTime" type="text" value="" class="input date" onfocus="WdatePicker({dateFmt:&#39;yyyy-MM-dd&#39;})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
+			        <i>日期</i>
+			      </div>
+			    </dd>
+			</dl>  
+			<dl>
+				<dt>备注</dt>
+				<dd>
+					<textarea id="writtenRemarks" style="resize:none;" name="writtenRemarks" rows="2" cols="20" class="input"></textarea>
+					<span class="Validform_checktip">255个字符以内</span>
+				</dd>
+			</dl>
+			<dl>
+				<dt>管理员密码</dt>
+				<dd><input name="password" id="password" type="password" class="input normal"></dd>
+			</dl>
 </div> 
 
 <!--工具栏-->
@@ -287,13 +181,31 @@ $(function () {
 <script type="text/javascript">
 	var validate = function() {
 		var money = $("#money").val();
-	
+		var arrivalTime = $("#arrivalTime").val();
 		var remark = $("#remark").val();
 		var password = $('#password').val();
 		var writtenRemarks = $('#writtenRemarks').val();
+		var myDate = new Date();   
+		var d1 = new Date(Date.parse(arrivalTime));
+		var time = new Date((d1/1000+86400)*1000);
+		
 		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert("请输入一个正确的数字");
+			return;
+		}
+		if(money.indexOf(".") != -1){;
+ 			money = money.substr(0,money.indexOf(".")+3);
+ 		}
+		if (money == 0) {
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("请输入一个有效的数字");
+			return;
+		}
+		$("#money").val(money);
+		if(myDate > time){
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("请输入大于当前的日期");
 			return;
 		}
 		if (!password) {

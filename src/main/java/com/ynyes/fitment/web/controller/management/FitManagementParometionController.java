@@ -231,8 +231,8 @@ public class FitManagementParometionController {
 	}
 	
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String userBalanceChangeSave(HttpServletRequest req, Double money, Double promotionMoney, 
-			String name, String remark, String writtenRemarks, String code, String arrivalTime ) {
+	public String userBalanceChangeSave(HttpServletRequest req, Double money, 
+			String remark, String writtenRemarks, String code, String arrivalTime ) {
 		String managerUsername = (String) req.getSession().getAttribute("manager");
 		TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(managerUsername);
 		if (null == manager) {
@@ -275,6 +275,12 @@ public class FitManagementParometionController {
 		try {
 			this.fitCompanyService.save(company);
 			this.fitPromotionMoneyLogService.save(log);
+			if (money > 0) {
+				this.fitPromotionMoneyLogService.doReceipt(company, money);
+			} else {
+				this.fitPromotionMoneyLogService.doRefund(company, money);
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
