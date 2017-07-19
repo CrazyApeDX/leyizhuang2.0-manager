@@ -43,9 +43,8 @@ public class FitPromotionMoneyLog extends TableEntity {
 	private String referenceNumber;
 
 	// 变更类型
-	@Column(length = 10, nullable = false, updatable = false)
-	@Enumerated(EnumType.STRING)
-	private CreditChangeType type;
+	@Column(length = 20, nullable = false, updatable = false)
+	private String type;
 
 	// 操作人类型
 	@Column(length = 10, nullable = false, updatable = false)
@@ -74,12 +73,11 @@ public class FitPromotionMoneyLog extends TableEntity {
 	
 	// 相关装饰公司编码
 	@Column(nullable = false, updatable = false)
-	private Long companyCode;
+	private String companyCode;
 	
 	// 到账日期
 	@Column(nullable = false, updatable = false)
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date arrivalTime;
+	private String arrivalTime;
 	
 	//手写备注
 	@Column(nullable = false, updatable = false)
@@ -112,6 +110,9 @@ public class FitPromotionMoneyLog extends TableEntity {
 
 	public FitPromotionMoneyLog setAfterChange(Double afterChange) {
 		this.afterChange = afterChange;
+		if (null == this.afterChangePromotion) {
+			this.afterChangePromotion = 0d;
+		}
 		this.totalBalance = this.afterChangePromotion + this.afterChange;
 		return this;
 	}
@@ -143,11 +144,11 @@ public class FitPromotionMoneyLog extends TableEntity {
 		return this;
 	}
 
-	public CreditChangeType getType() {
+	public String getType() {
 		return type;
 	}
 
-	public FitPromotionMoneyLog setType(CreditChangeType type) {
+	public FitPromotionMoneyLog setType(String type) {
 		this.type = type;
 		return this;
 	}
@@ -203,20 +204,20 @@ public class FitPromotionMoneyLog extends TableEntity {
 		return buffer.toString();
 	}
 
-	public Long getCompanyCode() {
+	public String getCompanyCode() {
 		return companyCode;
 	}
 
-	public FitPromotionMoneyLog setCompanyCode(Long companyCode) {
+	public FitPromotionMoneyLog setCompanyCode(String companyCode) {
 		this.companyCode = companyCode;
 		return this;
 	}
 
-	public Date getArrivalTime() {
+	public String getArrivalTime() {
 		return arrivalTime;
 	}
 
-	public FitPromotionMoneyLog setArrivalTime(Date arrivalTime) {
+	public FitPromotionMoneyLog setArrivalTime(String arrivalTime) {
 		this.arrivalTime = arrivalTime;
 		return this;
 	}
@@ -245,6 +246,9 @@ public class FitPromotionMoneyLog extends TableEntity {
 
 	public FitPromotionMoneyLog setAfterChangePromotion(Double afterChangePromotion) {
 		this.afterChangePromotion = afterChangePromotion;
+		if (null == this.afterChange) {
+			this.afterChange = 0d;
+		}
 		this.totalBalance = this.afterChangePromotion + this.afterChange;
 		return this;
 	}

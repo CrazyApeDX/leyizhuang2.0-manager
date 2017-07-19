@@ -177,7 +177,7 @@ $(function () {
 		</head>
 		
 		<body class="mainbody">
-		<form name="form_user" method="post" action="/Verwalter/user/balance/change/save" id="form">
+		<form name="form_user" method="post" action="/Verwalter/fitment/promotion/save" id="form">
 		<div>
 		<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="${__VIEWSTATE!""}" >
 		<input type="hidden" id="userId" name="userId" value="<#if user??>${user.id?c!""}</#if>" >
@@ -212,39 +212,40 @@ $(function () {
 			<dl>
 				<dt>装饰公司名称</dt>
 				<dd>
-					
+					<#if company??>${company.name!""}</#if>
+					<input name="name" type="text" value="<#if company??>${company.name!""}</#if>">
 				</dd>
 			</dl>
-			
+				
 			<dl>
 				<dt>装饰公司编码</dt>
 				<dd>
-					
+					<#if company??>${company.code!""}</#if>
+					<input name="code" type="text" value="<#if company??>${company.code!""}</#if>">
 				</dd>
 			</dl>
 			
 			<dl>
 				<dt>当前现金返利余额</dt>
 				<dd>
-					
+					<#if company??>${company.promotionMoney!0.00}</#if>
+					<input name="promotionMoney" type="text" value="<#if company??>${company.promotionMoney!0.00}</#if>">
 				</dd>
 			</dl>
 				
 			<dl>
 			    <dt>充值类型</dt>
 			    <dd>
-				        <select name="changeType" id="changeType" datatype="n">
-				            <option value="">请选择变更类型</option>
-				            <option value="1">回款银行1充值</option>
-				            <option value="2">回款银行2充值</option>
-				        </select>
+			        <select name="remark" id="remark" datatype="n">
+			            <option value="现金返利账户充值">现金返利账户充值</option>
+			        </select>
 			   	 </dd>
 			  </dl>
 		  
 		<dl>
 		    <dt>充值金额</dt>
 		    <dd>
-		     <dd><input name="money" id="money" type="text" class="input normal"></dd>
+		     <dd><input name="money" id="money" type="text" value="0.00" class="input normal"></dd>
 		    </dd>
 		</dl>
 			
@@ -252,7 +253,7 @@ $(function () {
 		    <dt>到账时间</dt>
 		    <dd>
 		      <div class="input-date">
-		        <input name="transferTime" type="text" value="" class="input date" onfocus="WdatePicker({dateFmt:&#39;yyyy-MM-dd&#39;})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
+		        <input name="arrivalTime" type="text" value="" class="input date" onfocus="WdatePicker({dateFmt:&#39;yyyy-MM-dd&#39;})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
 		        <i>日期</i>
 		      </div>
 		    </dd>
@@ -261,7 +262,7 @@ $(function () {
 		<dl>
 			<dt>备注</dt>
 			<dd>
-				<textarea id="remark" style="resize:none;" name="remark" rows="2" cols="20" class="input"></textarea>
+				<textarea id="writtenRemarks" style="resize:none;" name="writtenRemarks" rows="2" cols="20" class="input"></textarea>
 				<span class="Validform_checktip">255个字符以内</span>
 			</dd>
 		</dl>
@@ -285,42 +286,34 @@ $(function () {
 
 <script type="text/javascript">
 	var validate = function() {
+		var money = $("#money").val();
 	
-		var cashBalance = $("#cashBalance").val();
-		var unCashBalance = $("#unCashBalance").val();
-	
-		if (Number(cashBalance) + Number(<#if cashBalance??>${cashBalance?string("0.00")}<#else>0.00</#if>) < 0) {
-			alert("用户可提现预存款不足以扣减");
-			return;
-		}
-		
-		if (Number(unCashBalance) + Number(<#if unCashBalance??>${unCashBalance?string("0.00")}<#else>0.00</#if>) < 0) {
-			alert("用户不可提现预存款不足以扣减");
-			return;
-		}
-	
-		$("#btnSubmit").removeAttr("onclick");
 		var remark = $("#remark").val();
 		var password = $('#password').val();
-		var changeType = $('#changeType').val();
+		var writtenRemarks = $('#writtenRemarks').val();
+		if (isNaN(money)) {
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("请输入一个正确的数字");
+			return;
+		}
 		if (!password) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
-			alert('请输入管理员密码');
+			$.dialog.alert('请输入管理员密码');
 			return;
-		}else if (remark.length > 255) {
+		}else if (writtenRemarks.length > 255) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
-			alert('备注的长度不能超过255个字符');
+			$.dialog.alert('备注的长度不能超过255个字符');
 			return;
-		}else if(!changeType){
+		}else if(!remark){
 			$("#btnSubmit").attr("onclick","javascript:validate();");
-			alert('请选择变更类型');
+			$.dialog.alert('请选择变更类型');
 			return;
 		}else {
 			$.ajax({
-				url : '#',
+				url : '/Verwalter/fitment/promotion/manager/check',
 				type : 'POST',
 				data : {
-					'username' : ${username!''},
+					'id' : ${company.id},
 					'password' : password
 				},
 				error : function() {

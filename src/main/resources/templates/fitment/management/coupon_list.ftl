@@ -112,61 +112,7 @@
 			                </td>
 			                
 			                <td align="center">
-			                	<a href="/Verwalter/fitment/company/test2">变更</a>
-			                	
-								<script type="text/javascript">
-									var creditChange = function(id) {
-										$.dialog.prompt("请输入信用金变更值", function(text) {
-											if (isNaN(text)) {
-												$.dialog.alert("请输入一个正确的数字");
-												return;
-											} else {
-												$.ajax({
-													url: "/Verwalter/fitment/company/credit",
-													method: "POST",
-													data: {
-														id: id,
-														credit: text
-													},
-													success: function(res) {
-														if (res.actionCode === "SUCCESS") {
-															window.location.href = "/Verwalter/fitment/company/list";
-														} else {
-															$.dialog.alert(res.content);
-														}
-													}
-												})
-											}
-										});
-									}
-									
-									
-									var PromotionChange = function(id) {
-										$.dialog.prompt("请输入信用金变更值", function(text) {
-											if (isNaN(text)) {
-												$.dialog.alert("请输入一个正确的数字");
-												return;
-											} else {
-												$.ajax({
-													url: "/Verwalter/fitment/company/promotionMoney",
-													method: "POST",
-													data: {
-														id: id,
-														promotionMoney: text
-													},
-													success: function(res) {
-														if (res.actionCode === "SUCCESS") {
-															window.location.href = "/Verwalter/fitment/company/list";
-														} else {
-															$.dialog.alert(res.content);
-														}
-													}
-												})
-											}
-										});
-									}
-									
-								</script>			                	
+			                	<a href="/Verwalter/fitment/promotion/goUpdate?id=${item.id?c}">变更</a>
 			                </td>
 			            </tr>
         			</#list>

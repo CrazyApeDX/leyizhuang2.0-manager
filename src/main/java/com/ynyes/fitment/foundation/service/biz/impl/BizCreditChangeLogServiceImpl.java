@@ -65,7 +65,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setBeforeChange(company.getCredit() + order.getBalancePayed() + order.getUpstairsBalancePayed())
 				.setAfterChange(company.getCredit())
 				.setMoney(-1 * (order.getBalancePayed() + order.getUpstairsBalancePayed())).setChangeTime(new Date())
-				.setReferenceNumber(order.getOrderNumber()).setType(CreditChangeType.CONSUME)
+				.setReferenceNumber(order.getOrderNumber())//.setType(CreditChangeType.CONSUME)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(order.getEmployeeId()).setRemark("订单消费")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
@@ -78,7 +78,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getCredit() - orderCancel.getCredit()).setAfterChange(company.getCredit())
 				.setMoney(orderCancel.getCredit()).setChangeTime(new Date())
-				.setReferenceNumber(orderCancel.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.CANCEL)
+				.setReferenceNumber(orderCancel.getOrderNumber().replace("FIT", ""))//.setType(CreditChangeType.CANCEL)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(orderCancel.getAuditorId()).setRemark("订单取消")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
@@ -91,7 +91,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getCredit() - orderRefund.getCredit()).setAfterChange(company.getCredit())
 				.setMoney(orderRefund.getCredit()).setChangeTime(new Date())
-				.setReferenceNumber(orderRefund.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.REFUND)
+				.setReferenceNumber(orderRefund.getOrderNumber().replace("FIT", ""))//.setType(CreditChangeType.REFUND)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(orderRefund.getAuditorId()).setRemark("订单退货")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
@@ -185,7 +185,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getCredit() - inputCredit).setAfterChange(company.getCredit()).setMoney(inputCredit)
 				.setChangeTime(new Date()).setReferenceNumber(log.initManagerOperateNumber())
-				.setType(inputCredit < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
+				//.setType(inputCredit < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
 				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
@@ -201,7 +201,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getPromotionMoney() - inputPromotionMoney).setAfterChange(company.getPromotionMoney()).setMoney(inputPromotionMoney)
 				.setChangeTime(new Date()).setReferenceNumber(log.initManagerOperateNumber())
-				.setType(inputPromotionMoney < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
+				//.setType(inputPromotionMoney < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
 				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitPromotionMoneyLogRepo.save(log);
