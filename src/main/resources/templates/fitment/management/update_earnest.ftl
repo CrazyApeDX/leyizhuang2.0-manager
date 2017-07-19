@@ -177,7 +177,7 @@ $(function () {
 		</head>
 		
 		<body class="mainbody">
-		<form name="form_user" method="post" action="/Verwalter/user/balance/change/save" id="form">
+		<form name="form_user" method="post" action="/Verwalter/fitment/earnest/save/update" id="form">
 		<div>
 		<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="${__VIEWSTATE!""}" >
 		<input type="hidden" id="userId" name="userId" value="<#if user??>${user.id?c!""}</#if>" >
@@ -212,21 +212,24 @@ $(function () {
 			<dl>
 				<dt>装饰公司编码</dt>
 				<dd>
-					
+					<span><#if company??>${company.code!''}（${company.code!''}）</#if></span>
+					<input type="hidden" value="<#if company??>${company.code!''}</#if>" name="companyCode">
 				</dd>
 			</dl>
 			
 			<dl>
 				<dt>装饰公司名称</dt>
 				<dd>
-					
+					<span><#if company??>${company.name!''}（${company.name!''}）</#if></span>
+					<input type="hidden" value="<#if company??>${company.name!''}</#if>" name="companyName">
 				</dd>
 			</dl>
 			
 			<dl>
 				<dt>信用金当前余额</dt>
 				<dd>
-					
+					<span><#if company??>${company.credit!0.00}（${company.credit!0.00}）</#if></span>
+					<input type="hidden" value="<#if company??>${company.credit!0.00}</#if>" name="companyCredit">
 				</dd>
 			</dl>
 			
@@ -235,10 +238,14 @@ $(function () {
 		    <dd>
 		        <select name="changeType" id="changeType" datatype="n">
 		            <option value="">请选择变更类型</option>
-		            <option value="1">回款银行1充值</option>
-		            <option value="2">回款银行2充值</option>
-		            <option value="3">回款银行3充值</option>
-		            <option value="4">回款银行4充值</option>
+		            <#if tdCity.cityName??&&tdCity.cityName=="成都市">
+		          	<option value="回款银行1充值">回款银行1充值</option>
+		            <option value="回款银行2充值">回款银行2充值</option>
+		            <option value="回款银行3充值">回款银行3充值</option>
+		            </#if>
+		            <#if tdCity.cityName??&&tdCity.cityName=="郑州市">
+		            <option value="回款银行4充值">回款银行4充值</option>
+		            </#if>
 		        </select>
 		    </dd>
 		  </dl>
@@ -254,7 +261,7 @@ $(function () {
 		    <dt>到账时间</dt>
 		    <dd>
 		      <div class="input-date">
-		        <input name="transferTime" type="text" value="" class="input date" onfocus="WdatePicker({dateFmt:&#39;yyyy-MM-dd&#39;})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
+		        <input id="transferTime" name="transferTime" type="text" value="" class="input date" onfocus="WdatePicker({dateFmt:&#39;yyyy-MM-dd&#39;})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
 		        <i>日期</i>
 		      </div>
 		    </dd>
@@ -271,6 +278,9 @@ $(function () {
 			<dt>管理员密码</dt>
 			<dd><input name="password" id="password" type="password" class="input normal"></dd>
 		</dl>
+		
+		<input type="hidden" id="id" value="${id}" name="id" class="input normal">
+		<input type="hidden" id="cityName" value="${tdCity.cityName}" name="cityName" class="input normal">
 </div> 
 
 <!--工具栏-->
@@ -287,42 +297,34 @@ $(function () {
 
 <script type="text/javascript">
 	var validate = function() {
-	
-		var cashBalance = $("#cashBalance").val();
-		var unCashBalance = $("#unCashBalance").val();
-	
-		if (Number(cashBalance) + Number(<#if cashBalance??>${cashBalance?string("0.00")}<#else>0.00</#if>) < 0) {
-			alert("用户可提现预存款不足以扣减");
-			return;
-		}
-		
-		if (Number(unCashBalance) + Number(<#if unCashBalance??>${unCashBalance?string("0.00")}<#else>0.00</#if>) < 0) {
-			alert("用户不可提现预存款不足以扣减");
-			return;
-		}
-	
-		$("#btnSubmit").removeAttr("onclick");
+		var money = $("#money").val();
+		var changeType = $("#changeType").val();
 		var remark = $("#remark").val();
 		var password = $('#password').val();
-		var changeType = $('#changeType').val();
-		if (!password) {
+		var writtenRemarks = $('#writtenRemarks').val();
+		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
-			alert('请输入管理员密码');
+			$.dialog.alert("请输入一个正确的数字");
+			return;
+		}
+		if (!changeType) {
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert('请选择变更类型');
 			return;
 		}else if (remark.length > 255) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
-			alert('备注的长度不能超过255个字符');
+			$.dialog.alert('备注的长度不能超过255个字符');
 			return;
-		}else if(!changeType){
+		}else if(!password){
 			$("#btnSubmit").attr("onclick","javascript:validate();");
-			alert('请选择变更类型');
+			$.dialog.alert('请输入管理员密码');
 			return;
 		}else {
 			$.ajax({
-				url : '#',
+				url : '/Verwalter/fitment/promotion/manager/check',
 				type : 'POST',
 				data : {
-					'username' : ${username!''},
+					'id' : ${company.id},
 					'password' : password
 				},
 				error : function() {

@@ -109,6 +109,16 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	}
 	
 	@Override
+	public void creditMoney(TdManager manager, FitCompany company, Double inputCredit, String remark,String changeType) throws Exception {
+		if (inputCredit < 0) {
+			this.doRefundCredit(company, inputCredit,changeType);
+		} else {
+			this.doReceiptCredit(company, inputCredit,changeType);
+		}
+		
+	}
+	
+	@Override
 	public void promotionMoneyAction(TdManager manager, FitCompany company, Double inputPromotionMoney, String remark)
 			throws Exception {
 		this.manageLog(manager, company, inputPromotionMoney, remark);
@@ -120,7 +130,56 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 //			this.doReceipt(company, inputCredit);
 //		}
 	}
+	
 
+	private void doRefundCredit(FitCompany company, Double inputCredit,String changeType) {
+		TdCashRefundInf refund = new TdCashRefundInf();
+		Date now = new Date();
+		refund.setInitDate(now);
+		refund.setModifyDate(now);
+		refund.setAmount(-1 * inputCredit);
+		refund.setDiySiteCode(company.getCode());
+		refund.setProductType("CREDIT");
+		refund.setRefundClass("信用额度");
+		refund.setRefundDate(now);
+		refund.setRefundNumber(this.getNumber(now, "DECRE"));
+		refund.setRefundType(changeType);
+		refund.setSobId(company.getSobId());
+		refund.setUserid(company.getId());
+		refund.setUsername(company.getName());
+		refund.setUserphone("00000000000");
+		refund = tdCashRefundInfService.save(refund);
+		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		
+	}
+
+	private void doReceiptCredit(FitCompany company, Double inputCredit,String changeType) {
+		TdCashReciptInf receipt = new TdCashReciptInf();
+		Date now = new Date();
+		receipt.setInitDate(now);
+		receipt.setModifyDate(now);
+		receipt.setAmount(inputCredit);
+		receipt.setDiySiteCode(company.getCode());
+		receipt.setProductType("CREDIT");
+		receipt.setReceiptClass("信用额度");
+		receipt.setReceiptDate(now);
+		receipt.setReceiptNumber(this.getNumber(now, "RECRE"));
+		receipt.setReceiptType(changeType);
+		receipt.setSobId(company.getSobId());
+		receipt.setUserid(company.getId());
+		receipt.setUsername(company.getName());
+		receipt.setUserphone("00000000000");
+		receipt = this.tdCashReciptInfService.save(receipt);
+		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+		if (StringUtils.isBlank(resultStr)) {
+			receipt.setSendFlag(0);
+		} else {
+			receipt.setSendFlag(1);
+			receipt.setErrorMsg(resultStr);
+		}
+		tdCashReciptInfService.save(receipt);
+	}
+	
 	private void doReceipt(FitCompany company, Double inputCredit) {
 		TdCashReciptInf receipt = new TdCashReciptInf();
 		Date now = new Date();
@@ -147,6 +206,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		}
 		tdCashReciptInfService.save(receipt);
 	}
+
 
 	private void doRefund(FitCompany company, Double inputCredit) {
 		TdCashRefundInf refund = new TdCashRefundInf();
@@ -216,4 +276,5 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	public Page<FitCreditChangeLog> employeeGetLog(FitEmployee employee, Integer page, Integer size) throws Exception {
 		return this.fitCreditChangeLogService.findByCompanyIdOrderByChangeTimeDesc(employee.getCompanyId(), page, size);
 	}
+
 }
