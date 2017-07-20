@@ -121,9 +121,8 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<FitCompany> c = new Criteria<FitCompany>();
 		if (null != keywords && !keywords.equalsIgnoreCase("")) {
-			c.add(Restrictions.or(Restrictions.like("companyCode",keywords, true),Restrictions.like("companyTitle", keywords, true)));
+			c.add(Restrictions.or(Restrictions.like("code",keywords, true),Restrictions.like("name", keywords, true)));
 		}
-		c.setOrderByDesc("changeTime");
 		return fitCompanyRepo.findAll(c,pageRequest);
 	}
 }
