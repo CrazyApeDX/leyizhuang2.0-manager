@@ -72,7 +72,7 @@ public class FitManagementParometionController {
 	private FitCreditChangeLogService fitCreditChangeLogService;
 	
 	@RequestMapping(value = "/list")
-	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size, String __EVENTTARGET,
+	public String companyList(HttpServletRequest req, ModelMap map, String keywords, Integer page, Integer size, String __EVENTTARGET,
 			String __EVENTARGUMENT, String __VIEWSTATE) {
 
 		if (null != __EVENTTARGET) {
@@ -89,7 +89,7 @@ public class FitManagementParometionController {
 		page = null == page ? Global.DEFAULT_PAGE : page;
 		size = null == size ? Global.DEFAULT_SIZE : size;
 		try {
-			companyPage = this.fitCompanyService.findAll(page, size);
+			companyPage = this.fitCompanyService.findCompany(page, size, keywords);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -281,9 +281,9 @@ public class FitManagementParometionController {
 			this.fitCompanyService.save(company);
 			this.fitCreditChangeLogService.save(log);
 			if (money > 0) {
-				this.fitPromotionMoneyLogService.doReceipt(company, money);
+				this.fitPromotionMoneyLogService.doReceipt(company, money, log.getReferenceNumber());
 			} else {
-				this.fitPromotionMoneyLogService.doRefund(company, money);
+				this.fitPromotionMoneyLogService.doRefund(company, money, log.getReferenceNumber());
 			}
 			
 		} catch (Exception e) {

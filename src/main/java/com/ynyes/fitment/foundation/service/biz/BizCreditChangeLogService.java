@@ -17,7 +17,7 @@ public interface BizCreditChangeLogService {
 	
 	void creditAction(TdManager manager, FitCompany company, Double inputCredit, String remark) throws Exception;
 	
-	void creditMoney(TdManager manager, FitCompany company, Double inputCredit, String remark,String changeType) throws Exception;
+	void creditMoney(TdManager manager, FitCompany company, Double inputCredit, String remark,String changeType, String referenceNumber) throws Exception;
 
 	FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception;
 	

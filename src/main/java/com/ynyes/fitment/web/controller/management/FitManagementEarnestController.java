@@ -59,7 +59,7 @@ public class FitManagementEarnestController {
 	 * @return
 	 */
 	@RequestMapping(value = "/list", produces = "text/html;charset=utf-8")
-	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size, String __EVENTTARGET,
+	public String companyList(HttpServletRequest req, ModelMap map, String keywords, Integer page, Integer size, String __EVENTTARGET,
 			String __EVENTARGUMENT, String __VIEWSTATE) {
 
 		if (null != __EVENTTARGET) {
@@ -76,7 +76,7 @@ public class FitManagementEarnestController {
 		page = null == page ? Global.DEFAULT_PAGE : page;
 		size = null == size ? Global.DEFAULT_SIZE : size;
 		try {
-			companyPage = this.fitCompanyService.findAll(page, size);
+			companyPage = this.fitCompanyService.findCompany(page, size, keywords);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,7 +156,7 @@ public class FitManagementEarnestController {
 		try {
 			this.fitCompanyService.save(company);
 			this.fitCreditChangeLogService.save(log);
-			this.bizCreditChangeLogService.creditMoney(manager, company, money, remark, changeType);
+			this.bizCreditChangeLogService.creditMoney(manager, company, money, remark, changeType, log.getReferenceNumber());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

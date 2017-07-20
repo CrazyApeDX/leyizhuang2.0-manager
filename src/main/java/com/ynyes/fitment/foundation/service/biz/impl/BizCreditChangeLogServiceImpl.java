@@ -109,11 +109,11 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	}
 	
 	@Override
-	public void creditMoney(TdManager manager, FitCompany company, Double inputCredit, String remark,String changeType) throws Exception {
+	public void creditMoney(TdManager manager, FitCompany company, Double inputCredit, String remark,String changeType, String referenceNumber) throws Exception {
 		if (inputCredit < 0) {
-			this.doRefundCredit(company, inputCredit,changeType);
+			this.doRefundCredit(company, inputCredit,changeType, referenceNumber);
 		} else {
-			this.doReceiptCredit(company, inputCredit,changeType);
+			this.doReceiptCredit(company, inputCredit,changeType, referenceNumber);
 		}
 		
 	}
@@ -132,7 +132,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	}
 	
 
-	private void doRefundCredit(FitCompany company, Double inputCredit,String changeType) {
+	private void doRefundCredit(FitCompany company, Double inputCredit,String changeType, String referenceNumber) {
 		TdCashRefundInf refund = new TdCashRefundInf();
 		Date now = new Date();
 		refund.setInitDate(now);
@@ -148,12 +148,13 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		refund.setUserid(company.getId());
 		refund.setUsername(company.getName());
 		refund.setUserphone("00000000000");
+		refund.setReturnNumber(referenceNumber);
 		refund = tdCashRefundInfService.save(refund);
 		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
 		
 	}
 
-	private void doReceiptCredit(FitCompany company, Double inputCredit,String changeType) {
+	private void doReceiptCredit(FitCompany company, Double inputCredit,String changeType, String referenceNumber) {
 		TdCashReciptInf receipt = new TdCashReciptInf();
 		Date now = new Date();
 		receipt.setInitDate(now);
@@ -169,6 +170,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		receipt.setUserid(company.getId());
 		receipt.setUsername(company.getName());
 		receipt.setUserphone("00000000000");
+		receipt.setOrderNumber(referenceNumber);
 		receipt = this.tdCashReciptInfService.save(receipt);
 		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
 		if (StringUtils.isBlank(resultStr)) {

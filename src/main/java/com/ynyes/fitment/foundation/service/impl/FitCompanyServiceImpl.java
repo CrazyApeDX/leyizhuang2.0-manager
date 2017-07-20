@@ -2,6 +2,7 @@ package com.ynyes.fitment.foundation.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.fitment.core.service.PageableService;
 import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.repo.FitCompanyRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.lyz.util.Criteria;
@@ -112,5 +114,16 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 		}
 		c.setOrderByDesc("createTime");
 		return this.fitCompanyRepo.findAll(c,pageRequest);
+	}
+
+	@Override
+	public Page<FitCompany> findCompany(Integer page, Integer size, String keywords) throws Exception {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Criteria<FitCompany> c = new Criteria<FitCompany>();
+		if (null != keywords && !keywords.equalsIgnoreCase("")) {
+			c.add(Restrictions.or(Restrictions.like("companyCode",keywords, true),Restrictions.like("companyTitle", keywords, true)));
+		}
+		c.setOrderByDesc("changeTime");
+		return fitCompanyRepo.findAll(c,pageRequest);
 	}
 }

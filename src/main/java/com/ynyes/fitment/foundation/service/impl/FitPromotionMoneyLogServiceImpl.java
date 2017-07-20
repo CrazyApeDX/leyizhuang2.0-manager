@@ -42,7 +42,7 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 	}
 
 	@Override
-	public void doRefund(FitCompany company, Double money) throws Exception {
+	public void doRefund(FitCompany company, Double money, String referenceNumber) throws Exception {
 		TdCashRefundInf refund = new TdCashRefundInf();
 		Date now = new Date();
 		refund.setInitDate(now);
@@ -58,13 +58,14 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 		refund.setUserid(company.getId());
 		refund.setUsername(company.getName());
 		refund.setUserphone("00000000000");
+		refund.setReturnNumber(referenceNumber);
 		refund = tdCashRefundInfService.save(refund);
 		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
 		
 	}
 
 	@Override
-	public void doReceipt(FitCompany company, Double money) throws Exception {
+	public void doReceipt(FitCompany company, Double money, String referenceNumber) throws Exception {
 		TdCashReciptInf receipt = new TdCashReciptInf();
 		Date now = new Date();
 		receipt.setInitDate(now);
@@ -80,6 +81,7 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 		receipt.setUserid(company.getId());
 		receipt.setUsername(company.getName());
 		receipt.setUserphone("00000000000");
+		receipt.setOrderNumber(referenceNumber);
 		receipt = this.tdCashReciptInfService.save(receipt);
 		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
 		if (StringUtils.isBlank(resultStr)) {

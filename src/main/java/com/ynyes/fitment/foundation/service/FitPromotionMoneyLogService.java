@@ -7,7 +7,7 @@ public interface FitPromotionMoneyLogService {
 
 	FitPromotionMoneyLog save(FitPromotionMoneyLog log) throws Exception;
 	
-	void doRefund(FitCompany company, Double money) throws Exception;
+	void doRefund(FitCompany company, Double money, String referenceNumber) throws Exception;
 	
-	void doReceipt(FitCompany company, Double money) throws Exception;
+	void doReceipt(FitCompany company, Double money, String referenceNumber) throws Exception;
 }
