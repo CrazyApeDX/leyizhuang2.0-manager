@@ -58,19 +58,19 @@ public class FitPriceLineServiceImpl extends PageableService implements FitPrice
 	}
 
 	/**
-	 * 根据商品SKU模糊查询装饰公司商品价目(分页)
+	 * 鏍规嵁鍟嗗搧SKU妯＄硦鏌ヨ瑁呴グ鍏徃鍟嗗搧浠风洰(鍒嗛〉)
 	 * @param keywords
 	 * @param page
 	 * @param size
 	 * @return
 	 */
 	@Override
-	public Page<FitPriceLine> findByGoodsSkuContaining(String keywords, int page, int size) {
+	public Page<FitPriceLine> findByHeaderIdAndGoodsSkuContaining(Long headerId,String keywords, int page, int size) {
 		if (keywords == null) {
 			return null;
 		}
 		PageRequest pageRequest  = new PageRequest(page,size);
-		return this.fitPriceLineRepo.findByGoodsSkuContaining(keywords,pageRequest);
+		return this.fitPriceLineRepo.findByHeaderIdAndGoodsSkuContaining(headerId, keywords, pageRequest);
 	}
 
 }
