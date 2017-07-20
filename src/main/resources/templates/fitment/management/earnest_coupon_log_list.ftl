@@ -28,18 +28,18 @@ function downloaddate()
 {
     var begain = $("#begain").val();
     var end = $("#end").val();
-    var companyId = $("#companyId").val();
+    var companyCode = $("#companyCode").val();
     var city = $("#city").val();
     var keywords = $("#keywords").val();
     var type = $("#type").val();
     if(begain==""){
     	$.dialog.confirm("将导出全部数据,请确认导出?", function () {
-    		window.open("/Verwalter/companyChange/downdata?begindata="+ begain + "&enddata=" + end + "&companyId=" + companyId+ "&city=" + city
+    		window.open("/Verwalter/companyChange/downdata?begindata="+ begain + "&enddata=" + end + "&companyCode=" + companyCode+ "&city=" + city
     		+ "&keywords=" + keywords+ "&type=" + type);
     		return;
         });
     }else{
-    	window.open("/Verwalter/companyChange/downdata?begindata="+ begain + "&enddata=" + end + "&companyname=" + companyname+ "&city=" + city
+    	window.open("/Verwalter/companyChange/downdata?begindata="+ begain + "&enddata=" + end + "&companyCode=" + companyCode+ "&city=" + city
     		+ "&keywords=" + keywords+ "&type=" + type);
     }
 }
@@ -95,7 +95,7 @@ function downloaddate()
           <#if companyList?? && companyList?size gt 0 >
             <div class="menu-list" >
                 <div class="rule-single-select">
-                       <select name="companyId" id="companyId" onchange="javascript:setTimeout(__doPostBack('changeDiy',''), 0)">
+                       <select name="companyCode" id="companyCode" onchange="javascript:setTimeout(__doPostBack('changeDiy',''), 0)">
                        <option value="" >选择装饰公司</option>      
                        <#list companyList as company>
                        	<option value="${company.code?c }" >${company.name }</option>
