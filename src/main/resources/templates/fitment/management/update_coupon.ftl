@@ -203,6 +203,11 @@ $(function () {
 			return;
 		}
 		$("#money").val(money);
+		if(arrivalTime == ''){;
+ 			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("请输入到账时间");
+			return;
+ 		}
 		if(myDate > time){
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert("请输入大于当前的日期");
