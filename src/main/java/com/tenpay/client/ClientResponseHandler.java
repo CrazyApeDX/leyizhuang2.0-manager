@@ -11,34 +11,34 @@ import com.tenpay.util.MD5Util;
 import org.jdom.JDOMException;
 import com.tenpay.util.XMLUtil;
 /**
- * ºóÌ¨Ó¦´ğÀà<br/>
+ * åå°åº”ç­”ç±»<br/>
  * ========================================================================<br/>
- * apiËµÃ÷£º<br/>
- * getKey()/setKey(),»ñÈ¡/ÉèÖÃÃÜÔ¿<br/>
- * getContent() / setContent(), »ñÈ¡/ÉèÖÃÔ­Ê¼ÄÚÈİ<br/>
- * getParameter()/setParameter(),»ñÈ¡/ÉèÖÃ²ÎÊıÖµ<br/>
- * getAllParameters(),»ñÈ¡ËùÓĞ²ÎÊı<br/>
- * isTenpaySign(),ÊÇ·ñ²Æ¸¶Í¨Ç©Ãû,true:ÊÇ false:·ñ<br/>
- * getDebugInfo(),»ñÈ¡debugĞÅÏ¢<br/>
+ * apiè¯´æ˜ï¼š<br/>
+ * getKey()/setKey(),è·å–/è®¾ç½®å¯†é’¥<br/>
+ * getContent() / setContent(), è·å–/è®¾ç½®åŸå§‹å†…å®¹<br/>
+ * getParameter()/setParameter(),è·å–/è®¾ç½®å‚æ•°å€¼<br/>
+ * getAllParameters(),è·å–æ‰€æœ‰å‚æ•°<br/>
+ * isTenpaySign(),æ˜¯å¦è´¢ä»˜é€šç­¾å,true:æ˜¯ false:å¦<br/>
+ * getDebugInfo(),è·å–debugä¿¡æ¯<br/>
  * 
  * ========================================================================<br/>
  *
  */
 public class ClientResponseHandler {
 	
-	/** Ó¦´ğÔ­Ê¼ÄÚÈİ */
+	/** åº”ç­”åŸå§‹å†…å®¹ */
 	private String content;
 	
-	/** Ó¦´ğµÄ²ÎÊı */
+	/** åº”ç­”çš„å‚æ•° */
 	private SortedMap parameters; 
 	
-	/** debugĞÅÏ¢ */
+	/** debugä¿¡æ¯ */
 	private String debugInfo;
 	
-	/** ÃÜÔ¿ */
+	/** å¯†é’¥ */
 	private String key;
 	
-	/** ×Ö·û¼¯ */
+	/** å­—ç¬¦é›† */
 	private String charset;
 	
 	public ClientResponseHandler() {
@@ -60,8 +60,8 @@ public class ClientResponseHandler {
 	}
 	
 	/**
-	 * »ñÈ¡²ÎÊıÖµ
-	 * @param parameter ²ÎÊıÃû³Æ
+	 * è·å–å‚æ•°å€¼
+	 * @param parameter å‚æ•°åç§°
 	 * @return String 
 	 */
 	public String getParameter(String parameter) {
@@ -70,9 +70,9 @@ public class ClientResponseHandler {
 	}
 	
 	/**
-	 * ÉèÖÃ²ÎÊıÖµ
-	 * @param parameter ²ÎÊıÃû³Æ
-	 * @param parameterValue ²ÎÊıÖµ
+	 * è®¾ç½®å‚æ•°å€¼
+	 * @param parameter å‚æ•°åç§°
+	 * @param parameterValue å‚æ•°å€¼
 	 */
 	public void setParameter(String parameter, String parameterValue) {
 		String v = "";
@@ -83,7 +83,7 @@ public class ClientResponseHandler {
 	}
 	
 	/**
-	 * ·µ»ØËùÓĞµÄ²ÎÊı
+	 * è¿”å›æ‰€æœ‰çš„å‚æ•°
 	 * @return SortedMap
 	 */
 	public SortedMap getAllParameters() {
@@ -95,14 +95,14 @@ public class ClientResponseHandler {
 	}
 	
 	/**
-	*»ñÈ¡ÃÜÔ¿
+	*è·å–å¯†é’¥
 	*/
 	public String getKey() {
 		return key;
 	}
 
 	/**
-	*ÉèÖÃÃÜÔ¿
+	*è®¾ç½®å¯†é’¥
 	*/
 	public void setKey(String key) {
 		this.key = key;
@@ -117,7 +117,7 @@ public class ClientResponseHandler {
 	}	
 	
 	/**
-	 * ÊÇ·ñ²Æ¸¶Í¨Ç©Ãû,¹æÔòÊÇ:°´²ÎÊıÃû³Æa-zÅÅĞò,Óöµ½¿ÕÖµµÄ²ÎÊı²»²Î¼ÓÇ©Ãû¡£
+	 * æ˜¯å¦è´¢ä»˜é€šç­¾å,è§„åˆ™æ˜¯:æŒ‰å‚æ•°åç§°a-zæ’åº,é‡åˆ°ç©ºå€¼çš„å‚æ•°ä¸å‚åŠ ç­¾åã€‚
 	 * @return boolean
 	 */
 	public boolean isTenpaySign() {
@@ -135,12 +135,12 @@ public class ClientResponseHandler {
 		
 		sb.append("key=" + this.getKey());
 		
-		//Ëã³öÕªÒª
+		//ç®—å‡ºæ‘˜è¦
 		String sign = MD5Util.MD5Encode(sb.toString(), this.charset).toLowerCase();
 		
 		String tenpaySign = this.getParameter("sign").toLowerCase();
 		
-		//debugĞÅÏ¢
+		//debugä¿¡æ¯
 		this.setDebugInfo(sb.toString() + " => sign:" + sign +
 				" tenpaySign:" + tenpaySign);
 		
@@ -148,8 +148,8 @@ public class ClientResponseHandler {
 	}
 	
 	/**
-	 * ÊÇ·ñ²Æ¸¶Í¨Ç©Ãû
-	 * @param signParameterArray Ç©ÃûµÄ²ÎÊıÊı×é
+	 * æ˜¯å¦è´¢ä»˜é€šç­¾å
+	 * @param signParameterArray ç­¾åçš„å‚æ•°æ•°ç»„
 	 * @return boolean
 	 */
 	protected boolean isTenpaySign(String signParameterArray[]) {
@@ -165,13 +165,13 @@ public class ClientResponseHandler {
 		
 		signPars.append("key=" + this.getKey());
 				
-		//Ëã³öÕªÒª
+		//ç®—å‡ºæ‘˜è¦
 		String sign = MD5Util.MD5Encode(
 				signPars.toString(), this.charset).toLowerCase();
 		
 		String tenpaySign = this.getParameter("sign").toLowerCase();
 		
-		//debugĞÅÏ¢
+		//debugä¿¡æ¯
 		this.setDebugInfo(signPars.toString() + " => sign:" + sign +
 				" tenpaySign:" + tenpaySign);
 		
@@ -184,15 +184,15 @@ public class ClientResponseHandler {
 	}
 	
 	/**
-	 * ½âÎöXMLÄÚÈİ
+	 * è§£æXMLå†…å®¹
 	 */
 	protected void doParse() throws JDOMException, IOException {
 		String xmlContent = this.getContent();
 		
-		//½âÎöxml,µÃµ½map
+		//è§£æxml,å¾—åˆ°map
 		Map m = XMLUtil.doXMLParse(xmlContent);
 		
-		//ÉèÖÃ²ÎÊı
+		//è®¾ç½®å‚æ•°
 		Iterator it = m.keySet().iterator();
 		while(it.hasNext()) {
 			String k = (String) it.next();

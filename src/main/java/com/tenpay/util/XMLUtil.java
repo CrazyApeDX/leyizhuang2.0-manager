@@ -14,14 +14,14 @@ import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 
 /**
- * xml¹¤¾ßÀà
+ * xmlå·¥å…·ç±»
  * @author miklchen
  *
  */
 public class XMLUtil {
 
 	/**
-	 * ½âÎöxml,·µ»ØµÚÒ»¼¶ÔªËØ¼üÖµ¶Ô¡£Èç¹ûµÚÒ»¼¶ÔªËØÓĞ×Ó½Úµã£¬Ôò´Ë½ÚµãµÄÖµÊÇ×Ó½ÚµãµÄxmlÊı¾İ¡£
+	 * è§£æxml,è¿”å›ç¬¬ä¸€çº§å…ƒç´ é”®å€¼å¯¹ã€‚å¦‚æœç¬¬ä¸€çº§å…ƒç´ æœ‰å­èŠ‚ç‚¹ï¼Œåˆ™æ­¤èŠ‚ç‚¹çš„å€¼æ˜¯å­èŠ‚ç‚¹çš„xmlæ•°æ®ã€‚
 	 * @param strxml
 	 * @return
 	 * @throws JDOMException
@@ -56,14 +56,14 @@ public class XMLUtil {
 			m.put(k, v);
 		}
 		
-		//¹Ø±ÕÁ÷
+		//å…³é—­æµ
 		in.close();
 		
 		return m;
 	}
 	
 	/**
-	 * »ñÈ¡×Ó½áµãµÄxml
+	 * è·å–å­ç»“ç‚¹çš„xml
 	 * @param children
 	 * @return String
 	 */
@@ -89,7 +89,7 @@ public class XMLUtil {
 	}
 	
 	/**
-	 * »ñÈ¡xml±àÂë×Ö·û¼¯
+	 * è·å–xmlç¼–ç å­—ç¬¦é›†
 	 * @param strxml
 	 * @return
 	 * @throws IOException 
