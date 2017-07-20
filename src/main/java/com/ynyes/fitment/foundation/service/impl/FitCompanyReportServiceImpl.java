@@ -18,9 +18,9 @@ public class FitCompanyReportServiceImpl implements FitCompanyReportService {
 	private FitCompanyReportRepo fitCompanyReportRepo;
 	
 	@Override
-	public List<FitCompanyReport> queryDownList(String begindata, String enddata, String city, String companyname,
+	public List<FitCompanyReport> queryDownList(String begindata, String enddata, String city, Long companyId,
 			String keywords, String type) {
-		return this.fitCompanyReportRepo.queryDownList(begindata, enddata, city, companyname, keywords, type);
+		return this.fitCompanyReportRepo.queryDownList(begindata, enddata, city, companyId, keywords, type);
 	}
 
 }

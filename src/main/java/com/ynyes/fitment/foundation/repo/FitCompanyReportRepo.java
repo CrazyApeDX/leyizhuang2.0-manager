@@ -32,13 +32,13 @@ JpaSpecificationExecutor<FitCompanyReport>{
 		+ " from fit_promotion_money_log) a"
 		+ " where a.type like %?6%"
 		+ " and a.city like %?3%"
-		+ " and a.company_title like %?4%"
+		+ " and a.company_id = ?4"
 		+ " and a.change_time >= ?1"
 		+ " and a.change_time <= ?2"
 		+ " and (a.company_title like %?5%"
 		+ " or a.company_code like %?5%"
 		+ " or a.reference_number like %?5%)"
 		+ " ORDER BY change_time desc",nativeQuery=true)
-	List<FitCompanyReport> queryDownList(String begindata, String enddata, String city, String companyname,
+	List<FitCompanyReport> queryDownList(String begindata, String enddata, String city, Long companyId,
 			String keywords, String type);
 }
