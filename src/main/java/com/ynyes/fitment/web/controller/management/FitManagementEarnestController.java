@@ -183,22 +183,22 @@ public class FitManagementEarnestController {
 		if (null == size || size <= 0) {
 			size = SiteMagConstant.pageSize;
 		}
-		TdCity tdCity = this.tdCityService.findByCityName(city);
-		List<FitCompany> companyList = new ArrayList<FitCompany>();
-		try {
-			companyList = fitCompanyService.findBySobId(tdCity.getSobIdCity());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
 		List<TdCity> cityList = this.tdCityService.findAll();
 		Page<FitCreditChangeLog> balance_page= null;
+		List<FitCompany> companyList = new ArrayList<FitCompany>();
+		TdCity tdCity = null;
 		try {
-			companyList = this.fitCompanyService.findAll();
+			if (null == city) {
+				companyList = fitCompanyService.findAll();
+			} else {
+				tdCity = this.tdCityService.findByCityName(city);
+				companyList = fitCompanyService.findBySobId(tdCity.getSobIdCity());
+			}
 			balance_page = this.fitCreditChangeLogService.queryList(startTime, endTime, city, companyCode, keywords, type, page, size);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		map.addAttribute("balance_page", balance_page);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
