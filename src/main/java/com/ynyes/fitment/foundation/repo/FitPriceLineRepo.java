@@ -39,5 +39,5 @@ public interface FitPriceLineRepo extends ApplicationRepo<FitPriceLine> {
 	 * @param size
 	 * @return
 	 */
-	Page<FitPriceLine> findByGoodsSkuContaining(String keywords,Pageable pageable);
+	Page<FitPriceLine> findByHeaderIdAndGoodsSkuContaining(Long headerId,String keywords,Pageable pageable);
 }

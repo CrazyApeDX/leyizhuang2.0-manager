@@ -38,7 +38,7 @@ public class FitManagementPriceLineController {
                     }
                     break;
                 case "btnSearch":
-                    //µã»÷²éÑ¯°´Å¥µ±Ç°Ò³ĞŞ¸ÄÎªµÚÒ»Ò³
+                    //è®¾ç½®å½“å‰é¡µä¸ºç¬¬ä¸€é¡µ
                     page = 0;
                     break;
             }
@@ -57,7 +57,7 @@ public class FitManagementPriceLineController {
         map.addAttribute("headerId", headerId);
 
         if (StringUtils.isNotBlank(keywords)) {
-            map.addAttribute("linePage", fitPriceLineService.findByGoodsSkuContaining(keywords, page, size));
+            map.addAttribute("linePage", fitPriceLineService.findByHeaderIdAndGoodsSkuContaining(headerId,keywords, page, size));
         } else {
             try {
                 linePage = this.fitPriceLineService.findByHeaderId(headerId, page, size);
