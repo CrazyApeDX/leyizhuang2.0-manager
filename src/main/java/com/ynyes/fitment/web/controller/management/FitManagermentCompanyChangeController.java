@@ -30,16 +30,15 @@ public class FitManagermentCompanyChangeController extends TdManagerBaseControll
 	@RequestMapping(value = "/downdata")
 	@ResponseBody
 	public String dowmData(HttpServletRequest req, ModelMap map, String begindata, String enddata,
-			HttpServletResponse response, String city, Long companyId,String keywords,String type) {
+			HttpServletResponse response, String city, String companyCode,String keywords,String type) {
 
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
 		
-		
     	//报表数据
-		List<FitCompanyReport> list = this.fitCompanyReportService.queryDownList(begindata, enddata, city, companyId,
+		List<FitCompanyReport> list = this.fitCompanyReportService.queryDownList(begindata, enddata, city, companyCode,
 				keywords, type);
 		
 		// 第一步，创建一个webbook，对应一个Excel文件

@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
@@ -18,8 +19,8 @@ public class FitCompanyReport {
 	private static final SimpleDateFormat FORMATTER = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@GenericGenerator(name= "uuidGenerator",strategy = "uuid")
+	private String id;
 	
 	// 变更后信用余额
 	@Column(scale = 2, nullable = false, updatable = false)

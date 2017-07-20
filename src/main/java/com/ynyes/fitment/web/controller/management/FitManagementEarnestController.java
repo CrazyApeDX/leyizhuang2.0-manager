@@ -1,5 +1,6 @@
 package com.ynyes.fitment.web.controller.management;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdManagerService;
+import com.ynyes.lyz.util.SiteMagConstant;
 
 @Controller
 @RequestMapping(value = "/Verwalter/fitment/earnest")
@@ -163,23 +165,52 @@ public class FitManagementEarnestController {
 		return "redirect:/Verwalter/fitment/earnest/list";
 	}
 	
+	
 	@RequestMapping(value="/earnest_coupon_detail")
-	public String earnestCouponDetail(HttpServletRequest req, ModelMap map, String begindata, String enddata,
-			HttpServletResponse response, String city, String companyname,String keywords,String type){
-		String username = (String) req.getSession().getAttribute("manager");
-		if (null == username) {
-			return "redirect:/Verwalter/login";
+	public String earnestCouponDetail(String city, String companyCode,String keywords,String type, String begindata, String enddata, Integer page,
+			Integer size,  String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
+			ModelMap map, HttpServletRequest request) {
+		
+		if (null == page || page < 0) {
+			page = 0;
 		}
+		if (null != __EVENTTARGET) {
+			if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+			} 
+		}
+		if (null == size || size <= 0) {
+			size = SiteMagConstant.pageSize;
+		}
+		List<FitCompany> companyList = new ArrayList<FitCompany>();
+		try {
+			companyList = fitCompanyService.findAll();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		List<TdCity> cityList = this.tdCityService.findAll();
-		List<FitCompany> companyList = null; 
 		try {
 			companyList = this.fitCompanyService.findAll();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+		map.addAttribute("page", page);
+		map.addAttribute("size", size);
+		map.addAttribute("keywords", keywords);
 		map.addAttribute("companyList", companyList);
 		map.addAttribute("cityList", cityList);
+		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
+		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
+		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		map.addAttribute("companyCode", companyCode);
+		map.addAttribute("type", type);
+		map.addAttribute("begindata", begindata);
+		map.addAttribute("enddata", enddata);
+		map.addAttribute("city", city);
+
 		return "/fitment/management/earnest_coupon_log_list";
 	}
 
