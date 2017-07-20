@@ -97,7 +97,7 @@ public class FitCreditChangeLog extends TableEntity {
 
 	// 辨别类型
 	@Column(scale = 2, nullable = false, updatable = false)
-	private Integer distinguishType;
+	private Integer distinguish;
 
 	public Double getBeforeChange() {
 		return beforeChange;
@@ -274,11 +274,11 @@ public class FitCreditChangeLog extends TableEntity {
 		this.operatorUserName = operatorUserName;
 	}
 
-	public Integer getDistinguishType() {
-		return distinguishType;
+	public Integer getDistinguish() {
+		return distinguish;
 	}
 
-	public void setDistinguishType(Integer distinguishType) {
-		this.distinguishType = distinguishType;
+	public void setDistinguish(Integer distinguish) {
+		this.distinguish = distinguish;
 	}
 }

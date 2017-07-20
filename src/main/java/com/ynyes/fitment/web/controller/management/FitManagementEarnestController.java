@@ -151,7 +151,7 @@ public class FitManagementEarnestController {
 		log.setWrittenRemarks(remark);
 		log.setCity(cityName);
 		log.setAfterChangePromotion(company.getPromotionMoney());
-		log.setDistinguishType(0);
+		log.setDistinguish(0);
 		company.setCredit(company.getCredit() + money);
 		
 		try {

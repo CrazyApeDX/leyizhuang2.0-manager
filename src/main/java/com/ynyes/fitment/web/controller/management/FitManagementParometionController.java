@@ -274,7 +274,7 @@ public class FitManagementParometionController {
 		log.setWrittenRemarks(writtenRemarks);
 		log.setCity(region.getCityName());
 		log.setAfterChangePromotion(company.getPromotionMoney() + money);
-		log.setDistinguishType(1);
+		log.setDistinguish(1);
 		
 		company.setPromotionMoney(company.getPromotionMoney() + money);
 		try {
