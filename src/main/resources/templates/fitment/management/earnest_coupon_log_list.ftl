@@ -80,7 +80,6 @@ function downloaddate()
         </div>
       </div>
       
-      	
           	<div class="menu-list">
               	<div class="rule-single-select">
                       <select name="city" id="city" onchange="javascript:setTimeout(__doPostBack('changeCity',''), 0)">
@@ -92,7 +91,7 @@ function downloaddate()
            		</div>
            	</div>
            	
-          <#if diySiteList?? && diySiteList?size gt 0 >
+          
             <div class="menu-list" >
                 <div class="rule-single-select">
                        <select name="companyname" id="companyname" onchange="javascript:setTimeout(__doPostBack('changeDiy',''), 0)">
@@ -103,7 +102,7 @@ function downloaddate()
                        </select>
            		</div>
            	</div>
-           	</#if> 
+           	
            	<div class="menu-list">
               	  变更时间:
                 <input name="startTime" id="begain" type="text" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" " value="${startTime!'' }" />

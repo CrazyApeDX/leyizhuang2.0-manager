@@ -1,8 +1,10 @@
 package com.ynyes.fitment.web.controller.management;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.ynyes.fitment.core.constant.CreditOperator;
 import com.ynyes.fitment.core.constant.Global;
 import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.entity.FitCompanyReport;
 import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitCreditChangeLogService;
@@ -160,8 +163,15 @@ public class FitManagementEarnestController {
 		return "redirect:/Verwalter/fitment/earnest/list";
 	}
 	
-	@RequestMapping(value="/test")
-	public String tset(){
+	@RequestMapping(value="/earnest_coupon_detail")
+	public String earnestCouponDetail(HttpServletRequest req, ModelMap map, String begindata, String enddata,
+			HttpServletResponse response, String city, String companyname,String keywords,String type){
+		String username = (String) req.getSession().getAttribute("manager");
+		if (null == username) {
+			return "redirect:/Verwalter/login";
+		}
+		
+		
 		
 		return "/fitment/management/earnest_coupon_log_list";
 	}
