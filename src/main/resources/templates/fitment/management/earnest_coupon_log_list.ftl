@@ -98,7 +98,7 @@ function downloaddate()
                        <select name="companyId" id="companyId" onchange="javascript:setTimeout(__doPostBack('changeDiy',''), 0)">
                        <option value="" >选择装饰公司</option>      
                        <#list companyList as company>
-                       	<option value="${company.id?c }" >${company.name }</option>
+                       	<option value="${company.code?c }" >${company.name }</option>
                        </#list>
                        </select>
            		</div>
