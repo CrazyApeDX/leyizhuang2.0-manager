@@ -25,7 +25,7 @@ public class PrepayIdRequestHandler extends RequestHandler {
 	}
 
 	/**
-	 * ´´½¨Ç©ÃûSHA1
+	 * åˆ›å»ºç­¾åSHA1
 	 * 
 	 * @param signParams
 	 * @return
@@ -48,7 +48,7 @@ public class PrepayIdRequestHandler extends RequestHandler {
 		return appsign;
 	}
 
-	// Ìá½»Ô¤Ö§¸¶
+	// æäº¤é¢„æ”¯ä»˜
 	public String sendPrepay() throws JSONException {
 		String prepayid = "";
 		StringBuffer sb = new StringBuffer("{");
@@ -83,7 +83,7 @@ public class PrepayIdRequestHandler extends RequestHandler {
 		return prepayid;
 	}
 
-	// ÅĞ¶Ïaccess_tokenÊÇ·ñÊ§Ğ§
+	// åˆ¤æ–­access_tokenæ˜¯å¦å¤±æ•ˆ
 	public String sendAccessToken() {
 		String accesstoken = "";
 		StringBuffer sb = new StringBuffer("{");
@@ -110,7 +110,7 @@ public class PrepayIdRequestHandler extends RequestHandler {
 		if (httpClient.callHttpPost(requestUrl, params)) {
 			resContent = httpClient.getResContent();
 			if (2 == resContent.indexOf(ConstantUtil.ERRORCODE)) {
-				accesstoken = resContent.substring(11, 16);//»ñÈ¡¶ÔÓ¦µÄerrcodeµÄÖµ
+				accesstoken = resContent.substring(11, 16);//è·å–å¯¹åº”çš„errcodeçš„å€¼
 			}
 		}
 		return accesstoken;

@@ -18,22 +18,22 @@ public class AccessTokenRequestHandler extends RequestHandler {
 	private static String access_token = "";
 
 	/**
-	 * »ñÈ¡Æ¾Ö¤access_token
+	 * è·å–å‡­è¯access_token
 	 * @return
 	 */
 	public static String getAccessToken() {
-		if ("".equals(access_token)) {// Èç¹ûÎª¿ÕÖ±½Ó»ñÈ¡
+		if ("".equals(access_token)) {// å¦‚æœä¸ºç©ºç›´æ¥è·å–
 			return getTokenReal();
 		}
 
-		if (tokenIsExpire(access_token)) {// Èç¹û¹ıÆÚÖØĞÂ»ñÈ¡
+		if (tokenIsExpire(access_token)) {// å¦‚æœè¿‡æœŸé‡æ–°è·å–
 			return getTokenReal();
 		}
 		return access_token;
 	}
 
 	/**
-	 * Êµ¼Ê»ñÈ¡access_tokenµÄ·½·¨
+	 * å®é™…è·å–access_tokençš„æ–¹æ³•
 	 * @return
 	 */
 	protected static String getTokenReal() {
@@ -48,20 +48,20 @@ public class AccessTokenRequestHandler extends RequestHandler {
 			if (resContent.indexOf(ConstantUtil.ACCESS_TOKEN) > 0) {
 				access_token = JsonUtil.getJsonValue(resContent, ConstantUtil.ACCESS_TOKEN);
 			} else {
-				System.out.println("»ñÈ¡access_tokenÖµ·µ»Ø´íÎó£¡£¡£¡");
+				System.out.println("è·å–access_tokenå€¼è¿”å›é”™è¯¯ï¼ï¼ï¼");
 			}
 		} else {
-			System.out.println("ºóÌ¨µ÷ÓÃÍ¨ĞÅÊ§°Ü");
+			System.out.println("åå°è°ƒç”¨é€šä¿¡å¤±è´¥");
 			System.out.println(httpClient.getResponseCode());
 			System.out.println(httpClient.getErrInfo());
-			// ÓĞ¿ÉÄÜÒòÎªÍøÂçÔ­Òò£¬ÇëÇóÒÑ¾­´¦Àí£¬µ«Î´ÊÕµ½Ó¦´ğ¡£
+			// æœ‰å¯èƒ½å› ä¸ºç½‘ç»œåŸå› ï¼Œè¯·æ±‚å·²ç»å¤„ç†ï¼Œä½†æœªæ”¶åˆ°åº”ç­”ã€‚
 		}
 
 		return access_token;
 	}
 
 	/**
-	 * ÅĞ¶Ï´«µİ¹ıÀ´µÄ²ÎÊıaccess_tokenÊÇ·ñ¹ıÆÚ
+	 * åˆ¤æ–­ä¼ é€’è¿‡æ¥çš„å‚æ•°access_tokenæ˜¯å¦è¿‡æœŸ
 	 * @param access_token
 	 * @return
 	 */
@@ -75,14 +75,14 @@ public class AccessTokenRequestHandler extends RequestHandler {
 		wxReqHandler.setParameter("timestamp", WXUtil.getTimeStamp());
 		wxReqHandler.setParameter("traceid", ConstantUtil.traceid);
 
-		// Éú³ÉÖ§¸¶Ç©Ãû
+		// ç”Ÿæˆæ”¯ä»˜ç­¾å
 		String sign = wxReqHandler.createSHA1Sign();
 		wxReqHandler.setParameter("app_signature", sign);
 		wxReqHandler.setParameter("sign_method", ConstantUtil.SIGN_METHOD);
 		String gateUrl = ConstantUtil.GATEURL + access_token;
 		wxReqHandler.setGateUrl(gateUrl);
 
-		// ·¢ËÍÇëÇó
+		// å‘é€è¯·æ±‚
 		String accesstoken = wxReqHandler.sendAccessToken();
 		if (ConstantUtil.EXPIRE_ERRCODE.equals(accesstoken) || ConstantUtil.FAIL_ERRCODE.equals(accesstoken))
 			flag = true;

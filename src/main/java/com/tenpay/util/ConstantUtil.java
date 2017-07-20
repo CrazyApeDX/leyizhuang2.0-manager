@@ -2,25 +2,25 @@ package com.tenpay.util;
 
 public class ConstantUtil {
 	/**
-	 * ÉÌ¼Ò¿ÉÒÔ¿¼ÂÇ¶ÁÈ¡ÅäÖÃÎÄ¼ş
+	 * å•†å®¶å¯ä»¥è€ƒè™‘è¯»å–é…ç½®æ–‡ä»¶
 	 */
 	
-	//³õÊ¼»¯
-	public static String APP_ID = "wxd930ea5d5a258f4f";//Î¢ĞÅ¿ª·¢Æ½Ì¨Ó¦ÓÃid
-	public static String APP_SECRET = "db426a9829e4b49a0dcac7b4162da6b6";//Ó¦ÓÃ¶ÔÓ¦µÄÆ¾Ö¤
-	//Ó¦ÓÃ¶ÔÓ¦µÄÃÜÔ¿
+	//åˆå§‹åŒ–
+	public static String APP_ID = "wxd930ea5d5a258f4f";//å¾®ä¿¡å¼€å‘å¹³å°åº”ç”¨id
+	public static String APP_SECRET = "db426a9829e4b49a0dcac7b4162da6b6";//åº”ç”¨å¯¹åº”çš„å‡­è¯
+	//åº”ç”¨å¯¹åº”çš„å¯†é’¥
 	public static String APP_KEY = "L8LrMqqeGRxST5reouB0K66CaYAWpqhAVsq7ggKkxHCOastWksvuX1uvmvQclxaHoYd3ElNBrNO2DHnnzgfVG9Qs473M3DTOZug5er46FhuGofumV8H2FVR9qkjSlC5K";
-	public static String PARTNER = "1900000109";//²Æ¸¶Í¨ÉÌ»§ºÅ
-	public static String PARTNER_KEY = "8934e7d15453e97507ef794cf7b0519d";//ÉÌ»§ºÅ¶ÔÓ¦µÄÃÜÔ¿
-	public static String TOKENURL = "https://api.weixin.qq.com/cgi-bin/token";//»ñÈ¡access_token¶ÔÓ¦µÄurl
-	public static String GRANT_TYPE = "client_credential";//³£Á¿¹Ì¶¨Öµ 
-	public static String EXPIRE_ERRCODE = "42001";//access_tokenÊ§Ğ§ºóÇëÇó·µ»ØµÄerrcode
-	public static String FAIL_ERRCODE = "40001";//ÖØ¸´»ñÈ¡µ¼ÖÂÉÏÒ»´Î»ñÈ¡µÄaccess_tokenÊ§Ğ§,·µ»Ø´íÎóÂë
-	public static String GATEURL = "https://api.weixin.qq.com/pay/genprepay?access_token=";//»ñÈ¡Ô¤Ö§¸¶idµÄ½Ó¿Úurl
-	public static String ACCESS_TOKEN = "access_token";//access_token³£Á¿Öµ
-	public static String ERRORCODE = "errcode";//ÓÃÀ´ÅĞ¶Ïaccess_tokenÊÇ·ñÊ§Ğ§µÄÖµ
-	public static String SIGN_METHOD = "sha1";//Ç©ÃûËã·¨³£Á¿Öµ
-	//package³£Á¿Öµ
+	public static String PARTNER = "1900000109";//è´¢ä»˜é€šå•†æˆ·å·
+	public static String PARTNER_KEY = "8934e7d15453e97507ef794cf7b0519d";//å•†æˆ·å·å¯¹åº”çš„å¯†é’¥
+	public static String TOKENURL = "https://api.weixin.qq.com/cgi-bin/token";//è·å–access_tokenå¯¹åº”çš„url
+	public static String GRANT_TYPE = "client_credential";//å¸¸é‡å›ºå®šå€¼ 
+	public static String EXPIRE_ERRCODE = "42001";//access_tokenå¤±æ•ˆåè¯·æ±‚è¿”å›çš„errcode
+	public static String FAIL_ERRCODE = "40001";//é‡å¤è·å–å¯¼è‡´ä¸Šä¸€æ¬¡è·å–çš„access_tokenå¤±æ•ˆ,è¿”å›é”™è¯¯ç 
+	public static String GATEURL = "https://api.weixin.qq.com/pay/genprepay?access_token=";//è·å–é¢„æ”¯ä»˜idçš„æ¥å£url
+	public static String ACCESS_TOKEN = "access_token";//access_tokenå¸¸é‡å€¼
+	public static String ERRORCODE = "errcode";//ç”¨æ¥åˆ¤æ–­access_tokenæ˜¯å¦å¤±æ•ˆçš„å€¼
+	public static String SIGN_METHOD = "sha1";//ç­¾åç®—æ³•å¸¸é‡å€¼
+	//packageå¸¸é‡å€¼
 	public static String packageValue = "bank_type=WX&body=%B2%E2%CA%D4&fee_type=1&input_charset=GBK&notify_url=http%3A%2F%2F127.0.0.1%3A8180%2Ftenpay_api_b2c%2FpayNotifyUrl.jsp&out_trade_no=2051571832&partner=1900000109&sign=10DA99BCB3F63EF23E4981B331B0A3EF&spbill_create_ip=127.0.0.1&time_expire=20131222091010&total_fee=1";
-	public static String traceid = "testtraceid001";//²âÊÔÓÃ»§id
+	public static String traceid = "testtraceid001";//æµ‹è¯•ç”¨æˆ·id
 }

@@ -17,23 +17,23 @@ import com.tenpay.util.MD5Util;
 import com.tenpay.util.TenpayUtil;
 
 /**
- * ÇëÇó´¦ÀíÀà
- * ÇëÇó´¦ÀíÀà¼Ì³Ğ´ËÀà£¬ÖØĞ´createSign·½·¨¼´¿É¡£
+ * è¯·æ±‚å¤„ç†ç±»
+ * è¯·æ±‚å¤„ç†ç±»ç»§æ‰¿æ­¤ç±»ï¼Œé‡å†™createSignæ–¹æ³•å³å¯ã€‚
  * @author miklchen
  *
  */
 public class RequestHandler {
 	
-	/** Íø¹ØurlµØÖ· */
+	/** ç½‘å…³urlåœ°å€ */
 	private String gateUrl;
 	
-	/** ÃÜÔ¿ */
+	/** å¯†é’¥ */
 	private String key;
 	
-	/** ÇëÇóµÄ²ÎÊı */
+	/** è¯·æ±‚çš„å‚æ•° */
 	private SortedMap parameters;
 	
-	/** debugĞÅÏ¢ */
+	/** debugä¿¡æ¯ */
 	private String debugInfo;
 	
 	protected HttpServletRequest request;
@@ -41,7 +41,7 @@ public class RequestHandler {
 	protected HttpServletResponse response;
 	
 	/**
-	 * ¹¹Ôìº¯Êı
+	 * æ„é€ å‡½æ•°
 	 * @param request
 	 * @param response
 	 */
@@ -56,43 +56,43 @@ public class RequestHandler {
 	}
 	
 	/**
-	*³õÊ¼»¯º¯Êı¡£
+	*åˆå§‹åŒ–å‡½æ•°ã€‚
 	*/
 	public void init() {
 		//nothing to do
 	}
 
 	/**
-	*»ñÈ¡Èë¿ÚµØÖ·,²»°üº¬²ÎÊıÖµ
+	*è·å–å…¥å£åœ°å€,ä¸åŒ…å«å‚æ•°å€¼
 	*/
 	public String getGateUrl() {
 		return gateUrl;
 	}
 
 	/**
-	*ÉèÖÃÈë¿ÚµØÖ·,²»°üº¬²ÎÊıÖµ
+	*è®¾ç½®å…¥å£åœ°å€,ä¸åŒ…å«å‚æ•°å€¼
 	*/
 	public void setGateUrl(String gateUrl) {
 		this.gateUrl = gateUrl;
 	}
 
 	/**
-	*»ñÈ¡ÃÜÔ¿
+	*è·å–å¯†é’¥
 	*/
 	public String getKey() {
 		return key;
 	}
 
 	/**
-	*ÉèÖÃÃÜÔ¿
+	*è®¾ç½®å¯†é’¥
 	*/
 	public void setKey(String key) {
 		this.key = key;
 	}
 	
 	/**
-	 * »ñÈ¡²ÎÊıÖµ
-	 * @param parameter ²ÎÊıÃû³Æ
+	 * è·å–å‚æ•°å€¼
+	 * @param parameter å‚æ•°åç§°
 	 * @return String 
 	 */
 	public String getParameter(String parameter) {
@@ -101,9 +101,9 @@ public class RequestHandler {
 	}
 	
 	/**
-	 * ÉèÖÃ²ÎÊıÖµ
-	 * @param parameter ²ÎÊıÃû³Æ
-	 * @param parameterValue ²ÎÊıÖµ
+	 * è®¾ç½®å‚æ•°å€¼
+	 * @param parameter å‚æ•°åç§°
+	 * @param parameterValue å‚æ•°å€¼
 	 */
 	public void setParameter(String parameter, String parameterValue) {
 		String v = "";
@@ -114,7 +114,7 @@ public class RequestHandler {
 	}
 	
 	/**
-	 * ·µ»ØËùÓĞµÄ²ÎÊı
+	 * è¿”å›æ‰€æœ‰çš„å‚æ•°
 	 * @return SortedMap
 	 */
 	public SortedMap getAllParameters() {		
@@ -122,14 +122,14 @@ public class RequestHandler {
 	}
 
 	/**
-	*»ñÈ¡debugĞÅÏ¢
+	*è·å–debugä¿¡æ¯
 	*/
 	public String getDebugInfo() {
 		return debugInfo;
 	}
 	
 	/**
-	 * »ñÈ¡´ø²ÎÊıµÄÇëÇóURL
+	 * è·å–å¸¦å‚æ•°çš„è¯·æ±‚URL
 	 * @return String
 	 * @throws UnsupportedEncodingException 
 	 */
@@ -153,7 +153,7 @@ public class RequestHandler {
 			}
 		}
 		
-		//È¥µô×îºóÒ»¸ö&
+		//å»æ‰æœ€åä¸€ä¸ª&
 		String reqPars = sb.substring(0, sb.lastIndexOf("&"));
 		
 		return this.getGateUrl() + "?" + reqPars;
@@ -165,7 +165,7 @@ public class RequestHandler {
 	}
 	
 	/**
-	 * ´´½¨md5ÕªÒª,¹æÔòÊÇ:°´²ÎÊıÃû³Æa-zÅÅĞò,Óöµ½¿ÕÖµµÄ²ÎÊı²»²Î¼ÓÇ©Ãû¡£
+	 * åˆ›å»ºmd5æ‘˜è¦,è§„åˆ™æ˜¯:æŒ‰å‚æ•°åç§°a-zæ’åº,é‡åˆ°ç©ºå€¼çš„å‚æ•°ä¸å‚åŠ ç­¾åã€‚
 	 */
 	protected void createSign() {
 		StringBuffer sb = new StringBuffer();
@@ -187,13 +187,13 @@ public class RequestHandler {
 		
 		this.setParameter("sign", sign);
 		
-		//debugĞÅÏ¢
+		//debugä¿¡æ¯
 		this.setDebugInfo(sb.toString() + " => sign:" + sign);
 		
 	}
 	
 	/**
-	*ÉèÖÃdebugĞÅÏ¢
+	*è®¾ç½®debugä¿¡æ¯
 	*/
 	protected void setDebugInfo(String debugInfo) {
 		this.debugInfo = debugInfo;
