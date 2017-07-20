@@ -11,7 +11,7 @@
 </head>
 
 <body class="mainbody">
-	<form name="form1" method="post" action="/Verwalter/fitment/company/list" id="form1">
+	<form name="form1" method="post" action="/Verwalter/fitment/earnest/list" id="form1">
 		<div>
 			<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}">
 			<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}">
@@ -52,22 +52,11 @@
 			<div id="floatHead" class="toolbar" style="position: static; top: 42px;">
 				<div class="l-list">
 					<ul class="icon-list">
-						<#--
-						<li>
-							<a class="all" href="javascript:;" onclick="checkAll(this);">
-								<i></i>
-								<span>全选</span>
-							</a>
-						</li>
-						-->
-						<#--
-						<li>
-							<a onclick="return ExePostBack('btnDelete');" id="btnDelete" class="del" href="javascript:__doPostBack('btnDelete','')">
-								<i></i>
-								<span>删除</span>
-							</a>
-						</li>
-						-->
+							<div class="r-list">
+						      <input name="keywords" id="keywords" type="text" class="keyword" value="${keywords!""}">
+						      <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>
+						    </div>
+											
 					</ul>
 				</div>
 			</div>
