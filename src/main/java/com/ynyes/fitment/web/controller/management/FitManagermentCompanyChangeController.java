@@ -15,8 +15,8 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ynyes.fitment.foundation.entity.FitCompanyReport;
-import com.ynyes.fitment.foundation.service.FitCompanyReportService;
+import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
+import com.ynyes.fitment.foundation.service.FitCreditChangeLogService;
 import com.ynyes.lyz.controller.management.TdManagerBaseController;
 import com.ynyes.lyz.util.SiteMagConstant;
 
@@ -25,11 +25,11 @@ import com.ynyes.lyz.util.SiteMagConstant;
 public class FitManagermentCompanyChangeController extends TdManagerBaseController{
 
 	@Autowired
-	private FitCompanyReportService fitCompanyReportService;
+	private FitCreditChangeLogService fitCreditChangeLogService;
 	
 	@RequestMapping(value = "/downdata")
 	@ResponseBody
-	public String dowmData(HttpServletRequest req, ModelMap map, String begindata, String enddata,
+	public String dowmData(HttpServletRequest req, ModelMap map, String startTime, String endTime,
 			HttpServletResponse response, String city, String companyCode,String keywords,String type) {
 
 		String username = (String) req.getSession().getAttribute("manager");
@@ -38,7 +38,7 @@ public class FitManagermentCompanyChangeController extends TdManagerBaseControll
 		}
 		
     	//报表数据
-		List<FitCompanyReport> list = this.fitCompanyReportService.queryDownList(begindata, enddata, city, companyCode,
+		List<FitCreditChangeLog> list = this.fitCreditChangeLogService.queryDownList(startTime, endTime, city, companyCode,
 				keywords, type);
 		
 		// 第一步，创建一个webbook，对应一个Excel文件
@@ -66,7 +66,7 @@ public class FitManagermentCompanyChangeController extends TdManagerBaseControll
 
 
 		Integer i = 0;
-		for (FitCompanyReport log : list) {
+		for (FitCreditChangeLog log : list) {
 			row = sheet.createRow((int) i + 1);
 			String strfu="";
 			if (null != log.getCity()) {// 城市

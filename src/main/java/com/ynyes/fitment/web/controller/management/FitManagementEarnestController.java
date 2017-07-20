@@ -1,11 +1,11 @@
 package com.ynyes.fitment.web.controller.management;
 
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import com.ynyes.fitment.core.constant.CreditOperator;
 import com.ynyes.fitment.core.constant.Global;
 import com.ynyes.fitment.foundation.entity.FitCompany;
-import com.ynyes.fitment.foundation.entity.FitCompanyReport;
 import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitCreditChangeLogService;
@@ -167,7 +166,7 @@ public class FitManagementEarnestController {
 	
 	
 	@RequestMapping(value="/earnest_coupon_detail")
-	public String earnestCouponDetail(String city, String companyCode,String keywords,String type, String begindata, String enddata, Integer page,
+	public String earnestCouponDetail(String city, String companyCode,String keywords,String type, String startTime, String endTime, Integer page,
 			Integer size,  String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
 			ModelMap map, HttpServletRequest request) {
 		
@@ -184,19 +183,23 @@ public class FitManagementEarnestController {
 		if (null == size || size <= 0) {
 			size = SiteMagConstant.pageSize;
 		}
+		TdCity tdCity = this.tdCityService.findByCityName(city);
 		List<FitCompany> companyList = new ArrayList<FitCompany>();
 		try {
-			companyList = fitCompanyService.findAll();
+			companyList = fitCompanyService.findBySobId(tdCity.getSobIdCity());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
 		List<TdCity> cityList = this.tdCityService.findAll();
+		Page<FitCreditChangeLog> balance_page= null;
 		try {
 			companyList = this.fitCompanyService.findAll();
+			balance_page = this.fitCreditChangeLogService.queryList(startTime, endTime, city, companyCode, keywords, type, page, size);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		map.addAttribute("balance_page", balance_page);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
 		map.addAttribute("keywords", keywords);
@@ -207,8 +210,8 @@ public class FitManagementEarnestController {
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
 		map.addAttribute("companyCode", companyCode);
 		map.addAttribute("type", type);
-		map.addAttribute("begindata", begindata);
-		map.addAttribute("enddata", enddata);
+		map.addAttribute("startTime", startTime);
+		map.addAttribute("endTime", endTime);
 		map.addAttribute("city", city);
 
 		return "/fitment/management/earnest_coupon_log_list";

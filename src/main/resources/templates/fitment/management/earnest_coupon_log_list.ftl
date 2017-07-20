@@ -34,12 +34,12 @@ function downloaddate()
     var type = $("#type").val();
     if(begain==""){
     	$.dialog.confirm("将导出全部数据,请确认导出?", function () {
-    		window.open("/Verwalter/companyChange/downdata?begindata="+ begain + "&enddata=" + end + "&companyCode=" + companyCode+ "&city=" + city
+    		window.open("/Verwalter/companyChange/downdata?startTime="+ begain + "&endTime=" + end + "&companyCode=" + companyCode+ "&city=" + city
     		+ "&keywords=" + keywords+ "&type=" + type);
     		return;
         });
     }else{
-    	window.open("/Verwalter/companyChange/downdata?begindata="+ begain + "&enddata=" + end + "&companyCode=" + companyCode+ "&city=" + city
+    	window.open("/Verwalter/companyChange/downdata?startTime="+ begain + "&endTime=" + end + "&companyCode=" + companyCode+ "&city=" + city
     		+ "&keywords=" + keywords+ "&type=" + type);
     }
 }
@@ -72,10 +72,10 @@ function downloaddate()
         <div class="rule-single-select single-select">
         <select name="type" id="type" onchange="javascript:setTimeout(__doPostBack('type',''), 0)" style="display: none;">
             <option selected="selected" value="">变更类型</option>
-            <option  value="0">信用金充值</option>
-            <option  value="1">现金返利充值</option>
-            <option  value="3">消费</option>
-            <option  value="4">退款</option>
+            <option <#if type??&&type=='信用金充值'>selected</#if> value="信用金充值">信用金充值</option>
+            <option <#if type??&&type=='现金返利充值'>selected</#if> value="现金返利充值">现金返利充值</option>
+            <option <#if type??&&type=='消费'>selected</#if> value="消费">消费</option>
+            <option <#if type??&&type=='退款'>selected</#if> value="退款">退款</option>
         </select>
         </div>
       </div>
@@ -84,8 +84,8 @@ function downloaddate()
               	<div class="rule-single-select">
                       <select name="city" id="city" onchange="javascript:setTimeout(__doPostBack('changeCity',''), 0)">
                        <option value="" >选择城市</option>      
-                       <#list cityList as city>
-                       	<option value="${city.sobIdCity?c }" <#if cityCode?? && cityCode==city.sobIdCity>selected</#if> >${city.cityName }</option>
+                       <#list cityList as citys>
+                       	<option value="${citys.cityName!'' }" <#if city?? && city==citys.cityName>selected</#if> >${citys.cityName }</option>
                        </#list>
                        </select>
            		</div>
@@ -98,7 +98,7 @@ function downloaddate()
                        <select name="companyCode" id="companyCode" onchange="javascript:setTimeout(__doPostBack('changeDiy',''), 0)">
                        <option value="" >选择装饰公司</option>      
                        <#list companyList as company>
-                       	<option value="${company.code!'' }" >${company.name }</option>
+                       	<option value="${company.code!'' }" <#if companyCode?? && companyCode==company.code>selected</#if>>${company.name }</option>
                        </#list>
                        </select>
            		</div>
@@ -139,40 +139,15 @@ function downloaddate()
     <#if balance_page??>
         <#list balance_page.content as item>
             <tr>
-            	<td align="center">${item.username!''}</td>
-                <td align="left">
-                	<#switch item.type>
-                		<#case 0>
-                			充值
-                		<#break>
-                		<#case 1>
-                			提现
-                		<#break>
-                		<#case 2>
-                			管理员修改
-                		<#break>
-                		<#case 3>
-                			消费
-                		<#break>
-                		<#case 4>
-                			退款
-                		<#break>
-                		<#case 5>
-                			经销差价返还
-                		<#break>
-                		<#case 6>
-                			经销差价扣除
-                		<#break>
-                	</#switch>
-                </td>
-                <td align="left"><#if item.type==1 || item.type==3 || item.type==6>-</#if><#if item.money??>${item.money?string("0.00")}</#if></td>
-                <td align="left"><#if item.cashLeft??>${item.cashLeft?string("0.00")}<#else>暂无</#if></td>
-                <td align="left"><#if item.unCashLeft??>${item.unCashLeft?string("0.00")}<#else>暂无</#if></td>
-                <td align="left"><#if item.allLeft??>${item.allLeft?string("0.00")}<#else>暂无</#if></td>
-                <td align="left"><#if item.createTime??>${item.createTime?string("yyyy-MM-dd HH:mm:ss")}</#if></td>
-				<td align="center"><#if item.isSuccess??&&item.isSuccess>完成<#else>未完成</#if></td>
-				<td align="left">${item.reason!''}</td>
-				<td align="left">${item.orderNumber!''}</td>
+            	<td align="center">${item.companyTitle!''}</td>
+                <td align="left">${item.companyCode!''}</td>
+                <td align="left">${item.type!''}</td>
+                <td align="left"><#if item.money??>${item.money?string("0.00")}<#else>0.00</#if></td>
+                <td align="left"><#if item.afterChange??>${item.afterChange?string("0.00")}<#else>0.00</#if></td>
+                <td align="left"><#if item.afterChangePromotion??>${item.afterChangePromotion?string("0.00")}<#else>0.00</#if></td>
+                <td align="left"><#if item.totalBalance??>${item.totalBalance?string("0.00")}<#else>0.00</#if></td>
+                <td align="left"><#if item.changeTime??>${item.changeTime?string("yyyy-MM-dd HH:mm:ss")}</#if></td>
+				<td align="center">${item.referenceNumber!''}</td>
         </#list>
     </#if>
      
