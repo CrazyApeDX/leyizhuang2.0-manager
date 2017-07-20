@@ -37,7 +37,7 @@ public class FitCreditChangeLog extends TableEntity {
 	@Column(nullable = false, updatable = false)
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date changeTime;
-	
+
 	// 涉及单号
 	@Column(length = 30, updatable = false, nullable = false)
 	private String referenceNumber;
@@ -54,7 +54,7 @@ public class FitCreditChangeLog extends TableEntity {
 	// 操作人id
 	@Column(nullable = false, updatable = false)
 	private Long operatorId;
-	
+
 	// 操作人账号
 	@Column(nullable = false, updatable = false)
 	private String operatorUserName;
@@ -70,30 +70,34 @@ public class FitCreditChangeLog extends TableEntity {
 	// 相关装饰公司ID
 	@Column(nullable = false, updatable = false)
 	private Long companyId;
-	
+
 	// 相关装饰公司编码
 	@Column(nullable = false, updatable = false)
 	private String companyCode;
-	
+
 	// 到账日期
 	@Column(nullable = false, updatable = false)
 	private String arrivalTime;
-	
-	//手写备注
+
+	// 手写备注
 	@Column(nullable = false, updatable = false)
 	private String writtenRemarks;
-	
-	//城市
+
+	// 城市
 	@Column(nullable = false, updatable = false)
 	private String city;
-	
+
 	// 变更后现金返利余额
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double afterChangePromotion;
-	
+
 	// 总余额
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double totalBalance;
+
+	// 辨别类型
+	@Column(scale = 2, nullable = false, updatable = false)
+	private Integer distinguishType;
 
 	public Double getBeforeChange() {
 		return beforeChange;
@@ -268,5 +272,13 @@ public class FitCreditChangeLog extends TableEntity {
 
 	public void setOperatorUserName(String operatorUserName) {
 		this.operatorUserName = operatorUserName;
+	}
+
+	public Integer getDistinguishType() {
+		return distinguishType;
+	}
+
+	public void setDistinguishType(Integer distinguishType) {
+		this.distinguishType = distinguishType;
 	}
 }

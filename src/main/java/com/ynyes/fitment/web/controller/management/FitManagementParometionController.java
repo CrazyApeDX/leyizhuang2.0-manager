@@ -27,8 +27,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.ynyes.fitment.core.constant.CreditOperator;
 import com.ynyes.fitment.core.constant.Global;
 import com.ynyes.fitment.foundation.entity.FitCompany;
-import com.ynyes.fitment.foundation.entity.FitPromotionMoneyLog;
+import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
+import com.ynyes.fitment.foundation.service.FitCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.FitPromotionMoneyLogService;
 import com.ynyes.lyz.entity.TdChangeBalanceLog;
 import com.ynyes.lyz.entity.TdCity;
@@ -66,6 +67,9 @@ public class FitManagementParometionController {
 	
 	@Autowired
 	private FitPromotionMoneyLogService fitPromotionMoneyLogService;
+	
+	@Autowired
+	private FitCreditChangeLogService fitCreditChangeLogService;
 	
 	@RequestMapping(value = "/list")
 	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size, String __EVENTTARGET,
@@ -250,7 +254,7 @@ public class FitManagementParometionController {
 		
 		TdCity region = tdRegionService.findBySobIdCity(company.getSobId());
 		
-		FitPromotionMoneyLog log = new FitPromotionMoneyLog();
+		FitCreditChangeLog log = new FitCreditChangeLog();
 		
 		log.setBeforeChange(company.getPromotionMoney());
 		log.setAfterChange(company.getCredit());
@@ -270,11 +274,12 @@ public class FitManagementParometionController {
 		log.setWrittenRemarks(writtenRemarks);
 		log.setCity(region.getCityName());
 		log.setAfterChangePromotion(company.getPromotionMoney() + money);
+		log.setDistinguishType(1);
 		
 		company.setPromotionMoney(company.getPromotionMoney() + money);
 		try {
 			this.fitCompanyService.save(company);
-			this.fitPromotionMoneyLogService.save(log);
+			this.fitCreditChangeLogService.save(log);
 			if (money > 0) {
 				this.fitPromotionMoneyLogService.doReceipt(company, money);
 			} else {

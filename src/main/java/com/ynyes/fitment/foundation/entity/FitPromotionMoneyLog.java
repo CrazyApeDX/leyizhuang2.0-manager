@@ -94,6 +94,10 @@ public class FitPromotionMoneyLog extends TableEntity {
 	// 总余额
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double totalBalance;
+	
+	// 辨别类型
+	@Column(scale = 2, nullable = false, updatable = false)
+	private Integer distinguishType;
 
 	public Double getBeforeChange() {
 		return beforeChange;
@@ -268,5 +272,13 @@ public class FitPromotionMoneyLog extends TableEntity {
 
 	public void setOperatorUserName(String operatorUserName) {
 		this.operatorUserName = operatorUserName;
+	}
+
+	public Integer getDistinguishType() {
+		return distinguishType;
+	}
+
+	public void setDistinguishType(Integer distinguishType) {
+		this.distinguishType = distinguishType;
 	}
 }
