@@ -170,9 +170,16 @@ public class FitManagementEarnestController {
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
+		List<TdCity> cityList = this.tdCityService.findAll();
+		List<FitCompany> companyList = null; 
+		try {
+			companyList = this.fitCompanyService.findAll();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
-		
-		
+		map.addAttribute("companyList", companyList);
+		map.addAttribute("cityList", cityList);
 		return "/fitment/management/earnest_coupon_log_list";
 	}
 
