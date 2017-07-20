@@ -159,5 +159,11 @@ public class FitManagementEarnestController {
 		
 		return "redirect:/Verwalter/fitment/earnest/list";
 	}
+	
+	@RequestMapping(value="/test")
+	public String tset(){
+		
+		return "/fitment/management/earnest_coupon_log_list";
+	}
 
 }

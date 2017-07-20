@@ -212,7 +212,7 @@ $(function () {
 			<dl>
 				<dt>装饰公司编码</dt>
 				<dd>
-					<span><#if company??>${company.code!''}（${company.code!''}）</#if></span>
+					<span><#if company??>${company.code!''}</#if></span>
 					<input type="hidden" value="<#if company??>${company.code!''}</#if>" name="companyCode">
 				</dd>
 			</dl>
@@ -220,7 +220,7 @@ $(function () {
 			<dl>
 				<dt>装饰公司名称</dt>
 				<dd>
-					<span><#if company??>${company.name!''}（${company.name!''}）</#if></span>
+					<span><#if company??>${company.name!''}</#if></span>
 					<input type="hidden" value="<#if company??>${company.name!''}</#if>" name="companyName">
 				</dd>
 			</dl>
@@ -228,7 +228,7 @@ $(function () {
 			<dl>
 				<dt>信用金当前余额</dt>
 				<dd>
-					<span><#if company??>${company.credit!0.00}（${company.credit!0.00}）</#if></span>
+					<span><#if company??>${company.credit!0.00}</#if></span>
 					<input type="hidden" value="<#if company??>${company.credit!0.00}</#if>" name="companyCredit">
 				</dd>
 			</dl>
@@ -302,6 +302,17 @@ $(function () {
 		var remark = $("#remark").val();
 		var password = $('#password').val();
 		var writtenRemarks = $('#writtenRemarks').val();
+		var transferTime = $('#transferTime').val();
+		var myDate = new Date();   
+		var d1 = new Date(Date.parse(transferTime));
+		var time = new Date((d1/1000+86400)*1000);
+		
+		if(myDate > time){
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("请输入大于当前的日期");
+			return;
+		}
+		
 		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert("请输入一个正确的数字");
