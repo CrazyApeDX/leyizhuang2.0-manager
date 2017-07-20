@@ -1,5 +1,7 @@
 package com.ynyes.fitment.web.controller.management;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,13 @@ public class FitManagermentCompanyChangeController extends TdManagerBaseControll
 		String username = (String) req.getSession().getAttribute("manager");
 		if (null == username) {
 			return "redirect:/Verwalter/login";
+		}
+		if (null == startTime || "".equals(startTime)) {
+			startTime = "1970-01-01 00:00:00";
+		}
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		if (null == endTime || "".equals(endTime)) {
+			endTime = formatter.format(new Date());
 		}
 		
     	//报表数据

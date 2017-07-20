@@ -188,7 +188,7 @@ public class FitManagementEarnestController {
 		List<FitCompany> companyList = new ArrayList<FitCompany>();
 		TdCity tdCity = null;
 		try {
-			if (null == city) {
+			if (null == city || "".equals(city)) {
 				companyList = fitCompanyService.findAll();
 			} else {
 				tdCity = this.tdCityService.findByCityName(city);
