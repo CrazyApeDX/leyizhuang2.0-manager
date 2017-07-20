@@ -8,6 +8,6 @@ import com.ynyes.fitment.foundation.entity.FitCompanyReport;
 public interface FitCompanyReportService {
 	
 	List<FitCompanyReport> queryDownList(String begindata, String enddata,
-			String city, String companyname,String keywords,String type);
+			String city, Long companyId,String keywords,String type);
 
 }
