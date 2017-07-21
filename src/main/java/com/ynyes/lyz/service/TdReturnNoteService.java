@@ -553,7 +553,7 @@ public class TdReturnNoteService {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdReturnNote> c = new Criteria<TdReturnNote>();
 		
-		c.add(Restrictions.notLike("orderNumber", "FIT", true));
+		c.add(Restrictions.like("orderNumber", "FIT", true));
 		
 		if (StringUtils.isNotBlank(keyword)) {
 			c.add(Restrictions.or(Restrictions.like("orderNumber", keyword, true),
