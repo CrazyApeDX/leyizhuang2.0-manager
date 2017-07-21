@@ -297,7 +297,7 @@
                     </th>
                     <td>
                     	<div class="position">
-                             <span id="spanAcceptName">${user.realName!""}</span>
+                             <span id="spanAcceptName"><#if user??>${user.realName!""}</#if></span>
                          </div>
                     </td>
                     </tr>
@@ -344,7 +344,7 @@
                         </th>
                         <td>
                             <div class="position">
-                                <div>${returnNote.returnDetail!""}</div>
+                                <div><#if returnNote.returnDetail??>${returnNote.returnDetail!""}<#else>${returnNote.turnPrice!0.00} 元</#if></div>
                             </div>
                         </td>
                     </tr>

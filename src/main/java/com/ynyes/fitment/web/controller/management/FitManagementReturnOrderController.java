@@ -1,37 +1,25 @@
 package com.ynyes.fitment.web.controller.management;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
-import com.ynyes.lyz.entity.TdCity;
-import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdManager;
-import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
 import com.ynyes.lyz.entity.TdReturnNote;
-import com.ynyes.lyz.entity.user.TdUser;
-import com.ynyes.lyz.service.TdCityService;
-import com.ynyes.lyz.service.TdDiySiteRoleService;
-import com.ynyes.lyz.service.TdDiySiteService;
 import com.ynyes.lyz.service.TdManagerLogService;
 import com.ynyes.lyz.service.TdManagerRoleService;
 import com.ynyes.lyz.service.TdManagerService;
 import com.ynyes.lyz.service.TdReturnNoteService;
-import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.util.SiteMagConstant;
 
 @Controller
@@ -46,18 +34,6 @@ public class FitManagementReturnOrderController {
 	
 	@Autowired
 	TdManagerLogService tdManagerLogService;
-	
-	@Autowired
-	private TdDiySiteService tdDiySiteService;
-	
-	@Autowired
-	private TdDiySiteRoleService tdDiySiteRoleService;
-
-	@Autowired
-	private TdCityService tdCityService;
-
-	@Autowired
-	private TdUserService tdUserService;
 	
 	@Autowired
 	TdReturnNoteService tdReturnNoteService;

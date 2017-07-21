@@ -67,39 +67,36 @@ function downloaddateurl(type,url){
     </div>
     <!--/导航栏-->
     <!--工具栏-->
-     <div class="toolbar-wrap">
-        <div id="floatHead" class="toolbar">
-            <div class="l-list">
-                <ul class="icon-list">
-                
-            </div>
-
-            <div class="r-list">
-                <div class="odiv">  <span class="span1">开始时间：</span>
-                    <input name="orderStartTime" id="begain" type="text" value="${orderStartTime!"" }" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" " />
-                  <span class="span1">结束时间：</span>
-                    <input name="orderEndTime" id="end" type="text" value="${orderEndTime!"" }" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" " />
-                 <div class="odiv" style="width:350px;float:right"><div style="float:left;"><span class="span1">订单号：</span><input name="keywords" type="text" class="input" value="${orderNumber!"" }">
-                </div>
-                    <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>
-                    <div>
-
-                    </div></div>
-
-             <#if companyList?? && companyList?size gt 0 >      
-				<div class="odiv" style="float:left;width:310px;"><span class="span1">装饰公司：</span>
-                    <div class="rule-single-select">
-                        <select name="company" id="company" onchange="javascript:setTimeout(__doPostBack('changeCompany',''), 0)" >
-                            <option value="" >请选择</option>
-                            <#list companyList as companys>
-                                <option value="${companys.code!'' }" <#if company?? && company!='' && company==companys.code>selected</#if> >${companys.name }</option>
-                            </#list>
-                        </select>
-                    </div>
-                </div>
-            </#if>
-            </div>
-        </div>
+    <div class="toolbar-wrap">
+	  <div id="floatHead" class="toolbar" style="position: static; top: 42px;">
+	    <div class="l-list">
+	      <ul class="icon-list">
+	      </ul>
+	           	
+	           	<div class="menu-list">
+	              	 <span class="span1">开始时间：</span>
+	                <input name="orderStartTime" id="begain" type="text" value="${orderStartTime!"" }" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" " />
+	                <span class="span1">结束时间：</span>
+	                <input name="orderEndTime" id="end" type="text" value="${orderEndTime!"" }" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" " />
+	           	<#if companyList?? && companyList?size gt 0 >
+	                <div class="rule-single-select">
+                       <select name="company" id="company" onchange="javascript:setTimeout(__doPostBack('changeDiy',''), 0)">
+                       <option value="" >选择装饰公司</option>      
+                       <#list companyList as companys>
+                       	<option value="${companys.code!'' }" <#if company?? && company==companys.code>selected</#if>>${companys.name }</option>
+                       </#list>
+                       </select>
+	           		</div>
+	           	</div>
+	           </#if>
+	    </div>
+	    
+	    <div class="r-list">
+	      <input name="keywords" id="keywords" type="text" class="keyword" value="${keywords!""}">
+	      <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>
+	    </div>
+	  </div>
+	</div>
     <!--/工具栏-->
     <!--列表-->
     
@@ -117,9 +114,6 @@ function downloaddateurl(type,url){
         </th>
          <th align="left" width="12%">
             申请用户
-        </th>
-        <th align="left" width="12%">
-           用户名称
         </th>
         <th align="left" width="12%">
             门店名称
@@ -151,7 +145,6 @@ function downloaddateurl(type,url){
                     <a href="/Verwalter/returnNote/returnNote/edit?id=${returnNote.id?c}">${returnNote.returnNumber!""}</a></td>
                 <td>${returnNote.statusName!""}</td>
                 <td>${returnNote.username!""}</td>
-                <td><#if name_map??>${name_map[returnNote.username]!''}</#if></td>
                 <td>${returnNote.diySiteTitle!""}</td>
                 <td>${returnNote.remarkInfo!""}</td>
                 <td><#if returnNote.orderTime??>${returnNote.orderTime?string("yyyy-MM-dd HH:mm:ss")}</#if></td>

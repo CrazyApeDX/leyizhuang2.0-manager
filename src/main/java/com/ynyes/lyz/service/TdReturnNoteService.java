@@ -559,7 +559,7 @@ public class TdReturnNoteService {
 			c.add(Restrictions.or(Restrictions.like("orderNumber", keyword, true),
 					Restrictions.like("returnNumber", keyword, true), Restrictions.like("diySiteTitle", keyword, true)));
 		}
-		if (null != company && "".equals(company)) {
+		if (null != company && !"".equals(company)) {
 			c.add(Restrictions.eq("diyCode", company, true));
 		}
 		if (null != orderStartTime && !orderStartTime.equals("")) {
