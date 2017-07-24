@@ -1,9 +1,12 @@
 package com.ynyes.lyz.controller.management;
 
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.common.oss.utils.ImageClientUtils;
+import com.common.util.ImageCompressUtil;
 
 import net.sf.json.JSONObject;
 
@@ -26,6 +30,7 @@ import net.sf.json.JSONObject;
 @RequestMapping("/Verwalter/uploadAPk")
 public class UploadAPk {
 	
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 	
 	@RequestMapping(value = "/goUpload")
 	public String goodsList(HttpServletRequest req) {
@@ -36,7 +41,7 @@ public class UploadAPk {
 	
 	@RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
-    public Map<String, Object> upload(String action,
+    public Map<String, Object> upload(String action, String source, 
             @RequestParam MultipartFile Filedata, HttpServletRequest req, HttpServletResponse response) {
         Map<String, Object> res = new HashMap<String, Object>();
         res.put("status", 0);
@@ -51,18 +56,25 @@ public class UploadAPk {
             res.put("msg", "图片不存在");
             return res;
         }
+        String name = Filedata.getOriginalFilename();
+        String ext = name.substring(name.lastIndexOf("."));
         try {
+            Date dt = new Date(System.currentTimeMillis());
+            String fileName = SDF.format(dt) + ext;
+            
+            String path = "";
+            long fileSize = Filedata.getSize();
+			path = ImageClientUtils.getInstance().uploadImage(Filedata.getInputStream(), fileSize, fileName, source);
+           
+			String url = ImageClientUtils.getInstance().getAbsProjectImagePath(path);
 
-            InputStream stream = Filedata.getInputStream();
-
-            ImageClientUtils client = ImageClientUtils.getInstance();
-            String fileName = client.uploadImage(stream, stream.available());
-            String path = client.getAbsProjectImagePath(fileName);
-            stream.close();
             res.put("status", 1);
             res.put("msg", "上传文件成功！");
-            res.put("path",  path);
-            res.put("size", Filedata.getSize());
+            res.put("path", url);
+            res.put("thumb", url);
+            res.put("name", name);
+            res.put("size", fileSize);
+            res.put("ext", ext.substring(1));
 
         } catch (Exception e) {
             res.put("status", 0);
@@ -78,18 +90,18 @@ public class UploadAPk {
             writer.println(jsonObject);  //想办法把map转成json
             writer.flush();
         } catch (IOException e) {
+            System.err.println(e);
         } finally {
             if (writer != null) {
                 try {
                     writer.close();
                 } catch (Exception e) {
+                    System.err.println(e);
                 }
             }
         }
 
         return null;
-
-//        return res;
 
     }
 	
