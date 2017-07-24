@@ -571,6 +571,8 @@ public class TdManagerOrderController {
 		map.addAttribute("statusId", statusId);
 		if (null != id) {
 			TdOrder order = tdOrderService.findOne(id);
+			Double negotiatedPrice =order.getTotalGoodsPrice() - order.getCredit();
+			map.addAttribute("negotiatedPrice", negotiatedPrice);
 			map.addAttribute("order", tdOrderService.findOne(id));
 			// 仓库
 			if (null != order) {

@@ -434,10 +434,9 @@
 <form name="form1" method="post" action="/Verwalter/order/save" id="form1">
     <!--导航栏-->
     <div class="location" style="position: fixed; top: 0px;">
-        <a href="/Verwalter/order/list/${statusId!"0"}" class="back"><i></i><span>返回列表页</span></a>
+        <a href="/Verwalter/fitment/order/list" class="back"><i></i><span>返回列表页</span></a>
         <a href="/Verwalter/center" class="home"><i></i><span>首页</span></a>
-        <i class="arrow"></i>
-        <a href="/Verwalter/order/list/${statusId!"0"}"><span>订单管理</span></a>
+      
         <i class="arrow"></i><span>订单详细</span>
     </div>
     <div class="line10">
@@ -1052,8 +1051,13 @@
                         </td>
                     </tr>
                     <tr>
-                    	<th>会员折扣</th>
-                        <td><#if order.difFee??> ${order.difFee?string("0.00")}<#else>0.00</#if>元</td>
+                    <#if (order.credit??&&order.credit>0)||(order.promotionMoneyPayed??&&order.promotionMoneyPayed>0)>
+	                    	<th>协议抵减</th>
+	                        <td><#if negotiatedPrice??> ${negotiatedPrice?string("0.00")}<#else>0.00</#if>元</td>
+                        <#else>
+                        	<th>会员折扣</th>
+	                        <td><#if order.difFee??> ${order.difFee?string("0.00")}<#else>0.00</#if>元</td>
+	                    </#if>
                     </tr>
                     <tr>
                     	<th>收货人是否是主家</th>
