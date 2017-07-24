@@ -434,7 +434,7 @@
 <form name="form1" method="post" action="/Verwalter/order/save" id="form1">
     <!--导航栏-->
     <div class="location" style="position: fixed; top: 0px;">
-        <a href="/Verwalter/fitment/order/list" class="back"><i></i><span>返回列表页</span></a>
+        <a href="javascript:history.go(-1);" class="back"><i></i><span>返回列表页</span></a>
         <a href="/Verwalter/center" class="home"><i></i><span>首页</span></a>
       
         <i class="arrow"></i><span>订单详细</span>
