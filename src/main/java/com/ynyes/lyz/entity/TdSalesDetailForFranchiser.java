@@ -20,7 +20,7 @@ import org.hibernate.annotations.GenericGenerator;
 public class TdSalesDetailForFranchiser {
 
 	@Id
-	@GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private String id;
 	
 	// 门店名称
@@ -62,9 +62,6 @@ public class TdSalesDetailForFranchiser {
 	// 单价
 	@Column
 	private Double price;
-	// 总价
-	@Column
-	private Double totalPrice;
 
 	// 品牌类型
 	@Column
@@ -226,14 +223,6 @@ public class TdSalesDetailForFranchiser {
 
 	public void setPrice(Double price) {
 		this.price = price;
-	}
-
-	public Double getTotalPrice() {
-		return totalPrice;
-	}
-
-	public void setTotalPrice(Double totalPrice) {
-		this.totalPrice = totalPrice;
 	}
 
 	public String getBrandTitle() {

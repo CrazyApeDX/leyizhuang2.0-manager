@@ -3591,7 +3591,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				//使用产品券数量
                 row.createCell(15).setCellValue(objToString(salesDetail.getProductCouponQuantity()));
                 //预存款变更金额
-                row.createCell(16).setCellValue(objToString((salesDetail.getQuantity()-salesDetail.getProductCouponQuantity())*salesDetail.getPrice()));
+                row.createCell(16).setCellValue(objToString((salesDetail.getQuantity()-salesDetail.getProductCouponQuantity())*salesDetail.getJxPrice()));
 	          	//品牌
 				row.createCell(17).setCellValue(objToString(salesDetail.getBrandTitle()));
 	    		//商品父分类
@@ -4106,7 +4106,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        	//使用产品券数量
                 row.createCell(17).setCellValue(objToString(goodsInOut.getProductCouponQuantity()));
                 //预存款变更金额
-                row.createCell(18).setCellValue(objToString((goodsInOut.getQuantity()-goodsInOut.getProductCouponQuantity())*goodsInOut.getPrice()));
+                row.createCell(18).setCellValue(objToString((goodsInOut.getQuantity()-goodsInOut.getProductCouponQuantity())*goodsInOut.getJxPrice()));
 	          	//品牌
 				row.createCell(19).setCellValue(objToString(goodsInOut.getBrandTitle()));
 	    		//商品父分类

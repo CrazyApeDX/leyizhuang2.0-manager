@@ -117,6 +117,10 @@ public class TdGoodsInOutFranchisees {
 	@Column
 	private Double productCouponQuantity;
 
+	//赠品标识
+	@Column
+	private String giftFlag;
+
 	public Long getId() {
 		return id;
 	}
@@ -380,5 +384,13 @@ public class TdGoodsInOutFranchisees {
 
 	public void setProductCouponQuantity(Double productCouponQuantity) {
 		this.productCouponQuantity = productCouponQuantity;
+	}
+
+	public String getGiftFlag() {
+		return giftFlag;
+	}
+
+	public void setGiftFlag(String giftFlag) {
+		this.giftFlag = giftFlag;
 	}
 }
