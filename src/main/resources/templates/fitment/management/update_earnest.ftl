@@ -304,19 +304,19 @@ $(function () {
 		var writtenRemarks = $('#writtenRemarks').val();
 		var transferTime = $('#transferTime').val();
 		var myDate = new Date();   
-		var d1 = new Date(Date.parse(transferTime));
-		var time = new Date((d1/1000+86400)*1000);
+		<#--var d1 = new Date(Date.parse(transferTime));
+		var time = new Date((d1/1000+86400)*1000);-->
 		
 		if(!transferTime){
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert("请选择到账时间");
 			return;
 		}
-		if(myDate > time){
+		<#--if(myDate > time){
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert("请输入大于当前的日期");
 			return;
-		}
+		}-->
 		
 		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");

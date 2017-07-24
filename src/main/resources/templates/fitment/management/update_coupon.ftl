@@ -186,8 +186,8 @@ $(function () {
 		var password = $('#password').val();
 		var writtenRemarks = $('#writtenRemarks').val();
 		var myDate = new Date();   
-		var d1 = new Date(Date.parse(arrivalTime));
-		var time = new Date((d1/1000+86400)*1000);
+		<#--var d1 = new Date(Date.parse(arrivalTime));
+		var time = new Date((d1/1000+86400)*1000);-->
 		
 		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
@@ -208,11 +208,11 @@ $(function () {
 			$.dialog.alert("请输入到账时间");
 			return;
  		}
-		if(myDate > time){
+		<#--if(myDate > time){
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert("请输入大于当前的日期");
 			return;
-		}
+		}-->
 		if (!password) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert('请输入管理员密码');
