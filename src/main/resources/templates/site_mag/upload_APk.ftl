@@ -72,7 +72,7 @@
 </script>
 </head>
 <body class="mainbody">
-<form method="post" action="/Verwalter/article/save" id="form1">
+<form method="post" action="/Verwalter/uploadAPk/upload" id="form1">
 <div>
 <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}" />
 <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}" />
