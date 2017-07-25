@@ -124,7 +124,7 @@ public class FitManagermentCompanyChangeController extends TdManagerBaseControll
 		}
 
 		String exportAllUrl = SiteMagConstant.backupPath;
-		download(wb, exportAllUrl, response, "预存款变更明细");
+		download(wb, exportAllUrl, response, "账户变更明细报表");
 		return "";
 	}
 }
