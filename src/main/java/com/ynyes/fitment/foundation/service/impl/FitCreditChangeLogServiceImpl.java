@@ -81,7 +81,7 @@ public class FitCreditChangeLogServiceImpl extends PageableService implements Fi
 		if (StringUtils.isNotBlank(enddata)) {
 			c.add(Restrictions.lte("changeTime", com.ynyes.lyz.util.StringUtils.stringToDate(enddata, null), true));
 		}
-		c.setOrderByDesc("changeTime");
+		c.setOrderByDesc("id");
 		return fitCreditChangeLogRepo.findAll(c,pageRequest);
 	}
 

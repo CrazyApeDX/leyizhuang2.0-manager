@@ -552,9 +552,14 @@ public class TdReturnNoteService {
 			String company, int size, int page) {
 		PageRequest pageRequest = new PageRequest(page, size);
 		Criteria<TdReturnNote> c = new Criteria<TdReturnNote>();
-		
+		List<Long> status = new ArrayList<Long>();
+		status.add(1L);
+		status.add(2L);
+		status.add(3L);
+		status.add(4L);
+		status.add(5L);
 		c.add(Restrictions.like("orderNumber", "FIT", true));
-		
+		c.add(Restrictions.in("statusId", status, true));
 		if (StringUtils.isNotBlank(keyword)) {
 			c.add(Restrictions.or(Restrictions.like("orderNumber", keyword, true),
 					Restrictions.like("returnNumber", keyword, true), Restrictions.like("diySiteTitle", keyword, true)));
