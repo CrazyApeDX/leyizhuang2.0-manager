@@ -53,7 +53,7 @@ public class FitManagermentCompanyChangeController extends TdManagerBaseControll
 		// 第一步，创建一个webbook，对应一个Excel文件
 		HSSFWorkbook wb = new HSSFWorkbook();
 		// 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
-		HSSFSheet sheet = wb.createSheet("APP装饰公司账户变更明细报表");
+		HSSFSheet sheet = wb.createSheet("账户变更明细报表");
 		// 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
 		// 列宽
 		int[] widths = { 13, 18, 13, 13, 13, 15, 13, 11, 19, 11, 20, 25, 40, 13 };

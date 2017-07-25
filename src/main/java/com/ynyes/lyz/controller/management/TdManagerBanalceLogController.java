@@ -222,7 +222,12 @@ public class TdManagerBanalceLogController extends TdManagerBaseController {
 				row.createCell(5).setCellValue(log.getBalanceTypeName() + "预存款");
 			}
 			if (null != log.getMoney()) {// 变更金额
-				row.createCell(6).setCellValue(strfu + log.getMoney());
+				if("取消订单扣除经销差价".equals(log.getReason()) || "退货扣除经销差价".equals(log.getReason())){
+					row.createCell(6).setCellValue("-"+strfu + log.getMoney());
+				}else{
+					row.createCell(6).setCellValue(strfu + log.getMoney());
+				}
+				
 			}
 
 			if (null != log.getCashLeft()) {// 可提现余额剩余

@@ -323,6 +323,11 @@ $(function () {
 			$.dialog.alert("请输入一个正确的数字");
 			return;
 		}
+		if (money == 0) {
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("请输入一个有效的数字");
+			return;
+		}
 		if (!changeType) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert('请选择变更类型');

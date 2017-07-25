@@ -344,7 +344,7 @@
                         </th>
                         <td>
                             <div class="position">
-                                <div><#if returnNote.returnDetail??>${returnNote.returnDetail!""}<#else>${returnNote.turnPrice!0.00} 元</#if></div>
+                                <div><#if returnNote.returnDetail??>${returnNote.returnDetail!""}<#else>${returnNote.credit!0.00+returnNote.promotionMoneyPayed!0.00}元</#if></div>
                             </div>
                         </td>
                     </tr>
