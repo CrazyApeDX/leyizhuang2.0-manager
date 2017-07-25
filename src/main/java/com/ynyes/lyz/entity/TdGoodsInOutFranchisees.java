@@ -121,6 +121,9 @@ public class TdGoodsInOutFranchisees {
 	@Column
 	private String giftFlag;
 
+	@Column
+	private Boolean isDirect;
+
 	public Long getId() {
 		return id;
 	}
@@ -392,5 +395,13 @@ public class TdGoodsInOutFranchisees {
 
 	public void setGiftFlag(String giftFlag) {
 		this.giftFlag = giftFlag;
+	}
+
+	public Boolean getIsDirect() {
+		return isDirect;
+	}
+
+	public void setIsDirect(Boolean direct) {
+		isDirect = direct;
 	}
 }

@@ -3573,25 +3573,34 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				row.createCell(11).setCellValue(objToString(salesDetail.getPrice()));
 				//产品总价
 				row.createCell(12).setCellValue(objToString((salesDetail.getPrice() * salesDetail.getQuantity() *100)/100));
-				
-				if(null != salesDetail.getJxPrice()){
-					//经销单价
-					row.createCell(13).setCellValue(objToString(salesDetail.getJxPrice()));
-					//经销总价
-					if(null != salesDetail.getQuantity()){
-						row.createCell(14).setCellValue(objToString(salesDetail.getJxPrice() * salesDetail.getQuantity()));
-					}else{
-						row.createCell(14).setCellValue(objToString(0L));
-					}
-					
-				}else{
-					row.createCell(13).setCellValue(objToString(0L));
-					row.createCell(14).setCellValue(objToString(0L));
-				}
+                if(salesDetail.getIsDirect()){
+                    //经销单价
+                    row.createCell(13).setCellValue("NULL");
+                    //经销总价
+                    row.createCell(14).setCellValue("NULL");
+                }else{
+                    if(null != salesDetail.getJxPrice()){
+                        //经销单价
+                        row.createCell(13).setCellValue(objToString(salesDetail.getJxPrice()));
+                        //经销总价
+                        if(null != salesDetail.getQuantity()){
+                            row.createCell(14).setCellValue(objToString(salesDetail.getJxPrice() * salesDetail.getQuantity()));
+                        }else{
+                            row.createCell(14).setCellValue(objToString(0L));
+                        }
+                    }else{
+                        row.createCell(13).setCellValue(objToString(0L));
+                        row.createCell(14).setCellValue(objToString(0L));
+                    }
+                }
 				//使用产品券数量
                 row.createCell(15).setCellValue(objToString(salesDetail.getProductCouponQuantity()));
                 //预存款变更金额
-                row.createCell(16).setCellValue(objToString((salesDetail.getQuantity()-salesDetail.getProductCouponQuantity())*salesDetail.getJxPrice()));
+                if(salesDetail.getIsDirect()){
+                    row.createCell(16).setCellValue(objToString((salesDetail.getQuantity()-salesDetail.getProductCouponQuantity())*salesDetail.getPrice()));
+                }else{
+                    row.createCell(16).setCellValue(objToString((salesDetail.getQuantity()-salesDetail.getProductCouponQuantity())*salesDetail.getJxPrice()));
+                }
 	          	//品牌
 				row.createCell(17).setCellValue(objToString(salesDetail.getBrandTitle()));
 	    		//商品父分类
@@ -4099,14 +4108,34 @@ public class TdManagerStatementController extends TdManagerBaseController {
 				row.createCell(13).setCellValue(objToString(goodsInOut.getPrice()));
 				//产品总价
 				row.createCell(14).setCellValue(objToString((goodsInOut.getPrice() * goodsInOut.getQuantity() *100)/100));
-				//经销单价
-	        	row.createCell(15).setCellValue(objToString(goodsInOut.getJxPrice()));
-	        	//经销总价
-	        	row.createCell(16).setCellValue(objToString(goodsInOut.getJxPrice()*goodsInOut.getPrice()));
+                if(goodsInOut.getIsDirect()){
+                    //经销单价
+                    row.createCell(15).setCellValue("NULL");
+                    //经销总价
+                    row.createCell(16).setCellValue("NULL");
+                }else{
+                    if(null != goodsInOut.getJxPrice()){
+                        //经销单价
+                        row.createCell(15).setCellValue(objToString(goodsInOut.getJxPrice()));
+                        //经销总价
+                        if(null != goodsInOut.getQuantity()){
+                            row.createCell(16).setCellValue(objToString(goodsInOut.getJxPrice() * goodsInOut.getQuantity()));
+                        }else{
+                            row.createCell(16).setCellValue(objToString(0L));
+                        }
+                    }else{
+                        row.createCell(15).setCellValue(objToString(0L));
+                        row.createCell(16).setCellValue(objToString(0L));
+                    }
+                }
 	        	//使用产品券数量
                 row.createCell(17).setCellValue(objToString(goodsInOut.getProductCouponQuantity()));
                 //预存款变更金额
-                row.createCell(18).setCellValue(objToString((goodsInOut.getQuantity()-goodsInOut.getProductCouponQuantity())*goodsInOut.getJxPrice()));
+                if(goodsInOut.getIsDirect()){
+                    row.createCell(18).setCellValue(objToString((goodsInOut.getQuantity()-goodsInOut.getProductCouponQuantity())*goodsInOut.getPrice()));
+                }else{
+                    row.createCell(18).setCellValue(objToString((goodsInOut.getQuantity()-goodsInOut.getProductCouponQuantity())*goodsInOut.getJxPrice()));
+                }
 	          	//品牌
 				row.createCell(19).setCellValue(objToString(goodsInOut.getBrandTitle()));
 	    		//商品父分类

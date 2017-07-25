@@ -112,6 +112,9 @@ public class TdSalesDetailForFranchiser {
 	//使用产品券数量
 	@Column
 	private Double productCouponQuantity;
+	//是否直营门店
+	@Column
+	private Boolean isDirect;
 
 	public String getId() {
 		return id;
@@ -351,5 +354,13 @@ public class TdSalesDetailForFranchiser {
 
 	public void setProductCouponQuantity(Double productCouponQuantity) {
 		this.productCouponQuantity = productCouponQuantity;
+	}
+
+	public Boolean getIsDirect() {
+		return isDirect;
+	}
+
+	public void setIsDirect(Boolean direct) {
+		isDirect = direct;
 	}
 }
