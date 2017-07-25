@@ -19,9 +19,9 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 public class TdSalesDetailForFranchiser {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private String id;
+    @Id
+    @GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+    private String id;
 	
 	// 门店名称
 	@Column
@@ -360,7 +360,7 @@ public class TdSalesDetailForFranchiser {
 		return isDirect;
 	}
 
-	public void setIsDirect(Boolean direct) {
+	public void setIsDirectDirect(Boolean direct) {
 		isDirect = direct;
 	}
 }

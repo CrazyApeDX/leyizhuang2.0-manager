@@ -29,7 +29,7 @@ public interface TdSalesDetailForFranchiserRepo extends PagingAndSortingReposito
 	 *
 	 */
 	@Query(value =" SELECT "
-			+"   og.id                        id, "
+			+"   UUID()                   id, "
 			+"   o.diy_site_name              diy_site_name, "
 			+"   o.main_order_number          main_order_number, "
 			+"   o.order_number               order_number, "
@@ -107,7 +107,7 @@ public interface TdSalesDetailForFranchiserRepo extends PagingAndSortingReposito
 			+"  "
 			+" UNION ALL "
             +" SELECT "
-            +"   og.id                        id, "
+            +"   UUID()                       id, "
             +"   o.diy_site_name               diy_site_name, "
             +"   rn.return_number              main_order_number, "
             +"   rn.order_number               order_number, "
@@ -260,7 +260,7 @@ public interface TdSalesDetailForFranchiserRepo extends PagingAndSortingReposito
 			+" 	 "*/
 			+" UNION ALL "
 			+" SELECT "
-			+"   og.id                         id, "
+			+"   UUID()                        id, "
 			+"   o.diy_site_name               diy_site_name, "
 			+"   rn.return_number              main_order_number, "
 			+"   rn.order_number               order_number, "

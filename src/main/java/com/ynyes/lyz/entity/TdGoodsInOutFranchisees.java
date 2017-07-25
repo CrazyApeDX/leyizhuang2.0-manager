@@ -1,5 +1,7 @@
 package com.ynyes.lyz.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,9 +19,9 @@ import javax.persistence.Id;
 @Entity(name = "td_goods_in_out_franchisees")
 public class TdGoodsInOutFranchisees {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+    @Id
+    @GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+    private String id;
 	// 门店名称
 	@Column
 	private String diySiteName;
@@ -124,15 +126,15 @@ public class TdGoodsInOutFranchisees {
 	@Column
 	private Boolean isDirect;
 
-	public Long getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getDiySiteName() {
+    public String getDiySiteName() {
 		return diySiteName;
 	}
 
