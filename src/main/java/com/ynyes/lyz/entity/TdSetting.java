@@ -168,6 +168,14 @@ public class TdSetting {
 	
 	@Column(scale = 2)
 	private Double maxDeliveryFee;
+	
+	//apk二维码地址
+	@Column
+	private String apkQrCode;
+	
+	//apk地址
+	@Column
+	private String apk;
 
 	public Long getId() {
 		return id;
@@ -463,6 +471,22 @@ public class TdSetting {
 
 	public void setMaxDeliveryFee(Double maxDeliveryFee) {
 		this.maxDeliveryFee = maxDeliveryFee;
+	}
+
+	public String getApkQrCode() {
+		return apkQrCode;
+	}
+
+	public void setApkQrCode(String apkQrCode) {
+		this.apkQrCode = apkQrCode;
+	}
+
+	public String getApk() {
+		return apk;
+	}
+
+	public void setApk(String apk) {
+		this.apk = apk;
 	}
 
 	@Override

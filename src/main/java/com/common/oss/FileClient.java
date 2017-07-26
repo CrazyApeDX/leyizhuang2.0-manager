@@ -59,12 +59,11 @@ public class FileClient {
 	 * @throws IOException
 	 * @throws FileClientException
 	 */
-	public void saveImage(InputStream stream, long length, String filePath, String fileName)
+	public void saveFile(InputStream stream, long length, String filePath, String fileName)
 			throws FileClientException, IOException {
 		String key = getFullPath(filePath, fileName);
-
-
-		saveImageHelper(stream, length, key);
+		String type = fileName.substring(fileName.lastIndexOf("."));
+		saveFileHelper(stream, length, key, type);
 	}
 	
 	private String getFullPath(String filePath, String fileName) throws FileClientException, IOException {
@@ -137,12 +136,12 @@ public class FileClient {
 	}
 
 	
-	private PutObjectResult saveImageHelper(InputStream stream, long length, String key)
+	private PutObjectResult saveFileHelper(InputStream stream, long length, String key, String type)
 			throws IOException, FileClientException {
 		ObjectMetadata meta = new ObjectMetadata();
 
 		meta.setContentLength(length);
-		meta.setContentType("image/jpeg");
+		meta.setContentType(type);
 
 		PutObjectResult result = ossClient.putObject(SiteMagConstant.ossBucket, key, stream, meta);
 		return result;
