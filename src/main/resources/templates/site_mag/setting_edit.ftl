@@ -316,6 +316,9 @@ $(function () {
         <dd>
             <input name="apkQrCode" type="text" id="txtImgUrl" value="<#if setting??&&setting.apkQrCode??>${setting.apkQrCode!''}</#if>" style="width:50%;" class="input normal upload-path">
             <div class="upload-box upload-qrCode"></div>
+            <span class="Validform_checktip"></span>
+            <div class="photo-list thumb_ImgUrl_show thumb_androidImgUrl_show"></div>
+            <#--<div class="img"><img src="<#if setting??&&setting.apkQrCode??>${setting.apkQrCode!''}</#if>" alt="产品图片"></div>-->
         </dd>
     </dl>
 </div>

@@ -618,6 +618,10 @@ public class TdUploadController {
         }
         String name = Filedata.getOriginalFilename();
         String ext = name.substring(name.lastIndexOf("."));
+        if(!".apk".equals(ext)){
+        	res.put("msg", "文件格式必须是.apk");
+            return res;
+        }
         try {
             Date dt = new Date(System.currentTimeMillis());
             String fileName = SDF.format(dt) + ext;
