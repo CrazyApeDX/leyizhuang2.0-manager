@@ -152,9 +152,9 @@
 			                </td>
 			                <td align="center">
 			                	<a href="/Verwalter/fitment/category/edit/${item.id?c}">分类限购</a>|
-			                	<a href="/Verwalter/fitment/goods/list/${item.id?c}">可售商品</a>|
+			                	<a href="/Verwalter/fitment/goods/list/${item.id?c}">可售商品</a><#--|
 			                	<a href="javascript:creditChange(${item.id?c});">信用金变更</a>|
-			                	<a href="javascript:PromotionChange(${item.id?c});">赞助金变更</a>
+			                	<a href="javascript:PromotionChange(${item.id?c});">赞助金变更</a>-->
 			                	
 			                	
 								<script type="text/javascript">

@@ -51,6 +51,13 @@ public class TdManagerPermission {
     // 取消权限
     @Column
     private Boolean isCancel;
+    
+    //菜单id
+    @Column
+    private Long menuId;
+    
+    @Column
+    private Long roleId;
 
     public Long getId() {
         return id;
@@ -123,4 +130,29 @@ public class TdManagerPermission {
     public void setIsCancel(Boolean isCancel) {
         this.isCancel = isCancel;
     }
+
+	public Long getMenuId() {
+		return menuId;
+	}
+
+	public void setMenuId(Long menuId) {
+		this.menuId = menuId;
+	}
+
+	public Long getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Long roleId) {
+		this.roleId = roleId;
+	}
+
+	@Override
+	public String toString() {
+		return "TdManagerPermission [id=" + id + ", navId=" + navId + ", isView=" + isView + ", isAdd=" + isAdd
+				+ ", isModify=" + isModify + ", isDelete=" + isDelete + ", isVerify=" + isVerify + ", isReply="
+				+ isReply + ", isCancel=" + isCancel + ", menuId=" + menuId + "]";
+	}
+	
+	
 }
