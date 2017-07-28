@@ -84,12 +84,14 @@ public class FitManagementCompanyController {
 		List<FitPriceHeader> lyzPriceHeaderList = null;
 		List<FitPriceHeader> lsPriceHeaderList = null;
 		List<FitPriceHeader> yrPriceHeaderList = null;
+		List<FitPriceHeader> xqPriceHeaderList = null;
 		List<TdCity> cityList = null;
 		try {
 			company = this.fitCompanyService.findOne(id);
 			lyzPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("LYZ");
 			lsPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("LS");
 			yrPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("YR");
+			xqPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("XQ");
 			cityList = this.tdCityService.findAll();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -98,6 +100,7 @@ public class FitManagementCompanyController {
 		map.addAttribute("lyzPriceHeaderList", lyzPriceHeaderList);
 		map.addAttribute("lsPriceHeaderList", lsPriceHeaderList);
 		map.addAttribute("yrPriceHeaderList", yrPriceHeaderList);
+		map.addAttribute("xqPriceHeaderList", xqPriceHeaderList);
 		map.addAttribute("cityList", cityList);
 		return "/fitment/management/company_edit";
 	}

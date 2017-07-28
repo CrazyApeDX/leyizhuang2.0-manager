@@ -162,6 +162,23 @@
             		</div>
         		</dd>
     		</dl>
+    		<dl>
+        		<dt>喜鹊价目表</dt>
+        		<dd>
+            		<div class="rule-single-select">
+                		<select name="xqPriceHeaderId" datatype="*" sucmsg=" ">
+                    		<#if (!company?? || (company?? && company.xqPriceHeaderId = 0))>
+                    			<option value="0">请选择...</option>
+                    		</#if>
+                    		<#if xqPriceHeaderList??>
+                        		<#list xqPriceHeaderList as h>
+                            		<option value="${(h.id!"0")?c}" <#if company?? && company.xqPriceHeaderId==h.id>selected="selected"</#if>>${h.title!""}</option>
+                        		</#list>
+                    		</#if>
+                		</select>
+            		</div>
+        		</dd>
+    		</dl>
 		</div>
 		<!--/内容-->
 

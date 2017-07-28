@@ -53,6 +53,10 @@ public class FitCompany extends TableEntity {
 	@Column(nullable = false)
 	private Long lyzPriceHeaderId = 0l;
 	
+	@Column(nullable = false)
+	private Long xqPriceHeaderId = 0l;
+	
+	
 	public String getName() {
 		return name;
 	}
@@ -131,5 +135,13 @@ public class FitCompany extends TableEntity {
 
 	public void setDay(Integer day) {
 		this.day = day;
+	}
+
+	public Long getXqPriceHeaderId() {
+		return xqPriceHeaderId;
+	}
+
+	public void setXqPriceHeaderId(Long xqPriceHeaderId) {
+		this.xqPriceHeaderId = xqPriceHeaderId;
 	}
 }
