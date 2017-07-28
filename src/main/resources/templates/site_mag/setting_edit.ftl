@@ -319,7 +319,7 @@ $(function () {
             <div class="upload-box upload-qrCode"></div>
            <#-- <span class="Validform_checktip"></span>
             <div class="photo-list thumb_ImgUrl_show thumb_androidImgUrl_show"></div>-->
-            <div class="img"><img src="<#if setting??&&setting.apkQrCode??>${setting.apkQrCode!''}</#if>" alt="产品图片" style="width:100px;higth:100px;"></div>
+            <div class="img"><img src="<#if setting??&&setting.apkQrCode??>${setting.apkQrCode!''}</#if>" alt="apk下载二维码" style="width:100px;higth:100px;"></div>
         </dd>
     </dl>
 </div>
