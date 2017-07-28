@@ -166,6 +166,14 @@ public class TdReturnNote {
 	
 	@Column(scale = 2)
 	private Double jxReturn;
+	
+	// 装饰公司使用的信用额度
+	@Column(scale = 2, nullable = false)
+	private Double credit = 0d;
+
+	// 装饰公司使用的赞助金
+	@Column(scale = 2, nullable = false)
+	private Double promotionMoneyPayed = 0d;
 
 	public String getReturnDetail() {
 		return returnDetail;
@@ -474,5 +482,21 @@ public class TdReturnNote {
 
 	public void setJxReturn(Double jxReturn) {
 		this.jxReturn = jxReturn;
+	}
+
+	public Double getCredit() {
+		return credit;
+	}
+
+	public void setCredit(Double credit) {
+		this.credit = credit;
+	}
+
+	public Double getPromotionMoneyPayed() {
+		return promotionMoneyPayed;
+	}
+
+	public void setPromotionMoneyPayed(Double promotionMoneyPayed) {
+		this.promotionMoneyPayed = promotionMoneyPayed;
 	}
 }

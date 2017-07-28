@@ -20,6 +20,8 @@ import com.ynyes.fitment.foundation.entity.FitEmployee;
 import com.ynyes.fitment.foundation.entity.FitOrder;
 import com.ynyes.fitment.foundation.entity.FitOrderCancel;
 import com.ynyes.fitment.foundation.entity.FitOrderRefund;
+import com.ynyes.fitment.foundation.entity.FitPromotionMoneyLog;
+import com.ynyes.fitment.foundation.repo.FitPromotionMoneyLogRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitCreditChangeLogService;
 import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
@@ -49,6 +51,9 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	
 	@Autowired
 	private TdInterfaceService tdInterfaceService;
+	
+	@Autowired
+	private FitPromotionMoneyLogRepo fitPromotionMoneyLogRepo;
 
 	@Override
 	public FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception {
@@ -60,7 +65,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setBeforeChange(company.getCredit() + order.getBalancePayed() + order.getUpstairsBalancePayed())
 				.setAfterChange(company.getCredit())
 				.setMoney(-1 * (order.getBalancePayed() + order.getUpstairsBalancePayed())).setChangeTime(new Date())
-				.setReferenceNumber(order.getOrderNumber()).setType(CreditChangeType.CONSUME)
+				.setReferenceNumber(order.getOrderNumber())//.setType(CreditChangeType.CONSUME)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(order.getEmployeeId()).setRemark("订单消费")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
@@ -73,7 +78,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getCredit() - orderCancel.getCredit()).setAfterChange(company.getCredit())
 				.setMoney(orderCancel.getCredit()).setChangeTime(new Date())
-				.setReferenceNumber(orderCancel.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.CANCEL)
+				.setReferenceNumber(orderCancel.getOrderNumber().replace("FIT", ""))//.setType(CreditChangeType.CANCEL)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(orderCancel.getAuditorId()).setRemark("订单取消")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
@@ -86,7 +91,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getCredit() - orderRefund.getCredit()).setAfterChange(company.getCredit())
 				.setMoney(orderRefund.getCredit()).setChangeTime(new Date())
-				.setReferenceNumber(orderRefund.getOrderNumber().replace("FIT", "")).setType(CreditChangeType.REFUND)
+				.setReferenceNumber(orderRefund.getOrderNumber().replace("FIT", ""))//.setType(CreditChangeType.REFUND)
 				.setOperatorType(CreditOperator.PURCHASER).setOperatorId(orderRefund.getAuditorId()).setRemark("订单退货")
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
@@ -102,7 +107,81 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 			this.doReceipt(company, inputCredit);
 		}
 	}
+	
+	@Override
+	public void creditMoney(TdManager manager, FitCompany company, Double inputCredit, String remark,String changeType, String referenceNumber) throws Exception {
+		if (inputCredit < 0) {
+			this.doRefundCredit(company, inputCredit,changeType, referenceNumber);
+		} else {
+			this.doReceiptCredit(company, inputCredit,changeType, referenceNumber);
+		}
+		
+	}
+	
+	@Override
+	public void promotionMoneyAction(TdManager manager, FitCompany company, Double inputPromotionMoney, String remark)
+			throws Exception {
+		this.manageLog(manager, company, inputPromotionMoney, remark);
 
+		//传ebs
+		//		if (inputCredit < 0) {
+//			this.doRefund(company, inputCredit);
+//		} else {
+//			this.doReceipt(company, inputCredit);
+//		}
+	}
+	
+
+	private void doRefundCredit(FitCompany company, Double inputCredit,String changeType, String referenceNumber) {
+		TdCashRefundInf refund = new TdCashRefundInf();
+		Date now = new Date();
+		refund.setInitDate(now);
+		refund.setModifyDate(now);
+		refund.setAmount(-1 * inputCredit);
+		refund.setDiySiteCode(company.getCode());
+		refund.setProductType("CREDIT");
+		refund.setRefundClass("信用额度");
+		refund.setRefundDate(now);
+		refund.setRefundNumber(this.getNumber(now, "DECRE"));
+		refund.setRefundType(changeType);
+		refund.setSobId(company.getSobId());
+		refund.setUserid(company.getId());
+		refund.setUsername(company.getName());
+		refund.setUserphone("00000000000");
+		refund.setReturnNumber(referenceNumber);
+		refund = tdCashRefundInfService.save(refund);
+		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		
+	}
+
+	private void doReceiptCredit(FitCompany company, Double inputCredit,String changeType, String referenceNumber) {
+		TdCashReciptInf receipt = new TdCashReciptInf();
+		Date now = new Date();
+		receipt.setInitDate(now);
+		receipt.setModifyDate(now);
+		receipt.setAmount(inputCredit);
+		receipt.setDiySiteCode(company.getCode());
+		receipt.setProductType("CREDIT");
+		receipt.setReceiptClass("信用额度");
+		receipt.setReceiptDate(now);
+		receipt.setReceiptNumber(this.getNumber(now, "RECRE"));
+		receipt.setReceiptType(changeType);
+		receipt.setSobId(company.getSobId());
+		receipt.setUserid(company.getId());
+		receipt.setUsername(company.getName());
+		receipt.setUserphone("00000000000");
+		receipt.setOrderNumber(referenceNumber);
+		receipt = this.tdCashReciptInfService.save(receipt);
+		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+		if (StringUtils.isBlank(resultStr)) {
+			receipt.setSendFlag(0);
+		} else {
+			receipt.setSendFlag(1);
+			receipt.setErrorMsg(resultStr);
+		}
+		tdCashReciptInfService.save(receipt);
+	}
+	
 	private void doReceipt(FitCompany company, Double inputCredit) {
 		TdCashReciptInf receipt = new TdCashReciptInf();
 		Date now = new Date();
@@ -129,6 +208,7 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		}
 		tdCashReciptInfService.save(receipt);
 	}
+
 
 	private void doRefund(FitCompany company, Double inputCredit) {
 		TdCashRefundInf refund = new TdCashRefundInf();
@@ -167,10 +247,26 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		log.setCreateTime(new Date());
 		log.setBeforeChange(company.getCredit() - inputCredit).setAfterChange(company.getCredit()).setMoney(inputCredit)
 				.setChangeTime(new Date()).setReferenceNumber(log.initManagerOperateNumber())
-				.setType(inputCredit < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
+				//.setType(inputCredit < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
 				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)
 				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
 		return this.fitCreditChangeLogService.save(log);
+	}
+	
+	@Override
+	public FitPromotionMoneyLog managePromotionMoneyLog(TdManager manager, FitCompany company, Double inputPromotionMoney, String remark)
+			throws Exception {
+		company.setPromotionMoney(company.getPromotionMoney() + inputPromotionMoney);
+		this.fitCompanyService.save(company);
+		FitPromotionMoneyLog log = new FitPromotionMoneyLog();
+		log.setCreateOrigin(OriginType.ADD);
+		log.setCreateTime(new Date());
+		log.setBeforeChange(company.getPromotionMoney() - inputPromotionMoney).setAfterChange(company.getPromotionMoney()).setMoney(inputPromotionMoney)
+				.setChangeTime(new Date()).setReferenceNumber(log.initManagerOperateNumber())
+				//.setType(inputPromotionMoney < 0 ? CreditChangeType.CUT : CreditChangeType.RECHARGE)
+				.setOperatorType(CreditOperator.MANAGER).setOperatorId(manager.getId()).setRemark(remark)
+				.setCompanyId(company.getId()).setCompanyTitle(company.getName());
+		return this.fitPromotionMoneyLogRepo.save(log);
 	}
 
 	@Override
@@ -182,4 +278,5 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	public Page<FitCreditChangeLog> employeeGetLog(FitEmployee employee, Integer page, Integer size) throws Exception {
 		return this.fitCreditChangeLogService.findByCompanyIdOrderByChangeTimeDesc(employee.getCompanyId(), page, size);
 	}
+
 }

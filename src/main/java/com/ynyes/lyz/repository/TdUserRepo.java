@@ -3,6 +3,7 @@ package com.ynyes.lyz.repository;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -160,5 +161,21 @@ public interface TdUserRepo extends PagingAndSortingRepository<TdUser, Long>, Jp
 	 * @return
 	 */
 	List<TdUser> findByUpperDiySiteIdAndIsEnableTrue(Long upperDiySiteId);
+
+	Page<TdUser> findByUsernameContainingOrRealNameContaining(String keywords, String keywords2,
+			Pageable page);
+
+	
+	Page<TdUser> findByUsernameContainingOrRealNameContainingAndUserTypeIn(String keywords, String keywords2,
+			Pageable page, List<Long> userTypeList);
+
+	Page<TdUser> findByUsernameContainingOrRealNameContainingAndDiyCodeAndUserTypeIn(String keywords, String keywords2,
+			Pageable page, String diyCode, List<Long> userTypeList);
+
+	Page<TdUser> findByUsernameContainingOrRealNameContainingAndCityNameAndUserTypeIn(String keywords, String keywords2,
+			Pageable page, String cityName, List<Long> userTypeList);
+
+	Page<TdUser> findByUsernameContainingOrRealNameContainingAndUserType(String keywords, String keywords2,
+			Pageable page, long userType);
 	
 }

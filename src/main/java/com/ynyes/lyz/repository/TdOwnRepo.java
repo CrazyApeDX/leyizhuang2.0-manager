@@ -61,10 +61,11 @@ public interface TdOwnRepo extends
 			+" LEFT JOIN td_delivery_info di ON di.order_number = o.main_order_number "
 			+" LEFT JOIN td_user du ON du.op_user = di.driver "
 			+" LEFT JOIN td_ware_house wh ON wh.wh_number = di.wh_no "
+			+" LEFT JOIN  td_return_note rn ON rn.order_number = o.order_number "
 			+" WHERE "
-			+" 	o.send_time >= ?1 "
+            +"  IFNULL(rn.remark_info,'NULL') !='拒签退货' "
+			+" AND 	o.send_time >= ?1 "
 			+" AND o.send_time <= ?2  "
-			/*+" AND o.deliver_type_title = '送货上门'  "*/
 			+" AND o.city LIKE ?3 "
 			+" AND o.total_price - o.other_pay > 0  "
 			+" AND o.diy_site_code LIKE ?4   "

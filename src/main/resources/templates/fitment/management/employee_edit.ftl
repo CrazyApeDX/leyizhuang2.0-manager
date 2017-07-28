@@ -70,7 +70,7 @@
 	        			<select name="companyId" id="companyId" datatype="n">
 	            			<#if companyList??>
 	                			<#list companyList as item>
-	                    			<option <#if user??&&user.companyId?? && item.id==user.companyId>selected="selected"</#if> value="${item.id?c}">${item.name!''}</option>
+	                    			<option <#if employee?? && employee.companyId?? && item.id == employee.companyId>selected="selected"</#if> value="${item.id?c}">${item.name!''}</option>
 	                			</#list>
 	            			</#if>
 	        			</select>
@@ -88,7 +88,7 @@
   			<dl>
     			<dt>姓名</dt>
 				<dd>
-					<input name="name" type="text" datatype="*1-5" value="<#if employee??>${employee.name!""}</#if>" class="input normal">
+					<input name="name" type="text" datatype="*1-10" value="<#if employee??>${employee.name!""}</#if>" class="input normal">
 				</dd>
   			</dl>
   			<dl>

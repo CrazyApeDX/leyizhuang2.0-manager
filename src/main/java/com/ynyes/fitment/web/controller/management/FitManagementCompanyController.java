@@ -51,7 +51,7 @@ public class FitManagementCompanyController {
 
 	@RequestMapping(value = "/list", produces = "text/html;charset=utf-8")
 	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size, String __EVENTTARGET,
-			String __EVENTARGUMENT, String __VIEWSTATE) {
+			String __EVENTARGUMENT, String __VIEWSTATE,String keyWords,String frozen) {
 
 		if (null != __EVENTTARGET) {
 			switch (__EVENTTARGET) {
@@ -67,14 +67,16 @@ public class FitManagementCompanyController {
 		page = null == page ? Global.DEFAULT_PAGE : page;
 		size = null == size ? Global.DEFAULT_SIZE : size;
 		try {
-			companyPage = this.fitCompanyService.findAll(page, size);
-
+			companyPage = this.fitCompanyService.findAllAddConditionDeliveryType(page, size,keyWords,frozen);
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		map.addAttribute("companyPage", companyPage);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
+		map.addAttribute("keyWords", keyWords);
+		map.addAttribute("frozen", frozen);
 		return "/fitment/management/company_list";
 	}
 
@@ -174,6 +176,21 @@ public class FitManagementCompanyController {
 			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
 			FitCompany company = this.fitCompanyService.findOne(id);
 			this.bizCreditChangeLogService.creditAction(manager, company, credit, "");
+			return new ClientResult(ActionCode.SUCCESS, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请稍后重试或联系管理员");
+		}
+	}
+	
+	@RequestMapping(value = "/promotionMoney", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public ClientResult companyPromotionMoney(HttpServletRequest request, Long id, Double promotionMoney) {
+		try {
+			String manageUsername = (String) request.getSession().getAttribute(LoginSign.MANAGER_SIGN.toString());
+			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
+			FitCompany company = this.fitCompanyService.findOne(id);
+			this.bizCreditChangeLogService.managePromotionMoneyLog(manager, company, promotionMoney, "");
 			return new ClientResult(ActionCode.SUCCESS, null);
 		} catch (Exception e) {
 			e.printStackTrace();

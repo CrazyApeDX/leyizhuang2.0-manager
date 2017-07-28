@@ -17,20 +17,20 @@ import com.tenpay.util.MD5Util;
 import com.tenpay.util.TenpayUtil;
 
 /**
- * Ó¦´ğ´¦ÀíÀà
- * Ó¦´ğ´¦ÀíÀà¼Ì³Ğ´ËÀà£¬ÖØĞ´isTenpaySign·½·¨¼´¿É¡£
+ * åº”ç­”å¤„ç†ç±»
+ * åº”ç­”å¤„ç†ç±»ç»§æ‰¿æ­¤ç±»ï¼Œé‡å†™isTenpaySignæ–¹æ³•å³å¯ã€‚
  * @author miklchen
  *
  */
 public class ResponseHandler { 
 	
-	/** ÃÜÔ¿ */
+	/** å¯†é’¥ */
 	private String key;
 	
-	/** Ó¦´ğµÄ²ÎÊı */
+	/** åº”ç­”çš„å‚æ•° */
 	private SortedMap parameters; 
 	
-	/** debugĞÅÏ¢ */
+	/** debugä¿¡æ¯ */
 	private String debugInfo;
 	
 	private HttpServletRequest request;
@@ -40,7 +40,7 @@ public class ResponseHandler {
 	private String uriEncoding;
 	
 	/**
-	 * ¹¹Ôìº¯Êı
+	 * æ„é€ å‡½æ•°
 	 * 
 	 * @param request
 	 * @param response
@@ -67,22 +67,22 @@ public class ResponseHandler {
 	}
 	
 	/**
-	*»ñÈ¡ÃÜÔ¿
+	*è·å–å¯†é’¥
 	*/
 	public String getKey() {
 		return key;
 	}
 
 	/**
-	*ÉèÖÃÃÜÔ¿
+	*è®¾ç½®å¯†é’¥
 	*/
 	public void setKey(String key) {
 		this.key = key;
 	}
 
 	/**
-	 * »ñÈ¡²ÎÊıÖµ
-	 * @param parameter ²ÎÊıÃû³Æ
+	 * è·å–å‚æ•°å€¼
+	 * @param parameter å‚æ•°åç§°
 	 * @return String 
 	 */
 	public String getParameter(String parameter) {
@@ -91,9 +91,9 @@ public class ResponseHandler {
 	}
 	
 	/**
-	 * ÉèÖÃ²ÎÊıÖµ
-	 * @param parameter ²ÎÊıÃû³Æ
-	 * @param parameterValue ²ÎÊıÖµ
+	 * è®¾ç½®å‚æ•°å€¼
+	 * @param parameter å‚æ•°åç§°
+	 * @param parameterValue å‚æ•°å€¼
 	 */
 	public void setParameter(String parameter, String parameterValue) {
 		String v = "";
@@ -104,7 +104,7 @@ public class ResponseHandler {
 	}
 	
 	/**
-	 * ·µ»ØËùÓĞµÄ²ÎÊı
+	 * è¿”å›æ‰€æœ‰çš„å‚æ•°
 	 * @return SortedMap
 	 */
 	public SortedMap getAllParameters() {
@@ -112,7 +112,7 @@ public class ResponseHandler {
 	}
 	
 	/**
-	 * ÊÇ·ñ²Æ¸¶Í¨Ç©Ãû,¹æÔòÊÇ:°´²ÎÊıÃû³Æa-zÅÅĞò,Óöµ½¿ÕÖµµÄ²ÎÊı²»²Î¼ÓÇ©Ãû¡£
+	 * æ˜¯å¦è´¢ä»˜é€šç­¾å,è§„åˆ™æ˜¯:æŒ‰å‚æ•°åç§°a-zæ’åº,é‡åˆ°ç©ºå€¼çš„å‚æ•°ä¸å‚åŠ ç­¾åã€‚
 	 * @return boolean
 	 */
 	public boolean isTenpaySign() {
@@ -130,13 +130,13 @@ public class ResponseHandler {
 		
 		sb.append("key=" + this.getKey());
 		
-		//Ëã³öÕªÒª
+		//ç®—å‡ºæ‘˜è¦
 		String enc = TenpayUtil.getCharacterEncoding(this.request, this.response);
 		String sign = MD5Util.MD5Encode(sb.toString(), enc).toLowerCase();
 		
 		String tenpaySign = this.getParameter("sign").toLowerCase();
 		
-		//debugĞÅÏ¢
+		//debugä¿¡æ¯
 		this.setDebugInfo(sb.toString() + " => sign:" + sign +
 				" tenpaySign:" + tenpaySign);
 		
@@ -144,8 +144,8 @@ public class ResponseHandler {
 	}
 	
 	/**
-	 * ·µ»Ø´¦Àí½á¹û¸ø²Æ¸¶Í¨·şÎñÆ÷¡£
-	 * @param msg: Success or fail¡£
+	 * è¿”å›å¤„ç†ç»“æœç»™è´¢ä»˜é€šæœåŠ¡å™¨ã€‚
+	 * @param msg: Success or failã€‚
 	 * @throws IOException 
 	 */
 	public void sendToCFT(String msg) throws IOException {
@@ -158,7 +158,7 @@ public class ResponseHandler {
 	}
 	
 	/**
-	 * »ñÈ¡uri±àÂë
+	 * è·å–uriç¼–ç 
 	 * @return String
 	 */
 	public String getUriEncoding() {
@@ -166,7 +166,7 @@ public class ResponseHandler {
 	}
 
 	/**
-	 * ÉèÖÃuri±àÂë
+	 * è®¾ç½®uriç¼–ç 
 	 * @param uriEncoding
 	 * @throws UnsupportedEncodingException
 	 */
@@ -175,7 +175,7 @@ public class ResponseHandler {
 		if (!"".equals(uriEncoding.trim())) {
 			this.uriEncoding = uriEncoding;
 
-			// ±àÂë×ª»»
+			// ç¼–ç è½¬æ¢
 			String enc = TenpayUtil.getCharacterEncoding(request, response);
 			Iterator it = this.parameters.keySet().iterator();
 			while (it.hasNext()) {
@@ -188,14 +188,14 @@ public class ResponseHandler {
 	}
 
 	/**
-	*»ñÈ¡debugĞÅÏ¢
+	*è·å–debugä¿¡æ¯
 	*/
 	public String getDebugInfo() {
 		return debugInfo;
 	}
 	
 	/**
-	*ÉèÖÃdebugĞÅÏ¢
+	*è®¾ç½®debugä¿¡æ¯
 	*/
 	protected void setDebugInfo(String debugInfo) {
 		this.debugInfo = debugInfo;

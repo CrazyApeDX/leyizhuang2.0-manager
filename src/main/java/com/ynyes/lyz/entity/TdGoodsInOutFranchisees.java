@@ -1,5 +1,7 @@
 package com.ynyes.lyz.entity;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,9 +19,9 @@ import javax.persistence.Id;
 @Entity(name = "td_goods_in_out_franchisees")
 public class TdGoodsInOutFranchisees {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+    @Id
+    @GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+    private String id;
 	// 门店名称
 	@Column
 	private String diySiteName;
@@ -62,12 +64,9 @@ public class TdGoodsInOutFranchisees {
 	// 单价
 	@Column
 	private Double price;
-	// 总价
+	/*// 总价
 	@Column
-	private Double totalPrice;
-	// 现金卷
-	@Column
-	private Double cashCoupon;
+	private Double totalPrice;*/
 	// 品牌类型
 	@Column
 	private String brandTitle;
@@ -113,19 +112,29 @@ public class TdGoodsInOutFranchisees {
 	// 经销单价
 	@Column
 	private Double jxPrice;
-	// 经销总价
+	/*// 经销总价
 	@Column
-	private Double jxTotalPrice;
+	private Double jxTotalPrice;*/
+	//使用产品券数量
+	@Column
+	private Double productCouponQuantity;
 
-	public Long getId() {
-		return id;
-	}
+	//赠品标识
+	@Column
+	private String giftFlag;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+	@Column
+	private Boolean isDirect;
 
-	public String getDiySiteName() {
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getDiySiteName() {
 		return diySiteName;
 	}
 
@@ -237,21 +246,14 @@ public class TdGoodsInOutFranchisees {
 		this.price = price;
 	}
 
-	public Double getTotalPrice() {
+	/*public Double getTotalPrice() {
 		return totalPrice;
 	}
 
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
 	}
-
-	public Double getCashCoupon() {
-		return cashCoupon;
-	}
-
-	public void setCashCoupon(Double cashCoupon) {
-		this.cashCoupon = cashCoupon;
-	}
+*/
 
 	public String getBrandTitle() {
 		return brandTitle;
@@ -373,12 +375,35 @@ public class TdGoodsInOutFranchisees {
 		this.jxPrice = jxPrice;
 	}
 
-	public Double getJxTotalPrice() {
+	/*public Double getJxTotalPrice() {
 		return jxTotalPrice;
 	}
 
 	public void setJxTotalPrice(Double jxTotalPrice) {
 		this.jxTotalPrice = jxTotalPrice;
+	}*/
+
+	public Double getProductCouponQuantity() {
+		return productCouponQuantity;
 	}
 
+	public void setProductCouponQuantity(Double productCouponQuantity) {
+		this.productCouponQuantity = productCouponQuantity;
+	}
+
+	public String getGiftFlag() {
+		return giftFlag;
+	}
+
+	public void setGiftFlag(String giftFlag) {
+		this.giftFlag = giftFlag;
+	}
+
+	public Boolean getIsDirect() {
+		return isDirect;
+	}
+
+	public void setIsDirect(Boolean direct) {
+		isDirect = direct;
+	}
 }

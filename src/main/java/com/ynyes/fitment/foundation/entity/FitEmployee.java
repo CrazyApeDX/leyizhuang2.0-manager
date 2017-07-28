@@ -42,7 +42,7 @@ public class FitEmployee extends TableEntity {
 	private String mobile;
 
 	// 员工姓名
-	@Column(length = 5, nullable = false)
+	@Column(length = 10, nullable = false)
 	private String name = "员工";
 	
 	// 城市名

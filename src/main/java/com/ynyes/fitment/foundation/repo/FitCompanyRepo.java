@@ -22,4 +22,6 @@ public interface FitCompanyRepo extends ApplicationRepo<FitCompany>  {
 	
 	@Query(value="select * from fit_company where sob_id in ?1 ;",nativeQuery=true)
 	List<FitCompany> findFitCompanyBySobId(List<Long> sobIdList);
+	
+	List<FitCompany> findBySobId(Long sobId);
 }

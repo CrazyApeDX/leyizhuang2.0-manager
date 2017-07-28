@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +55,22 @@ public class FitPriceLineServiceImpl extends PageableService implements FitPrice
 		} else {
 			return this.fitPriceLineRepo.save(line);
 		}
+	}
+
+	/**
+	 * 根据商品SKU模糊查询装饰公司商品价目(分页)
+	 * @param keywords
+	 * @param page
+	 * @param size
+	 * @return
+	 */
+	@Override
+	public Page<FitPriceLine> findByHeaderIdAndGoodsSkuContaining(Long headerId,String keywords, int page, int size) {
+		if (keywords == null) {
+			return null;
+		}
+		PageRequest pageRequest  = new PageRequest(page,size);
+		return this.fitPriceLineRepo.findByHeaderIdAndGoodsSkuContaining(headerId, keywords, pageRequest);
 	}
 
 }

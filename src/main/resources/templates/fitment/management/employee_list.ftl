@@ -136,6 +136,48 @@
 						</li>
 						-->
 					</ul>
+					
+					<div class="menu-list">
+						<#if cityList?? && cityList?size gt 0 >
+			                <div class="odiv" style="float:left;width:110px;">
+			                    <div class="rule-single-select">
+			                        <select name="cityTitle" id="cityTitle" onchange="javascript:setTimeout(__doPostBack('changeCity',''), 0)" >
+			                            <option value="" >选择城市</option>
+			                            <#list cityList as city>
+			                                <option value="${city.cityName!'' }" <#if cityTitle?? && cityTitle==city.cityName!''>selected</#if> >${city.cityName!'' }</option>
+			                            </#list>
+			                        </select>
+			                    </div>
+			                </div>
+			            </#if>
+			            <#if companyList?? && companyList?size gt 0 >
+			                <div class="odiv" style="float:left;width:110px;">
+			                    <div class="rule-single-select">
+			                        <select name="companyTitle" id="companyTitle" onchange="javascript:setTimeout(__doPostBack('changeCity',''), 0)" >
+			                            <option value="" >选择公司</option>
+			                            <#list companyList as company>
+			                                <option value="${company.name!'' }" <#if companyTitle?? && companyTitle==company.name!''>selected</#if> >${company.name!'' }</option>
+			                            </#list>
+			                        </select>
+			                    </div>
+			                </div>
+			            </#if>
+			            
+			            <div class="odiv" style="float: left; width: 110px;">
+							<div class="rule-single-select">
+								<select name="isMain" id="isMain" onchange="javascript:setTimeout(__doPostBack('',''), 0)">
+									<option value="">选择角色</option>
+									<option value="0" <#if isMain?? && isMain=="0">selected</#if>>工长</option>
+									<option value="1" <#if isMain?? && isMain=="1">selected</#if>>采购经理</option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="r-list">
+					  <input name="keyWords" type="text" class="keyword" value="${keyWords!"" }">
+					  <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a> 
 				</div>
 			</div>
 		</div>

@@ -2,6 +2,7 @@ package com.ynyes.fitment.foundation.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +15,8 @@ import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitEmployeeService;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.service.TdCityService;
+import com.ynyes.lyz.util.Criteria;
+import com.ynyes.lyz.util.Restrictions;
 
 @Service
 @Transactional
@@ -83,5 +86,36 @@ public class FitEmployeeServiceImpl extends PageableService implements FitEmploy
 		} else {
 			return this.fitEmployeeRepo.save(employee);
 		}
+	}
+
+	@Override
+	public Page<FitEmployee> findAllAddConditionDeliveryType(Integer page, Integer size, String keyWords, String cityTitle,
+			String companyTitle, String isMain) throws Exception {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Criteria<FitEmployee> c = new Criteria<FitEmployee>();
+		
+		if (null != keyWords && !"".equals(keyWords)) {
+			//去掉前后空格
+			keyWords = keyWords.trim();
+			c.add(Restrictions.or(Restrictions.like("mobile", keyWords, true),Restrictions.like("name", keyWords, true)));
+		}
+		
+		if (null != cityTitle && !"".equals(cityTitle)) {
+			c.add(Restrictions.eq("cityTitle", cityTitle, true));
+		}
+		
+		if (null != companyTitle && !"".equals(companyTitle)) {
+			c.add(Restrictions.eq("companyTitle", companyTitle, true));
+		}
+		
+		if (null != isMain && !"".equals(isMain)) {
+			boolean b = true;
+			if(isMain.equals("0")){
+				b = false;
+			}
+			c.add(Restrictions.eq("isMain", b, true));
+		}
+		c.setOrderByDesc("createTime");
+		return this.fitEmployeeRepo.findAll(c, pageRequest);
 	}
 }
