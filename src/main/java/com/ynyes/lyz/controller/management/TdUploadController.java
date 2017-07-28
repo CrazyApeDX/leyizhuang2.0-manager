@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.common.oss.utils.FileClientutils;
 import com.common.oss.utils.ImageClientUtils;
 import com.common.util.ImageCompressUtil;
 import com.ynyes.lyz.service.TdArticleCategoryService;
@@ -531,5 +532,139 @@ public class TdUploadController {
             }
         }
         return null;
+    }
+    
+    @RequestMapping(value = "/upload/QRCode", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> uploadQRCode(String action, @RequestParam MultipartFile Filedata, HttpServletRequest req, HttpServletResponse response) {
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("status", 0);
+        String username = (String) req.getSession().getAttribute("manager");
+        
+        if (null == username) {
+            res.put("msg", "请重新登录！");
+            return res;
+        }
+
+        if (null == Filedata || Filedata.isEmpty()) {
+            res.put("msg", "图片不存在");
+            return res;
+        }
+        String name = Filedata.getOriginalFilename();
+        String ext = name.substring(name.lastIndexOf("."));
+        try {
+            Date dt = new Date(System.currentTimeMillis());
+            String fileName = SDF.format(dt) + ext;
+            
+            String path = "";
+            long fileSize = Filedata.getSize();
+			path = FileClientutils.getInstance().uploadFile(Filedata.getInputStream(), fileSize, fileName, "img");
+           
+			String url = FileClientutils.getInstance().getAbsProjectImagePath(path);
+
+            res.put("status", 1);
+            res.put("msg", "上传文件成功！");
+            res.put("path", url);
+            res.put("thumb", url);
+            res.put("name", name);
+            res.put("size", fileSize);
+            res.put("ext", ext.substring(1));
+
+        } catch (Exception e) {
+            res.put("status", 0);
+            res.put("msg", "上传文件失败！");
+        }
+        response.reset();
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+            JSONObject jsonObject = JSONObject.fromObject(res);
+            writer.println(jsonObject);  //想办法把map转成json
+            writer.flush();
+        } catch (IOException e) {
+            System.err.println(e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+            }
+        }
+
+        return null;
+
+    }
+    
+    @RequestMapping(value = "/uploadAPk/upload", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> uploadApk(String action, @RequestParam MultipartFile Filedata, HttpServletRequest req, HttpServletResponse response) {
+        Map<String, Object> res = new HashMap<String, Object>();
+        res.put("status", 0);
+        String username = (String) req.getSession().getAttribute("manager");
+        
+        if (null == username) {
+            res.put("msg", "请重新登录！");
+            return res;
+        }
+
+        if (null == Filedata || Filedata.isEmpty()) {
+            res.put("msg", "文件不存在");
+            return res;
+        }
+        String name = Filedata.getOriginalFilename();
+        String ext = name.substring(name.lastIndexOf("."));
+        if(!".apk".equals(ext)){
+        	res.put("msg", "文件格式必须是.apk");
+            return res;
+        }
+        try {
+            Date dt = new Date(System.currentTimeMillis());
+            String fileName = SDF.format(dt) + ext;
+            
+            String path = "";
+            long fileSize = Filedata.getSize();
+			path = FileClientutils.getInstance().uploadFile(Filedata.getInputStream(), fileSize, fileName, "package");
+           
+			String url = FileClientutils.getInstance().getAbsProjectImagePath(path);
+
+            res.put("status", 1);
+            res.put("msg", "上传文件成功！");
+            res.put("path", url);
+            res.put("thumb", url);
+            res.put("name", name);
+            res.put("size", fileSize);
+            res.put("ext", ext.substring(1));
+
+        } catch (Exception e) {
+            res.put("status", 0);
+            res.put("msg", "上传文件失败！");
+        }
+        response.reset();
+        response.setCharacterEncoding("UTF-8");
+        response.setContentType("text/html");
+        PrintWriter writer = null;
+        try {
+            writer = response.getWriter();
+            JSONObject jsonObject = JSONObject.fromObject(res);
+            writer.println(jsonObject);  //想办法把map转成json
+            writer.flush();
+        } catch (IOException e) {
+            System.err.println(e);
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (Exception e) {
+                    System.err.println(e);
+                }
+            }
+        }
+
+        return null;
+
     }
 }

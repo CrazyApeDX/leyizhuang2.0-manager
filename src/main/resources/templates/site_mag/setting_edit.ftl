@@ -41,6 +41,21 @@ $(function () {
         });
     });
     
+    //初始化上传控件
+    $(".upload-apk").each(function () {
+        $(this).InitSWFUpload({ 
+            sendurl: "/Verwalter/uploadAPk/upload", 
+            flashurl: "/mag/js/swfupload.swf"
+        });
+    });
+    //初始化上传控件
+    $(".upload-qrCode").each(function () {
+        $(this).InitSWFUpload({ 
+            sendurl: "/Verwalter/upload/QRCode", 
+            flashurl: "/mag/js/swfupload.swf"
+        });
+    });
+    
     //（缩略图）
     var txtPic = $("#txtImgUrl").val();
     if (txtPic == "" || txtPic == null) {
@@ -288,6 +303,23 @@ $(function () {
         <dt>最大运费额</dt>
         <dd>
             <input name="maxDeliveryFee" rows="2" cols="6" class="input" datatype="n" sucmsg=" " value="<#if setting??&&setting.maxDeliveryFee??>${setting.maxDeliveryFee?string("0.00")}<#else>0.00</#if>" />&nbsp;&nbsp;
+        </dd>
+    </dl>
+    <dl>
+        <dt>上传APK</dt>
+        <dd>
+            <input name="apk" type="text" id="txtImgUrl" value="<#if setting??&&setting.apk??>${setting.apk!''}</#if>" style="width:50%;" class="input normal upload-path">
+            <div class="upload-box upload-apk"></div>
+        </dd>
+    </dl>
+    <dl>
+        <dt>上传APK下载二维码</dt>
+        <dd>
+            <input name="apkQrCode" type="text" id="txtImgUrl" value="<#if setting??&&setting.apkQrCode??>${setting.apkQrCode!''}</#if>" style="width:50%;" class="input normal upload-path">
+            <div class="upload-box upload-qrCode"></div>
+           <#-- <span class="Validform_checktip"></span>
+            <div class="photo-list thumb_ImgUrl_show thumb_androidImgUrl_show"></div>-->
+            <div class="img"><img src="<#if setting??&&setting.apkQrCode??>${setting.apkQrCode!''}</#if>" alt="产品图片"></div>
         </dd>
     </dl>
 </div>
