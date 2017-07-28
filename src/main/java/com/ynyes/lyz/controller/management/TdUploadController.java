@@ -622,8 +622,8 @@ public class TdUploadController {
             return res;
         }
         try {
-            Date dt = new Date(System.currentTimeMillis());
-            String fileName = SDF.format(dt) + ext;
+//            Date dt = new Date(System.currentTimeMillis());
+            String fileName = "LE_YI_ZHUANG" + ext;
             
             String path = "";
             long fileSize = Filedata.getSize();
