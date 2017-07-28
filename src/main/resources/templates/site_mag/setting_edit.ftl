@@ -313,7 +313,7 @@ $(function () {
         </dd>
     </dl>
     <dl>
-        <dt>上传APK下载二维码</dt>
+        <dt>APK下载二维码</dt>
         <dd>
             <input name="apkQrCode" type="text" id="txtImgUrl" value="<#if setting??&&setting.apkQrCode??>${setting.apkQrCode!''}</#if>" style="width:50%;" class="input normal upload-path">
             <div class="upload-box upload-qrCode"></div>
