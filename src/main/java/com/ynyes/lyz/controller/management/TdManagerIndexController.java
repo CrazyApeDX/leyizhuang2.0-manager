@@ -77,134 +77,173 @@ public class TdManagerIndexController {
 			}
         	
 //        	int tempNumber = 0;
-        	int total_index = 0;
-			for(int i = 0; i < rootmenuList.length && total_index < tdManagerRole.getTotalPermission(); i++)
+//        	int total_index = 0;
+//			for(int i = 0; i < rootmenuList.length && total_index < tdManagerRole.getTotalPermission(); i++)
+        	for(int i = 0; i < rootmenuList.length; i++)
 			{
-					if (total_index >= tdManagerRole.getPermissionList().size()) 
-					{
-						//rootMenuList.remove(i);
-						rootmenuList[i] = null;
-					}
-					else
-					{
-						if (null!=(tdManagerRole.getPermissionList().get(total_index).getIsView()) && (tdManagerRole.getPermissionList().get(total_index).getIsView())==false)
-						{
-							rootmenuList[i] = null;
+				TdNavigationMenu rootMenu = null;
+//					if (total_index >= tdManagerRole.getPermissionList().size()) 
+//					{
+//						//rootMenuList.remove(i);
+//						rootmenuList[i] = null;
+//					}
+//					else
+//					{
+//						if (null!=(tdManagerRole.getPermissionList().get(total_index).getIsView()) && (tdManagerRole.getPermissionList().get(total_index).getIsView())==false)
+//						{
+//							rootmenuList[i] = null;
+//						}
+						
+				for (int j = 0; j < tdManagerRole.getPermissionList().size(); j++) {
+					if(rootmenuList[i].getId() == tdManagerRole.getPermissionList().get(j).getMenuId()){
+						if (null != tdManagerRole.getPermissionList().get(j).getIsView() && tdManagerRole.getPermissionList().get(j).getIsView()) {
+							rootMenu = rootMenuList.get(i);
 						}
-					}
-					total_index = total_index + 1;
-					TdNavigationMenu rootMenu = null;
-					if (i < rootmenuList.length) 
-					{
-					    rootMenu = rootMenuList.get(i);
-					}
-					
-	                // 取一级菜单列表
-	                List<TdNavigationMenu> level0MenuList = null;
-	                if (null != rootMenu) 
-	                {
-	                	level0MenuList = tdNavigationMenuService.findByParentIdAndSort(rootMenu.getId());
-					}
-	                else
-	                {
 						
 					}
+				}
+//					}
+//					total_index = total_index + 1;
+					
+//					if (i < rootmenuList.length) 
+//					{
+//					    rootMenu = rootMenuList.get(i);
+//					}
+					
+	                // 取一级菜单列表
+                List<TdNavigationMenu> level0MenuList = null;
+                if (null != rootMenu) 
+                {
+                	level0MenuList = tdNavigationMenuService.findByParentIdAndSort(rootMenu.getId());
+				}
+                else
+                {
+					
+				}
 	                
-	                TdNavigationMenu level0menuList[] = null;
-	                if (null != level0MenuList)
-	                {
-	                	//将list中的数据存入数组中
-		                level0menuList = new TdNavigationMenu[level0MenuList.size()];
-		            	for(int a = 0; a < level0MenuList.size(); a++)
-		            	{
-		            		level0menuList[a] = level0MenuList.get(a);
-		            	}
-					}
+                TdNavigationMenu level0menuList[] = null;
+                if (null != level0MenuList)
+                {
+                	//将list中的数据存入数组中
+	                level0menuList = new TdNavigationMenu[level0MenuList.size()];
+	            	for(int a = 0; a < level0MenuList.size(); a++)
+	            	{
+	            		level0menuList[a] = level0MenuList.get(a);
+	            	}
+				}
 	                
-	                int tempIndex = 0;
-	                if (null != level0menuList && level0menuList.length > 0)
+                int tempIndex = 0;
+                if (null != level0menuList && level0menuList.length > 0)
+                {
+//		                for(int j = 0; j < level0menuList.length && total_index < tdManagerRole.getTotalPermission(); j++)
+                	for(int j = 0; j < level0menuList.length; j++)
 	                {
-		                for(int j = 0; j < level0menuList.length && total_index < tdManagerRole.getTotalPermission(); j++)
-		                {
-		                	if (total_index >= tdManagerRole.getPermissionList().size())
-		                	{
-		                		level0menuList[j] = null;
-							}
-		                	else
-		                	{
-								if(null!=tdManagerRole.getPermissionList().get(total_index))
-								{
-			                		if (null!=(tdManagerRole.getPermissionList().get(total_index).getIsView()) && (tdManagerRole.getPermissionList().get(total_index).getIsView())==false) 
-			                		{
-			                			level0menuList[j] = null;
-				    				}
-			                	}
-							}
+//		                	if (total_index >= tdManagerRole.getPermissionList().size())
+//		                	{
+//		                		level0menuList[j] = null;
+//							}
+//		                	else
+//		                	{
+//								if(null!=tdManagerRole.getPermissionList().get(total_index))
+//								{
+////			                		if (null!=(tdManagerRole.getPermissionList().get(total_index).getIsView()) && (tdManagerRole.getPermissionList().get(total_index).getIsView())==false) 
+////			                		{
+////			                			level0menuList[j] = null;
+////				    				}
+//			                	}
+//							}
 		                	
-			                	total_index = total_index + 1;
+//			                	total_index = total_index + 1;
 			                	
-			                	TdNavigationMenu level0Menu = null;
-			                	if (j < level0menuList.length) {
-			                		level0Menu = level0MenuList.get(j);
-								}			                	
+			            TdNavigationMenu level0Menu = null;
+//			                	if (j < level0menuList.length) {
+//			                		level0Menu = level0MenuList.get(j);
+//								}	
+                		
+                		for (int k = 0; k < tdManagerRole.getPermissionList().size(); k++) {
+                			if (null != tdManagerRole.getPermissionList().get(k).getMenuId()) {
+	        					if(null != level0menuList[j] && level0menuList[j].getId().longValue() == tdManagerRole.getPermissionList().get(k).getMenuId().longValue()){
+	        						if (null != tdManagerRole.getPermissionList().get(k).getIsView() && tdManagerRole.getPermissionList().get(k).getIsView()) {
+	        							level0Menu = level0MenuList.get(j);
+	        							break;
+	        						}
+	        						level0menuList[j] = null;
+	        					}
+                			}
+        				}
 			                 
-			                    // 取二级菜单列表
-			                	
-			                    List<TdNavigationMenu> level1MenuList = null;
-			                    if(null != level0Menu)
-			                    {
-			                    	level1MenuList = tdNavigationMenuService.findByParentIdAndSort(level0Menu.getId());
-			                    }
+	                    // 取二级菜单列表
+	                	
+	                    List<TdNavigationMenu> level1MenuList = null;
+	                    if(null != level0Menu)
+	                    {
+	                    	level1MenuList = tdNavigationMenuService.findByParentIdAndSort(level0Menu.getId());
+	                    }
 			                    
-			                    TdNavigationMenu level1menuList[] = null;
-			                    if (null != level1MenuList) 
-			                    {
-			                    	//将list中的数据存入数组中
-					            	level1menuList = new TdNavigationMenu[level1MenuList.size()];
-					            	for(int b = 0; b < level1MenuList.size(); b++)
-					            	{
-					            		level1menuList[b] = level1MenuList.get(b);
-					            	}
+	                    TdNavigationMenu level1menuList[] = null;
+	                    if (null != level1MenuList) 
+	                    {
+	                    	//将list中的数据存入数组中
+			            	level1menuList = new TdNavigationMenu[level1MenuList.size()];
+			            	for(int b = 0; b < level1MenuList.size(); b++)
+			            	{
+			            		level1menuList[b] = level1MenuList.get(b);
+			            	}
+						}
+			                    
+	                    if (null != level1menuList && level1menuList.length > 0) 
+	                    {
+//				                    for(int c = 0; c < level1menuList.length && total_index < tdManagerRole.getTotalPermission(); c++)
+	                    	for(int c = 0; c < level1menuList.length; c++)
+		                    {
+//				                    	if (total_index >= tdManagerRole.getPermissionList().size()) 
+//				                    	{
+//				                    		level1menuList[c] = null;
+//										}
+//				                    	else
+//				                    	{
+//										if(null!=tdManagerRole.getPermissionList().get(total_index))
+////										{
+//					                    		if (null!=(tdManagerRole.getPermissionList().get(total_index).getIsView()) && (tdManagerRole.getPermissionList().get(total_index).getIsView())==false) 
+//					                    		{
+//					                    			level1menuList[c] = null;
+//						        				}
+//						                    	
+//					                    	}
+//										}
+	                    		boolean temp = false;
+	                    		for (int k = 0; k < tdManagerRole.getPermissionList().size(); k++) {
+	                    			if (null != tdManagerRole.getPermissionList().get(k).getMenuId()) {
+		                    			if(null != level1menuList[c] && level1menuList[c].getId().longValue() == tdManagerRole.getPermissionList().get(k).getMenuId().longValue()){
+		            						temp = true;
+		            						if (null == tdManagerRole.getPermissionList().get(k).getIsView() || tdManagerRole.getPermissionList().get(k).getIsView() == false) {
+		            							level1menuList[c] = null;
+		            							break;
+		            						}
+		            					}
+	                    			}
+	            				}
+	                    		if (!temp) {
+	                    			level1menuList[c] = null;
 								}
-			                    
-			                    if (null != level1menuList && level1menuList.length > 0) 
-			                    {
-				                    for(int c = 0; c < level1menuList.length && total_index < tdManagerRole.getTotalPermission(); c++)
-				                    {
-				                    	if (total_index >= tdManagerRole.getPermissionList().size()) 
-				                    	{
-				                    		level1menuList[c] = null;
-										}
-				                    	else
-				                    	{
-											if(null!=tdManagerRole.getPermissionList().get(total_index))
-											{
-					                    		if (null!=(tdManagerRole.getPermissionList().get(total_index).getIsView()) && (tdManagerRole.getPermissionList().get(total_index).getIsView())==false) 
-					                    		{
-					                    			level1menuList[c] = null;
-						        				}
-						                    	
-					                    	}
-										}
-				                    	
-				                    	total_index = total_index + 1;
-				                    }
-				                    
-				                    change(level1MenuList, level1menuList);
-				                    if (null != level1MenuList && level1MenuList.size() > 0) 
-				                    {
-					                    map.addAttribute("level_" + i + tempIndex + "_menu_list", level1MenuList);
-					                    tempIndex +=1;
-				                    }
-			                    }
+//				                    	total_index = total_index + 1;
+		                    }
+		                    
+		                    change(level1MenuList, level1menuList);
+		                    if (null != level1MenuList && level1MenuList.size() > 0) 
+		                    {
+			                    map.addAttribute("level_" + i + tempIndex + "_menu_list", level1MenuList);
+			                    tempIndex +=1;
+		                    }
+	                    }
 	
-		                }
-		                change(level0MenuList, level0menuList);
-		                if (null != level0MenuList && level0MenuList.size() > 0)
-		                {
-			                map.addAttribute("level_" + i + "_menu_list", level0MenuList);
-			             }
-	                }		
+	                }
+	                change(level0MenuList, level0menuList);
+	                if (null != level0MenuList && level0MenuList.size() > 0)
+	                {
+		                map.addAttribute("level_" + i + "_menu_list", level0MenuList);
+		             }
+                }		
 				
 			}
 			//change(rootMenuList, rootmenuList);
