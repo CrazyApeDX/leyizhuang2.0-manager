@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -25,7 +24,6 @@ import com.ynyes.lyz.interfaces.entity.TdReturnOrderInf;
 import com.ynyes.lyz.interfaces.entity.TdReturnTimeInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
 import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
-import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.service.TdOrderCouponInfService;
 import com.ynyes.lyz.interfaces.service.TdOrderGoodsInfService;
@@ -73,10 +71,6 @@ public class TdEbsResendController {
 
 	@Autowired
 	private TdReturnTimeInfService tdReturnTimeInfService;
-	
-	@Autowired
-	private TdEbsSenderService tdEbsSenderService;
-	
 	
 	Logger log = Logger.getLogger(TdEbsResendController.class);
 
@@ -404,25 +398,21 @@ public class TdEbsResendController {
 	 */
 	@RequestMapping(value = "/orderReceipt")
 	public void resendOrderReceipt(String orderNumber) {
-		log.info("门店自提开始重传"+orderNumber);
 		List<TdOrderReceiveInf> orderReceiveInfs = tdOrderReceiveInfService.findByOrderNumber(orderNumber);
 		if (orderReceiveInfs != null && orderReceiveInfs.size() > 0) {
 			for (int i = 0; i < orderReceiveInfs.size(); i++) {
 				TdOrderReceiveInf orderReceiveInf = orderReceiveInfs.get(i);
 				if (orderReceiveInf.getSendFlag() == null || orderReceiveInf.getSendFlag() == 1) {
-					Map<String, Object> result = tdEbsSenderService.sendStorePickUpToEbs(orderReceiveInf);
-					String message = (String) result.get("msg");
-					if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
+					String resultStr = tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						orderReceiveInf.setSendFlag(0);
 					} else {
 						orderReceiveInf.setSendFlag(1);
-						orderReceiveInf.setErrorMsg(message);
+						orderReceiveInf.setErrorMsg(resultStr);
 					}
 				}
 			}
 			tdOrderReceiveInfService.save(orderReceiveInfs);
-		}else{
-			log.info("门店自提收货时间表不存在数据order_number="+orderNumber);
 		}
 	}
 	
@@ -438,13 +428,12 @@ public class TdEbsResendController {
 			for (int i = 0; i < orderReceiveInfs.size(); i++) {
 				TdOrderReceiveInf orderReceiveInf = orderReceiveInfs.get(i);
 				if (orderReceiveInf.getSendFlag() == null || orderReceiveInf.getSendFlag() == 1) {
-					Map<String, Object> result = tdEbsSenderService.sendStorePickUpToEbs(orderReceiveInf);
-					String message = (String) result.get("msg");
-					if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
+					String resultStr = tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						orderReceiveInf.setSendFlag(0);
 					} else {
 						orderReceiveInf.setSendFlag(1);
-						orderReceiveInf.setErrorMsg(message);
+						orderReceiveInf.setErrorMsg(resultStr);
 					}
 				}
 			}
@@ -669,13 +658,12 @@ public class TdEbsResendController {
 			for (int i = 0; i < returnTimeInfs.size(); i++) {
 				TdReturnTimeInf returnTimeInf = returnTimeInfs.get(i);
 				if (returnTimeInf.getSendFlag() == null || returnTimeInf.getSendFlag() == 1) {
-					Map<String, Object> result = tdEbsSenderService.sendStoreReturnToEbs(returnTimeInf);
-					String message = (String) result.get("msg");
-					if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
+					String resultStr = tdInterfaceService.ebsWithObject(returnTimeInf, INFTYPE.RETURNTIMEINF);
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						returnTimeInf.setSendFlag(0);
 					} else {
 						returnTimeInf.setSendFlag(1);
-						returnTimeInf.setErrorMsg(message);
+						returnTimeInf.setErrorMsg(resultStr);
 					}
 				}
 			}
@@ -696,13 +684,12 @@ public class TdEbsResendController {
 			for (int i = 0; i < returnTimeInfs.size(); i++) {
 				TdReturnTimeInf returnTimeInf = returnTimeInfs.get(i);
 				if (returnTimeInf.getSendFlag() == null || returnTimeInf.getSendFlag() == 1) {
-					Map<String, Object> result = tdEbsSenderService.sendStoreReturnToEbs(returnTimeInf);
-					String message = (String) result.get("msg");
-					if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
+					String resultStr = tdInterfaceService.ebsWithObject(returnTimeInf, INFTYPE.RETURNTIMEINF);
+					if (org.apache.commons.lang3.StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
 						returnTimeInf.setSendFlag(0);
 					} else {
 						returnTimeInf.setSendFlag(1);
-						returnTimeInf.setErrorMsg(message);
+						returnTimeInf.setErrorMsg(resultStr);
 					}
 				}
 			}
@@ -710,6 +697,5 @@ public class TdEbsResendController {
 		}
 		return Integer.valueOf(returnTimeInfs.size()).toString();
 	}
-	
-	
+
 }

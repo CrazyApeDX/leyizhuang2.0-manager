@@ -33,7 +33,6 @@ import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.entity.TdReturnTimeInf;
-import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.service.TdCashReturnNoteService;
@@ -100,9 +99,6 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 
 	@Autowired
 	private TdDiySiteAccountService tdDiySiteAccountService;
-	
-	@Autowired
-	private TdEbsSenderService tdEbsSenderService;
 
 	// 列表
 	@RequestMapping(value = "/{type}/list")
@@ -378,8 +374,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 				// 修改库存
 				tdDiySiteInventoryService.changeGoodsInventory(returnNote, req);
 				TdReturnTimeInf returnTimeInf = tdInterfaceService.initReturnTimeByReturnNote(returnNote);
-				//异步发送ebs：门店退货
-				tdEbsSenderService.sendStoreReturnEbsAndRecord(returnTimeInf);
+				tdInterfaceService.ebsWithObject(returnTimeInf, INFTYPE.RETURNTIMEINF);
 
 			}
 			// 确认验货
