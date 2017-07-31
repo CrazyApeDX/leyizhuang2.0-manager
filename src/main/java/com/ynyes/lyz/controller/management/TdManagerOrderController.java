@@ -47,9 +47,8 @@ import com.ynyes.lyz.entity.TdWareHouse;
 import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.service.TdOrderReceiveInfService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.service.TdArticleService;
 import com.ynyes.lyz.service.TdCityService;
@@ -163,7 +162,7 @@ public class TdManagerOrderController {
 	private TdDiySiteInventoryService tdDiySiteInventoryService;
 	
 	@Autowired
-	private TdOrderReceiveInfService tdOrderReceiveInfService;
+    TdEbsSenderService tdEbsSenderService;
 	/** 
 	 * @author lc
 	 * @注释：下载
@@ -1090,17 +1089,9 @@ public class TdManagerOrderController {
 						order.setStatusId(4L);
 						order.setSendTime(new Date());
 						TdOrderReceiveInf orderReceiveInf = tdInterfaceService.initOrderReceiveByOrder(order);
-						if (orderReceiveInf != null) {
-							String result =tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
-							if (org.apache.commons.lang3.StringUtils.isBlank(result)) {
-								orderReceiveInf.setSendFlag(0);
-							} else {
-								orderReceiveInf.setSendFlag(1);
-								orderReceiveInf.setErrorMsg(result);
-							}
-							
-						}
-						tdOrderReceiveInfService.save(orderReceiveInf);
+						
+						//异步发送到ebs：门店自提
+						tdEbsSenderService.sendStorePickUpToEbsAndRecord(orderReceiveInf);
 					}
 
 				}
