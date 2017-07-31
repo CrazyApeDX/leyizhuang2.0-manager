@@ -27,4 +27,8 @@ public interface FitCompanyService {
 	Boolean validateRepeatCompanyByCode(String code, Long id) throws Exception;
 
 	List<FitCompany> findFitCompanyBySobId(List<Long> sobIdList);
+	
+	List<FitCompany> findBySobId(Long sobId);
+	
+	Page<FitCompany> findCompany(Integer page, Integer size, String keywords) throws Exception;
 }

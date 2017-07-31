@@ -13,4 +13,10 @@ public interface FitCreditChangeLogService {
 	List<FitCreditChangeLog> findByCompanyIdOrderByChangeTimeDesc(Long companyId) throws Exception;
 
 	Page<FitCreditChangeLog> findByCompanyIdOrderByChangeTimeDesc(Long companyId, Integer page, Integer size) throws Exception;
+	
+	List<FitCreditChangeLog> queryDownList(String begindata, String enddata, String city, String companyCode,
+			String keywords, String type);
+	
+	Page<FitCreditChangeLog> queryList(String begindata, String enddata, String city, String companyCode,
+			String keywords, String type, Integer page, Integer size) throws Exception;
 }

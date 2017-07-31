@@ -44,7 +44,9 @@ import com.ynyes.lyz.entity.TdPriceList;
 import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.entity.TdShippingAddress;
 import com.ynyes.lyz.entity.TdWareHouse;
-import com.ynyes.lyz.entity.user.CreditChangeType;
+import com.ynyes.lyz.entity.user.CreditChangeType
+
+;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
 import com.ynyes.lyz.interfaces.service.TdEbsSenderService;

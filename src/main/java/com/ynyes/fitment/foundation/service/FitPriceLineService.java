@@ -14,5 +14,5 @@ public interface FitPriceLineService {
 
 	FitPriceLine save(FitPriceLine line);
 
-	Page<FitPriceLine> findByGoodsSkuContaining(String keywords, int page, int size);
+	Page<FitPriceLine> findByHeaderIdAndGoodsSkuContaining(Long headerId,String keywords, int page, int size);
 }

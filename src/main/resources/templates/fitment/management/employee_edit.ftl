@@ -88,7 +88,7 @@
   			<dl>
     			<dt>姓名</dt>
 				<dd>
-					<input name="name" type="text" datatype="*1-5" value="<#if employee??>${employee.name!""}</#if>" class="input normal">
+					<input name="name" type="text" datatype="*1-10" value="<#if employee??>${employee.name!""}</#if>" class="input normal">
 				</dd>
   			</dl>
   			<dl>

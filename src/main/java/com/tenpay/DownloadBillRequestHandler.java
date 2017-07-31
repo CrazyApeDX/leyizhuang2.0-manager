@@ -15,7 +15,7 @@ public class DownloadBillRequestHandler extends RequestHandler {
 	}
 	
 	/**
-	 * ´´½¨md5ÕªÒª,¹æÔòÊÇ:°´²ÎÊý¹Ì¶¨Ë³Ðò×é´®,Óöµ½¿ÕÖµµÄ²ÎÊý²»²Î¼ÓÇ©Ãû¡£
+	 * åˆ›å»ºmd5æ‘˜è¦,è§„åˆ™æ˜¯:æŒ‰å‚æ•°å›ºå®šé¡ºåºç»„ä¸²,é‡åˆ°ç©ºå€¼çš„å‚æ•°ä¸å‚åŠ ç­¾åã€‚
 	 */
 	protected void createSign() {
 		StringBuffer sb = new StringBuffer();
@@ -31,7 +31,7 @@ public class DownloadBillRequestHandler extends RequestHandler {
 		
 		this.setParameter("sign", sign);
 		
-		//debugÐÅÏ¢
+		//debugä¿¡æ¯
 		this.setDebugInfo(sb.toString() + " => sign:" + sign);
 		
 	}

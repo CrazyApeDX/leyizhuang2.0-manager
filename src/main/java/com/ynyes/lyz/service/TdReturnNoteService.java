@@ -1,5 +1,6 @@
 package com.ynyes.lyz.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -544,5 +545,52 @@ public class TdReturnNoteService {
 
 		int i = (int) (Math.random() * 900) + 100;
 		return "RT" + middle + i;
+	}
+	
+	
+	public Page<TdReturnNote> searchFitReturnList(String keyword, String orderStartTime, String orderEndTime,
+			String company, int size, int page) {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Criteria<TdReturnNote> c = new Criteria<TdReturnNote>();
+		c.add(Restrictions.like("orderNumber", "FIT", true));
+		c.add(Restrictions.notLike("remarkInfo", "用户取消订单，退货", true));
+		if (StringUtils.isNotBlank(keyword)) {
+			c.add(Restrictions.or(Restrictions.like("orderNumber", keyword, true),
+					Restrictions.like("returnNumber", keyword, true), Restrictions.like("diySiteTitle", keyword, true)));
+		}
+		if (null != company && !"".equals(company)) {
+			c.add(Restrictions.eq("diyCode", company, true));
+		}
+		if (null != orderStartTime && !orderStartTime.equals("")) {
+			c.add(Restrictions.gte("orderTime", stringToDate(orderStartTime, null), true));
+
+		}
+		if (null != orderEndTime && !orderEndTime.equals("")) {
+			c.add(Restrictions.lte("orderTime", stringToDate(orderEndTime, null), true));
+		}
+
+		c.setOrderByDesc("id");
+		return repository.findAll(c, pageRequest);
+	}
+	
+	/**
+	 * 字符串转换时间默认格式yyyy-MM-dd HH:mm:ss
+	 * 
+	 * @return
+	 */
+	private Date stringToDate(String time, String dateFormat) {
+		if (null == dateFormat || "".equals(dateFormat)) {
+			dateFormat = "yyyy-MM-dd HH:mm:ss";
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+		Date date = null;
+		if (null != time && !time.equals("")) {
+			try {
+				date = sdf.parse(time);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+		}
+		return date;
 	}
 }

@@ -2,6 +2,7 @@ package com.ynyes.fitment.foundation.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.fitment.core.service.PageableService;
 import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.entity.FitCreditChangeLog;
 import com.ynyes.fitment.foundation.repo.FitCompanyRepo;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.lyz.util.Criteria;
@@ -81,8 +83,15 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 		return null;
 	}
 	
+	@Override
+	public List<FitCompany> findBySobId(Long sobId) {
+		if(null != sobId){
+			return this.fitCompanyRepo.findBySobId(sobId);
+		}
+		return null;
+	}
 	/**
-	 * ²éÑ¯Ìõ¼þ·ÖÒ³  == 2017-07-13 == panjie == °üÀ¨ ¡®Ãû³Æ¡¯¡¢¡®±àÂë¡¯¡¢¡®ÊÇ·ñ¶³½á¡¯µÈ ²éÑ¯Ìõ¼þ
+	 * ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò³  == 2017-07-13 == panjie == ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Æ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¡¯ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ñ¶³½á¡¯ï¿½ï¿½ ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½
 	 */
 	@Override
 	public Page<FitCompany> findAllAddConditionDeliveryType(Integer page, Integer size, String keyWords,
@@ -91,7 +100,7 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 		Criteria<FitCompany> c = new Criteria<FitCompany>();
 		
 		if (null != keyWords && !"".equals(keyWords)) {
-			//È¥µôÇ°ºó¿Õ¸ñ
+			//È¥ï¿½ï¿½Ç°ï¿½ï¿½Õ¸ï¿½
 			keyWords = keyWords.trim();
 			c.add(Restrictions.or(Restrictions.like("name", keyWords, true),Restrictions.like("code", keyWords, true)));
 		}
@@ -105,5 +114,15 @@ public class FitCompanyServiceImpl extends PageableService implements FitCompany
 		}
 		c.setOrderByDesc("createTime");
 		return this.fitCompanyRepo.findAll(c,pageRequest);
+	}
+
+	@Override
+	public Page<FitCompany> findCompany(Integer page, Integer size, String keywords) throws Exception {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Criteria<FitCompany> c = new Criteria<FitCompany>();
+		if (null != keywords && !keywords.equalsIgnoreCase("")) {
+			c.add(Restrictions.or(Restrictions.like("code",keywords, true),Restrictions.like("name", keywords, true)));
+		}
+		return fitCompanyRepo.findAll(c,pageRequest);
 	}
 }

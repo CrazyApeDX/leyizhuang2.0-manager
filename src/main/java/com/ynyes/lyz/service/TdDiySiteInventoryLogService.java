@@ -139,20 +139,22 @@ public class TdDiySiteInventoryLogService {
 		if (endDate != null) {
 			c.add(Restrictions.lte("changeDate", endDate, true));
 		}
-		if(type == 1){
+		if (type == 1) {
 			c.add(Restrictions.notLike("changeType", "门店", true));
 		}
-		if(type == 2){
-			if(regionId == 2033L){
-				cityName = "郑州市";
-			}else if(regionId == 2121L){
-				cityName = "成都市";
-			}else {
-				cityName = "重庆市";
+		if (null != regionId) {
+			if (type == 2) {
+				if (regionId == 2033L) {
+					cityName = "郑州市";
+				} else if (regionId == 2121L) {
+					cityName = "成都市";
+				} else {
+					cityName = "重庆市";
+				}
+				c.add(Restrictions.like("regionName", cityName, true));
 			}
-			c.add(Restrictions.like("regionName", cityName, true));
 		}
-		
+
 		c.setOrderByAsc("goodsSku");
 		return repository.findAll(c);
 	}

@@ -424,6 +424,10 @@ public class TdOrder {
 	@Column(scale = 2, nullable = false)
 	private Double credit = 0d;
 	
+	// 装饰公司使用的赞助金
+	@Column(scale = 2, nullable = false)
+	private Double promotionMoneyPayed = 0d;
+	
 	// 经销总价
 	@Column(scale = 2)
 	private Double jxTotalPrice = 0d;
@@ -1283,6 +1287,14 @@ public class TdOrder {
 
 	public void setReceiverIsMember(Boolean receiverIsMember) {
 		this.receiverIsMember = receiverIsMember;
+	}
+
+	public Double getPromotionMoneyPayed() {
+		return promotionMoneyPayed;
+	}
+
+	public void setPromotionMoneyPayed(Double promotionMoneyPayed) {
+		this.promotionMoneyPayed = promotionMoneyPayed;
 	}
 
 }

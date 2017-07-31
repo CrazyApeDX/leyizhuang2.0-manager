@@ -6,4 +6,5 @@ public interface FitOrderCancelGoodsService {
 	
 	FitOrderCancelGoods save(FitOrderCancelGoods goods) throws Exception;
 
+	
 }

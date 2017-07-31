@@ -78,6 +78,16 @@
         			<span class="Validform_checktip">*当前信用额度（此处修改不会进行账务处理）</span>
     			</dd>
   			</dl>
+  			
+  			<dl>
+    			<dt>赞助金</dt>
+    			<dd>
+        			<input name="promotionMoney" type="text" value="<#if company??>${(company.promotionMoney!"0.00")?string("0.00")}</#if>" class="input normal" 
+        				datatype="/^(([1-9]{1}\d*)|([0]{1}))(\.(\d){1,2})?$/" sucmsg=" "> 
+        			<span class="Validform_checktip">*当前赞助额度（此处修改不会进行账务处理）</span>
+    			</dd>
+  			</dl>
+  			
 			<dl>
 				<dt>是否冻结</dt>
 				<dd>
@@ -156,6 +166,23 @@
                     		<#if yrPriceHeaderList??>
                         		<#list yrPriceHeaderList as h>
                             		<option value="${(h.id!"0")?c}" <#if company?? && company.yrPriceHeaderId==h.id>selected="selected"</#if>>${h.title!""}</option>
+                        		</#list>
+                    		</#if>
+                		</select>
+            		</div>
+        		</dd>
+    		</dl>
+    		<dl>
+        		<dt>喜鹊价目表</dt>
+        		<dd>
+            		<div class="rule-single-select">
+                		<select name="xqPriceHeaderId" datatype="*" sucmsg=" ">
+                    		<#if (!company?? || (company?? && company.xqPriceHeaderId = 0))>
+                    			<option value="0">请选择...</option>
+                    		</#if>
+                    		<#if xqPriceHeaderList??>
+                        		<#list xqPriceHeaderList as h>
+                            		<option value="${(h.id!"0")?c}" <#if company?? && company.xqPriceHeaderId==h.id>selected="selected"</#if>>${h.title!""}</option>
                         		</#list>
                     		</#if>
                 		</select>

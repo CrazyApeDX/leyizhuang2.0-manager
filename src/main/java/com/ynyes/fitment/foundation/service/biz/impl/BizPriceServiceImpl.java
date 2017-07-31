@@ -40,6 +40,8 @@ public class BizPriceServiceImpl implements BizPriceService {
 				headerId = company.getLyzPriceHeaderId();
 			} else if ("YR".equalsIgnoreCase(goods.getProductFlag())) {
 				headerId = company.getYrPriceHeaderId();
+			} else if ("XQ".equalsIgnoreCase(goods.getProductFlag())) {
+				headerId = company.getXqPriceHeaderId();
 			}
 			return this.fitPriceLineService.findByHeaderIdAndGoodsId(headerId, goodsId);
 		}

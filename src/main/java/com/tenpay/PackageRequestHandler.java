@@ -19,7 +19,7 @@ public class PackageRequestHandler extends RequestHandler {
 	}
 
 	/**
-	 * »ñÈ¡´ø²ÎÊıµÄÇëÇóURL
+	 * è·å–å¸¦å‚æ•°çš„è¯·æ±‚URL
 	 * @return String
 	 * @throws UnsupportedEncodingException 
 	 */
@@ -39,9 +39,9 @@ public class PackageRequestHandler extends RequestHandler {
 			sb.append(k + "=" + URLEncoder.encode(v, enc) + "&");
 		}
 		
-		//È¥µô×îºóÒ»¸ö&
+		//å»æ‰æœ€åä¸€ä¸ª&
 		String reqPars = sb.substring(0, sb.lastIndexOf("&"));
-		// ÉèÖÃdebugĞÅÏ¢
+		// è®¾ç½®debugä¿¡æ¯
 		this.setDebugInfo("md5 sb:" + getDebugInfo() + "\r\npackage:" + reqPars);
 		return reqPars;
 		

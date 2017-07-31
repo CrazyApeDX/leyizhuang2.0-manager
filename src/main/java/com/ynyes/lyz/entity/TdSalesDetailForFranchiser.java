@@ -19,9 +19,9 @@ import org.hibernate.annotations.GenericGenerator;
 @Entity
 public class TdSalesDetailForFranchiser {
 
-	@Id
-	@GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
-	private String id;
+    @Id
+    @GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+    private String id;
 	
 	// 门店名称
 	@Column
@@ -62,12 +62,7 @@ public class TdSalesDetailForFranchiser {
 	// 单价
 	@Column
 	private Double price;
-	// 总价
-	@Column
-	private Double totalPrice;
-	// 现金卷
-	@Column
-	private Double cashCoupon;
+
 	// 品牌类型
 	@Column
 	private String brandTitle;
@@ -114,8 +109,12 @@ public class TdSalesDetailForFranchiser {
 	// 经销单价
 	@Column(scale = 2)
 	private Double jxPrice = 0d;
-
-	
+	//使用产品券数量
+	@Column
+	private Double productCouponQuantity;
+	//是否直营门店
+	@Column
+	private Boolean isDirect;
 
 	public String getId() {
 		return id;
@@ -165,12 +164,20 @@ public class TdSalesDetailForFranchiser {
 		this.statusId = statusId;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getSellerRealName() {
+		return sellerRealName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setSellerRealName(String sellerRealName) {
+		this.sellerRealName = sellerRealName;
+	}
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public String getRealName() {
@@ -179,6 +186,14 @@ public class TdSalesDetailForFranchiser {
 
 	public void setRealName(String realName) {
 		this.realName = realName;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	public String getSku() {
@@ -213,111 +228,6 @@ public class TdSalesDetailForFranchiser {
 		this.price = price;
 	}
 
-	public Double getTotalPrice() {
-		return totalPrice;
-	}
-
-	public void setTotalPrice(Double totalPrice) {
-		this.totalPrice = totalPrice;
-	}
-
-	public String getRemark() {
-		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-
-	public String getDeliverRealName() {
-		return deliverRealName;
-	}
-
-	public void setDeliverRealName(String deliverRealName) {
-		this.deliverRealName = deliverRealName;
-	}
-
-	public String getDeliverUsername() {
-		return deliverUsername;
-	}
-
-	public void setDeliverUsername(String deliverUsername) {
-		this.deliverUsername = deliverUsername;
-	}
-
-	public String getSellerRealName() {
-		return sellerRealName;
-	}
-
-	public void setSellerRealName(String sellerRealName) {
-		this.sellerRealName = sellerRealName;
-	}
-
-	public String getDeliverTypeTitle() {
-		return deliverTypeTitle;
-	}
-
-	public void setDeliverTypeTitle(String deliverTypeTitle) {
-		this.deliverTypeTitle = deliverTypeTitle;
-	}
-
-	public String getShippingAddress() {
-		return shippingAddress;
-	}
-
-	public void setShippingAddress(String shippingAddress) {
-		this.shippingAddress = shippingAddress;
-	}
-
-	public String getDiySiteCode() {
-		return diySiteCode;
-	}
-
-	public void setDiySiteCode(String diySiteCode) {
-		this.diySiteCode = diySiteCode;
-	}
-
-	public String getShippingName() {
-		return shippingName;
-	}
-
-	public void setShippingName(String shippingName) {
-		this.shippingName = shippingName;
-	}
-
-	public String getCityName() {
-		return cityName;
-	}
-
-	public void setCityName(String cityName) {
-		this.cityName = cityName;
-	}
-
-	public Long getDiyId() {
-		return diyId;
-	}
-
-	public void setDiyId(Long diyId) {
-		this.diyId = diyId;
-	}
-
-	public String getShippingPhone() {
-		return shippingPhone;
-	}
-
-	public void setShippingPhone(String shippingPhone) {
-		this.shippingPhone = shippingPhone;
-	}
-
-
-	public Double getCashCoupon() {
-		return cashCoupon;
-	}
-
-	public void setCashCoupon(Double cashCoupon) {
-		this.cashCoupon = cashCoupon;
-	}
-
 	public String getBrandTitle() {
 		return brandTitle;
 	}
@@ -342,6 +252,14 @@ public class TdSalesDetailForFranchiser {
 		this.goodsTypeTitle = goodsTypeTitle;
 	}
 
+	public String getDeliverTypeTitle() {
+		return deliverTypeTitle;
+	}
+
+	public void setDeliverTypeTitle(String deliverTypeTitle) {
+		this.deliverTypeTitle = deliverTypeTitle;
+	}
+
 	public String getWhName() {
 		return whName;
 	}
@@ -350,12 +268,76 @@ public class TdSalesDetailForFranchiser {
 		this.whName = whName;
 	}
 
-	public Long getUserId() {
-		return userId;
+	public String getDeliverRealName() {
+		return deliverRealName;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setDeliverRealName(String deliverRealName) {
+		this.deliverRealName = deliverRealName;
+	}
+
+	public String getDeliverUsername() {
+		return deliverUsername;
+	}
+
+	public void setDeliverUsername(String deliverUsername) {
+		this.deliverUsername = deliverUsername;
+	}
+
+	public String getShippingName() {
+		return shippingName;
+	}
+
+	public void setShippingName(String shippingName) {
+		this.shippingName = shippingName;
+	}
+
+	public String getShippingPhone() {
+		return shippingPhone;
+	}
+
+	public void setShippingPhone(String shippingPhone) {
+		this.shippingPhone = shippingPhone;
+	}
+
+	public String getShippingAddress() {
+		return shippingAddress;
+	}
+
+	public void setShippingAddress(String shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
+	public String getCityName() {
+		return cityName;
+	}
+
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+
+	public String getDiySiteCode() {
+		return diySiteCode;
+	}
+
+	public void setDiySiteCode(String diySiteCode) {
+		this.diySiteCode = diySiteCode;
+	}
+
+	public Long getDiyId() {
+		return diyId;
+	}
+
+	public void setDiyId(Long diyId) {
+		this.diyId = diyId;
 	}
 
 	public Double getJxPrice() {
@@ -365,7 +347,20 @@ public class TdSalesDetailForFranchiser {
 	public void setJxPrice(Double jxPrice) {
 		this.jxPrice = jxPrice;
 	}
-	
-	
 
+	public Double getProductCouponQuantity() {
+		return productCouponQuantity;
+	}
+
+	public void setProductCouponQuantity(Double productCouponQuantity) {
+		this.productCouponQuantity = productCouponQuantity;
+	}
+
+	public Boolean getIsDirect() {
+		return isDirect;
+	}
+
+	public void setIsDirectDirect(Boolean direct) {
+		isDirect = direct;
+	}
 }

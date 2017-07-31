@@ -107,7 +107,7 @@ function downloaddate(type)
                 <#elseif 17==statusId>
                     <span>预存款变更商品明细表</span>
                 <#elseif 18==statusId>
-                    <span>加盟商出退货报表</span>                
+                    <span>商品出退货报表</span>
                 </#if>
             </#if> 
     </div>

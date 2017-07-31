@@ -86,12 +86,14 @@ public class FitManagementCompanyController {
 		List<FitPriceHeader> lyzPriceHeaderList = null;
 		List<FitPriceHeader> lsPriceHeaderList = null;
 		List<FitPriceHeader> yrPriceHeaderList = null;
+		List<FitPriceHeader> xqPriceHeaderList = null;
 		List<TdCity> cityList = null;
 		try {
 			company = this.fitCompanyService.findOne(id);
 			lyzPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("LYZ");
 			lsPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("LS");
 			yrPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("YR");
+			xqPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("XQ");
 			cityList = this.tdCityService.findAll();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -100,6 +102,7 @@ public class FitManagementCompanyController {
 		map.addAttribute("lyzPriceHeaderList", lyzPriceHeaderList);
 		map.addAttribute("lsPriceHeaderList", lsPriceHeaderList);
 		map.addAttribute("yrPriceHeaderList", yrPriceHeaderList);
+		map.addAttribute("xqPriceHeaderList", xqPriceHeaderList);
 		map.addAttribute("cityList", cityList);
 		return "/fitment/management/company_edit";
 	}
@@ -173,6 +176,21 @@ public class FitManagementCompanyController {
 			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
 			FitCompany company = this.fitCompanyService.findOne(id);
 			this.bizCreditChangeLogService.creditAction(manager, company, credit, "");
+			return new ClientResult(ActionCode.SUCCESS, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请稍后重试或联系管理员");
+		}
+	}
+	
+	@RequestMapping(value = "/promotionMoney", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	@ResponseBody
+	public ClientResult companyPromotionMoney(HttpServletRequest request, Long id, Double promotionMoney) {
+		try {
+			String manageUsername = (String) request.getSession().getAttribute(LoginSign.MANAGER_SIGN.toString());
+			TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(manageUsername);
+			FitCompany company = this.fitCompanyService.findOne(id);
+			this.bizCreditChangeLogService.managePromotionMoneyLog(manager, company, promotionMoney, "");
 			return new ClientResult(ActionCode.SUCCESS, null);
 		} catch (Exception e) {
 			e.printStackTrace();
