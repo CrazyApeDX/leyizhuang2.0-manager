@@ -119,6 +119,7 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 		this.initCompanyGoods(companyId, company.getLsPriceHeaderId());
 		this.initCompanyGoods(companyId, company.getLyzPriceHeaderId());
 		this.initCompanyGoods(companyId, company.getYrPriceHeaderId());
+		this.initCompanyGoods(companyId, company.getXqPriceHeaderId());
 	}
 
 	private void initCompanyGoods(Long companyId, Long priceHeaderId) throws Exception {
