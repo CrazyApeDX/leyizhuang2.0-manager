@@ -133,14 +133,8 @@ public class TdEbsSenderService {
 			public void run() {
 				Map<String, Object> result = sendStorePickUpToEbs(tdOrderReceiveInf);
 				if (!(Boolean) result.get("success")) {
-					//包含unique constraint 说明已经调用成功过
-                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
-                		LOGGER.info("门店自提重复传输");
-                		tdOrderReceiveInf.setSendFlag(0);
-                	}else{
-                		tdOrderReceiveInf.setSendFlag(1);
-                		tdOrderReceiveInf.setErrorMsg((String) result.get("msg"));
-                	}
+            		tdOrderReceiveInf.setSendFlag(1);
+            		tdOrderReceiveInf.setErrorMsg((String) result.get("msg"));
 				} else {
 					tdOrderReceiveInf.setSendFlag(0);
 				}
@@ -158,14 +152,8 @@ public class TdEbsSenderService {
 			public void run() {
 				Map<String, Object> result = sendStoreReturnToEbs(tdReturnTimeInf);
 				if (!(Boolean) result.get("success")) {
-					//包含unique constraint 说明已经调用成功过
-                	if(String.valueOf(result.get("msg")).contains("ORA-00001")){
-                		LOGGER.info("门店自提重复传输");
-                		tdReturnTimeInfService.save(tdReturnTimeInf);
-                	}else{
-                		tdReturnTimeInf.setSendFlag(1);
-    					tdReturnTimeInf.setErrorMsg((String) result.get("msg"));
-                	}
+            		tdReturnTimeInf.setSendFlag(1);
+					tdReturnTimeInf.setErrorMsg((String) result.get("msg"));
 				} else {
 					tdReturnTimeInf.setSendFlag(0);
 				}
