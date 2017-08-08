@@ -106,6 +106,10 @@ public class TdReceipt {
 	@Column
 	private Long diyId;
 	
+	//POS刷卡流水号
+    @Column
+    private Long serialNumber;
+	
 	private Date realPayTime;
 
 	public String getCreateUsername() {
@@ -300,6 +304,14 @@ public class TdReceipt {
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
+	}
+
+	public Long getSerialNumber() {
+		return serialNumber;
+	}
+
+	public void setSerialNumber(Long serialNumber) {
+		this.serialNumber = serialNumber;
 	}
 
 	@Override
