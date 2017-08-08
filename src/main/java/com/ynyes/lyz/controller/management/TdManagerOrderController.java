@@ -1238,7 +1238,7 @@ public class TdManagerOrderController {
 	 */
 	@RequestMapping(value = "/own/money")
 	@ResponseBody
-	public Map<String, Object> ownMoney(Long id, Double money, Double pos, Double other, String realPayTime,
+	public Map<String, Object> ownMoney(Long id, Double money, Double pos, Double other, String realPayTime,Long serialNumber,
 			HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
@@ -1276,6 +1276,9 @@ public class TdManagerOrderController {
 			res.put("message", "必须一次性还清");
 			res.put("code", -1);
 			return res;
+		}
+		if(null != serialNumber){
+			own.setSerialNumber(serialNumber);
 		}
 		// 设置值 并保存
 		own.setBackMoney(money);
@@ -1329,7 +1332,7 @@ public class TdManagerOrderController {
 	 */
 	@RequestMapping(value = "/backMoney")
 	@ResponseBody
-	public Map<String, Object> backMoney(Long id, Double money, Double pos, Double other, String realPayTime,
+	public Map<String, Object> backMoney(Long id, Double money, Double pos, Double other, String realPayTime,Long serialNumber,
 			HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
@@ -1376,6 +1379,9 @@ public class TdManagerOrderController {
 		}
 		// 保存收款记录
 		TdOwnMoneyRecord rec = new TdOwnMoneyRecord();
+		if(null != serialNumber){
+			rec.setSerialNumber(serialNumber);
+		}
 		rec.setCreateTime(new Date());
 		rec.setOrderNumber(order.getMainOrderNumber());
 		rec.setDiyCode(order.getDiySiteCode());
