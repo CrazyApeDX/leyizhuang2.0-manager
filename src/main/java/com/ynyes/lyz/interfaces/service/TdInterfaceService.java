@@ -882,7 +882,8 @@ public class TdInterfaceService {
 			return null;
 		}
 
-		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByOrderNumber(cashReturnNote.getOrderNumber());
+//		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByOrderNumber(cashReturnNote.getOrderNumber());
+		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByReturnNumber(cashReturnNote.getReturnNoteNumber());
 		if (returnOrderInf == null) {
 			return null;
 		}
