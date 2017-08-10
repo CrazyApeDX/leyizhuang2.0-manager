@@ -642,7 +642,7 @@
 		<div class="dialog_row"><input placeholder="现金" id="money" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="POS" id="pos" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="其他" id="other" style="height:30px;width:175px;" type="number" /> </div>
-		<div class="dialog_row"><input placeholder="POS刷卡参考号后六位" id="serialNumber" style="height:30px;width:175px;" type="number" /> </div>
+		<div class="dialog_row"><input placeholder="POS刷卡参考号后六位" id="serialNumber" style="height:30px;width:175px;" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/> </div>
 		<div class="dialog_row">
 			<div class="input-date">
 	            <input id="realPayTime" name="beginDate" placeholder="收款时间" id="beginDate" type="text" value="<#if activity??>${activity.beginDate?string("yyyy-MM-dd HH:mm:ss")}</#if>" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
