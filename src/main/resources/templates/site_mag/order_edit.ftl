@@ -406,7 +406,12 @@
         		return;
         	}
         	
-        	if (Number(pos) > 0&& null != serialNumber && serialNumber != "" && l != 6 ) {
+        	if (Number(serialNumber) < 0) {
+    		alert("请正确填写POS刷卡凭证号(后6位)");
+    		return;
+    		}
+        	
+        	if (Number(pos) > 0&& null != serialNumber && serialNumber != "" && l != 6) {
         		alert("请正确填写POS刷卡凭证号(后6位)");
         		return;
         	}
