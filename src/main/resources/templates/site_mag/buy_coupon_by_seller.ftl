@@ -709,6 +709,7 @@ function checkDate(){
 		<div class="dialog_row"><input placeholder="现金" id="cash" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="POS" id="pos" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="其他" id="other" style="height:30px;width:175px;" type="number" /> </div>
+		<div class="dialog_row"><input placeholder="POS刷卡参考号后六位" id="serialNumber" style="height:30px;width:175px;" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/> </div>
 		<#--
 		<div class="dialog_row"><input placeholder="预存款" id="balance" style="height:30px;width:175px;" type="number" /> </div>
 		-->
@@ -746,6 +747,9 @@ function checkDate(){
 			var money = $("#money").html();
 			
 			var realPayTime = $('#realPayTime').val();
+			var serialNumber = $('#serialNumber').val();
+        	
+        	var l=document.getElementById("serialNumber").value.length
 				
 			if (!cash) {
 	    		cash = 0.0;
@@ -761,7 +765,30 @@ function checkDate(){
 	    		$("#submitBuy").attr("onclick", "buy();");
 	    		count = 0;
 	    		return;
-	    	}
+	    	}if (Number(pos) < 0) {
+        		alert("POS收款不能为负数");
+        		return;
+        	}
+        	
+        	if (Number(pos) > 0 && !serialNumber) {
+        		alert("请填写POS刷卡凭证号");
+        		return;
+        	}
+        	
+        	if (Number(serialNumber) < 0) {
+    		alert("请正确填写POS刷卡凭证号(后6位)");
+    		return;
+    		}
+        	
+        	if (Number(pos) > 0&& null != serialNumber && serialNumber != "" && l != 6) {
+        		alert("请正确填写POS刷卡凭证号(后6位)");
+        		return;
+        	}
+        	
+        	if (!pos && null != serialNumber && serialNumber != "" ) {
+        		alert("请填写POS金额");
+        		return;
+        	}
 						
 			if (Number(cash) + Number(pos) + Number(other) === Number(money)) {
 			
@@ -781,7 +808,8 @@ function checkDate(){
 		    				pos : pos,
 		    				cash : cash,
 		    				other : other,
-		    				realPayTime: realPayTime
+		    				realPayTime: realPayTime,
+		    				serialNumber: serialNumber
 						},
 						success : function(res) {
 							if (0 === res.status) {
