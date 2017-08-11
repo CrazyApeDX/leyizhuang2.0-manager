@@ -748,8 +748,9 @@ function checkDate(){
 			
 			var realPayTime = $('#realPayTime').val();
 			var serialNumber = $('#serialNumber').val();
-        	
         	var l=document.getElementById("serialNumber").value.length
+        	
+        	var totalMoney = Number(cash) + Number(pos) + Number(other) 
 				
 			if (!cash) {
 	    		cash = 0.0;
@@ -789,7 +790,14 @@ function checkDate(){
         		alert("请填写POS金额");
         		return;
         	}
-						
+        	if (Number(cash) + Number(pos) + Number(other) != Number(money)) {
+        		alert("输入金额不正确");
+        		return;
+        	}
+			if (Number(totalMoney) != Number(money)) {
+        		alert("输入金额不正确");
+        		return;
+        	}			
 			if (Number(cash) + Number(pos) + Number(other) === Number(money)) {
 			
 				var username = $("#hidden_username").val();
