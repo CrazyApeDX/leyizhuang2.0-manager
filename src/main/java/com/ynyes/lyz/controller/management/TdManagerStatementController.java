@@ -1222,7 +1222,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short  
 	        //列宽
 	        int[] widths={18,13,25,18,18,13,13,20,18,18,18,
-	        		18,18,18,18,18,18};
+	        		18,18,18,18,18,18,18};
 	        sheetColumnWidth(sheet,widths);
 	        
 	        // 第四步，创建单元格，并设置值表头 设置表头居中  
@@ -1235,7 +1235,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        HSSFRow row = sheet.createRow((int) 0); 
 	        
 	        String[] cellValues={"门店名称","付款类型","主单号","会员编号","会员名称","会员电话","导购","下单时间","配送方式","收款时间&退款时间","预存款","第三方支付","门店现金",
-					"门店POS","门店其他","汇总","门店真实收款时间"};
+					"门店POS","门店其他","汇总","门店真实收款时间","POS刷卡流水号"};
 			cellDates(cellValues, style, row);
 			
 			for(int j=0;j<maxRowNum;j++)
@@ -1319,6 +1319,10 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	        	if(null !=receipt.getRealPayTime()){
 	        		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd") ;
 	        		row.createCell(16).setCellValue(sdf.format(receipt.getRealPayTime()).toString());
+	        	}
+	        	//POS刷卡流水号
+	        	if(null != receipt.getSerialNumber()){
+	        		row.createCell(17).setCellValue(receipt.getSerialNumber());
 	        	}
 	        	
 //	            System.out.println("正在生成excel文件的 sheet"+(i+1)+"第"+(j+1)+"行");

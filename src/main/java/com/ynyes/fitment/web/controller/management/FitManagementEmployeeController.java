@@ -112,8 +112,9 @@ public class FitManagementEmployeeController {
 				employee.setPassword((null == oldPassword || "".equalsIgnoreCase(oldPassword))
 						? MD5.md5(Global.DEFAULT_PASSWORD, 32) : MD5.md5(oldPassword, 32));
 			} else {
-				if (null == oldPassword) {
-					employee.setPassword(null);
+				FitEmployee em = fitEmployeeService.findOne(employee.getId());
+				if (null == oldPassword || "".equals(oldPassword)) {
+					employee.setPassword(em.getPassword());
 				} else {
 					employee.setPassword(MD5.md5(oldPassword, 32));
 				}

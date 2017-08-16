@@ -126,6 +126,9 @@ public class FitCompanyGoodsServiceImpl extends PageableService implements FitCo
 		List<FitPriceLine> priceLineList = this.fitPriceLineRepo.findByHeaderId(priceHeaderId);
 		if (null != priceLineList && priceLineList.size() > 0) {
 			for (FitPriceLine line : priceLineList) {
+				if (line.getGoodsSku().equals("SJJZF-40") || line.getGoodsSku().equals("DTDQ01-8MM")) {
+					System.out.println("进入了");
+				}
 				Long goodsId = line.getGoodsId();
 				// if (!this.validateRepeatByCompanyIdAndGoodsId(companyId,
 				// goodsId)) {

@@ -122,6 +122,10 @@
     	var pos=$('#pos').val();
     	var other = $('#other').val();
     	var realPayTime = $('#realPayTime').val();
+    	var serialNumber = $('#serialNumber').val();
+        var l=document.getElementById("serialNumber").value.length
+    	
+    	
     	if (!money) {
     		money = 0.0;
     	}
@@ -140,6 +144,25 @@
     		return;
     	}
     	
+        if (Number(pos) > 0 && !serialNumber) {
+        	alert("请填写POS刷卡凭证号");
+        	return;
+        }
+        if (Number(serialNumber) < 0) {
+    		alert("请正确填写POS刷卡凭证号(后6位)");
+    		return;
+    	}
+        	
+        if (Number(pos) > 0&& null != serialNumber && serialNumber != "" && l != 6) {
+        	alert("请正确填写POS刷卡凭证号(后6位)");
+        	return;
+        }
+        	
+        if (!pos && null != serialNumber && serialNumber != "" ) {
+        	alert("请填写POS金额");
+        	return;
+        }
+        	
     	if (Number(other) < 0) {
     		alert("其他收款不能为负数");
     		return;
@@ -149,7 +172,7 @@
     		 $.ajax({
     	            type: "post",
     	            url: "/Verwalter/order/own/money",
-    	            data: {"id":id,"money":money,"pos":pos,"other":other,"realPayTime":realPayTime},
+    	            data: {"id":id,"money":money,"pos":pos,"other":other,"realPayTime":realPayTime,"serialNumber":serialNumber},
     	            dataType: "json",
     	            error: function (XMLHttpRequest, textStatus, errorThrown) {
     	            	 $.dialog.alert('错误提示：' + '网络连接失败', function () { });
@@ -619,6 +642,7 @@
 		<div class="dialog_row"><input placeholder="现金" id="money" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="POS" id="pos" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="其他" id="other" style="height:30px;width:175px;" type="number" /> </div>
+		<div class="dialog_row"><input placeholder="POS刷卡参考号后六位" id="serialNumber" style="height:30px;width:175px;" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/> </div>
 		<div class="dialog_row">
 			<div class="input-date">
 	            <input id="realPayTime" name="beginDate" placeholder="收款时间" id="beginDate" type="text" value="<#if activity??>${activity.beginDate?string("yyyy-MM-dd HH:mm:ss")}</#if>" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">

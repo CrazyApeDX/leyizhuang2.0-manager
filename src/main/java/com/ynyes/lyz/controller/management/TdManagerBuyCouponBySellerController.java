@@ -596,7 +596,7 @@ public class TdManagerBuyCouponBySellerController {
 	@RequestMapping(value = "/create/order", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> createOrder(HttpServletRequest req, ModelMap map, String username, String sellerUsername,
-			Long[] ids, Long[] numbers, Long[] coupons, Double pos, Double cash, Double other, String realPayTime) {
+			Long[] ids, Long[] numbers, Long[] coupons, Double pos, Double cash, Double other, String realPayTime,Long serialNumber) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 
@@ -624,6 +624,7 @@ public class TdManagerBuyCouponBySellerController {
 		own.setBackOther(other);
 		own.setBackPos(pos);
 		own.setPayTime(new Date());
+		own.setSerialNumber(serialNumber);
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = null;
 		try {
