@@ -1299,6 +1299,8 @@ public class TdManagerOrderController {
 
 		// 修改订单收款金额
 		tdOrderService.modifyOrderPay(money, pos, other, own.getOrderNumber());
+		
+		// TODO 变更TdOrderData的信息
 
 		// 2017-02-13：增加信用额度
 		String mainOrderNumber = own.getOrderNumber();
