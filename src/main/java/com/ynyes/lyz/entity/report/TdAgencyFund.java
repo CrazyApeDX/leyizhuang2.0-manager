@@ -1,4 +1,4 @@
-package com.ynyes.lyz.entity;
+package com.ynyes.lyz.entity.report;
 
 import java.util.Date;
 

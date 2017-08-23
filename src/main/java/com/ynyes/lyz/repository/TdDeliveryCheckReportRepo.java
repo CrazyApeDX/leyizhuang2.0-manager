@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.ynyes.lyz.entity.DeliveryCheckReport;
+import com.ynyes.lyz.entity.report.DeliveryCheckReport;
 
 /**
  *  配送考核报表数据仓库

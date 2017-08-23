@@ -13,10 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +26,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
-import com.ynyes.lyz.entity.DeliveryCheckReport;
+import com.ynyes.lyz.entity.report.DeliveryCheckReport;
 import com.ynyes.lyz.entity.FitGoodsInOut;
 import com.ynyes.lyz.entity.GarmentFranchisorReport;
 import com.ynyes.lyz.entity.TdActiveUser;
-import com.ynyes.lyz.entity.TdAgencyFund;
+import com.ynyes.lyz.entity.report.TdAgencyFund;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdGoodsInOut;
@@ -548,7 +545,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="预存款变更商品明细表";
 		}else if(statusId==18){
 			fileName="商品出退货报表";
-		}
+		}else if(statusId==19){
+		    fileName="配送员代收款日报表";
+        }
 		return fileName;
 	}
 	/**
@@ -600,16 +599,109 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=salesDetailForFranchiser(begin, end, diyCode, cityName, username,roleDiyIds);
 		}else if(statusId==18){//商品出退货报表
 			wb=franchiseesGoodsInOutWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
-		}
+		}else if(statusId==19){//配送员代收款报表
+            wb=deliveryAgencyFundWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
+        }
 		return wb;
 	}
-	
-	
-	
 
-	
+    /**
+     * @param begin
+     * @param end
+     * @param diyCode
+     * @param cityName
+     * @param username
+     * @param roleDiyIds
+     * @return
+     */
+    private HSSFWorkbook deliveryAgencyFundWorkBook(Date begin, Date end, String diyCode, String cityName, String username, List<String> roleDiyIds){
+        String warehouse = getWhNoByUsername(username);
 
-	private HSSFWorkbook fitGoodsInOutBook(Date begin, Date end, String code, String cityName, String username) {
+        List<Object> agencyFundList = tdAgencyFundService.queryDeliveryDownList(begin, end, cityName, diyCode,username,roleDiyIds,warehouse);
+
+        HSSFWorkbook wb = new HSSFWorkbook();
+        //excel单表最大行数是65535
+        int maxRowNum = 60000;
+        int maxSize=0;
+        if(agencyFundList!=null){
+            maxSize=agencyFundList.size();
+        }
+        int sheets = maxSize/maxRowNum+1;
+        //写入excel文件数据信息
+        for(int i=0;i<sheets;i++){
+
+            // 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+            HSSFSheet sheet = wb.createSheet("第"+(i+1)+"页");
+            // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+            //列宽
+            int[] widths={10,10,15,10,18,20,20,15,15,15,
+                    15,15,15,13,15,};
+            sheetColumnWidth(sheet,widths);
+
+            // 第四步，创建单元格，并设置值表头 设置表头居中
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+            style.setWrapText(true);
+            HSSFFont font = wb.createFont();
+            font.setFontName("黑体");
+            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);//粗体显示
+            style.setFont(font);//选择需要用到的字体格式
+
+            //设置标题
+            HSSFRow row = sheet.createRow((int) 0);
+            //版本1.1
+            String[] cellValues={"城市","仓库","门店","门店类型","收货人","订单号","出货单号","导购","配送员姓名","订单代收金额","配送员实际收款现金",
+                    "配送员实际收款POS","配送员备注","门店是否审核通过欠款","应退门店"};
+            cellDates(cellValues, style, row);
+            HSSFCellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            for(int j=0;j<maxRowNum;j++)
+            {
+                if(j+i*maxRowNum>=maxSize){
+                    break;
+                }
+                Object[] cells = (Object[])agencyFundList.get(j+i*maxRowNum);
+
+                row = sheet.createRow((int) j + 1);
+                setDeliveryAgencyFundRowValueAndStyle(cells,cellStyle,row);
+            }
+        }
+        return wb;
+    }
+
+    private String getWhNoByUsername(String username) {
+        String warehouse;
+        switch (username) {
+            case "dafengcang":
+                warehouse = "1301";
+                break;
+            case "hangtiancang":
+                warehouse = "1302";
+                break;
+            case "jitoucang":
+                warehouse = "1303";
+                break;
+
+            default:
+                warehouse = "%";
+                break;
+        }
+        return  warehouse;
+    }
+
+    private void  setDeliveryAgencyFundRowValueAndStyle(Object[] cells, HSSFCellStyle cellStyle, HSSFRow row) {
+        HSSFCell cell = null;
+        if (null != cells && cells.length > 0) {
+            for (int i = 0; i < cells.length; i++) {
+                cell = row.createCell(i);
+                cell.setCellValue(objToString(cells[i]));
+                cell.setCellStyle(cellStyle);
+            }
+        }
+    }
+
+
+    private HSSFWorkbook fitGoodsInOutBook(Date begin, Date end, String code, String cityName, String username) {
 		
 		// 第一步，创建一个webbook，对应一个Excel文件 
         HSSFWorkbook wb = new HSSFWorkbook();  
@@ -1041,30 +1133,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
         
         // 修改代收款报表逻辑和呈现方式  ----- 2016-11-14 10:43 ----- 闫乐
         
-        String warehouse = null;
-        /*if(username.equalsIgnoreCase("dafengcang")||username.equalsIgnoreCase("hangtiancang")||username.equalsIgnoreCase("jitoucang")){
-        	warehouse = 
-        }*/
-        switch (username) {
-		case "dafengcang":
-			warehouse = "1301";
-			break;
-		case "hangtiancang":
-			warehouse = "1302";
-			break;
-		case "jitoucang":
-			warehouse = "1303";
-			break;
-
-		default:
-			warehouse = "%";
-			break;
-		}
-        
+        String warehouse = getWhNoByUsername(username);
         List<TdAgencyFund> agencyFundList = tdAgencyFundService.queryDownList(begin, end, cityName, diyCode,username,roleDiyIds,warehouse);
-  
-        
-        
         //excel单表最大行数是65535
         int maxRowNum = 60000;
         int maxSize=0;
