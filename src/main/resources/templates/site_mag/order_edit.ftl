@@ -1128,6 +1128,12 @@
                         <th>剩余上楼费</th>
                         <td><#if order.upstairsLeftFee??>${(order.upstairsLeftFee)?string("0.00")}<#else>0.00</#if>元</td>
                     </tr>
+                    <#if order.agencyRefund?? && order.agencyRefund gt 0>
+	                    <tr>
+	                        <th>导购填写代收款</th>
+	                        <td><#if order.agencyRefund??>${(order.agencyRefund)?string("0.00")}<#else>0.00</#if>元</td>
+	                    </tr>
+                    </#if>
                 </tbody>
                 </table>
             </dd>

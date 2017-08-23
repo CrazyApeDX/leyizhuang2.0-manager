@@ -1187,6 +1187,14 @@ public class TdManagerOrderController {
 		if (null != id) {
 			TdOwnMoneyRecord own = tdOwnMoneyRecordService.findOne(id);
 			String mainOrderNumber = own.getOrderNumber();
+			
+			{
+				TdOrderData orderData = tdOrderDataService.findByMainOrderNumber(mainOrderNumber);
+				if (null != orderData) {
+					map.addAttribute("agencyRefund", orderData.getAgencyRefund());
+				}
+			}
+			
 			System.out.println(mainOrderNumber.substring(2, mainOrderNumber.length()));
 			List<TdOrder> orderList = tdOrderService
 					.findByOrderNumberContaining(mainOrderNumber.substring(5, mainOrderNumber.length()));

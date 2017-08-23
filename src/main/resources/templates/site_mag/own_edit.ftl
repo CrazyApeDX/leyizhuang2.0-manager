@@ -467,6 +467,16 @@
                         <td width="80%">
                             <#if totalPrice??>${totalPrice?string("0.00")}<#else>0.00</#if>元</td>
                     </tr>
+                    <#if agencyRefund?? && agencyRefund gt 0>
+	                    <tr>
+	                        <th>
+	                            导购填写代收款 
+	                        </th>
+	                        <td width="80%">
+	                            <#if agencyRefund??>${agencyRefund?string("0.00")}<#else>0.00</#if>元
+                            </td>
+	                    </tr>
+                    </#if>
                     <tr>
                         <th>
                             收款现金
