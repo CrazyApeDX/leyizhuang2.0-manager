@@ -50,6 +50,10 @@ public class TdCategoryLimit {
 	// 排序号
 	@Column
 	private Double sortId;
+	
+	// 主类编号(1.水 ;2.电 3.木;4.瓦;5.油)
+	@Column
+	private String mainNumber;
 
 	public Long getId() {
 		return id;
@@ -121,6 +125,14 @@ public class TdCategoryLimit {
 
 	public void setSortId(Double sortId) {
 		this.sortId = sortId;
+	}
+
+	public String getMainNumber() {
+		return mainNumber;
+	}
+
+	public void setMainNumber(String mainNumber) {
+		this.mainNumber = mainNumber;
 	}
 
 }

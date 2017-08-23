@@ -433,6 +433,7 @@ public class TdManagerSettingController {
 						cateLimit.setLayerCount(category.getLayerCount());
 						cateLimit.setInvCategoryId(cateLimit.getInvCategoryId());
 						cateLimit.setSortId(category.getSortId());
+						cateLimit.setMainNumber(category.getMainNumber());
 
 						tdCategoryLimitService.save(cateLimit);
 					}

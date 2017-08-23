@@ -79,6 +79,10 @@ public class TdProductCategory {
     @Column
     private String seoDescription;
     
+    //主类编号(1.水 ;2.电 3.木;4.瓦;5.油)
+    @Column
+    private String mainNumber;
+    
     // ebs接口 新增字段
     
     // EBS物料类别id
@@ -220,4 +224,12 @@ public class TdProductCategory {
     public void setSeoDescription(String seoDescription) {
         this.seoDescription = seoDescription;
     }
+
+	public String getMainNumber() {
+		return mainNumber;
+	}
+
+	public void setMainNumber(String mainNumber) {
+		this.mainNumber = mainNumber;
+	}
 }

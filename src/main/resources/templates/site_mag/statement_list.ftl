@@ -108,6 +108,8 @@ function downloaddate(type)
                     <span>预存款变更商品明细表</span>
                 <#elseif 18==statusId>
                     <span>商品出退货报表</span>
+                <#elseif 19==statusId>
+                    <span>配送员代收款日报表</span>
                 </#if>
             </#if> 
     </div>
