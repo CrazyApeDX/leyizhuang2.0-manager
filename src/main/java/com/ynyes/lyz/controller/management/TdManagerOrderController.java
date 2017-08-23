@@ -37,6 +37,7 @@ import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerDiySiteRole;
 import com.ynyes.lyz.entity.TdManagerRole;
 import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.entity.TdOrderData;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdOwnMoneyRecord;
 import com.ynyes.lyz.entity.TdPayType;
@@ -49,8 +50,6 @@ import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
 import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.service.TdOrderReceiveInfService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.service.TdArticleService;
 import com.ynyes.lyz.service.TdCityService;
@@ -65,6 +64,7 @@ import com.ynyes.lyz.service.TdGoodsService;
 import com.ynyes.lyz.service.TdManagerLogService;
 import com.ynyes.lyz.service.TdManagerRoleService;
 import com.ynyes.lyz.service.TdManagerService;
+import com.ynyes.lyz.service.TdOrderDataService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdOwnMoneyRecordService;
 import com.ynyes.lyz.service.TdPayTypeService;
@@ -162,13 +162,17 @@ public class TdManagerOrderController {
 
 	@Autowired
 	private TdDiySiteInventoryService tdDiySiteInventoryService;
-	
+
+	// @Autowired
+	// private TdOrderReceiveInfService tdOrderReceiveInfService;
+
 	@Autowired
-	private TdOrderReceiveInfService tdOrderReceiveInfService;
-	
+	TdEbsSenderService tdEbsSenderService;
+
 	@Autowired
-    TdEbsSenderService tdEbsSenderService;
-	/** 
+	private TdOrderDataService tdOrderDataService;
+
+	/**
 	 * @author lc
 	 * @注释：下载
 	 */
@@ -1094,8 +1098,8 @@ public class TdManagerOrderController {
 						order.setStatusId(4L);
 						order.setSendTime(new Date());
 						TdOrderReceiveInf orderReceiveInf = tdInterfaceService.initOrderReceiveByOrder(order);
-						
-						//异步发送到ebs：门店自提
+
+						// 异步发送到ebs：门店自提
 						tdEbsSenderService.sendStorePickUpToEbsAndRecord(orderReceiveInf);
 					}
 
@@ -1107,13 +1111,15 @@ public class TdManagerOrderController {
 					order.setStatusId(5L);
 					order.setReceiveTime(new Date());
 
-					/*if (order.getDeliverTypeTitle().equalsIgnoreCase("门店自提")) {
-						// add send receive time to ebs
-						TdOrderReceiveInf orderReceiveInf = tdInterfaceService.initOrderReceiveByOrder(order);
-						if (orderReceiveInf != null) {
-							tdInterfaceService.ebsWithObject(orderReceiveInf, INFTYPE.ORDERRECEIVEINF);
-						}
-					}*/
+					/*
+					 * if (order.getDeliverTypeTitle().equalsIgnoreCase("门店自提"))
+					 * { // add send receive time to ebs TdOrderReceiveInf
+					 * orderReceiveInf =
+					 * tdInterfaceService.initOrderReceiveByOrder(order); if
+					 * (orderReceiveInf != null) {
+					 * tdInterfaceService.ebsWithObject(orderReceiveInf,
+					 * INFTYPE.ORDERRECEIVEINF); } }
+					 */
 				}
 			}
 			// 确认完成
@@ -1238,8 +1244,8 @@ public class TdManagerOrderController {
 	 */
 	@RequestMapping(value = "/own/money")
 	@ResponseBody
-	public Map<String, Object> ownMoney(Long id, Double money, Double pos, Double other, String realPayTime,Long serialNumber,
-			HttpServletRequest req) {
+	public Map<String, Object> ownMoney(Long id, Double money, Double pos, Double other, String realPayTime,
+			Long serialNumber, HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
 		// 判断登录
@@ -1277,7 +1283,7 @@ public class TdManagerOrderController {
 			res.put("code", -1);
 			return res;
 		}
-		if(null != serialNumber){
+		if (null != serialNumber) {
 			own.setSerialNumber(serialNumber);
 		}
 		// 设置值 并保存
@@ -1299,6 +1305,14 @@ public class TdManagerOrderController {
 		}
 		own.setRealPayTime(date);
 		tdOwnMoneyRecordService.save(own);
+
+		// 查找TdOrderData，如果存在，则设置TdOrderData的值
+		TdOrderData orderData = tdOrderDataService.findByMainOrderNumber(own.getOrderNumber());
+		orderData.setSellerCash(own.getBackMoney());
+		orderData.setSellerPos(own.getBackPos());
+		orderData.setSellerOther(own.getBackOther());
+		orderData.setDue(orderData.countDue());
+		tdOrderDataService.save(orderData);
 
 		// 修改订单收款金额
 		tdOrderService.modifyOrderPay(money, pos, other, own.getOrderNumber());
@@ -1332,8 +1346,8 @@ public class TdManagerOrderController {
 	 */
 	@RequestMapping(value = "/backMoney")
 	@ResponseBody
-	public Map<String, Object> backMoney(Long id, Double money, Double pos, Double other, String realPayTime,Long serialNumber,
-			HttpServletRequest req) {
+	public Map<String, Object> backMoney(Long id, Double money, Double pos, Double other, String realPayTime,
+			Long serialNumber, HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
 		// 判断登录
@@ -1379,7 +1393,7 @@ public class TdManagerOrderController {
 		}
 		// 保存收款记录
 		TdOwnMoneyRecord rec = new TdOwnMoneyRecord();
-		if(null != serialNumber){
+		if (null != serialNumber) {
 			rec.setSerialNumber(serialNumber);
 		}
 		rec.setCreateTime(new Date());
@@ -1674,7 +1688,7 @@ public class TdManagerOrderController {
 					List<TdOrder> orderList = tdOrderService.findByMainOrderNumberIgnoreCase(orderNumber);
 					if (null != orderList && orderList.size() > 0) {
 						TdOrder order = orderList.get(0);
-						if ( null != order.getIsSellerOrder() && order.getIsSellerOrder()) {
+						if (null != order.getIsSellerOrder() && order.getIsSellerOrder()) {
 							TdUser seller = tdUserService.findOne(order.getSellerId());
 							tdUserService.repayCredit(CreditChangeType.REPAY, seller, ownMoneyRecord.getPayed(),
 									order.getMainOrderNumber());

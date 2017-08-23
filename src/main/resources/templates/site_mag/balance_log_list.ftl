@@ -165,7 +165,7 @@ function downloaddate()
                 			经销差价
                 		<#break>
                 		<#case 6>
-                			经销差价
+                			配送还款
                 		<#break>
                 	</#switch>
                 </td>

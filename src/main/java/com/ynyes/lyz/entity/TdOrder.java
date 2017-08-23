@@ -14,6 +14,8 @@ import javax.persistence.OneToMany;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.ynyes.lyz.util.CountUtil;
+
 /**
  * 订单
  *
@@ -423,11 +425,11 @@ public class TdOrder {
 	// 装饰公司使用的信用额度
 	@Column(scale = 2, nullable = false)
 	private Double credit = 0d;
-	
+
 	// 装饰公司使用的赞助金
 	@Column(scale = 2, nullable = false)
 	private Double promotionMoneyPayed = 0d;
-	
+
 	// 经销总价
 	@Column(scale = 2)
 	private Double jxTotalPrice = 0d;
@@ -444,14 +446,22 @@ public class TdOrder {
 	@Column(scale = 2)
 	private Double difFee = 0d;
 
-	// 代收金额
+	// 显示在界面上的剩余金额
 	@Column(scale = 2)
 	private Double notPayedFee = 0d;
 
 	// 收货人是否是主家
 	@Column
 	private Boolean receiverIsMember = Boolean.FALSE;
-	
+
+	// 传递给wms的应收
+	@Column(scale = 2)
+	private Double mockReceivable;
+
+	// 传递给WMS的代收，同时也是订单实际的代收
+	@Column(scale = 2)
+	private Double agencyRefund = 0d;
+
 	public Double getRefund() {
 		return refund;
 	}
@@ -1227,7 +1237,7 @@ public class TdOrder {
 	public void setCredit(Double credit) {
 		this.credit = credit;
 	}
-	
+
 	public Double getJxTotalPrice() {
 		return jxTotalPrice;
 	}
@@ -1253,19 +1263,9 @@ public class TdOrder {
 	}
 
 	public Double getNotPayedFee() {
-		totalGoodsPrice = null == totalGoodsPrice ? 0d : totalGoodsPrice;
-		deliverFee = null == deliverFee ? 0d : deliverFee;
-		upstairsFee = null == upstairsFee ? 0d : upstairsFee;
-		colorFee = null == colorFee ? 0d : colorFee;
-		activitySubPrice = null == activitySubPrice ? 0d : activitySubPrice;
-		cashCoupon = null == cashCoupon ? 0d : cashCoupon;
-		proCouponFee = null == proCouponFee ? 0d : proCouponFee;
-		difFee = null == difFee ? 0d : difFee;
-		cashBalanceUsed = null == cashBalanceUsed ? 0d : cashBalanceUsed;
-		unCashBalanceUsed = null == unCashBalanceUsed ? 0d : unCashBalanceUsed;
-		otherPay = null == otherPay ? 0d : otherPay;
-		notPayedFee = totalGoodsPrice + deliverFee + upstairsFee + colorFee - activitySubPrice - cashCoupon
-				- proCouponFee - difFee - cashBalanceUsed - unCashBalanceUsed - otherPay;
+		double allFee = this.getAllFee();
+		double allDiscount = this.getAllDiscount();
+		notPayedFee = CountUtil.sub(allFee, allDiscount);
 		return notPayedFee;
 	}
 
@@ -1297,4 +1297,84 @@ public class TdOrder {
 		this.promotionMoneyPayed = promotionMoneyPayed;
 	}
 
+	public Double getAgencyRefund() {
+		return agencyRefund;
+	}
+
+	public void setAgencyRefund(Double agencyRefund) {
+		this.agencyRefund = agencyRefund;
+	}
+
+	public Double getMockReceivable() {
+		return mockReceivable;
+	}
+
+	public void setMockReceivable(Double mockReceivable) {
+		this.mockReceivable = mockReceivable;
+	}
+
+	private double getAllFee() {
+		totalGoodsPrice = null == totalGoodsPrice ? 0d : totalGoodsPrice;
+		deliverFee = null == deliverFee ? 0d : deliverFee;
+		upstairsFee = null == upstairsFee ? 0d : upstairsFee;
+		colorFee = null == colorFee ? 0d : colorFee;
+		return CountUtil.add(totalGoodsPrice, deliverFee, upstairsFee, colorFee);
+	}
+
+	private double getAllDiscount() {
+		activitySubPrice = null == activitySubPrice ? 0d : activitySubPrice;
+		cashCoupon = null == cashCoupon ? 0d : cashCoupon;
+		proCouponFee = null == proCouponFee ? 0d : proCouponFee;
+		difFee = null == difFee ? 0d : difFee;
+		cashBalanceUsed = null == cashBalanceUsed ? 0d : cashBalanceUsed;
+		unCashBalanceUsed = null == unCashBalanceUsed ? 0d : unCashBalanceUsed;
+		otherPay = null == otherPay ? 0d : otherPay;
+		return CountUtil.add(activitySubPrice, cashCoupon, proCouponFee, difFee, cashBalanceUsed, unCashBalanceUsed,
+				otherPay);
+	}
+
+	/**
+	 * 获取真实的应收款金额，该方法只对于主单有效（分单缺失部分信息，且所涉及字段只用于WMS）
+	 * 
+	 * @return 应收款金额
+	 * @author dengxiao
+	 */
+	public double countActualReceivable() {
+		return this.getNotPayedFee();
+	}
+
+	/**
+	 * 获取传递给WMS的应收款金额，该方法只对于主单有效（分单缺失部分信息，且所涉及字段只用于WMS）
+	 * 
+	 * @return 计算后的传递给WMS的应收款
+	 * @author dengxiao
+	 */
+	public double countMockReceivable() {
+		double result;
+		double actualReceivable = this.countActualReceivable();
+		if (actualReceivable == 0d) {
+			result = 0d;
+		} else {
+			if (this.receiverIsMember) {
+				result = this.getAllFee();
+			} else {
+				result = this.countActualReceivable();
+			}
+		}
+		this.mockReceivable = result;
+		return this.mockReceivable;
+	}
+
+	/**
+	 * 计算代收金额的方法：如果是代下单的情况，代收金额为导购自己填写的，如果不是代下单的情况，则值为传递给WMS的应收金额
+	 * 该方法只对于主单有效（分单缺失部分信息，且所涉及字段只用于WMS）
+	 * @return 通过各种条件计算完毕的代收金额
+	 * @author dengxiao
+	 */
+	public double countAgencyRefund() {
+		if (!this.isSellerOrder) {
+			this.agencyRefund = this.countMockReceivable();
+		}
+		return CountUtil.HALF_UP_SCALE_2(this.agencyRefund);
+	}
 }
