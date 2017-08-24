@@ -217,10 +217,10 @@ function __doPostBack(eventTarget, eventArgument) {
             <#list goods_page.content as goods>
                 <tr>
                     <td>
-                        <a class="itemzengpin_select" style="cursor:pointer;" itemzengpin_title="${goods.title!""} ${goods.version!""} ${goods.color!""} ${goods.capacity!""} ${goods.saleType!""}" itemzengpin_id="${goods.id?c}" itemzengpin_price="${(goods.salePrice!"0.00")?string("0.00")}" itemzengpin_image="${goods.coverImageUri!''}">${goods.title!""} ${goods.version!""} ${goods.color!""} ${goods.capacity!""} ${goods.saleType!""}</a></td>
+                        <a class="itemzengpin_select" style="cursor:pointer;" itemzengpin_title="${goods.title!""} ${goods.version!""} ${goods.color!""} ${goods.capacity!""} ${goods.saleType!""}" itemzengpin_id="${goods.id?c}" itemzengpin_price="<#if goods.salePrice?? >${goods.salePrice?string("#.##")}<#else>0.00</#if>" itemzengpin_image="${goods.coverImageUri!''}">${goods.title!""} ${goods.version!""} ${goods.color!""} ${goods.capacity!""} ${goods.saleType!""}</a></td>
                     <td>${goods.code!""}</td>
                     <td>${goods.categoryTitle!""}</td>
-                    <td>${goods.salePrice?string("#.##")}</td>
+                    <td><#if goods.salePrice??>${goods.salePrice?string("#.##")}<#else>0.00</#if></td>
                     <td>${goods.onSaleTime!""}</td>
                 </tr>
             </#list>
