@@ -30,4 +30,19 @@ public interface FitCreditChangeLogRepo extends ApplicationRepo<FitCreditChangeL
 			+ " ORDER BY id desc",nativeQuery=true)
 		List<FitCreditChangeLog> queryDownList(String begindata, String enddata, String city, String companyCode,
 				String keywords, String type);
+	
+	@Query(value="select * from"
+			+ " fit_credit_change_log"
+			+ " where type like %?6%"
+			+ " and distinguish = 2"
+			+ " and city like %?3%"
+			+ " and company_code like %?4%"
+			+ " and change_time >= ?1"
+			+ " and change_time <= ?2"
+			+ " and (company_title like %?5%"
+			+ " or company_code like %?5%"
+			+ " or reference_number like %?5%)"
+			+ " ORDER BY id desc",nativeQuery=true)
+		List<FitCreditChangeLog> queryWalletDownList(String begindata, String enddata, String city, String companyCode,
+				String keywords, String type);
 }

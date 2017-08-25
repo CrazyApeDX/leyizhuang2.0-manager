@@ -10,8 +10,10 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +43,7 @@ import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdManagerService;
 import com.ynyes.lyz.service.TdSettingService;
 import com.ynyes.lyz.service.TdSmsAccountService;
+import com.ynyes.lyz.util.SiteMagConstant;
 
 
 @Controller
@@ -70,6 +73,9 @@ public class FitManagementWalletController {
 	
 	@Autowired
 	private FitCreditChangeLogService fitCreditChangeLogService;
+	
+	@Autowired
+	private TdCityService tdCityService;
 	
 	@RequestMapping(value = "/list")
 	public String companyList(HttpServletRequest req, ModelMap map, String keywords, Integer page, Integer size, String __EVENTTARGET,
@@ -296,6 +302,58 @@ public class FitManagementWalletController {
 		}
 		
 		return "redirect:/Verwalter/fitment/wallet/list";
+	}
+	
+	@RequestMapping(value="/wallet_detail")
+	public String earnestCouponDetail(String city, String companyCode,String keywords,String type, String startTime, String endTime, Integer page,
+			Integer size,  String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
+			ModelMap map, HttpServletRequest request) {
+		
+		if (null == page || page < 0) {
+			page = 0;
+		}
+		if (null != __EVENTTARGET) {
+			if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+			} 
+		}
+		if (null == size || size <= 0) {
+			size = SiteMagConstant.pageSize;
+		}
+		List<TdCity> cityList = this.tdCityService.findAll();
+		Page<FitCreditChangeLog> balance_page= null;
+		List<FitCompany> companyList = new ArrayList<FitCompany>();
+		TdCity tdCity = null;
+		try {
+			if (null == city || "".equals(city)) {
+				companyList = fitCompanyService.findAll();
+			} else {
+				tdCity = this.tdCityService.findByCityName(city);
+				companyList = fitCompanyService.findBySobId(tdCity.getSobIdCity());
+			}
+			balance_page = this.fitCreditChangeLogService.queryList(startTime, endTime, city, companyCode, keywords, type, page, size);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		map.addAttribute("balance_page", balance_page);
+		map.addAttribute("page", page);
+		map.addAttribute("size", size);
+		map.addAttribute("keywords", keywords);
+		map.addAttribute("companyList", companyList);
+		map.addAttribute("cityList", cityList);
+		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
+		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
+		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		map.addAttribute("companyCode", companyCode);
+		map.addAttribute("type", type);
+		map.addAttribute("startTime", startTime);
+		map.addAttribute("endTime", endTime);
+		map.addAttribute("city", city);
+
+		return "/fitment/management/wallet_money_detail_list";
 	}
 	
 }
