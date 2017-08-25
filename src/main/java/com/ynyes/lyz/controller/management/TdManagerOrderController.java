@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -171,6 +173,8 @@ public class TdManagerOrderController {
 
 	@Autowired
 	private TdOrderDataService tdOrderDataService;
+
+	private final Logger LOG = LoggerFactory.getLogger(TdManagerOrderController.class);
 
 	/**
 	 * @author lc
@@ -1187,14 +1191,14 @@ public class TdManagerOrderController {
 		if (null != id) {
 			TdOwnMoneyRecord own = tdOwnMoneyRecordService.findOne(id);
 			String mainOrderNumber = own.getOrderNumber();
-			
+
 			{
 				TdOrderData orderData = tdOrderDataService.findByMainOrderNumber(mainOrderNumber);
 				if (null != orderData) {
 					map.addAttribute("agencyRefund", orderData.getAgencyRefund());
 				}
 			}
-			
+
 			System.out.println(mainOrderNumber.substring(2, mainOrderNumber.length()));
 			List<TdOrder> orderList = tdOrderService
 					.findByOrderNumberContaining(mainOrderNumber.substring(5, mainOrderNumber.length()));
@@ -1316,11 +1320,15 @@ public class TdManagerOrderController {
 
 		// 查找TdOrderData，如果存在，则设置TdOrderData的值
 		TdOrderData orderData = tdOrderDataService.findByMainOrderNumber(own.getOrderNumber());
-		orderData.setSellerCash(own.getBackMoney());
-		orderData.setSellerPos(own.getBackPos());
-		orderData.setSellerOther(own.getBackOther());
-		orderData.setDue(orderData.countDue());
-		tdOrderDataService.save(orderData);
+		if (null != orderData) {
+			orderData.setSellerCash(own.getBackMoney());
+			orderData.setSellerPos(own.getBackPos());
+			orderData.setSellerOther(own.getBackOther());
+			orderData.setDue(orderData.countDue());
+			tdOrderDataService.save(orderData);
+		} else {
+			LOG.warn("未查找到主单号为{}的TdOrderData数据", own.getOrderNumber());
+		}
 
 		// 修改订单收款金额
 		tdOrderService.modifyOrderPay(money, pos, other, own.getOrderNumber());
