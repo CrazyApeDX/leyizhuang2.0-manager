@@ -44,8 +44,8 @@ import com.ynyes.lyz.service.TdSmsAccountService;
 
 
 @Controller
-@RequestMapping(value = "/Verwalter/fitment/promotion")
-public class FitManagementParometionController {
+@RequestMapping(value = "/Verwalter/fitment/wallet")
+public class FitManagementWalletController {
 
 	@Autowired
 	private FitCompanyService fitCompanyService;
@@ -97,7 +97,7 @@ public class FitManagementParometionController {
 		map.addAttribute("companyPage", companyPage);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
-		return "/fitment/management/coupon_list";
+		return "/fitment/management/wallet_list";
 	}
 	
 	
@@ -111,7 +111,7 @@ public class FitManagementParometionController {
 			e.printStackTrace();
 		}
 		map.addAttribute("company", company);
-		return "/fitment/management/update_coupon";
+		return "/fitment/management/update_wallet";
 	}
 	
 	
@@ -132,13 +132,13 @@ public class FitManagementParometionController {
 				res.put("message", "未能成功获取到登录管理员的信息，操作失败");
 				return res;
 			} else if (null != tdManager.getErrorCount() && 0 == tdManager.getErrorCount().intValue()) {
-				res.put("message", "您已经输入错误3次，暂不可修改装饰公司现金返利，请联系超级管理员");
+				res.put("message", "您已经输入错误3次，暂不可修改装饰公司钱包金额，请联系超级管理员");
 				return res;
 			} else if (!tdManager.getPassword().equals(password)) {
 				tdManager.setErrorCount(tdManager.getErrorCount() - 1);
 				tdManagerService.save(tdManager);
 				if (0 == tdManager.getErrorCount().intValue()) {
-					res.put("message", "管理员密码错误，操作失败，您已经输入错误3次，暂不可修改装饰公司现金返利，请联系超级管理员");
+					res.put("message", "管理员密码错误，操作失败，您已经输入错误3次，暂不可修改装饰公司钱包金额，请联系超级管理员");
 					// 在此给管理员发短信
 					TdSetting setting = tdSettingService.findTopBy();
 					String phones = setting.getInfPhone();
@@ -147,7 +147,7 @@ public class FitManagementParometionController {
 						for (String phone : allPhones) {
 							this.sendSmsCaptcha(req, phone, 
 									"管理员" + tdManager.getUsername() + "修改装饰公司" + company.getName() 
-											+ "现金返利时，密码输入错误超过3次，为保证用户账户信息安全，现关闭管理员修改装饰公司现金返利权限", 
+											+ "现金返利时，密码输入错误超过3次，为保证用户账户信息安全，现关闭管理员修改装饰公司钱包金额权限", 
 											company.getSobId());
 						}
 					}
@@ -167,7 +167,7 @@ public class FitManagementParometionController {
 						} catch (UnknownHostException e) {
 							e.printStackTrace();
 						}
-						log.setRemark("密码输入错误3次，锁定管理员修改装饰公司现金返利功能");
+						log.setRemark("密码输入错误3次，锁定管理员修改装饰公司钱包金额功能");
 						tdChangeBalanceLogService.save(log);
 					}
 				} else {
@@ -252,6 +252,10 @@ public class FitManagementParometionController {
 			company.setCredit(0D);
 		}
 		
+		if (null == company.getWalletMoney() || "".equals(company.getWalletMoney())){
+			company.setWalletMoney(0D);
+		}
+		
 		TdCity region = tdRegionService.findBySobIdCity(company.getSobId());
 		
 		FitCreditChangeLog log = new FitCreditChangeLog();
@@ -263,7 +267,7 @@ public class FitManagementParometionController {
 		log.setChangeTime(new Date());
 		log.setReferenceNumber(log.initManagerOperateNumber());
 		log.setOperatorType(CreditOperator.MANAGER);
-		log.setType("现金返利充值");
+		log.setType("钱包充值");
 		log.setOperatorId(manager.getId());
 		log.setOperatorUserName(manager.getUsername());
 		log.setRemark(remark);
@@ -273,11 +277,11 @@ public class FitManagementParometionController {
 		log.setArrivalTime(arrivalTime);
 		log.setWrittenRemarks(writtenRemarks);
 		log.setCity(region.getCityName());
-		log.setAfterChangePromotion(company.getPromotionMoney() + money);
-		log.setDistinguish(1);
-		log.setAfterChangeWallet(company.getWalletMoney());
+		log.setAfterChangePromotion(company.getPromotionMoney());
+		log.setDistinguish(2);
+		log.setAfterChangeWallet(company.getWalletMoney() + money);
 		
-		company.setPromotionMoney(company.getPromotionMoney() + money);
+		company.setWalletMoney(company.getWalletMoney() + money);
 		try {
 			this.fitCompanyService.save(company);
 			this.fitCreditChangeLogService.save(log);
@@ -291,7 +295,7 @@ public class FitManagementParometionController {
 			e.printStackTrace();
 		}
 		
-		return "redirect:/Verwalter/fitment/promotion/list";
+		return "redirect:/Verwalter/fitment/wallet/list";
 	}
 	
 }

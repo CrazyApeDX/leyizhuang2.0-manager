@@ -91,6 +91,10 @@ public class FitCreditChangeLog extends TableEntity {
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double afterChangePromotion;
 
+	// 变更后钱包余额
+	@Column(scale = 2, nullable = false, updatable = false)
+	private Double afterChangeWallet;
+
 	// 总余额
 	@Column(scale = 2, nullable = false, updatable = false)
 	private Double totalBalance;
@@ -280,5 +284,13 @@ public class FitCreditChangeLog extends TableEntity {
 
 	public void setDistinguish(Integer distinguish) {
 		this.distinguish = distinguish;
+	}
+
+	public Double getAfterChangeWallet() {
+		return afterChangeWallet;
+	}
+
+	public void setAfterChangeWallet(Double afterChangeWallet) {
+		this.afterChangeWallet = afterChangeWallet;
 	}
 }

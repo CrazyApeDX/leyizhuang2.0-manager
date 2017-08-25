@@ -38,6 +38,10 @@ public class FitCompany extends TableEntity {
 	// 赞助金
 	@Column(scale = 2, nullable = false)
 	private Double promotionMoney = 0d;
+	
+	// 赞助金
+	@Column(scale = 2, nullable = false)
+	private Double walletMoney = 0d;
 
 	// 还款日
 	@Column(length = 2, nullable = false)
@@ -57,10 +61,10 @@ public class FitCompany extends TableEntity {
 
 	@Column(nullable = false)
 	private Long lyzPriceHeaderId = 0l;
-	
+
 	@Column(nullable = false)
 	private Long xqPriceHeaderId = 0l;
-	
+
 	public String getName() {
 		return name;
 	}
@@ -148,12 +152,20 @@ public class FitCompany extends TableEntity {
 	public void setXqPriceHeaderId(Long xqPriceHeaderId) {
 		this.xqPriceHeaderId = xqPriceHeaderId;
 	}
-	
+
 	public Double getPromotionMoney() {
 		return promotionMoney;
 	}
 
 	public void setPromotionMoney(Double promotionMoney) {
 		this.promotionMoney = promotionMoney;
+	}
+
+	public Double getWalletMoney() {
+		return walletMoney;
+	}
+
+	public void setWalletMoney(Double walletMoney) {
+		this.walletMoney = walletMoney;
 	}
 }
