@@ -74,7 +74,6 @@ function downloaddate()
             <option selected="selected" value="">变更类型</option>
             <option <#if type??&&type=='信用金充值'>selected</#if> value="信用金充值">信用金充值</option>
             <option <#if type??&&type=='现金返利充值'>selected</#if> value="现金返利充值">现金返利充值</option>
-            <option <#if type??&&type=='钱包充值'>selected</#if> value="钱包充值">钱包充值</option>
             <option <#if type??&&type=='消费'>selected</#if> value="消费">消费</option>
             <option <#if type??&&type=='退款'>selected</#if> value="退款">退款</option>
         </select>
@@ -126,14 +125,13 @@ function downloaddate()
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ltable">
   <tbody>
   <tr class="odd_bg">
-    <th align="center" width="10%">装饰公司名称</th>
+    <th align="center" width="15%">装饰公司名称</th>
     <th align="left" width="9%">装饰公司编码</th>
     <th align="left" width="10%">变更类型</th>
-	<th align="left" width="9%">变更金额</th>
-	<th align="left" width="9%">信用金余额</th>
-	<th align="left" width="9%">现金返利余额</th>
-	<th align="left" width="9%">钱包余额</th>
-    <th align="left" width="8%">总余额</th>
+	<th align="left" width="10%">变更金额</th>
+	<th align="left" width="10%">信用金余额</th>
+	<th align="left" width="10%">现金返利余额</th>
+    <th align="left" width="9%">总余额</th>
     <th align="center" width="12%">变更时间</th>
     <th align="left" width="15%">涉及单号</th>
   </tr>
@@ -147,7 +145,6 @@ function downloaddate()
                 <td align="left"><#if item.money??>${item.money?string("0.00")}<#else>0.00</#if></td>
                 <td align="left"><#if item.afterChange??>${item.afterChange?string("0.00")}<#else>0.00</#if></td>
                 <td align="left"><#if item.afterChangePromotion??>${item.afterChangePromotion?string("0.00")}<#else>0.00</#if></td>
-                <td align="left"><#if item.afterChangeWallet??>${item.afterChangeWallet?string("0.00")}<#else>0.00</#if></td>
                 <td align="left"><#if item.totalBalance??>${item.totalBalance?string("0.00")}<#else>0.00</#if></td>
                 <td align="left"><#if item.changeTime??>${item.changeTime?string("yyyy-MM-dd HH:mm:ss")}</#if></td>
 				<td align="center">${item.referenceNumber!''}</td>
