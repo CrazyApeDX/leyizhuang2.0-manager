@@ -78,6 +78,7 @@ import com.ynyes.lyz.service.TdShippingAddressService;
 import com.ynyes.lyz.service.TdSubdistrictService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.service.TdWareHouseService;
+import com.ynyes.lyz.util.CountUtil;
 import com.ynyes.lyz.util.SiteMagConstant;
 
 /**
@@ -1290,11 +1291,18 @@ public class TdManagerOrderController {
 			other = 0.00;
 		}
 		// 判断是否还清
-		if (!own.getOwned().equals((money + pos + other))) {
+//		if (!own.getOwned().equals((money + pos + other))) {
+//			res.put("message", "必须一次性还清");
+//			res.put("code", -1);
+//			return res;
+//		}
+		
+		if (CountUtil.sub(own.getOwned(), money, pos, other) != 0d) {
 			res.put("message", "必须一次性还清");
 			res.put("code", -1);
 			return res;
 		}
+		
 		if (null != serialNumber) {
 			own.setSerialNumber(serialNumber);
 		}
