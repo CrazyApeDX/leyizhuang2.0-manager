@@ -128,6 +128,9 @@ public class TdInterfaceService {
 
 	@Autowired
 	private FitCompanyService fitCompanyService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 
 	private Call call;
 
@@ -183,10 +186,28 @@ public class TdInterfaceService {
 			return null;
 		}
 	}
-
+	/**
+	 * 根据退货单给ebs发送销退单
+	 * @param returnNote
+	 */
 	public void sendReturnOrderByAsyn(TdReturnNote returnNote) {
-		sendEbsReturnOrderThread ebsReturnOrderThread = new sendEbsReturnOrderThread(returnNote);
-		ebsReturnOrderThread.start();
+		if (returnNote == null) {
+			return;
+		}
+
+		// 头
+		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByReturnNumber(returnNote.getReturnNumber());
+		if (returnOrderInf == null) {
+			return;
+		}
+		// 行
+		List<TdReturnGoodsInf> returnGoodsInfs = tdReturnGoodsInfService
+				.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+		// 券
+		List<TdReturnCouponInf> returnCouponInfs = tdReturnCouponInfService
+				.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+
+		tdEbsSenderService.sendReturnOrderToEbsAndRecord(returnOrderInf, returnGoodsInfs, returnCouponInfs);
 	}
 
 	class sendEbsReturnOrderThread extends Thread {
@@ -793,7 +814,10 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DELIVER_CASH, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					//ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 配送pos
@@ -802,7 +826,10 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DELIVER_POS, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					//ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 门店现金
@@ -811,7 +838,10 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DIYSITE_CASH, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					//ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 门店pos
@@ -820,7 +850,10 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DIYSITE_POS, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					//ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 新增：2016-08-25抛出门店其他还款金额
@@ -829,7 +862,10 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DIYSITE_OHTER, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					//ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 

@@ -18,6 +18,7 @@ import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.service.TdOrderInfService;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
@@ -57,7 +58,8 @@ public class TdGenerationController {
 	@Autowired
 	private TdDiySiteService tdDiySiteService;
 	
-	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 	
 	
 	@RequestMapping(value = "/{number}", produces = "application/json;charset=utf8")
@@ -280,7 +282,10 @@ public class TdGenerationController {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 							TdCashReciptInf.RECEIPT_TYPE_DELIVER_CASH, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
-						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						//tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						
+						// 调用新ebs收款接口
+						tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 					}
 				}
 				
@@ -292,7 +297,10 @@ public class TdGenerationController {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 							TdCashReciptInf.RECEIPT_TYPE_DELIVER_POS, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
-						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						//tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						
+						// 调用新ebs收款接口
+						tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 					}
 				}
 				
@@ -304,7 +312,10 @@ public class TdGenerationController {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_CASH, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
-						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						//tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						
+						// 调用新ebs收款接口
+						tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 					}
 				}
 				
@@ -316,7 +327,10 @@ public class TdGenerationController {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_POS, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
-						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						//tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						
+						// 调用新ebs收款接口
+						tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 					}
 				}
 				
@@ -328,7 +342,10 @@ public class TdGenerationController {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_OHTER, amount,ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
-						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						//tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+						
+						// 调用新ebs收款接口
+						tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 					}
 				}
 				

@@ -44,6 +44,7 @@ import com.ynyes.lyz.entity.TdProductCategory;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.interfaces.utils.StringTools;
@@ -134,7 +135,10 @@ public class TdManagerBuyCouponBySellerController {
 	
 	@Autowired
 	private TdManagerRoleService tdManagerRoleService;
-
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
+	
 	@RequestMapping
 	public String index(HttpServletRequest req, ModelMap map) {
 		String username = (String) req.getSession().getAttribute("manager");
@@ -1600,15 +1604,18 @@ public class TdManagerBuyCouponBySellerController {
 					cashReciptInf.setReceiptType("门店POS");
 					cashReciptInf.setReceiptDate(new Date());
 					cashReciptInf.setAmount(pos);
-					tdCashReciptInfService.save(cashReciptInf);
-					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-					if (StringUtils.isBlank(resultStr)) {
-						cashReciptInf.setSendFlag(0);
-					} else {
-						cashReciptInf.setSendFlag(1);
-						cashReciptInf.setErrorMsg(resultStr);
-					}
-					tdCashReciptInfService.save(cashReciptInf);
+//					tdCashReciptInfService.save(cashReciptInf);
+//					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					if (StringUtils.isBlank(resultStr)) {
+//						cashReciptInf.setSendFlag(0);
+//					} else {
+//						cashReciptInf.setSendFlag(1);
+//						cashReciptInf.setErrorMsg(resultStr);
+//					}
+//					tdCashReciptInfService.save(cashReciptInf);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 				if (null != cash && cash > 0) {
 					TdCashReciptInf inf = new TdCashReciptInf();
@@ -1628,14 +1635,17 @@ public class TdManagerBuyCouponBySellerController {
 					cashReciptInf.setReceiptDate(new Date());
 					cashReciptInf.setAmount(cash);
 					tdCashReciptInfService.save(cashReciptInf);
-					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-					if (StringUtils.isBlank(resultStr)) {
-						cashReciptInf.setSendFlag(0);
-					} else {
-						cashReciptInf.setSendFlag(1);
-						cashReciptInf.setErrorMsg(resultStr);
-					}
-					tdCashReciptInfService.save(cashReciptInf);
+//					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					if (StringUtils.isBlank(resultStr)) {
+//						cashReciptInf.setSendFlag(0);
+//					} else {
+//						cashReciptInf.setSendFlag(1);
+//						cashReciptInf.setErrorMsg(resultStr);
+//					}
+//					tdCashReciptInfService.save(cashReciptInf);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 				if (null != other && other > 0) {
 					TdCashReciptInf inf = new TdCashReciptInf();
@@ -1655,14 +1665,17 @@ public class TdManagerBuyCouponBySellerController {
 					cashReciptInf.setReceiptDate(new Date());
 					cashReciptInf.setAmount(other);
 					tdCashReciptInfService.save(cashReciptInf);
-					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-					if (StringUtils.isBlank(resultStr)) {
-						cashReciptInf.setSendFlag(0);
-					} else {
-						cashReciptInf.setSendFlag(1);
-						cashReciptInf.setErrorMsg(resultStr);
-					}
-					tdCashReciptInfService.save(cashReciptInf);
+//					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					if (StringUtils.isBlank(resultStr)) {
+//						cashReciptInf.setSendFlag(0);
+//					} else {
+//						cashReciptInf.setSendFlag(1);
+//						cashReciptInf.setErrorMsg(resultStr);
+//					}
+//					tdCashReciptInfService.save(cashReciptInf);
+					
+					// 调用新ebs收款接口
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 		}

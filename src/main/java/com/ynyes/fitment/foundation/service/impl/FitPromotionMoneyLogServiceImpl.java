@@ -17,6 +17,7 @@ import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
 import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 
@@ -35,6 +36,9 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 	
 	@Autowired
 	private TdCashReciptInfService tdCashReciptInfService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 	
 	@Override
 	public FitPromotionMoneyLog save(FitPromotionMoneyLog log) throws Exception {
@@ -60,7 +64,10 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 		refund.setUserphone("00000000000");
 		refund.setReturnNumber(referenceNumber);
 		refund = tdCashRefundInfService.save(refund);
-		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		//tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		
+		// 调新ebs退款接口
+		tdEbsSenderService.sendCashRefundToEbsAndRecord(refund);
 		
 	}
 
@@ -83,14 +90,17 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 		receipt.setUserphone("00000000000");
 		receipt.setOrderNumber(referenceNumber);
 		receipt = this.tdCashReciptInfService.save(receipt);
-		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			receipt.setSendFlag(0);
-		} else {
-			receipt.setSendFlag(1);
-			receipt.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(receipt);
+//		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			receipt.setSendFlag(0);
+//		} else {
+//			receipt.setSendFlag(1);
+//			receipt.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(receipt);
+		
+		// 调用新ebs收款接口
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(receipt);
 	}
 	
 	private String getNumber(Date date, String type) {

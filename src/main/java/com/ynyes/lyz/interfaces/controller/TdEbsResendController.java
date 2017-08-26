@@ -98,13 +98,16 @@ public class TdEbsResendController {
 				if (cashReciptInf.getSendFlag() != null && cashReciptInf.getSendFlag() == 0) {
 					continue;
 				}
-				String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-				if (StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
+				
+				Map<String, Object> result = tdEbsSenderService.sendCashReciptToEbs(cashReciptInf);
+				String message = (String) result.get("msg");
+				if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
 					cashReciptInf.setSendFlag(0);
 				} else {
 					cashReciptInf.setSendFlag(1);
-					cashReciptInf.setErrorMsg(resultStr);
+					cashReciptInf.setErrorMsg(message);
 				}
+				
 			}
 			tdCashReciptInfService.save(cashReciptInfs);
 
@@ -126,12 +129,13 @@ public class TdEbsResendController {
 			for (int i = 0; i < cashReciptInfs.size(); i++) {
 				TdCashReciptInf cashReciptInf = cashReciptInfs.get(i);
 				
-				String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-				if (StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
+				Map<String, Object> result = tdEbsSenderService.sendCashReciptToEbs(cashReciptInf);
+				String message = (String) result.get("msg");
+				if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
 					cashReciptInf.setSendFlag(0);
 				} else {
 					cashReciptInf.setSendFlag(1);
-					cashReciptInf.setErrorMsg(resultStr);
+					cashReciptInf.setErrorMsg(message);
 				}
 			}
 			tdCashReciptInfService.save(cashReciptInfs);
@@ -158,12 +162,13 @@ public class TdEbsResendController {
 				if (cashRefundInf.getSendFlag() != null && cashRefundInf.getSendFlag() == 0) {
 					continue;
 				}
-				String resultStr = tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-				if (StringUtils.isBlank(resultStr) ||resultStr.contains("已存在") || resultStr.contains("已传输")) {
+				Map<String, Object> result = tdEbsSenderService.sendCashRefundToEbs(cashRefundInf);
+				String message = (String) result.get("msg");
+				if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
 					cashRefundInf.setSendFlag(0);
 				} else {
 					cashRefundInf.setSendFlag(1);
-					cashRefundInf.setErrorMsg(resultStr);
+					cashRefundInf.setErrorMsg(message);
 				}
 			}
 			tdCashRefundInfService.save(cashRefundInfs);
@@ -185,12 +190,13 @@ public class TdEbsResendController {
 				if (cashRefundInf.getSendFlag() != null && cashRefundInf.getSendFlag() == 0) {
 					continue;
 				}
-				String resultStr = tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-				if (StringUtils.isBlank(resultStr) || resultStr.contains("已存在") || resultStr.contains("已传输")) {
+				Map<String, Object> result = tdEbsSenderService.sendCashRefundToEbs(cashRefundInf);
+				String message = (String) result.get("msg");
+				if ((Boolean) result.get("success") || message.contains("已存在") || message.contains("已传输") || message.contains("ORA-00001")) {
 					cashRefundInf.setSendFlag(0);
 				} else {
 					cashRefundInf.setSendFlag(1);
-					cashRefundInf.setErrorMsg(resultStr);
+					cashRefundInf.setErrorMsg(message);
 				}
 			}
 			tdCashRefundInfService.save(cashRefundInfs);

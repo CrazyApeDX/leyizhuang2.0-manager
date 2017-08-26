@@ -34,6 +34,7 @@ import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
@@ -94,6 +95,8 @@ public class TdPriceCountService {
 	@Autowired
 	private TdUpstairsSettingService tdUpstairSettingService;
 
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 	/**
 	 * 计算订单价格和能使用的最大的预存款的方法
 	 * 
@@ -2381,14 +2384,17 @@ public class TdPriceCountService {
 			return;
 		}
 		TdCashReciptInf cashReciptInf = tdInterfaceService.initCashReciptByReCharge(tdRecharge, tdUser);
-		String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			cashReciptInf.setSendFlag(0);
-		} else {
-			cashReciptInf.setSendFlag(1);
-			cashReciptInf.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(cashReciptInf);
+//		String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			cashReciptInf.setSendFlag(0);
+//		} else {
+//			cashReciptInf.setSendFlag(1);
+//			cashReciptInf.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(cashReciptInf);
+		
+		// 调用新ebs收款接口
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 	}
 
 	/**

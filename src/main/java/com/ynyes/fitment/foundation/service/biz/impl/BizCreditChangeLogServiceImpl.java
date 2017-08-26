@@ -30,6 +30,7 @@ import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
 import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 
@@ -55,6 +56,9 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	@Autowired
 	private FitPromotionMoneyLogRepo fitPromotionMoneyLogRepo;
 
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
+	
 	@Override
 	public FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception {
 		company.setCredit(company.getCredit() - order.getBalancePayed() - order.getUpstairsBalancePayed());
@@ -150,7 +154,10 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		refund.setUserphone("00000000000");
 		refund.setReturnNumber(referenceNumber);
 		refund = tdCashRefundInfService.save(refund);
-		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		//tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		
+		// 调新ebs退款接口
+		tdEbsSenderService.sendCashRefundToEbsAndRecord(refund);
 		
 	}
 
@@ -172,14 +179,17 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		receipt.setUserphone("00000000000");
 		receipt.setOrderNumber(referenceNumber);
 		receipt = this.tdCashReciptInfService.save(receipt);
-		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			receipt.setSendFlag(0);
-		} else {
-			receipt.setSendFlag(1);
-			receipt.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(receipt);
+//		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			receipt.setSendFlag(0);
+//		} else {
+//			receipt.setSendFlag(1);
+//			receipt.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(receipt);
+		
+		// 调用新ebs收款接口
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(receipt);
 	}
 	
 	private void doReceipt(FitCompany company, Double inputCredit) {
@@ -199,14 +209,17 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		receipt.setUsername(company.getName());
 		receipt.setUserphone("00000000000");
 		receipt = this.tdCashReciptInfService.save(receipt);
-		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			receipt.setSendFlag(0);
-		} else {
-			receipt.setSendFlag(1);
-			receipt.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(receipt);
+//		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			receipt.setSendFlag(0);
+//		} else {
+//			receipt.setSendFlag(1);
+//			receipt.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(receipt);
+		
+		// 调用新ebs收款接口
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(receipt);
 	}
 
 
@@ -227,7 +240,10 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		refund.setUsername(company.getName());
 		refund.setUserphone("00000000000");
 		refund = tdCashRefundInfService.save(refund);
-		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		//tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		
+		// 调新ebs退款接口
+		tdEbsSenderService.sendCashRefundToEbsAndRecord(refund);
 		
 	}
 

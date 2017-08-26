@@ -38,6 +38,7 @@ import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.TdSmsAccount;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.service.TdBalanceLogService;
@@ -103,6 +104,8 @@ public class TdManagerUserBalanceChangeController {
 	@Autowired
 	private TdCommonService tdCommonService;
 	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 	/**
 	 * <p>描述：该控制器获取权限下的所有用户</p>
 	 * @author 作者：CrazyDX
@@ -454,7 +457,10 @@ public class TdManagerUserBalanceChangeController {
 				
 				TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
 				
-				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+				//tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+				
+				// 调新ebs退款接口
+				tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 			}
 			
 			String unCashBalanceNumber = null;
@@ -492,7 +498,10 @@ public class TdManagerUserBalanceChangeController {
 				unCashBalanceNumber = deposit.getNumber();
 				deposit = tdDepositService.save(deposit);
 				TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
-				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+				//tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+				
+				// 调新ebs退款接口
+				tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 			}
 //			Double subCashBalance = cashBalance - userCashBalance;
 //			Double subUnCashBalance = unCashBalance - userUnCashBalance;

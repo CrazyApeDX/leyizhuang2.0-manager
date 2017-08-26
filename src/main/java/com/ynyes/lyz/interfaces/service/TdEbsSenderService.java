@@ -33,7 +33,15 @@ import com.ynyes.lyz.entity.TdAllocation;
 import com.ynyes.lyz.entity.TdAllocationCallRecord;
 import com.ynyes.lyz.entity.TdAllocationDetail;
 import com.ynyes.lyz.entity.TdDiySite;
+import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
+import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
+import com.ynyes.lyz.interfaces.entity.TdOrderCouponInf;
+import com.ynyes.lyz.interfaces.entity.TdOrderGoodsInf;
+import com.ynyes.lyz.interfaces.entity.TdOrderInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
+import com.ynyes.lyz.interfaces.entity.TdReturnCouponInf;
+import com.ynyes.lyz.interfaces.entity.TdReturnGoodsInf;
+import com.ynyes.lyz.interfaces.entity.TdReturnOrderInf;
 import com.ynyes.lyz.interfaces.entity.TdReturnTimeInf;
 import com.ynyes.lyz.repository.TdAllocationCallRecordRepo;
 import com.ynyes.lyz.repository.TdDiySiteRepo;
@@ -41,6 +49,14 @@ import com.ynyes.lyz.repository.TdDiySiteRepo;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationDetail;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationHeader;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationReceive;
+import cn.com.leyizhuang.ebs.entity.dto.CashReceipt;
+import cn.com.leyizhuang.ebs.entity.dto.CashRefund;
+import cn.com.leyizhuang.ebs.entity.dto.Order;
+import cn.com.leyizhuang.ebs.entity.dto.OrderCoupon;
+import cn.com.leyizhuang.ebs.entity.dto.OrderCouponReturn;
+import cn.com.leyizhuang.ebs.entity.dto.OrderGood;
+import cn.com.leyizhuang.ebs.entity.dto.OrderGoodReturn;
+import cn.com.leyizhuang.ebs.entity.dto.OrderReturn;
 import cn.com.leyizhuang.ebs.entity.dto.StorePickUp;
 import cn.com.leyizhuang.ebs.entity.dto.StoreReturn;
 
@@ -68,6 +84,30 @@ public class TdEbsSenderService {
     @Autowired
 	private TdReturnTimeInfService tdReturnTimeInfService;
     
+    @Autowired
+	private TdCashReciptInfService tdCashReciptInfService;
+
+	@Autowired
+	private TdCashRefundInfService tdCashRefundInfService;
+    
+	@Autowired
+	private TdOrderInfService tdOrderInfService;
+	
+	@Autowired
+	private TdOrderGoodsInfService tdOrderGoodsInfService;
+	
+	@Autowired
+	private TdOrderCouponInfService tdOrderCouponInfService;
+	
+	@Autowired
+	private TdReturnOrderInfService tdReturnOrderInfService;
+	
+	@Autowired
+	private TdReturnGoodsInfService tdReturnGoodsInfService;
+	
+	@Autowired
+	private TdReturnCouponInfService tdReturnCouponInfService;
+	
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     /**
@@ -161,6 +201,129 @@ public class TdEbsSenderService {
 			}
 		});
 	}
+	
+	/**
+	 * 异步发送【收款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashReciptInf
+	 */
+	public void sendCashReciptToEbsAndRecord(final TdCashReciptInf tdCashReciptInf) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendCashReciptToEbs(tdCashReciptInf);
+				if (!(Boolean) result.get("success")) {
+					tdCashReciptInf.setSendFlag(1);
+					tdCashReciptInf.setErrorMsg((String) result.get("msg"));
+				} else {
+					tdCashReciptInf.setSendFlag(0);
+				}
+				tdCashReciptInfService.save(tdCashReciptInf);
+			}
+		});
+	}
+
+	/**
+	 * 异步发送【退款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashRefundInf
+	 */
+	public void sendCashRefundToEbsAndRecord(final TdCashRefundInf tdCashRefundInf) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendCashRefundToEbs(tdCashRefundInf);
+				if (!(Boolean) result.get("success")) {
+					tdCashRefundInf.setSendFlag(1);
+					tdCashRefundInf.setErrorMsg((String) result.get("msg"));
+				} else {
+					tdCashRefundInf.setSendFlag(0);
+				}
+				tdCashRefundInfService.save(tdCashRefundInf);
+			}
+		});
+	}
+	
+	/**
+	 * 发送订单（订单头、产品信息、卷）到EBS
+	 * @param orderInf
+	 * @param goodsInfs
+	 * @param couponInfs
+	 */
+	public void sendOrderToEbsAndRecord(final TdOrderInf orderInf,final List<TdOrderGoodsInf> goodsInfs,final List<TdOrderCouponInf> couponInfs) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendOrderToEbs(orderInf,goodsInfs,couponInfs);
+				if (!(Boolean) result.get("success")) {
+					orderInf.setErrorMsg((String) result.get("msg"));
+					updateOrderFlag(orderInf, goodsInfs, couponInfs,1);
+				} else {
+					updateOrderFlag(orderInf, goodsInfs, couponInfs,0);
+				}
+				
+			}
+			
+		});
+	}
+	/**
+	 * 更新订单状态
+	 * @param orderInf
+	 * @param goodsInfs
+	 * @param couponInfs
+	 */
+	public void updateOrderFlag(final TdOrderInf orderInf, final List<TdOrderGoodsInf> goodsInfs,
+			final List<TdOrderCouponInf> couponInfs,Integer flag) {
+		orderInf.setSendFlag(flag);
+		tdOrderInfService.save(orderInf);
+		for (TdOrderGoodsInf orderGoodsInf : goodsInfs) {
+			orderGoodsInf.setSendFlag(flag);
+			tdOrderGoodsInfService.save(orderGoodsInf);
+		}
+		for (TdOrderCouponInf tdOrderCouponInf : couponInfs) {
+			tdOrderCouponInf.setSendFlag(flag);
+			tdOrderCouponInfService.save(tdOrderCouponInf);
+		}
+	}
+	
+	/**
+	 * 发送退单（退单头、产品信息、卷）到EBS
+	 * @param orderInf
+	 * @param goodsInfs
+	 * @param couponInfs
+	 */
+	public void sendReturnOrderToEbsAndRecord(final TdReturnOrderInf returnOrderInf,final List<TdReturnGoodsInf> returnGoodsInfs,final List<TdReturnCouponInf> returnCouponInfs) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendReturnOrderToEbs(returnOrderInf,returnGoodsInfs,returnCouponInfs);
+				if (!(Boolean) result.get("success")) {
+					returnOrderInf.setSendFlag(1);
+					returnOrderInf.setErrorMsg((String) result.get("msg"));
+					for (TdReturnGoodsInf returnOrderGoodsInf : returnGoodsInfs) {
+						returnOrderGoodsInf.setSendFlag(1);
+						returnOrderGoodsInf.setErrorMsg((String) result.get("msg"));
+					}
+					for (TdReturnCouponInf tdReturnOrderCouponInf : returnCouponInfs) {
+						tdReturnOrderCouponInf.setSendFlag(1);
+						tdReturnOrderCouponInf.setErrorMsg((String) result.get("msg"));
+					}
+				} else {
+					returnOrderInf.setSendFlag(0);
+					for (TdReturnGoodsInf returnOrderGoodsInf : returnGoodsInfs) {
+						returnOrderGoodsInf.setSendFlag(0);
+					}
+					for (TdReturnCouponInf tdReturnOrderCouponInf : returnCouponInfs) {
+						tdReturnOrderCouponInf.setSendFlag(0);
+					}
+				}
+				tdReturnOrderInfService.save(returnOrderInf);
+				for (TdReturnGoodsInf returnOrderGoodsInf : returnGoodsInfs) {
+					tdReturnGoodsInfService.save(returnOrderGoodsInf);
+				}
+				for (TdReturnCouponInf tdReturnOrderCouponInf : returnCouponInfs) {
+					tdReturnCouponInfService.save(tdReturnOrderCouponInf);
+				}
+			}
+		});
+	}
+	
     /**
      * 发送【调拨单(出库)】信息到EBS
      * 
@@ -290,7 +453,314 @@ public class TdEbsSenderService {
         LOGGER.info("sendFaildAllocationToEBS, result=" + result);
         return result;
     }
+    /**
+	 * 发送【收款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashReciptInf
+	 * @return
+	 */
+	public Map<String, Object> sendCashReciptToEbs(TdCashReciptInf tdCashReciptInf) {
+		LOGGER.info("sendCashReciptToEbs, tdCashReciptInf=" + tdCashReciptInf);
 
+		CashReceipt cashReceipt = new CashReceipt();
+		cashReceipt.setAmount(toString(tdCashReciptInf.getAmount()));
+		cashReceipt.setDescription("");
+		cashReceipt.setDiySiteCode(toString(tdCashReciptInf.getDiySiteCode()));
+		cashReceipt.setOrderHeaderId(toString(tdCashReciptInf.getOrderHeaderId()));
+		cashReceipt.setOrderNumber(toString(tdCashReciptInf.getOrderNumber()));
+		cashReceipt.setProductType(toString(tdCashReciptInf.getProductType()));
+		cashReceipt.setReceiptClass(toString(tdCashReciptInf.getReceiptClass()));
+		cashReceipt.setReceiptDate(DateFormatUtils.format(tdCashReciptInf.getReceiptDate(), DateUtil.FORMAT_DATETIME));
+		cashReceipt.setReceiptId(toString(tdCashReciptInf.getReceiptId()));
+		cashReceipt.setReceiptNumber(toString(tdCashReciptInf.getReceiptNumber()));
+		cashReceipt.setReceiptType(toString(tdCashReciptInf.getReceiptType()));
+		cashReceipt.setSobId(toString(tdCashReciptInf.getSobId()));
+		cashReceipt.setUserid(toString(tdCashReciptInf.getUserid()));
+		cashReceipt.setUsername(toString(tdCashReciptInf.getUsername()));
+		cashReceipt.setUserphone(toString(tdCashReciptInf.getUserphone()));
+
+		String allocationReceiveJson = JSON.toJSONString(cashReceipt);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("cashReceiptJson", allocationReceiveJson));
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callCashReceipt", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("cashReceiptJson", allocationReceiveJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendCashReciptToEbs, result=" + result);
+		return result;
+	}
+
+	/**
+	 * 发送【退款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashRefundInf
+	 * @return
+	 */
+	public Map<String, Object> sendCashRefundToEbs(TdCashRefundInf tdCashRefundInf) {
+		LOGGER.info("sendCashRefundToEbs, tdCashRefundInf=" + tdCashRefundInf);
+
+		CashRefund cashRefund = new CashRefund();
+		cashRefund.setAmount(toString(tdCashRefundInf.getAmount()));
+		cashRefund.setDescription(toString(tdCashRefundInf.getDescription()));
+		cashRefund.setDiySiteCode(toString(tdCashRefundInf.getDiySiteCode()));
+		cashRefund.setOrderHeaderId(toString(tdCashRefundInf.getOrderHeaderId()));
+		cashRefund.setProductType(toString(tdCashRefundInf.getProductType()));
+		cashRefund.setRefundClass(toString(tdCashRefundInf.getRefundClass()));
+		cashRefund.setRefundDate(DateFormatUtils.format(tdCashRefundInf.getRefundDate(), DateUtil.FORMAT_DATETIME));
+		cashRefund.setRefundId(toString(tdCashRefundInf.getRefundId()));
+		cashRefund.setRefundNumber(toString(tdCashRefundInf.getRefundNumber()));
+		cashRefund.setRefundType(toString(tdCashRefundInf.getRefundType()));
+		cashRefund.setReturnNumber(toString(tdCashRefundInf.getReturnNumber()));
+		cashRefund.setRtHeaderId(toString(tdCashRefundInf.getRtHeaderId()));
+		cashRefund.setSobId(toString(tdCashRefundInf.getSobId()));
+		cashRefund.setUserid(toString(tdCashRefundInf.getUserid()));
+		cashRefund.setUsername(toString(tdCashRefundInf.getUsername()));
+		cashRefund.setUserphone(toString(tdCashRefundInf.getUserphone()));
+
+		String allocationReceiveJson = JSON.toJSONString(cashRefund);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("cashRefundJson", allocationReceiveJson));
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callCashRefund", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("cashRefundJson", allocationReceiveJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendCashRefundToEbs, result=" + result);
+		return result;
+	}
+	
+	/**
+	 * 发送【订单（订单头、订单产品、订单券）】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashRefundInf
+	 * @return
+	 */
+	public Map<String, Object> sendOrderToEbs(TdOrderInf orderInf,List<TdOrderGoodsInf> goodsInfs,List<TdOrderCouponInf> couponInfs) {
+		LOGGER.info("sendOrderToEbs, tdOrderInf=" + orderInf);
+		LOGGER.info("sendOrderToEbs,goodsInfs=" + goodsInfs );
+		LOGGER.info("sendOrderToEbs,couponInfs=" + couponInfs );
+		
+		Order order = new Order();
+		order.setAttribute1(toString(orderInf.getAttribute1()));
+		order.setAttribute2(toString(orderInf.getAttribute2()));
+		order.setAttribute3(toString(orderInf.getAttribute3()));
+		order.setAttribute4(toString(orderInf.getAttribute4()));
+		order.setAttribute5(toString(orderInf.getAttribute5()));
+		order.setCity(toString(orderInf.getCity()));
+		order.setCompanyDeliveryFee(toString(orderInf.getCompanyDeliveryFee()));
+		order.setCouponFlag(toString(orderInf.getCouponFlag()));
+		order.setDeliverTypeTitle(toString(orderInf.getDeliverTypeTitle()));
+		order.setDeliveryFee(toString(orderInf.getDeliveryFee()));
+		order.setDisctrict(toString(orderInf.getDisctrict()));
+		order.setDiySiteCode(toString(orderInf.getDiySiteCode()));
+		order.setDiySiteId(toString(orderInf.getDiySiteId()));
+		order.setDiySiteName(toString(orderInf.getDiySiteName()));
+		order.setDiySitePhone(toString(orderInf.getDiySitePhone()));
+		order.setIsonlinepay(toString(orderInf.getIsonlinepay()));
+		order.setMainOrderNumber(toString(orderInf.getMainOrderNumber()));
+		order.setOrderDate(DateFormatUtils.format(orderInf.getOrderDate(), DateUtil.FORMAT_DATETIME));
+		order.setOrderHeaderId(toString(orderInf.getHeaderId()));
+		order.setOrderNumber(toString(orderInf.getOrderNumber()));
+		order.setOrderTypeId(toString(orderInf.getOrderTypeId()));
+		order.setPayAmt(toString(orderInf.getPayAmt()));
+		order.setPayDate(DateFormatUtils.format(orderInf.getPayDate(), DateUtil.FORMAT_DATETIME));
+		order.setPayType(toString(orderInf.getPayType()));
+		order.setPrepayAmt(toString(orderInf.getPrepayAmt()));
+		order.setProductType(toString(orderInf.getProductType()));
+		order.setProvince(toString(orderInf.getProvince()));
+		order.setRecAmt(toString(orderInf.getRecAmt()));
+		order.setSellerName(toString(orderInf.getSellerName()));
+		order.setSellerPhone(toString(orderInf.getSellerPhone()));
+		order.setShippingAddress(toString(orderInf.getShippingAddress()));
+		order.setShippingName(toString(orderInf.getShippingName()));
+		order.setShippingPhone(toString(orderInf.getShippingPhone()));
+		order.setSobId(toString(orderInf.getSobId()));
+		order.setUserid(toString(orderInf.getUserid()));
+		order.setUsername(toString(orderInf.getUsername()));
+		order.setUserphone(toString(orderInf.getUserphone()));
+		
+		List<OrderGood> orderGoods = new ArrayList<>();
+		if(null != goodsInfs && goodsInfs.size()>0){
+			for (TdOrderGoodsInf orderGoodsInf : goodsInfs) {
+				OrderGood orderGood = new OrderGood();
+				orderGood.setAttribute1(toString(orderGoodsInf.getAttribute1()));
+				orderGood.setAttribute2(toString(orderGoodsInf.getAttribute2()));
+				orderGood.setAttribute3(toString(orderGoodsInf.getAttribute3()));
+				orderGood.setAttribute4(toString(orderGoodsInf.getAttribute4()));
+				orderGood.setAttribute5(toString(orderGoodsInf.getAttribute5()));
+				orderGood.setDeliveryFee("");
+				orderGood.setGiftFlag(toString(orderGoodsInf.getGiftFlag()));
+				orderGood.setGoodsId(toString(orderGoodsInf.getGoodsId()));
+				orderGood.setGoodsSubTitle(toString(orderGoodsInf.getGoodsSubTitle()));
+				orderGood.setGoodsTitle(toString(orderGoodsInf.getGoodsTitle()));
+				orderGood.setHyPrice(toString(orderGoodsInf.getHyPrice()));
+				orderGood.setJxPrice(toString(orderGoodsInf.getJxPrice()));
+				orderGood.setLsPrice(toString(orderGoodsInf.getLsPrice()));
+				orderGood.setOrderHeaderId(toString(orderGoodsInf.getOrderHeaderId()));
+				orderGood.setOrderLineId(toString(orderGoodsInf.getOrderLineId()));
+				orderGood.setProBreakFlag("");
+				orderGood.setPromotion(toString(orderGoodsInf.getPromotion()));
+				orderGood.setQuantity(toString(orderGoodsInf.getQuantity()));
+				orderGood.setSku(toString(orderGoodsInf.getSku()));
+				orderGoods.add(orderGood);
+			}
+		}
+		
+		List<OrderCoupon> orderCoupons = new ArrayList<>();
+		if(null != couponInfs && couponInfs.size()>0){
+			for (TdOrderCouponInf orderCouponInf : couponInfs) {
+				OrderCoupon orderCoupon = new OrderCoupon();
+				orderCoupon.setAttribute1(toString(orderCouponInf.getAttribute1()));
+				orderCoupon.setAttribute2(toString(orderCouponInf.getAttribute2()));
+				orderCoupon.setAttribute3(toString(orderCouponInf.getAttribute3()));
+				orderCoupon.setAttribute4(toString(orderCouponInf.getAttribute4()));
+				orderCoupon.setAttribute5(toString(orderCouponInf.getAttribute5()));
+				orderCoupon.setCouponTypeId(toString(orderCouponInf.getCouponTypeId()));
+				orderCoupon.setHistoryFlag(toString(orderCouponInf.getHistoryFlag()));
+				orderCoupon.setLineId(toString(orderCouponInf.getLineId()));
+				orderCoupon.setOrderHeaderId(toString(orderCouponInf.getOrderHeaderId()));
+				orderCoupon.setPrice(toString(orderCouponInf.getPrice()));
+				orderCoupon.setPromotion(toString(orderCouponInf.getPromotion()));
+				orderCoupon.setQuantity(toString(orderCouponInf.getQuantity()));
+				orderCoupon.setSku(toString(orderCouponInf.getSku()));
+				orderCoupons.add(orderCoupon);
+			}
+		}
+		String orderJson = JSON.toJSONString(order);
+		String orderGoodsJson = JSON.toJSONString(orderGoods);
+		String orderCouponsJson = JSON.toJSONString(orderCoupons);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("orderJson", orderJson));
+		parameters.add(new BasicNameValuePair("orderGoodsJson", orderGoodsJson));
+		parameters.add(new BasicNameValuePair("orderCouponsJson", orderCouponsJson));
+		
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callOrder", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("orderJson", orderJson);
+			content.put("orderGoodsJson", orderGoodsJson);
+			content.put("orderCouponsJson", orderCouponsJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendOrderToEbs, result=" + result);
+		return result;
+	}
+	
+	/**
+	 * 发送【退单（退单头、退单产品、退单券）】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashRefundInf
+	 * @return
+	 */
+	public Map<String, Object> sendReturnOrderToEbs(TdReturnOrderInf returnOrderInf,List<TdReturnGoodsInf> returnGoodsInfs,List<TdReturnCouponInf> returnCouponInfs) {
+		LOGGER.info("sendReturnOrderToEbs, tdReturnOrderInf=" + returnOrderInf);
+		LOGGER.info("sendReturnOrderToEbs,returnGoodsInfs=" + returnGoodsInfs );
+		LOGGER.info("sendReturnOrderToEbs,returnCouponInfs=" + returnCouponInfs );
+		
+		OrderReturn orderReturn = new OrderReturn();
+		orderReturn.setAttribute1(toString(returnOrderInf.getAttribute1()));
+		orderReturn.setAttribute2(toString(returnOrderInf.getAttribute2()));
+		orderReturn.setAttribute3(toString(returnOrderInf.getAttribute3()));
+		orderReturn.setAttribute4(toString(returnOrderInf.getAttribute4()));
+		orderReturn.setAttribute5(toString(returnOrderInf.getAttribute5()));
+		orderReturn.setAuditDate(DateFormatUtils.format(returnOrderInf.getAuditDate(), DateUtil.FORMAT_DATETIME));
+		orderReturn.setCouponFlag(toString(returnOrderInf.getCouponFlag()));
+		orderReturn.setDeliverTypeTitle(toString(returnOrderInf.getDeliverTypeTitle()));
+		orderReturn.setDiySiteCode(toString(returnOrderInf.getDiySiteCode()));
+		orderReturn.setOrderHeaderId(toString(returnOrderInf.getOrderHeaderId()));
+		orderReturn.setOrderNumber(toString(returnOrderInf.getOrderNumber()));
+		orderReturn.setOrderTypeId(toString(returnOrderInf.getOrderTypeId()));
+		orderReturn.setPrepayAmt(toString(returnOrderInf.getPrepayAmt()));
+		orderReturn.setProductType(toString(returnOrderInf.getProdectType()));
+		orderReturn.setRefundAmount(toString(returnOrderInf.getRefundAmount()));
+		orderReturn.setReturnDate(DateFormatUtils.format(returnOrderInf.getReturnDate(), DateUtil.FORMAT_DATETIME));
+		orderReturn.setReturnNumber(toString(returnOrderInf.getReturnNumber()));
+		orderReturn.setRtFullFlag(toString(returnOrderInf.getRtFullFlag()));
+		orderReturn.setRtHeaderId(toString(returnOrderInf.getRtHeaderId()));
+		orderReturn.setSobId(toString(returnOrderInf.getSobId()));
+		orderReturn.setStatus(toString(returnOrderInf.getStatus()));
+		orderReturn.setUserid(toString(returnOrderInf.getUserid()));
+		orderReturn.setUsername(toString(returnOrderInf.getUsername()));
+		orderReturn.setUserphone(toString(returnOrderInf.getUserphone()));
+		
+		List<OrderGoodReturn> orderGoodsReturnList = new ArrayList<>();
+		if(null != returnGoodsInfs && returnGoodsInfs.size()>0){
+			for (TdReturnGoodsInf orderGoodsInfReturn : returnGoodsInfs){
+				OrderGoodReturn orderGoodsReturn = new OrderGoodReturn();
+				orderGoodsReturn.setAttribute1(toString(orderGoodsInfReturn.getAttribute1()));
+				orderGoodsReturn.setAttribute2(toString(orderGoodsInfReturn.getAttribute2()));
+				orderGoodsReturn.setAttribute3(toString(orderGoodsInfReturn.getAttribute3()));
+				orderGoodsReturn.setAttribute4(toString(orderGoodsInfReturn.getAttribute4()));
+				orderGoodsReturn.setAttribute5(toString(orderGoodsInfReturn.getAttribute5()));
+				orderGoodsReturn.setGoodId("");
+				orderGoodsReturn.setGoodSubTitle("");
+				orderGoodsReturn.setGoodTitle("");
+				orderGoodsReturn.setHyPrice("");
+				orderGoodsReturn.setJxActualPrice("");
+				orderGoodsReturn.setJxPrice(toString(orderGoodsInfReturn.getJxPrice()));
+				orderGoodsReturn.setLsPrice(toString(orderGoodsInfReturn.getLsPrice()));
+				orderGoodsReturn.setLsSharePrice(toString(orderGoodsInfReturn.getLsSharePrice()));
+				orderGoodsReturn.setQuantity(toString(orderGoodsInfReturn.getQuantity()));
+				orderGoodsReturn.setRtHeaderId(toString(orderGoodsInfReturn.getRtHeaderId()));
+				orderGoodsReturn.setRtLineId(toString(orderGoodsInfReturn.getRtLineId()));
+				orderGoodsReturn.setSku(toString(orderGoodsInfReturn.getSku()));
+				orderGoodsReturnList.add(orderGoodsReturn);
+				
+			}
+		}
+		
+		List<OrderCouponReturn> orderCouponReturnList = new ArrayList<>();
+		if(null != returnCouponInfs && returnCouponInfs.size()>0){
+			for (TdReturnCouponInf orderCouponReturns : returnCouponInfs){
+				OrderCouponReturn orderCouponReturn = new OrderCouponReturn();
+				orderCouponReturn.setAttribute1(toString(orderCouponReturns.getAttribute1()));
+				orderCouponReturn.setAttribute2(toString(orderCouponReturns.getAttribute2()));
+				orderCouponReturn.setAttribute3(toString(orderCouponReturns.getAttribute3()));
+				orderCouponReturn.setAttribute4(toString(orderCouponReturns.getAttribute4()));
+				orderCouponReturn.setAttribute5(toString(orderCouponReturns.getAttribute5()));
+				orderCouponReturn.setCouponTypeId(toString(orderCouponReturns.getCouponTypeId()));
+				orderCouponReturn.setLineId(toString(orderCouponReturns.getLineId()));
+				orderCouponReturn.setPrice(toString(orderCouponReturns.getPrice()));
+				orderCouponReturn.setQuantity(toString(orderCouponReturns.getQuantity()));
+				orderCouponReturn.setRtHeaderId(toString(orderCouponReturns.getRtHeaderId()));
+				orderCouponReturn.setSku(toString(orderCouponReturns.getSku()));
+				orderCouponReturnList.add(orderCouponReturn);
+				
+			}
+			
+		}
+		
+
+		String orderReturnJson = JSON.toJSONString(orderReturn);
+		String orderGoodsReturnJson = JSON.toJSONString(orderGoodsReturnList);
+		String orderCouponsReturnJson = JSON.toJSONString(orderCouponReturnList);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("orderReturnJson", orderReturnJson));
+		parameters.add(new BasicNameValuePair("orderGoodsReturnJson", orderGoodsReturnJson));
+		parameters.add(new BasicNameValuePair("orderCouponsReturnJson", orderCouponsReturnJson));
+		
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callOrderReturn", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("orderReturnJson", orderReturnJson);
+			content.put("orderGoodsReturnJson", orderGoodsReturnJson);
+			content.put("orderCouponsReturnJson", orderCouponsReturnJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendReturnOrderToEbs, result=" + result);
+		return result;
+	}
     /**
      * 生成调拨单头Json
      * 

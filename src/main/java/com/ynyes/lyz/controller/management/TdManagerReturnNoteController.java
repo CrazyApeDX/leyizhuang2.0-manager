@@ -104,6 +104,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 	@Autowired
 	private TdEbsSenderService tdEbsSenderService;
 
+	
 	// 列表
 	@RequestMapping(value = "/{type}/list")
 	public String list(@PathVariable String type, Integer page, Integer size, String keywords, String __EVENTTARGET,
@@ -431,7 +432,9 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 							List<TdCashRefundInf> cashRefundList = tdReturnNoteService
 									.doActionWithReturnCash(returnNote, user, diySite);
 							for (TdCashRefundInf cashRefundInf : cashRefundList) {
-								tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+								//tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+								// 调新ebs退款接口
+								tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 							}
 						}
 					}
@@ -444,7 +447,9 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					if (cashReturnNotes != null && cashReturnNotes.size() > 0) {
 						for (TdCashReturnNote tdCashReturnNote : cashReturnNotes) {
 							TdCashRefundInf cashRefundInf = tdInterfaceService.initCashRefundInf(tdCashReturnNote);
-							tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+							//tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+							// 调新ebs退款接口
+							tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 						}
 						for (int index = 0; index < cashReturnNotes.size(); index++) {
 							TdCashReturnNote cashReturnNote = cashReturnNotes.get(index);

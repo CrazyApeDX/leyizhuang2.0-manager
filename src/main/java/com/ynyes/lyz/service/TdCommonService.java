@@ -68,6 +68,7 @@ import com.ynyes.lyz.interfaces.entity.TdOrderGoodsInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
 import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.service.TdOrderCouponInfService;
 import com.ynyes.lyz.interfaces.service.TdOrderGoodsInfService;
@@ -195,6 +196,9 @@ public class TdCommonService {
 
 	@Autowired
 	private TdUpstairsSettingService tdUpstairsSettingService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 
 	/**
 	 * 根据仓库编号获取仓库名
@@ -2277,28 +2281,37 @@ public class TdCommonService {
 			}
 			// 收款
 			List<TdCashReciptInf> cashReciptInfs = tdCashReciptInfService.findByOrderHeaderId(orderInf.getHeaderId());
-			String cashreciptInfXML = tdInterfaceService.XmlWithObject(cashReciptInfs, INFTYPE.CASHRECEIPTINF);
-			if (org.apache.commons.lang3.StringUtils.isNotBlank(cashreciptInfXML) && isOrderInfSucceed) {
-				Object[] cashreciptInf = { INFConstants.INF_CASH_RECEIPTS_STR, "1", cashreciptInfXML };
-				try {
-					String object = (String) tdInterfaceService.getCall().invoke(cashreciptInf);
-					String resultStr1 = StringTools.interfaceMessage(object);
-					for (int i = 0; i < cashReciptInfs.size(); i++) {
-						if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1)) {
-							cashReciptInfs.get(i).setSendFlag(0);
-						} else {
-							cashReciptInfs.get(i).setSendFlag(1);
-							cashReciptInfs.get(i).setErrorMsg(resultStr1);
-						}
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-					for (int i = 0; i < cashReciptInfs.size(); i++) {
-						cashReciptInfs.get(i).setSendFlag(1);
-						cashReciptInfs.get(i).setErrorMsg(e.getMessage());
-					}
+//			String cashreciptInfXML = tdInterfaceService.XmlWithObject(cashReciptInfs, INFTYPE.CASHRECEIPTINF);
+//			if (org.apache.commons.lang3.StringUtils.isNotBlank(cashreciptInfXML) && isOrderInfSucceed) {
+//				Object[] cashreciptInf = { INFConstants.INF_CASH_RECEIPTS_STR, "1", cashreciptInfXML };
+//				try {
+//					String object = (String) tdInterfaceService.getCall().invoke(cashreciptInf);
+//					String resultStr1 = StringTools.interfaceMessage(object);
+//					for (int i = 0; i < cashReciptInfs.size(); i++) {
+//						if (org.apache.commons.lang3.StringUtils.isBlank(resultStr1)) {
+//							cashReciptInfs.get(i).setSendFlag(0);
+//						} else {
+//							cashReciptInfs.get(i).setSendFlag(1);
+//							cashReciptInfs.get(i).setErrorMsg(resultStr1);
+//						}
+//					}
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//					for (int i = 0; i < cashReciptInfs.size(); i++) {
+//						cashReciptInfs.get(i).setSendFlag(1);
+//						cashReciptInfs.get(i).setErrorMsg(e.getMessage());
+//					}
+//				}
+//				tdCashReciptInfService.save(cashReciptInfs);
+//			}
+			
+			//调用新的ebs收款接口
+			if (cashReciptInfs != null && cashReciptInfs.size() > 0) {
+				for (int i = 0; i < cashReciptInfs.size(); i++) {
+					TdCashReciptInf cashReciptInf = cashReciptInfs.get(i);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
-				tdCashReciptInfService.save(cashReciptInfs);
+
 			}
 		}
 		LOGGER.info("sendOrderToEBS, OUT");
