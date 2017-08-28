@@ -46,6 +46,7 @@ import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdDeposit;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdDiySiteInventory;
+import com.ynyes.lyz.entity.TdDiySitePrice;
 import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdInterfaceErrorLog;
 import com.ynyes.lyz.entity.TdOrder;
@@ -195,6 +196,9 @@ public class TdCommonService {
 
 	@Autowired
 	private TdUpstairsSettingService tdUpstairsSettingService;
+	
+	@Autowired
+	private TdDiySitePriceService tdDiySitePriceService;
 
 	/**
 	 * 根据仓库编号获取仓库名
@@ -3803,6 +3807,7 @@ public class TdCommonService {
 	}
 
 	// 获取指定商品的券价格
+	@Deprecated
 	public Double getPrice(Long goodsId, String username) {
 		TdUser user = tdUserService.findByUsername(username);
 		Long sobId = null;
@@ -3858,6 +3863,105 @@ public class TdCommonService {
 
 		List<TdPriceListItem> priceItemList = tdPriceListItemService
 				.findByListHeaderIdAndInventoryItemIdAndStartDateActiveAndEndDateActive(list_header_id,
+						goods.getInventoryItemId(), new Date(), new Date());
+
+		if (null == priceItemList || priceItemList.size() == 0 || priceItemList.size() > 1) {
+			return null;
+		}
+
+		return priceItemList.get(0).getCouponPrice();
+	}
+	
+	public Double getCouponPrice(String username, TdGoods goods) {
+
+		TdUser user = tdUserService.findByUsername(username);
+		Long upperDiySiteId = user.getUpperDiySiteId();
+		TdDiySite diySite = tdDiySiteService.findOne(upperDiySiteId);
+
+		if (null == diySite) {
+			return null;
+		}
+
+		// 获取sobId
+		Long sobId = diySite.getRegionId();
+		// 获取门店编码
+		String storeCode = diySite.getStoreCode();
+
+		if (null == goods) {
+			return null;
+		}
+
+		if (null == goods.getInventoryItemId()) {
+			return null;
+		}
+
+		String productFlag = goods.getBrandTitle();
+		if (null == productFlag) {
+			return null;
+		}
+
+		String custType = "ZY";
+		String priceType = null;
+
+		// 华润零售价
+		if (productFlag.equalsIgnoreCase("华润") && custType.equalsIgnoreCase("ZY")) {
+			priceType = "LS";
+		}
+		// 华润经销价
+		else if (productFlag.equalsIgnoreCase("华润") && custType.equalsIgnoreCase("JX")) {
+			priceType = "JX_LS";
+		}
+		// 乐意装零售价
+		else if (productFlag.equalsIgnoreCase("乐易装") && custType.equalsIgnoreCase("ZY")) {
+			priceType = "LYZ";
+		}
+		// 乐意装经销价
+		else if (productFlag.equalsIgnoreCase("乐易装") && custType.equalsIgnoreCase("JX")) {
+			priceType = "JX_LYZ";
+		}
+		// 莹润零售价
+		else if (productFlag.equalsIgnoreCase("莹润") && custType.equalsIgnoreCase("ZY")) {
+			priceType = "YR";
+		}
+		// 莹润经销价
+		else if (productFlag.equalsIgnoreCase("莹润") && custType.equalsIgnoreCase("JX")) {
+			priceType = "JX_YR";
+		}
+		// 喜鹊零售价
+		else if (productFlag.equalsIgnoreCase("喜鹊") && custType.equalsIgnoreCase("ZY")) {
+			priceType = "XQ";
+		}
+		// 不支持的价格
+		else {
+			return null;
+		}
+
+		// 获取商品价格中间表信息
+		List<TdDiySitePrice> diySitePriceList = tdDiySitePriceService.getDiySitePrice(sobId, storeCode, priceType,
+				new Date(), new Date());
+
+		if (null == diySitePriceList || diySitePriceList.size() == 0 || diySitePriceList.size() > 1) {
+			return null;
+		}
+
+		Long listHeaderId = diySitePriceList.get(0).getListHeaderId();
+
+		// List<TdPriceList> priceList_list = tdPriceListService
+		// .findByListHeaderIdAndPriceTypeAndStartDateActiveAndEndDateActive(listHeaderId,
+		// priceType, new Date(),
+		// new Date());
+		//
+		// if (null == priceList_list || priceList_list.size() == 0 ||
+		// priceList_list.size() > 1) {
+		// return null;
+		// }
+		//
+		// // 价目表ID
+		// Long list_header_id = 0L;
+		// list_header_id = priceList_list.get(0).getListHeaderId();
+
+		List<TdPriceListItem> priceItemList = tdPriceListItemService
+				.findByListHeaderIdAndInventoryItemIdAndStartDateActiveAndEndDateActive(listHeaderId,
 						goods.getInventoryItemId(), new Date(), new Date());
 
 		if (null == priceItemList || priceItemList.size() == 0 || priceItemList.size() > 1) {

@@ -1296,8 +1296,8 @@ public class TdManagerOrderController {
 //			res.put("code", -1);
 //			return res;
 //		}
-		
-		if (CountUtil.sub(own.getOwned(), money, pos, other) != 0d) {
+		double result = CountUtil.sub(own.getOwned(), money, pos, other);
+		if (result != 0d) {
 			res.put("message", "必须一次性还清");
 			res.put("code", -1);
 			return res;

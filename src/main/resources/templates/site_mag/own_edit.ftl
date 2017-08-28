@@ -168,7 +168,7 @@
     		return;
     	}
     	
-    	if(parseFloat(money)+parseFloat(pos)+parseFloat(other) - parseFloat(owned) < 0.001){
+    	if(parseFloat(money)+parseFloat(pos)+parseFloat(other) - parseFloat(owned) < 0.0001){
     		 $.ajax({
     	            type: "post",
     	            url: "/Verwalter/order/own/money",

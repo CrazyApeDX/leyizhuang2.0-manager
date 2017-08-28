@@ -199,7 +199,7 @@ public class TdManagerBuyCouponBySellerController {
 			if (null != goods_page) {
 				for (int i = 0; i < goods_page.getContent().size(); i++) {
 					TdGoods goods = goods_page.getContent().get(i);
-					Double price = tdCommonService.getPrice(goods.getId(), username);
+					Double price = tdCommonService.getCouponPrice(username, goods);
 					goods.setSalePrice(price);
 				}
 			}
@@ -368,7 +368,7 @@ public class TdManagerBuyCouponBySellerController {
 			// 获取指定的商品
 			TdGoods goods = tdGoodsService.findOne(id);
 			// 获取商品的价格
-			Double price = tdCommonService.getPrice(goods.getId(), username);
+			Double price = tdCommonService.getCouponPrice(username, goods);
 			if (null == price) {
 				res.put("message", "id为" + id + "的商品无法查询到其价格");
 				return res;
@@ -518,7 +518,7 @@ public class TdManagerBuyCouponBySellerController {
 			// 获取指定的商品
 			TdGoods goods = tdGoodsService.findOne(id);
 			// 获取商品的价格
-			Double price = tdCommonService.getPrice(goods.getId(), username);
+			Double price = tdCommonService.getCouponPrice(username, goods);
 			if (null == price) {
 				errMsg = "id为" + id + "的商品无法查询到其价格";
 				return "/site_mag/buy_coupon_dialog_present";
@@ -974,7 +974,7 @@ public class TdManagerBuyCouponBySellerController {
 										orderGoods.setGoodsTitle(goods.getTitle());
 										orderGoods.setGoodsSubTitle(goods.getSubTitle());
 										orderGoods.setPrice(0.0);
-										orderGoods.setGiftPrice(tdCommonService.getPrice(goods.getId(), username));
+										orderGoods.setGiftPrice(tdCommonService.getCouponPrice(username, goods));
 										orderGoods.setQuantity(quantity * min);
 										orderGoods.setSku(goods.getCode());
 										// 记录活动id
@@ -1052,7 +1052,7 @@ public class TdManagerBuyCouponBySellerController {
 							TdGoods goods = tdGoodsService.findOne(id);
 
 							// 获取该件商品的价格
-							Double price = tdCommonService.getPrice(goods.getId(), username);
+							Double price = tdCommonService.getCouponPrice(username, goods);
 
 							totalCost += (price * buyQuantity);
 
@@ -1141,7 +1141,7 @@ public class TdManagerBuyCouponBySellerController {
 											orderGoods.setGoodsTitle(goods.getTitle());
 											orderGoods.setGoodsSubTitle(goods.getSubTitle());
 											orderGoods.setPrice(0.0);
-											orderGoods.setGiftPrice(tdCommonService.getPrice(goods.getId(), username));
+											orderGoods.setGiftPrice(tdCommonService.getCouponPrice(username, goods));
 											orderGoods.setQuantity(quantity * min);
 											orderGoods.setSku(goods.getCode());
 											// 记录活动id

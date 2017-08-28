@@ -52,7 +52,7 @@ public class CountUtil {
 			BigDecimal decimal = new BigDecimal(Double.toString(number));
 			result = result.add(decimal);
 		}
-		return result.doubleValue();
+		return HALF_UP_SCALE_2(result.doubleValue());
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class CountUtil {
 			BigDecimal decimal = new BigDecimal(Double.toString(number));
 			result = result.subtract(decimal);
 		}
-		return result.doubleValue();
+		return HALF_UP_SCALE_2(result.doubleValue());
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class CountUtil {
 					result = result.divide(decimal, 2, BigDecimal.ROUND_HALF_UP);
 				}
 			}
-			return result.doubleValue();
+			return HALF_UP_SCALE_2(result.doubleValue());
 		}
 	}
 }
