@@ -376,7 +376,7 @@ public class TdManagerBuyCouponBySellerController {
 			// 查找券模板
 //			TdCouponModule module = tdCouponModuleService.findByGoodsIdAndCityIdAndType(goods.getId(), user.getCityId(),
 //					1L);
-			TdPriceListItem priceListItem = tdCommonService.getGoodsPrice(city.getSobIdCity(), goods.getId());
+			TdPriceListItem priceListItem = tdCommonService.getCouponPriceListItem(username, goods);
 			Double subPrice = 0.00;
 //			if (null != module && null != module.getPrice()) {
 //				subPrice = module.getPrice();
