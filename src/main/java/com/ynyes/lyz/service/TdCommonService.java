@@ -2968,8 +2968,6 @@ public class TdCommonService {
 			return;
 		}
 
-		TdUser user = tdUserService.findByUsername(order.getRealUserUsername());
-
 		Boolean isCoupon = order.getIsCoupon();
 		if (null == isCoupon || !isCoupon) {
 			return;
@@ -3065,7 +3063,8 @@ public class TdCommonService {
 							// TdCouponModule module =
 							// tdCouponModuleService.findByGoodsIdAndCityIdAndType(goodsId,
 							// user.getCityId(), 1L);
-							TdPriceListItem priceListItem = this.getGoodsPrice(user.getCityId(), goodsId);
+							TdGoods goods = tdGoodsService.findOne(orderGoods.getGoodsId());
+							TdPriceListItem priceListItem = this.getCouponPriceListItem(realUser.getUsername(), goods);
 							// if (null != module) {
 							// coupon.setBuyPrice(orderGoods.getPrice() -
 							// module.getPrice() - shareUnit);
