@@ -50,10 +50,10 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 		refund.setAmount(-1 * money);
 		refund.setDiySiteCode(company.getCode());
 		refund.setProductType("CASH_REBATE");
-		refund.setRefundClass("钱包");
+		refund.setRefundClass("钱包充值");
 		refund.setRefundDate(now);
 		refund.setRefundNumber(this.getNumber(now, "DECRE"));
-		refund.setRefundType("钱包");
+		refund.setRefundType("钱包充值");
 		refund.setSobId(company.getSobId());
 		refund.setUserid(company.getId());
 		refund.setUsername(company.getName());
@@ -73,10 +73,10 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 		receipt.setAmount(money);
 		receipt.setDiySiteCode(company.getCode());
 		receipt.setProductType("CASH_REBATE");
-		receipt.setReceiptClass("钱包");
+		receipt.setReceiptClass("钱包充值");
 		receipt.setReceiptDate(now);
 		receipt.setReceiptNumber(this.getNumber(now, "RECRE"));
-		receipt.setReceiptType("钱包");
+		receipt.setReceiptType("钱包充值");
 		receipt.setSobId(company.getSobId());
 		receipt.setUserid(company.getId());
 		receipt.setUsername(company.getName());
