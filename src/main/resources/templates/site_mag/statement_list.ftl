@@ -109,7 +109,9 @@ function downloaddate(type)
                 <#elseif 18==statusId>
                     <span>商品出退货报表</span>
                 <#elseif 19==statusId>
-                    <span>配送员代收款日报表</span>
+                    <span>配送员代收款日报表
+                <#elseif 20==statusId>
+                    <span>门店代收款报表</span>
                 </#if>
             </#if> 
     </div>

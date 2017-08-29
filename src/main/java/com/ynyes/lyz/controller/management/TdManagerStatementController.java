@@ -1,17 +1,17 @@
 package com.ynyes.lyz.controller.management;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.service.FitCompanyService;
+import com.ynyes.lyz.entity.*;
+import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
+import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
+import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetailStatement;
+import com.ynyes.lyz.entity.report.DeliveryCheckReport;
+import com.ynyes.lyz.entity.report.TdAgencyFund;
+import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.service.*;
+import com.ynyes.lyz.service.basic.settlement.ISettlementService;
+import com.ynyes.lyz.util.SiteMagConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.slf4j.Logger;
@@ -24,70 +24,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ynyes.fitment.foundation.entity.FitCompany;
-import com.ynyes.fitment.foundation.service.FitCompanyService;
-import com.ynyes.lyz.entity.report.DeliveryCheckReport;
-import com.ynyes.lyz.entity.FitGoodsInOut;
-import com.ynyes.lyz.entity.GarmentFranchisorReport;
-import com.ynyes.lyz.entity.TdActiveUser;
-import com.ynyes.lyz.entity.report.TdAgencyFund;
-import com.ynyes.lyz.entity.TdCity;
-import com.ynyes.lyz.entity.TdDiySite;
-import com.ynyes.lyz.entity.TdGoodsInOut;
-import com.ynyes.lyz.entity.TdGoodsInOutFranchisees;
-import com.ynyes.lyz.entity.TdManager;
-import com.ynyes.lyz.entity.TdManagerDiySiteRole;
-import com.ynyes.lyz.entity.TdManagerRole;
-import com.ynyes.lyz.entity.TdOrder;
-import com.ynyes.lyz.entity.TdOrderGoods;
-import com.ynyes.lyz.entity.TdOwn;
-import com.ynyes.lyz.entity.TdReceipt;
-import com.ynyes.lyz.entity.TdReserveOrder;
-import com.ynyes.lyz.entity.TdReturnReport;
-import com.ynyes.lyz.entity.TdSales;
-import com.ynyes.lyz.entity.TdSalesDetail;
-import com.ynyes.lyz.entity.TdSalesDetailForFranchiser;
-import com.ynyes.lyz.entity.TdSalesForContinuousBuy;
-import com.ynyes.lyz.entity.TdSetting;
-import com.ynyes.lyz.entity.TdSubOwn;
-import com.ynyes.lyz.entity.TdWareHouse;
-import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
-import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
-import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetailStatement;
-import com.ynyes.lyz.entity.user.TdUser;
-import com.ynyes.lyz.service.FitGoodsInOutService;
-import com.ynyes.lyz.service.TdActiveUserService;
-import com.ynyes.lyz.service.TdAgencyFundService;
-import com.ynyes.lyz.service.TdCityService;
-import com.ynyes.lyz.service.TdDeliveryCheckReportService;
-import com.ynyes.lyz.service.TdDeliveryFeeHeadService;
-import com.ynyes.lyz.service.TdDiySiteRoleService;
-import com.ynyes.lyz.service.TdDiySiteService;
-import com.ynyes.lyz.service.TdGarmentFranchisorReportService;
-import com.ynyes.lyz.service.TdGatheringService;
-import com.ynyes.lyz.service.TdGoodsInOutFranchiseesService;
-import com.ynyes.lyz.service.TdGoodsInOutService;
-import com.ynyes.lyz.service.TdManagerRoleService;
-import com.ynyes.lyz.service.TdManagerService;
-import com.ynyes.lyz.service.TdOrderDeliveryFeeDetailService;
-import com.ynyes.lyz.service.TdOrderDeliveryFeeDetailStatementService;
-import com.ynyes.lyz.service.TdOrderGoodsService;
-import com.ynyes.lyz.service.TdOrderService;
-import com.ynyes.lyz.service.TdOwnService;
-import com.ynyes.lyz.service.TdReceiptService;
-import com.ynyes.lyz.service.TdReserveOrderService;
-import com.ynyes.lyz.service.TdReturnReportService;
-import com.ynyes.lyz.service.TdSalesDetailForFranchiserService;
-import com.ynyes.lyz.service.TdSalesDetailService;
-import com.ynyes.lyz.service.TdSalesForActiveUserService;
-import com.ynyes.lyz.service.TdSalesForContinuousBuyService;
-import com.ynyes.lyz.service.TdSalesService;
-import com.ynyes.lyz.service.TdSettingService;
-import com.ynyes.lyz.service.TdSubOwnService;
-import com.ynyes.lyz.service.TdUserService;
-import com.ynyes.lyz.service.TdWareHouseService;
-import com.ynyes.lyz.service.basic.settlement.ISettlementService;
-import com.ynyes.lyz.util.SiteMagConstant;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 @Controller
@@ -547,7 +489,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			fileName="商品出退货报表";
 		}else if(statusId==19){
 		    fileName="配送员代收款日报表";
-        }
+        }else if(statusId == 20){
+			fileName="门店代收款报表";
+		}
 		return fileName;
 	}
 	/**
@@ -601,9 +545,77 @@ public class TdManagerStatementController extends TdManagerBaseController {
 			wb=franchiseesGoodsInOutWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
 		}else if(statusId==19){//配送员代收款报表
             wb=deliveryAgencyFundWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
+        }else if(statusId==20){
+		    wb = storeAgencyFundWorkBook(begin, end, diyCode, cityName, username,roleDiyIds);
         }
 		return wb;
 	}
+
+    /**
+     * 门店代收款报表
+     * @param begin
+     * @param end
+     * @param diyCode
+     * @param cityName
+     * @param username
+     * @param roleDiyIds
+     * @return
+     */
+    private HSSFWorkbook storeAgencyFundWorkBook(Date begin, Date end, String diyCode, String cityName, String username, List<String> roleDiyIds) {
+
+        List<Object> agencyFundList = tdAgencyFundService.queryStoreDownList(begin, end, cityName, diyCode, username, roleDiyIds);
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        //excel单表最大行数是65535
+        int maxRowNum = 60000;
+        int maxSize = 0;
+        if (agencyFundList != null) {
+            maxSize = agencyFundList.size();
+        }
+        int sheets = maxSize / maxRowNum + 1;
+
+        for (int i = 0; i < sheets; i++) {
+            // 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+            HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
+            // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+            //列宽
+            int[] widths = {10, 10, 10, 15, 20, 30, 30, 15, 15, 15,
+                    15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 15, 15, 15, 15, 15, 15, 15, 15, 20, 50, 15, 15};
+            sheetColumnWidth(sheet, widths);
+            // 第四步，创建单元格，并设置值表头 设置表头居中
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+            style.setWrapText(true);
+            HSSFFont font = wb.createFont();
+            font.setFontName("黑体");
+            font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);//粗体显示
+            style.setFont(font);//选择需要用到的字体格式
+
+            //设置标题
+            HSSFRow row = sheet.createRow((int) 0);
+            //版本1.1
+            String[] cellValues = {"城市", "门店", "门店类型", "会员名称", "会员电话", "订单号", "出货单号", "导购"
+                    , "订单金额(零售)", "会员折扣", "满减折扣", "产品券", "现金券", "预付款", "线上支付", "运费(客户)"
+                    , "应收金额", "订单代收金额", "配送员实际收款现金", "配送员实际收款POS", "配送员备注", "导购实际收款现金"
+                    , "导购实际收款POS", "导购实际收款其他", "应退门店", "欠款金额", "会员预存款", "收货人身份", "收货人姓名"
+                    , "收货人电话", "收货人地址", "配送仓库", "配送员姓名"};
+            cellDates(cellValues, style, row);
+            HSSFCellStyle cellStyle = wb.createCellStyle();
+            cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            for (int j = 0; j < maxRowNum; j++) {
+                if (j + i * maxRowNum >= maxSize) {
+                    break;
+                }
+                Object[] cells = (Object[]) agencyFundList.get(j + i * maxRowNum);
+
+                row = sheet.createRow((int) j + 1);
+                setAgencyFundRowValueAndStyle(cells, cellStyle, row);
+            }
+        }
+        return wb;
+    }
+
+
 
     /**
      * @param begin
@@ -663,7 +675,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 Object[] cells = (Object[])agencyFundList.get(j+i*maxRowNum);
 
                 row = sheet.createRow((int) j + 1);
-                setDeliveryAgencyFundRowValueAndStyle(cells,cellStyle,row);
+                setAgencyFundRowValueAndStyle(cells,cellStyle,row);
             }
         }
         return wb;
@@ -689,7 +701,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
         return  warehouse;
     }
 
-    private void  setDeliveryAgencyFundRowValueAndStyle(Object[] cells, HSSFCellStyle cellStyle, HSSFRow row) {
+    private void  setAgencyFundRowValueAndStyle(Object[] cells, HSSFCellStyle cellStyle, HSSFRow row) {
         HSSFCell cell = null;
         if (null != cells && cells.length > 0) {
             for (int i = 0; i < cells.length; i++) {

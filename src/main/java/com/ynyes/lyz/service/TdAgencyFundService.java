@@ -173,4 +173,24 @@ public class TdAgencyFundService {
 		return repository.queryDeliveryDownList(begin, end, cityName, diyCode, roleDiyIds,warehouse);
 
 	}
+
+	public List<Object> queryStoreDownList(Date begin, Date end, String cityName, String diyCode, String username, List<String> roleDiyIds) {
+		// 判断空值
+		if (begin == null) {
+			begin = Utils.getSysStartDate();
+		}
+		if (end == null) {
+			end = new Date();
+		}
+		if (StringUtils.isBlank(cityName)) {
+			cityName = "%";
+		}
+		if (StringUtils.isBlank(diyCode)) {
+			diyCode = "%";
+		}
+		if (roleDiyIds == null || roleDiyIds.size() == 0) {
+			roleDiyIds.add("0");
+		}
+		return repository.queryStoreDownList(begin, end, cityName, diyCode, roleDiyIds);
+	}
 }
