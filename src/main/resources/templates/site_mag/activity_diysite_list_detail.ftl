@@ -72,15 +72,15 @@ function UncheckDiy(object)
                 <span>
                     <#list diysite_list as product>
                     	<#if activity_gift??>
-                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id!""}" datatype="*" <#if activity_gift?? && activity_gift.diySiteIds?? && activity_gift.diySiteIds?contains(product.id?c)>checked="checked"</#if>>
+                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id?c}" datatype="*" <#if activity_gift?? && activity_gift.diySiteIds?? && activity_gift.diySiteIds?contains(product.id?c)>checked="checked"</#if>>
                         	<label>${product.title!""}</label>
                     	
                     	<#elseif activity??>
-                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id!""}" datatype="*" <#if activity?? && activity.diySiteIds?? && activity.diySiteIds?contains(product.id?c)>checked="checked"</#if>>
+                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id?c}" datatype="*" <#if activity?? && activity.diySiteIds?? && activity.diySiteIds?contains(product.id?c)>checked="checked"</#if>>
                         	<label>${product.title!""}</label>
                     	
                     	<#else>
-                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id!""}" datatype="*" >
+                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id?c}" datatype="*" >
                         	<label>${product.title!""}</label>
                     	</#if>
                     </#list>
