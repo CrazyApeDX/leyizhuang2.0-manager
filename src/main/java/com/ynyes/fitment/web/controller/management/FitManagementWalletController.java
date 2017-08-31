@@ -266,7 +266,7 @@ public class FitManagementWalletController {
 		
 		FitCreditChangeLog log = new FitCreditChangeLog();
 		
-		log.setBeforeChange(company.getPromotionMoney());
+		log.setBeforeChange(company.getWalletMoney());
 		log.setAfterChange(company.getCredit());
 		log.setMoney(money);
 		log.setCreateTime(new Date());
