@@ -34,18 +34,18 @@ function downloaddate()
     var type = $("#type").val();
     if(begain==""){
     	$.dialog.confirm("将导出全部数据,请确认导出?", function () {
-    		window.open("/Verwalter/companyChange/downdata?startTime="+ begain + "&endTime=" + end + "&companyCode=" + companyCode+ "&city=" + city
+    		window.open("/Verwalter/wallet/downdata?startTime="+ begain + "&endTime=" + end + "&companyCode=" + companyCode+ "&city=" + city
     		+ "&keywords=" + keywords+ "&type=" + type);
     		return;
         });
     }else{
-    	window.open("/Verwalter/companyChange/downdata?startTime="+ begain + "&endTime=" + end + "&companyCode=" + companyCode+ "&city=" + city
+    	window.open("/Verwalter/wallet/downdata?startTime="+ begain + "&endTime=" + end + "&companyCode=" + companyCode+ "&city=" + city
     		+ "&keywords=" + keywords+ "&type=" + type);
     }
 }
 </script>
 <body class="mainbody"><div class="" style="left: 0px; top: 0px; visibility: hidden; position: absolute;"><table class="ui_border"><tbody><tr><td class="ui_lt"></td><td class="ui_t"></td><td class="ui_rt"></td></tr><tr><td class="ui_l"></td><td class="ui_c"><div class="ui_inner"><table class="ui_dialog"><tbody><tr><td colspan="2"><div class="ui_title_bar"><div class="ui_title" unselectable="on" style="cursor: move;"></div><div class="ui_title_buttons"><a class="ui_min" href="javascript:void(0);" title="最小化" style="display: inline-block;"><b class="ui_min_b"></b></a><a class="ui_max" href="javascript:void(0);" title="最大化" style="display: inline-block;"><b class="ui_max_b"></b></a><a class="ui_res" href="javascript:void(0);" title="还原"><b class="ui_res_b"></b><b class="ui_res_t"></b></a><a class="ui_close" href="javascript:void(0);" title="关闭(esc键)" style="display: inline-block;">×</a></div></div></td></tr><tr><td class="ui_icon" style="display: none;"></td><td class="ui_main" style="width: auto; height: auto;"><div class="ui_content" style="padding: 10px;"></div></td></tr><tr><td colspan="2"><div class="ui_buttons" style="display: none;"></div></td></tr></tbody></table></div></td><td class="ui_r"></td></tr><tr><td class="ui_lb"></td><td class="ui_b"></td><td class="ui_rb" style="cursor: se-resize;"></td></tr></tbody></table></div>
-<form name="form1" id="theForm" method="post" action="/Verwalter/fitment/earnest/earnest_coupon_detail" id="form1">
+<form name="form1" id="theForm" method="post" action="/Verwalter/fitment/wallet/wallet_detail" id="form1">
 <div>
 <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}">
 <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}">
@@ -72,8 +72,7 @@ function downloaddate()
         <div class="rule-single-select single-select">
         <select name="type" id="type" onchange="javascript:setTimeout(__doPostBack('type',''), 0)" style="display: none;">
             <option selected="selected" value="">变更类型</option>
-            <option <#if type??&&type=='信用金充值'>selected</#if> value="信用金充值">信用金充值</option>
-            <option <#if type??&&type=='现金返利充值'>selected</#if> value="现金返利充值">现金返利充值</option>
+            <option <#if type??&&type=='钱包充值'>selected</#if> value="钱包充值">钱包充值</option>
             <option <#if type??&&type=='消费'>selected</#if> value="消费">消费</option>
             <option <#if type??&&type=='退款'>selected</#if> value="退款">退款</option>
         </select>
@@ -129,25 +128,23 @@ function downloaddate()
     <th align="left" width="9%">装饰公司编码</th>
     <th align="left" width="10%">变更类型</th>
 	<th align="left" width="10%">变更金额</th>
-	<th align="left" width="10%">信用金余额</th>
-	<th align="left" width="10%">现金返利余额</th>
-    <th align="left" width="9%">总余额</th>
+	<th align="left" width="10%">钱包余额</th>
     <th align="center" width="12%">变更时间</th>
     <th align="left" width="15%">涉及单号</th>
   </tr>
 
     <#if balance_page??>
         <#list balance_page.content as item>
+        	<#if item.distinguish == 2>
             <tr>
             	<td align="center">${item.companyTitle!''}</td>
                 <td align="left">${item.companyCode!''}</td>
                 <td align="left">${item.type!''}</td>
                 <td align="left"><#if item.money??>${item.money?string("0.00")}<#else>0.00</#if></td>
-                <td align="left"><#if item.afterChange??>${item.afterChange?string("0.00")}<#else>0.00</#if></td>
-                <td align="left"><#if item.afterChangePromotion??>${item.afterChangePromotion?string("0.00")}<#else>0.00</#if></td>
-                <td align="left"><#if item.totalBalance??>${item.totalBalance?string("0.00")}<#else>0.00</#if></td>
+                <td align="left"><#if item.afterChangeWallet??>${item.afterChangeWallet?string("0.00")}<#else>0.00</#if></td>
                 <td align="left"><#if item.changeTime??>${item.changeTime?string("yyyy-MM-dd HH:mm:ss")}</#if></td>
 				<td align="center">${item.referenceNumber!''}</td>
+			</#if>
         </#list>
     </#if>
      

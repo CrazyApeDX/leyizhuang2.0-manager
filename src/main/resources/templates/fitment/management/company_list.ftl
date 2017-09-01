@@ -106,9 +106,10 @@
 					<th align="left" width="10%">编码</th>
 					<th align="left" width="12%">当前信用额度</th>
 					<th align="left" width="10%">赞助金</th>
+					<th align="left" width="10%">钱包</th>
 					<th align="left" width="5%">冻结</th>
 					<th align="center" width="10%">操作</th>
-					<th align="center" width="29%">配置</th>
+					<th align="center" width="19%">配置</th>
 				</tr>
 
     			<#if companyPage??>
@@ -129,6 +130,9 @@
 			                </td>
 			                <td align="left">
 			                	<#if item.promotionMoney??>${item.promotionMoney?string("0.00")}<#else>0.00</#if>
+			                </td>
+			                <td align="left">
+			                	<#if item.walletMoney??>${item.walletMoney?string("0.00")}<#else>0.00</#if>
 			                </td>
 			                <td align="left">
 			                	<#if item.frozen==true>

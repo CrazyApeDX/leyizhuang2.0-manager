@@ -19,4 +19,7 @@ public interface FitCreditChangeLogService {
 	
 	Page<FitCreditChangeLog> queryList(String begindata, String enddata, String city, String companyCode,
 			String keywords, String type, Integer page, Integer size) throws Exception;
+
+	List<FitCreditChangeLog> queryWalletDownList(String begindata, String enddata, String city, String companyCode,
+			String keywords, String type);
 }

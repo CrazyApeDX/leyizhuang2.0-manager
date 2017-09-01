@@ -53,6 +53,12 @@ public class FitCreditChangeLogServiceImpl extends PageableService implements Fi
 			String keywords, String type) {
 		return this.fitCreditChangeLogRepo.queryDownList(begindata, enddata, city, companyCode, keywords, type);
 	}
+	
+	@Override
+	public List<FitCreditChangeLog> queryWalletDownList(String begindata, String enddata, String city, String companyCode,
+			String keywords, String type) {
+		return this.fitCreditChangeLogRepo.queryWalletDownList(begindata, enddata, city, companyCode, keywords, type);
+	}
 
 	@Override
 	public Page<FitCreditChangeLog> queryList(String begindata, String enddata, String city, String companyCode,
