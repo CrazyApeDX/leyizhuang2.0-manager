@@ -245,8 +245,6 @@ $(function () {
 		            </#if>
 		            <#if tdCity.cityName??&&tdCity.cityName=="郑州市">
 		            <option value="回款银行1充值">回款银行1充值</option>
-		            <option value="回款银行2充值">回款银行2充值</option>
-		            <option value="回款银行3充值">回款银行3充值</option>
 		            </#if>
 		        </select>
 		    </dd>
