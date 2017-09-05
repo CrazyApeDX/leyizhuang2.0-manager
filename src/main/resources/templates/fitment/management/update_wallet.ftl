@@ -164,6 +164,7 @@ $(function () {
 				<dt>管理员密码</dt>
 				<dd><input name="password" id="password" type="password" class="input normal"></dd>
 			</dl>
+			<input type="hidden" id="count" name="count" value="">
 </div> 
 
 <!--工具栏-->
@@ -185,9 +186,9 @@ $(function () {
 		var remark = $("#remark").val();
 		var password = $('#password').val();
 		var writtenRemarks = $('#writtenRemarks').val();
-		var myDate = new Date();   
-		<#--var d1 = new Date(Date.parse(arrivalTime));
-		var time = new Date((d1/1000+86400)*1000);-->
+		var myDate = new Date();  
+		var count = $("#count").val(); 
+		
 		
 		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
@@ -208,11 +209,7 @@ $(function () {
 			$.dialog.alert("请输入到账时间");
 			return;
  		}
-		<#--if(myDate > time){
-			$("#btnSubmit").attr("onclick","javascript:validate();");
-			$.dialog.alert("请输入大于当前的日期");
-			return;
-		}-->
+		
 		if (!password) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert('请输入管理员密码');
@@ -225,7 +222,11 @@ $(function () {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert('请选择变更类型');
 			return;
+		}else if(count == 1){
+			$.dialog.alert('不能重复提交');
+			return;
 		}else {
+			$("#count").val(1);
 			$.ajax({
 				url : '/Verwalter/fitment/wallet/manager/check',
 				type : 'POST',
@@ -236,11 +237,13 @@ $(function () {
 				error : function() {
 					$("#btnSubmit").attr("onclick","javascript:validate();");
 					alert('网络错误，请稍后重试');
+					$("#promotionMoney").val("");
 				},
 				success : function(res) {
 					if (-1 === Number(res.status)) {
 						$("#btnSubmit").attr("onclick","javascript:validate();");
 						alert(res.message);
+						$("#promotionMoney").val("");
 					} else {
 						$('#form').submit();
 					}

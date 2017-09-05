@@ -279,6 +279,7 @@ $(function () {
 			<dd><input name="password" id="password" type="password" class="input normal"></dd>
 		</dl>
 		
+		<input type="hidden" id="count" name="count" value="">
 		<input type="hidden" id="id" value="${id}" name="id" class="input normal">
 		<input type="hidden" id="cityName" value="${tdCity.cityName}" name="cityName" class="input normal">
 </div> 
@@ -303,7 +304,9 @@ $(function () {
 		var password = $('#password').val();
 		var writtenRemarks = $('#writtenRemarks').val();
 		var transferTime = $('#transferTime').val();
-		var myDate = new Date();   
+		var myDate = new Date();
+		var count = $("#count").val();   
+		
 		<#--var d1 = new Date(Date.parse(transferTime));
 		var time = new Date((d1/1000+86400)*1000);-->
 		
@@ -340,7 +343,11 @@ $(function () {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
 			$.dialog.alert('请输入管理员密码');
 			return;
+		}else if(count == 1){
+			$.dialog.alert('不能重复提交');
+			return;
 		}else {
+			$("#count").val(1);
 			$.ajax({
 				url : '/Verwalter/fitment/promotion/manager/check',
 				type : 'POST',
@@ -351,11 +358,13 @@ $(function () {
 				error : function() {
 					$("#btnSubmit").attr("onclick","javascript:validate();");
 					alert('网络错误，请稍后重试');
+					$("#promotionMoney").val("");
 				},
 				success : function(res) {
 					if (-1 === Number(res.status)) {
 						$("#btnSubmit").attr("onclick","javascript:validate();");
 						alert(res.message);
+						$("#promotionMoney").val("");
 					} else {
 						$('#form').submit();
 					}
