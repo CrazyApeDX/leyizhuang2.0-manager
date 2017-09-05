@@ -11,7 +11,7 @@
 </head>
 
 <body class="mainbody">
-	<form name="form1" method="post" action="/Verwalter/fitment/earnest/list" id="form1">
+	<form name="form1" method="post" action="/Verwalter/fitment/wallet/list" id="form1">
 		<div>
 			<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}">
 			<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}">
