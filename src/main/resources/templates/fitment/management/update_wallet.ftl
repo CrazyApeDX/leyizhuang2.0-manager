@@ -236,14 +236,14 @@ $(function () {
 				},
 				error : function() {
 					$("#btnSubmit").attr("onclick","javascript:validate();");
+					$("#count").val("");
 					alert('网络错误，请稍后重试');
-					$("#promotionMoney").val("");
 				},
 				success : function(res) {
 					if (-1 === Number(res.status)) {
 						$("#btnSubmit").attr("onclick","javascript:validate();");
+						$("#count").val("");
 						alert(res.message);
-						$("#promotionMoney").val("");
 					} else {
 						$('#form').submit();
 					}
