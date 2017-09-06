@@ -24,8 +24,6 @@ public class TdManagerActiveRedPacketController {
 	@Autowired
 	private TdCityService tdCityService;
 	
-	@Autowired
-	private TdManagerLogService tdManagerLogService;
 
 	@RequestMapping("/list")
 	public String redPacketList(Integer page, Integer size,  String keywords,
