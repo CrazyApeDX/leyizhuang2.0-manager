@@ -58,7 +58,7 @@ function downloaddate()
   <i class="arrow"></i>
   <span>装饰公司</span>
   <i class="arrow"></i>
-  <span>信用金、现金返利变更记录</span>  
+  <span>钱包变更记录</span>  
 </div>
 <!--/导航栏-->
 
