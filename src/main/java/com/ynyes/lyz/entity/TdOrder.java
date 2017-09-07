@@ -461,6 +461,10 @@ public class TdOrder {
 	// 传递给WMS的代收，同时也是订单实际的代收
 	@Column(scale = 2)
 	private Double agencyRefund = 0d;
+	
+	//使用钱包金额
+	@Column(scale = 2)
+	private Double walletMoney = 0d;
 
 	public Double getRefund() {
 		return refund;
@@ -1331,6 +1335,14 @@ public class TdOrder {
 		otherPay = null == otherPay ? 0d : otherPay;
 		return CountUtil.add(activitySubPrice, cashCoupon, proCouponFee, difFee, cashBalanceUsed, unCashBalanceUsed,
 				otherPay);
+	}
+
+	public Double getWalletMoney() {
+		return walletMoney;
+	}
+
+	public void setWalletMoney(Double walletMoney) {
+		this.walletMoney = walletMoney;
 	}
 
 	/**

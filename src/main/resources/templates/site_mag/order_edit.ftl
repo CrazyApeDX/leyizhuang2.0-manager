@@ -1037,7 +1037,7 @@
                             </div>
                         </td>
                     </tr>
-            <#if (order.credit??&&order.credit>0)||(order.promotionMoneyPayed??&&order.promotionMoneyPayed>0)>
+            <#if (order.credit??&&order.credit>0)||(order.promotionMoneyPayed??&&order.promotionMoneyPayed>0) || (order.walletMoney??&&order.walletMoney>0)>
                     <tr>
                         <th>
                             订单使用信用金
@@ -1052,6 +1052,14 @@
                         </th>
                         <td>
                          <#if order.promotionMoneyPayed??> ${order.promotionMoneyPayed?string("0.00")}<#else>0.00</#if> 元 
+                            </td>
+                    </tr>
+                     <tr>
+                        <th>
+                            订单使用钱包
+                        </th>
+                        <td>
+                         <#if order.walletMoney??> ${order.walletMoney?string("0.00")}<#else>0.00</#if> 元 
                             </td>
                     </tr>
             <#else>
