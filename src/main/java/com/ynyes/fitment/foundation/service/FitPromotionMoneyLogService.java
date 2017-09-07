@@ -10,4 +10,8 @@ public interface FitPromotionMoneyLogService {
 	void doRefund(FitCompany company, Double money, String referenceNumber) throws Exception;
 	
 	void doReceipt(FitCompany company, Double money, String referenceNumber) throws Exception;
+
+	void doReceipt(FitCompany company, Double money, String referenceNumber, String remark) throws Exception;
+
+	void doRefund(FitCompany company, Double money, String referenceNumber, String remark) throws Exception;
 }

@@ -87,6 +87,39 @@ public class FitCreditChangeLogServiceImpl extends PageableService implements Fi
 		if (StringUtils.isNotBlank(enddata)) {
 			c.add(Restrictions.lte("changeTime", com.ynyes.lyz.util.StringUtils.stringToDate(enddata, null), true));
 		}
+		c.add(Restrictions.ne("distinguish", 2, true));
+		c.setOrderByDesc("id");
+		return fitCreditChangeLogRepo.findAll(c,pageRequest);
+	}
+	
+	@Override
+	public Page<FitCreditChangeLog> queryListWallet(String begindata, String enddata, String city, String companyCode,
+			String keywords, String type, Integer page, Integer size) throws Exception {
+		PageRequest pageRequest = new PageRequest(page, size);
+		Criteria<FitCreditChangeLog> c = new Criteria<FitCreditChangeLog>();
+		if (null != keywords && !keywords.equalsIgnoreCase("")) {
+			c.add(Restrictions.or(Restrictions.like("companyCode",keywords, true),Restrictions.like("companyTitle", keywords, true),Restrictions.like("referenceNumber", keywords, true)));
+		}
+		if (null != companyCode) {
+			c.add(Restrictions.eq("companyCode", companyCode, true));
+		}
+		
+		if (null != type) {
+			c.add(Restrictions.eq("type", type, true));
+		}
+		
+		if (null != city) {
+			c.add(Restrictions.eq("city", city, true));
+		}
+		
+		if (StringUtils.isNotBlank(begindata)) {
+			c.add(Restrictions.gte("changeTime", com.ynyes.lyz.util.StringUtils.stringToDate(begindata, null), true));
+
+		}
+		if (StringUtils.isNotBlank(enddata)) {
+			c.add(Restrictions.lte("changeTime", com.ynyes.lyz.util.StringUtils.stringToDate(enddata, null), true));
+		}
+		c.add(Restrictions.eq("distinguish", 2, true));
 		c.setOrderByDesc("id");
 		return fitCreditChangeLogRepo.findAll(c,pageRequest);
 	}

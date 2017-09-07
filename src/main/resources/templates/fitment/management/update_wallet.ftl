@@ -211,6 +211,11 @@ $(function () {
 			$.dialog.alert("请输入一个有效的数字");
 			return;
 		}
+		if (money < 0){
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("金额不能为负数！");
+			return;
+		}
 		$("#money").val(money);
 		if(arrivalTime == ''){;
  			$("#btnSubmit").attr("onclick","javascript:validate();");

@@ -295,9 +295,9 @@ public class FitManagementWalletController {
 			this.fitCompanyService.save(company);
 			this.fitCreditChangeLogService.save(log);
 			if (money > 0) {
-				this.fitPromotionMoneyLogService.doReceipt(company, money, log.getReferenceNumber());
+				this.fitPromotionMoneyLogService.doReceipt(company, money, log.getReferenceNumber(),remark);
 			} else {
-				this.fitPromotionMoneyLogService.doRefund(company, money, log.getReferenceNumber());
+				this.fitPromotionMoneyLogService.doRefund(company, money, log.getReferenceNumber(),remark);
 			}
 
 		} catch (Exception e) {
@@ -336,7 +336,7 @@ public class FitManagementWalletController {
 				tdCity = this.tdCityService.findByCityName(city);
 				companyList = fitCompanyService.findBySobId(tdCity.getSobIdCity());
 			}
-			balance_page = this.fitCreditChangeLogService.queryList(startTime, endTime, city, companyCode, keywords,
+			balance_page = this.fitCreditChangeLogService.queryListWallet(startTime, endTime, city, companyCode, keywords,
 					type, page, size);
 		} catch (Exception e) {
 			e.printStackTrace();

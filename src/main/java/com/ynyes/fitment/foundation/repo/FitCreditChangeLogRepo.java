@@ -21,6 +21,7 @@ public interface FitCreditChangeLogRepo extends ApplicationRepo<FitCreditChangeL
 			+ " fit_credit_change_log"
 			+ " where type like %?6%"
 			+ " and city like %?3%"
+			+ " and distinguish in (0,1)"
 			+ " and company_code like %?4%"
 			+ " and change_time >= ?1"
 			+ " and change_time <= ?2"
