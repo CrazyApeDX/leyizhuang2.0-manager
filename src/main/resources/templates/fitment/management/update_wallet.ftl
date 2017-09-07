@@ -133,7 +133,15 @@ $(function () {
 			    <dt>充值类型</dt>
 			    <dd>
 			        <select name="remark" id="remark" datatype="n">
-			            <option value="钱包充值">钱包充值</option>
+			            <option value="">请选择变更类型</option>
+			            <#if tdCity.cityName??&&tdCity.cityName=="成都市">
+			            <option value="装饰公司预存款充值1">装饰公司预存款充值1</option>
+			            <option value="装饰公司预存款充值2">装饰公司预存款充值2</option>
+			            <option value="装饰公司预存款充值3">装饰公司预存款充值3</option>
+			            </#if>
+			            <#if tdCity.cityName??&&tdCity.cityName=="郑州市">
+			            <option value="装饰公司预存款充值4">装饰公司预存款充值4</option>
+			            </#if>
 			        </select>
 			   	 </dd>
 			</dl>
