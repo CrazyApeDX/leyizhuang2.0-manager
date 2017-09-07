@@ -126,6 +126,7 @@ $(function () {
 				<dt>当前钱包余额</dt>
 				<dd>
 					<#if company??>￥${company.walletMoney?string("0.00")}</#if>
+					<input type="hidden" id="walletMoney" name="walletMoney" value="<#if company??>${company.walletMoney?string("0.00")}</#if>">
 				</dd>
 			</dl>
 				
@@ -196,7 +197,7 @@ $(function () {
 		var writtenRemarks = $('#writtenRemarks').val();
 		var myDate = new Date();  
 		var count = $("#count").val(); 
-		
+		var walletMoney = $("#walletMoney").val();
 		
 		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
@@ -211,11 +212,12 @@ $(function () {
 			$.dialog.alert("请输入一个有效的数字");
 			return;
 		}
-		if (money < 0){
+		if (Number(money)+Number(walletMoney) < 0 ) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
-			$.dialog.alert("金额不能为负数！");
+			$.dialog.alert("扣减金额大于现有金额");
 			return;
 		}
+		
 		$("#money").val(money);
 		if(arrivalTime == ''){;
  			$("#btnSubmit").attr("onclick","javascript:validate();");
@@ -239,6 +241,7 @@ $(function () {
 			$.dialog.alert('不能重复提交');
 			return;
 		}else {
+			
 			$("#count").val(1);
 			$.ajax({
 				url : '/Verwalter/fitment/wallet/manager/check',
