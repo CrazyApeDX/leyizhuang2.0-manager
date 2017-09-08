@@ -82,6 +82,34 @@ public class TdPhotoOrderInfo {
 	@Column(length = 1000)
 	private String remark;
 	
+	// 收货人姓名
+	@Column(length = 20)
+	private String receiverName;
+
+	// 收货人移动电话
+	@Column(length = 50)
+	private String receiverMobile;
+	
+	// 市
+	@Column(length = 225)
+	private String city;
+	
+	// 区
+	@Column(length = 225)
+	private String disctrict;
+	
+	// 街道
+	@Column(length = 225)
+	private String subdistrict;
+	
+	// 详细地址
+	@Column(length = 225)
+	private String detailAddress;
+	
+	// 订单号
+	@Column(length = 225)
+	private String orderNumber;
+	
 	public static enum Status {
 		WAITING, ACTIONING, FINISHING
 	}
@@ -196,6 +224,62 @@ public class TdPhotoOrderInfo {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public String getReceiverName() {
+		return receiverName;
+	}
+
+	public void setReceiverName(String receiverName) {
+		this.receiverName = receiverName;
+	}
+
+	public String getReceiverMobile() {
+		return receiverMobile;
+	}
+
+	public void setReceiverMobile(String receiverMobile) {
+		this.receiverMobile = receiverMobile;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getDisctrict() {
+		return disctrict;
+	}
+
+	public void setDisctrict(String disctrict) {
+		this.disctrict = disctrict;
+	}
+
+	public String getSubdistrict() {
+		return subdistrict;
+	}
+
+	public void setSubdistrict(String subdistrict) {
+		this.subdistrict = subdistrict;
+	}
+
+	public String getDetailAddress() {
+		return detailAddress;
+	}
+
+	public void setDetailAddress(String detailAddress) {
+		this.detailAddress = detailAddress;
+	}
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
 	}
 	
 }

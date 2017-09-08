@@ -120,6 +120,9 @@ public class TdPriceCountService {
 		// 每次重新计算的时候，清空优惠券的使用说明
 		order.setCashCoupon(0.00);
 		order.setProductCoupon("");
+		
+		order.setCashBalanceUsed(0d);
+		order.setUnCashBalanceUsed(0d);
 
 		List<TdOrderGoods> goodsList = order.getOrderGoodsList();
 		// 如果订单里面没有商品，则也没有计算的必要
@@ -130,6 +133,7 @@ public class TdPriceCountService {
 		// 初始化订单金额
 		order.setTotalPrice(0.00);
 		order.setTotalGoodsPrice(0.00);
+		order.getNotPayedFee();
 
 		// 开始计算原始商品总额和原始订单金额
 		for (TdOrderGoods orderGoods : goodsList) {
@@ -150,35 +154,7 @@ public class TdPriceCountService {
 			order.setTotalPrice(order.getTotalPrice() + total);
 			order.setTotalGoodsPrice(order.getTotalGoodsPrice() + total);
 		}
-
-		// 计算订单的运费
-		// order.setDeliverFee(0.00);
-
-		// 获取订单的收货街道
-		// List<TdSubdistrict> subDistrict_list = tdSubDistrictService
-		// .findByDistrictNameAndNameOrderBySortIdAsc(order.getDisctrict(),
-		// order.getSubdistrict());
-		// if (null != subDistrict_list && subDistrict_list.size() > 0) {
-		// TdSubdistrict subdistrict = subDistrict_list.get(0);
-		// if (null != subdistrict) {
-		// Double fee = subdistrict.getDeliveryFee();
-		// if (null != fee) {
-		// order.setDeliverFee(fee);
-		// }
-		// }
-		// }
-
-		// Double fee = 0d;
 		
-
-		// // 判断能否使用预存款和优惠券（支付方式为到店支付的情况下不能够使用预存款和优惠券）
-		// String payTypeTitle = order.getPayTypeTitle();
-		// if (null != payTypeTitle && payTypeTitle.equalsIgnoreCase("到店支付")) {
-		// order.setCashCouponId("");
-		// order.setProductCouponId("");
-		// canUseBalance = false;
-		// }
-
 		if (canUseBalance) {
 			// 开始计算使用的现金券的价值
 			String cashCouponId = order.getCashCouponId();
@@ -206,6 +182,7 @@ public class TdPriceCountService {
 			}
 
 			// 开始计算产品券产品券的价值
+			order.setProCouponFee(0d);
 			String productCouponId = order.getProductCouponId();
 			// 拆分产品券
 			if (null != productCouponId && !"".equals(productCouponId)) {
@@ -220,12 +197,16 @@ public class TdPriceCountService {
 								&& null != coupon.getIsOutDate() && null != coupon.getIsUsed() && !coupon.getIsOutDate()
 								&& !coupon.getIsUsed()) {
 							// 遍历所有的已选商品，查找与优惠券对应的商品，获取其价格
+							order.setProCouponFee(order.getProCouponFee() + coupon.getRealPrice());
 							order.setTotalPrice(order.getTotalPrice() - coupon.getRealPrice());
 						}
 					}
 				}
 			}
 		}
+		
+		// 判断是否享受会员差价 
+		order = this.memberDiscount(order);
 
 		// 计算上楼费
 		Double upstairsFee = tdUpstairSettingService.countUpstairsFee(order);
@@ -240,6 +221,9 @@ public class TdPriceCountService {
 		if (0 > order.getTotalPrice()) {
 			order.setTotalPrice(0.00);
 		}
+		
+
+		order.setIsFixedDeliveryFee(isFixedDeliveryFee);
 		
 		try {
 			Map<String, Double> depiveryFeeMap = new HashMap<>();
@@ -272,9 +256,7 @@ public class TdPriceCountService {
 		}
 		// 将运费的费用添加到订单总额中
 		order.setTotalPrice(order.getTotalPrice() + order.getDeliverFee());
-
-		order.setIsFixedDeliveryFee(isFixedDeliveryFee);
-
+		
 		// 开始计算最大能使用的预存款的额度
 		if (canUseBalance) {
 			Double balance = user.getBalance();
@@ -282,12 +264,12 @@ public class TdPriceCountService {
 				balance = 0.00;
 			}
 			// 如果预存款小于订单金额，则能够使用的最大预存款额度为用户的预存款
-			if (balance < (order.getTotalPrice() + order.getUpstairsFee())) {
+			if (balance < order.getNotPayedFee()) {
 				max_use = balance;
 			}
 			// 其他情况则为订单的金额
 			else {
-				max_use = (order.getTotalPrice() + order.getUpstairsFee());
+				max_use = order.getNotPayedFee();
 			}
 		} else {
 			max_use = 0.00;
@@ -304,16 +286,29 @@ public class TdPriceCountService {
 		}
 
 		// 判断是否使用的预存款大于了订单的总金额
-		if (order.getActualPay() > order.getTotalPrice()) {
-			order.setActualPay(order.getTotalPrice());
+		if (order.getActualPay() > order.getNotPayedFee()) {
+			order.setActualPay(order.getNotPayedFee());
 		}
 
 		// 判断上楼费是否多收
 		if (order.getUpstairsBalancePayed() > order.getUpstairsFee()) {
 			order.setUpstairsBalancePayed(order.getUpstairsFee());
 		}
+		
+		// 判断是否是会员，如果不是，则不享受会员差价
+//		TdUser realUser = tdUserService.findOne(order.getRealUserId());
+//		if (null == realUser || null == realUser.getSellerId()) {
+//			order.setDifFee(0d);
+//		}
+
+		// 计算会员差价优惠额
+		Double difFee = null == order.getDifFee() ? 0d : order.getDifFee();
+		order.setTotalPrice(order.getTotalPrice() - difFee);
+
 
 		order.setTotalPrice(order.getTotalPrice() - order.getActualPay());
+		
+		
 
 		tdOrderService.save(order);
 
@@ -325,7 +320,27 @@ public class TdPriceCountService {
 
 		return results;
 	}
+	
+	private TdOrder memberDiscount(TdOrder order) {
+		Long realUserId = order.getRealUserId();
+		TdUser user = tdUserService.findOne(realUserId);
 
+		if (null != user && null != user.getSellerId() && null != user.getIdentityType() && user.getIdentityType().equals(0)) {
+			List<TdOrderGoods> orderGoodsList = order.getOrderGoodsList();
+			if (null != orderGoodsList && orderGoodsList.size() > 0) {
+				Double memberDiscount = 0d;
+				for (TdOrderGoods orderGoods : orderGoodsList) {
+					Double price = null == orderGoods.getPrice() ? 0d : orderGoods.getPrice();
+					Double realPrice = null == orderGoods.getRealPrice() ? 0d : orderGoods.getRealPrice();
+					Long quantity = null == orderGoods.getQuantity() ? 0L : orderGoods.getQuantity();
+					memberDiscount += (price - realPrice) * quantity;
+				}
+				order.setDifFee(memberDiscount);
+			}
+		}
+		return order;
+	}
+	
 	/**
 	 * 根据用户的已选，计算每个品牌能够使用的优惠券的额度和已使用的额度
 	 * 

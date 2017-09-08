@@ -29,7 +29,7 @@ td {
 
 <body class="mainbody">
 <div style="left: 0px; top: 0px; visibility: hidden; position: absolute;" class=""><table class="ui_border"><tbody><tr><td class="ui_lt"></td><td class="ui_t"></td><td class="ui_rt"></td></tr><tr><td class="ui_l"></td><td class="ui_c"><div class="ui_inner"><table class="ui_dialog"><tbody><tr><td colspan="2"><div class="ui_title_bar"><div class="ui_title" unselectable="on" style="cursor: move;"></div><div class="ui_title_buttons"><a class="ui_min" href="javascript:void(0);" title="最小化" style="display: inline-block;"><b class="ui_min_b"></b></a><a class="ui_max" href="javascript:void(0);" title="最大化" style="display: inline-block;"><b class="ui_max_b"></b></a><a class="ui_res" href="javascript:void(0);" title="还原"><b class="ui_res_b"></b><b class="ui_res_t"></b></a><a class="ui_close" href="javascript:void(0);" title="关闭(esc键)" style="display: inline-block;">×</a></div></div></td></tr><tr><td class="ui_icon" style="display: none;"></td><td class="ui_main" style="width: auto; height: auto;"><div class="ui_content" style="padding: 10px;"></div></td></tr><tr><td colspan="2"><div class="ui_buttons" style="display: none;"></div></td></tr></tbody></table></div></td><td class="ui_r"></td></tr><tr><td class="ui_lb"></td><td class="ui_b"></td><td class="ui_rb" style="cursor: se-resize;"></td></tr></tbody></table></div>
-<form name="form1" method="post" action="/Verwalter/activity/list" id="form1">
+<form name="form1"  action="/Verwalter/photo/order/list" id="form1">
 <div>
 <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}" />
 <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}" />
@@ -69,11 +69,20 @@ function __doPostBack(eventTarget, eventArgument) {
   <div id="floatHead" class="toolbar">
     <div class="l-list">
       <ul class="icon-list">
-        <li><a class="all" href="javascript:;" onclick="checkAll(this);"><i></i><span>全选</span></a></li>
-        <li><a onclick="return ExePostBack('btnDelete');" id="btnDelete" class="del" href="javascript:__doPostBack('btnDelete','')"><i></i><span>删除</span></a></li>
       </ul>
       <div class="menu-list">
-        
+        <div class="rule-single-select">
+            <select name="status" onchange="javascript:setTimeout(__doPostBack('status', ''), 0)">
+                <option <#if status??><#else>selected="selected"</#if> value="">所有类别</option>
+                
+                <option value="WAITING" <#if status?? && "WAITING"==status>selected="selected"</#if> >待处理</option>
+            
+            	<option value="ACTIONING" <#if status?? && "ACTIONING"==status>selected="selected"</#if> >处理中</option>
+            
+            	<option value="FINISHING" <#if status?? && "FINISHING"==status>selected="selected"</#if> >已完成</option>
+                    
+            </select>
+        </div>
         
       </div>
     </div>
@@ -92,33 +101,43 @@ function __doPostBack(eventTarget, eventArgument) {
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ltable">
 <tbody>
     <tr class="odd_bg">
-        <th width="5%">选择</th>
         <th align="left" width="5%">序号</th>
         <th align="left" width="10%">手机号名</th>
         <th align="left" width="10%">客户名</th>
-        <th align="left" width="20%">创建时间</th>
+        <th align="left" width="10%">创建时间</th>
+        <th align="left" width="10%">开始处理时间</th>
+        <th align="left" width="10%">处理结束时间</th>
         <th align="left" width="20%">备注</th>
-        <th align="left" width="10%">状态</th>
+        <th align="left" width="5%">状态</th>
         <th width="8%">操作</th>
     </tr>
     
     <#if photoOrderPage?? && photoOrderPage.content??>
     <#list photoOrderPage.content as order>
         <tr>
-            <td align="center">
-                <span class="checkall" style="vertical-align:middle;">
-                    <input id="listChkId" type="checkbox" name="listChkId" value="${order_index}" >
-                </span>
-                <input type="hidden" name="listId" id="listId" value="${order.id?c}">
-            </td>
             <td>${order.id?c}</td>
             <td>${order.username!"无"}</td>
             <td>${order.userRealName!"无"}</td>
             <td>${order.createTime!""}</td>
+            <td>${order.startActionTime!""}</td>
+            <td>${order.finishTime!""}</td>
             <td>${order.remark!""}</td>
-            <td>${order.status!""}</td>
+            <td><#if order.status?? && order.status == 'WAITING'>
+            		<label style="color: red">待处理</label>
+            	<#elseif order.status?? && order.status == 'ACTIONING'>
+            		处理中
+            	<#elseif order.status?? && order.status == 'FINISHING'>
+            		已完成
+            	</#if>
+            </td>
             <td align="center">
-                <a href="/Verwalter/activity/edit?id=${order.id?c}">修改</a>
+                <#if order.status?? && order.status == 'WAITING'>
+            		<a href="/Verwalter/photo/order/toprocess/0?id=${order.id?c}" style="color: red">处理</a>
+            	<#elseif order.status?? && order.status == 'ACTIONING'>
+            		<a href="/Verwalter/photo/order/toprocess/1?id=${order.id?c}">查看</a>
+            	<#elseif order.status?? && order.status == 'FINISHING'>
+            		<a href="/Verwalter/photo/order/toprocess/1?id=${order.id?c}">查看</a>
+            	</#if>
             </td>
         </tr>
     </#list>

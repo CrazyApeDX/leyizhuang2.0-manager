@@ -462,6 +462,10 @@ public class TdOrder {
 	@Column(scale = 2)
 	private Double agencyRefund = 0d;
 
+	// 拍照下单标志
+	@Column
+	private Boolean isPhotoOrder = Boolean.FALSE;
+	
 	public Double getRefund() {
 		return refund;
 	}
@@ -1210,6 +1214,14 @@ public class TdOrder {
 
 	public void setUpstairsOtherPayed(Double upstairsOtherPayed) {
 		this.upstairsOtherPayed = upstairsOtherPayed;
+	}
+
+	public Boolean getIsPhotoOrder() {
+		return isPhotoOrder;
+	}
+
+	public void setIsPhotoOrder(Boolean isPhotoOrder) {
+		this.isPhotoOrder = isPhotoOrder;
 	}
 
 	public Double getUpstairsLeftFee() {

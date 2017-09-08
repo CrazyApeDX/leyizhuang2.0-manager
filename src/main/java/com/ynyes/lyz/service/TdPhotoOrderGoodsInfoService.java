@@ -10,10 +10,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ynyes.lyz.entity.TdActiveRedPacket;
-import com.ynyes.lyz.entity.TdOrder;
-import com.ynyes.lyz.entity.TdPhotoOrderInfo;
-import com.ynyes.lyz.repository.TdPhotoOrderInfoRepo;
+import com.ynyes.lyz.entity.TdPhotoOrderGoodsInfo;
+import com.ynyes.lyz.repository.TdPhotoOrderGoodsInfoRepo;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
 
@@ -22,7 +20,7 @@ import com.ynyes.lyz.util.Restrictions;
 
 
 /**
- * 拍照下单 服务类
+ * 拍照下单商品 服务类
  * 
  * @author panjie
  *
@@ -30,10 +28,10 @@ import com.ynyes.lyz.util.Restrictions;
 
 @Service
 @Transactional
-public class TdPhotoOrderInfoService {
+public class TdPhotoOrderGoodsInfoService {
 
 	@Autowired
-	private TdPhotoOrderInfoRepo repository;
+	private TdPhotoOrderGoodsInfoRepo repository;
 
 	/**
 	 * 删除
@@ -53,7 +51,7 @@ public class TdPhotoOrderInfoService {
 	 * @param e
 	 * @return
 	 */
-	public TdPhotoOrderInfo save(TdPhotoOrderInfo e) {
+	public TdPhotoOrderGoodsInfo save(TdPhotoOrderGoodsInfo e) {
 
 		return repository.save(e);
 	}
@@ -65,26 +63,33 @@ public class TdPhotoOrderInfoService {
 	 * @param keywords
 	 * @return
 	 */
-	public Page<TdPhotoOrderInfo> findAllAddCondition(int page, int size,String keywords,String status) {
+	public Page<TdPhotoOrderGoodsInfo> findAllAddCondition(int page, int size,String keywords) {
 		PageRequest pageRequest = new PageRequest(page, size,new Sort(Direction.DESC, "createTime"));
-		Criteria<TdPhotoOrderInfo> c = new Criteria<TdPhotoOrderInfo>();
+		Criteria<TdPhotoOrderGoodsInfo> c = new Criteria<TdPhotoOrderGoodsInfo>();
 		
 		if(null != keywords && !keywords.equalsIgnoreCase("")){
 			c.add(Restrictions.or(Restrictions.like("username", keywords, true),Restrictions.like("userRealName", keywords, true)));
 		}
-		if(null != status && !status.equalsIgnoreCase("")){
-			
-			c.add(Restrictions.eq("status", TdPhotoOrderInfo.Status.valueOf(status), true));
-		}
+		
 		return repository.findAll(c, pageRequest);
 	}
 	
 	/**
 	 * 根据id查询订单
 	 */
-	public TdPhotoOrderInfo findOne(Long id){
+	public TdPhotoOrderGoodsInfo findOne(Long id){
 		if(null != id){
 			return repository.findOne(id);
+		}
+		return null;
+	}
+	
+	/**
+	 * 根据photoOrderId查询
+	 */
+	public List<TdPhotoOrderGoodsInfo> findByPhotoOrderIdEquals(Long id){
+		if(null != id){
+			return repository.findByPhotoOrderIdEquals(id);
 		}
 		return null;
 	}
