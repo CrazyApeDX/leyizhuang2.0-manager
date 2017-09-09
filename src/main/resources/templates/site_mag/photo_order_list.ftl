@@ -73,7 +73,7 @@ function __doPostBack(eventTarget, eventArgument) {
       <div class="menu-list">
         <div class="rule-single-select">
             <select name="status" onchange="javascript:setTimeout(__doPostBack('status', ''), 0)">
-                <option <#if status??><#else>selected="selected"</#if> value="">所有类别</option>
+                <option <#if status??><#else>selected="selected"</#if> value="">订单状态</option>
                 
                 <option value="WAITING" <#if status?? && "WAITING"==status>selected="selected"</#if> >待处理</option>
             
@@ -102,12 +102,14 @@ function __doPostBack(eventTarget, eventArgument) {
 <tbody>
     <tr class="odd_bg">
         <th align="left" width="5%">序号</th>
+        <th align="left" width="5%">城市</th>
+        <th align="left" width="10%">门店</th>
+        <th align="left" width="5%">客户名</th>
         <th align="left" width="10%">手机号名</th>
-        <th align="left" width="10%">客户名</th>
         <th align="left" width="10%">创建时间</th>
         <th align="left" width="10%">开始处理时间</th>
         <th align="left" width="10%">处理结束时间</th>
-        <th align="left" width="20%">备注</th>
+        <th align="left" width="20%">订单号</th>
         <th align="left" width="5%">状态</th>
         <th width="8%">操作</th>
     </tr>
@@ -116,12 +118,14 @@ function __doPostBack(eventTarget, eventArgument) {
     <#list photoOrderPage.content as order>
         <tr>
             <td>${order.id?c}</td>
-            <td>${order.username!"无"}</td>
-            <td>${order.userRealName!"无"}</td>
+            <td>${order.city!""}</td>
+            <td>${order.diySiteName!""}</td>
+            <td>${order.userRealName!""}</td>
+            <td>${order.username!""}</td>
             <td>${order.createTime!""}</td>
             <td>${order.startActionTime!""}</td>
             <td>${order.finishTime!""}</td>
-            <td>${order.remark!""}</td>
+            <td>${order.orderNumber!""}</td>
             <td><#if order.status?? && order.status == 'WAITING'>
             		<label style="color: red">待处理</label>
             	<#elseif order.status?? && order.status == 'ACTIONING'>

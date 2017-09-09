@@ -110,6 +110,13 @@ public class TdPhotoOrderInfo {
 	@Column(length = 225)
 	private String orderNumber;
 	
+	// 门店id
+	@Column(length = 20, nullable = false)
+	private Long diySiteId;
+	
+	// 门店名
+	@Column(length = 225)
+	private String diySiteName;
 	public static enum Status {
 		WAITING, ACTIONING, FINISHING
 	}
@@ -280,6 +287,22 @@ public class TdPhotoOrderInfo {
 
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+
+	public Long getDiySiteId() {
+		return diySiteId;
+	}
+
+	public void setDiySiteId(Long diySiteId) {
+		this.diySiteId = diySiteId;
+	}
+
+	public String getDiySiteName() {
+		return diySiteName;
+	}
+
+	public void setDiySiteName(String diySiteName) {
+		this.diySiteName = diySiteName;
 	}
 	
 }

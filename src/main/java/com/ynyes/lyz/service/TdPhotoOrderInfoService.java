@@ -70,7 +70,8 @@ public class TdPhotoOrderInfoService {
 		Criteria<TdPhotoOrderInfo> c = new Criteria<TdPhotoOrderInfo>();
 		
 		if(null != keywords && !keywords.equalsIgnoreCase("")){
-			c.add(Restrictions.or(Restrictions.like("username", keywords, true),Restrictions.like("userRealName", keywords, true)));
+			c.add(Restrictions.or(Restrictions.like("username", keywords, true),Restrictions.like("userRealName", keywords, true)
+					,Restrictions.like("orderNumber", keywords, true)));
 		}
 		if(null != status && !status.equalsIgnoreCase("")){
 			

@@ -73,9 +73,6 @@
 </style>
 <script type="text/javascript">
 $(function () {
-    //初始化表单验证
-    $("#form1").initValidform();
-    
    
     // 添加组合
     $("#addGoods").click(function(){
@@ -120,26 +117,6 @@ function del_goods_comb(obj) {
     $("#totalComb").val(parseInt($("#totalComb").val())-1);
 }
 
-
-
-//创建商品组合窗口
-function show_goods_comb_dialog(obj) {
-    var objNum = arguments.length;
-    var zengpinDialog = $.dialog({
-        id: 'zengpinhDialogId',
-        lock: true,
-        max: false,
-        min: false,
-        title: "活动赠品",
-        content: 'url:/Verwalter/goods/list/dialog/comb',
-        width: 800,
-        height: 550
-    });
-    //如果是修改状态，将对象传进去
-    if (objNum == 1) {
-        zengpinDialog.data = obj;
-    }
-}
 
 //放大展示照片
 function showPhotoOrderImg(node){
@@ -186,7 +163,7 @@ function showPhotoOrderImg(node){
         <div id="floatHead" class="content-tab">
             <div class="content-tab-ul-wrap" >
                 <ul>
-                    <li><a href="javascript:;" onclick="tabs(this);" class="selected">客户信息</a></li>
+                    <li><a href="javascript:;" onclick="tabs(this);" class="selected">订单信息</a></li>
                 </ul>
             </div>
         </div>
@@ -194,6 +171,20 @@ function showPhotoOrderImg(node){
     <div id="id-first-tab" class="tab-content" style="display: block;">
     	<input type="hidden" id="photoOrderId" value="<#if photoOrder??>${photoOrder.id!'' }</#if>"/>
         <table>
+        	<#if photoOrder?? && photoOrder.orderNumber??>
+        		<tr>
+        			<td>
+        				<dl id="order_number">
+				            <dt>订单号:</dt>
+				             <dd>
+				                <input id="orderNumber" type="text" class="input normal" value="<#if photoOrder??>${photoOrder.orderNumber!'' }</#if>" readonly="readonly">
+				            </dd>
+				        </dl>
+        			</td>
+        			<td></td>
+        		</tr>
+        	</#if>
+        	
         	<tr>
         		<td>
         			<dl id="user_name">
