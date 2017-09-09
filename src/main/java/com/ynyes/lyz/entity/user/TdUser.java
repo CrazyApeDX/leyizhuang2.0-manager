@@ -158,6 +158,18 @@ public class TdUser {
 	@Column(scale = 2, nullable = false)
 	private Double creditLimit = 0d;
 	
+	//红包标记 ： 0/null、无； 1、有红包；2、已使用红包
+	@Column(length = 1, nullable = false)
+	private Integer redPacketFlag;
+	
+	public Integer getRedPacketFlag() {
+		return redPacketFlag;
+	}
+
+	public void setRedPacketFlag(Integer redPacketFlag) {
+		this.redPacketFlag = redPacketFlag;
+	}
+
 	public Long getId() {
 		return id;
 	}
