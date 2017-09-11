@@ -14,6 +14,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -92,6 +94,8 @@ public class TdManagerPhotoOrderController {
 	
 	@Autowired
 	private TdSmsAccountService tdSmsAccountService;
+	
+	private final Logger LOG = LoggerFactory.getLogger(TdManagerPhotoOrderController.class);
 	
 	/**
 	 * 查询出所有的拍照订单记录
@@ -236,6 +240,8 @@ public class TdManagerPhotoOrderController {
 			//所属门店
 			TdDiySite diySite = tdDiySiteService.findOne(user.getUpperDiySiteId());
 			
+			List<TdGoods> goodsList = new ArrayList<TdGoods>();
+			
 			if (null != goods_page) {
 				
 				for (int i = 0; i < goods_page.getContent().size(); i++) {
@@ -243,11 +249,12 @@ public class TdManagerPhotoOrderController {
 					TdPriceListItem priceListItem = tdCommonService.secondGetGoodsPrice(diySite, goods,"ZY");
 					if(priceListItem != null){
 						goods.setSalePrice(priceListItem.getSalePrice());
+						goodsList.add(goods);
 					}
 				}
 			}
 
-			map.addAttribute("goods_page", goods_page);
+			map.addAttribute("goods_page", goodsList);
 		}
 		return "/site_mag/buy_goods_dialog";
 	}
@@ -283,20 +290,17 @@ public class TdManagerPhotoOrderController {
 
 		TdOrder orderTemp = null;
 
-		
-		// 如果session中没有虚拟订单，则通过方法生成一个
-		if (null == orderTemp) {
-			try {
-				orderTemp = tdCommonService.createVirtual(req, realUserId, ids,numbers,photoOrderId);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			// 2017-06-05修改：取消赠送优惠券
-			// 开始赠送优惠券
-			// tdPriceCouintService.sendCoupon(order_temp);
-		} else {
-			orderTemp = tdOrderService.findOne(orderTemp.getId());
+		// 通过方法生成一个虚拟订单
+		try {
+			orderTemp = tdCommonService.createVirtual(req, realUserId, ids,numbers,photoOrderId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			LOG.error(e.getMessage());
+			res.put("status", -1);
+			res.put("message", "亲,系统出错拉！");
+			return res;
 		}
+		
 
 		if (null == orderTemp.getUpstairsType()) {
 			orderTemp.setUpstairsType("不上楼");
@@ -442,6 +446,11 @@ public class TdManagerPhotoOrderController {
 		orderTemp.setIsSellerOrder(false);
 
 		tdOrderService.save(orderTemp);
+		
+		// 清空已选
+		if ( null != ids && !"".equals(ids)) {
+			tdCommonService.clear(req, ids);
+		}
 		
 		res.put("status", 0);
 		res.put("message", "提交订单成功！");
