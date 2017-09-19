@@ -3,6 +3,7 @@ package com.ynyes.lyz.controller.interfaces;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,133 +33,145 @@ import com.ynyes.lyz.service.basic.generation.IGenerationService;
 @Controller
 @RequestMapping(value = "/generation")
 public class TdGenerationController {
-	
+
 	@Autowired
 	private TdOrderService tdOrderService;
-	
+
 	@Autowired
 	private IGenerationService generationService;
-	
+
 	@Autowired
 	private TdReturnNoteService tdReturnNoteService;
-	
+
 	@Autowired
 	private TdInterfaceService tdInterfaceService;
-	
+
 	@Autowired
 	private TdOwnMoneyRecordService tdOwnMoneyRecordService;
-	
+
 	@Autowired
 	private TdCashReciptInfService tdCashReciptInfService;
-	
-	@Autowired 
+
+	@Autowired
 	private TdOrderInfService tdOrderInfService;
-	
+
 	@Autowired
 	private TdDiySiteService tdDiySiteService;
-	
-	
-	
-	
-	@RequestMapping(value = "/{number}", produces = "application/json;charset=utf8")
+
+/*	@RequestMapping(value = "/{number}", produces = "application/json;charset=utf8")
 	@ResponseBody
 	public String generation(@PathVariable String number) {
 		TdOrder order = tdOrderService.findByOrderNumber(number);
 		String result = generationService.generateOrderData(order);
 		return result;
-	} 
-	
+	}*/
+
+	/**
+	 * 新重新生成订单接口信息方法
+	 * 
+	 * @param number
+	 * @return
+	 */
+	@RequestMapping(value = "/{number}", produces = "application/json;charset=utf8")
+	@ResponseBody
+	public String generationNew(@PathVariable String number) {
+		TdOrder order = tdOrderService.findByOrderNumber(number);
+		String result = generationService.generateOrderDataNew(order);
+		return result;
+	}
+
 	@RequestMapping(value = "/order", produces = "application/json;charset=utf8")
 	@ResponseBody
-	public String generationOrderAll(String beginDate,String endDate) throws ParseException {
-		
-		if(null ==beginDate ){
+	public String generationOrderAll(String beginDate, String endDate) throws ParseException {
+
+		if (null == beginDate) {
 			return "起始时间有误！";
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		List<TdOrder> orders = tdOrderService.findMissedOrders(sdf.parse(beginDate),sdf.parse(endDate));
+		List<TdOrder> orders = tdOrderService.findMissedOrders(sdf.parse(beginDate), sdf.parse(endDate));
 		for (TdOrder tdOrder : orders) {
 			String result = generationService.generateOrderData(tdOrder);
 			System.out.println(result);
 		}
-		String sb = "共处理"+orders.size()+"条数据!";
-		return sb ;
-	} 
-	
-	
+		String sb = "共处理" + orders.size() + "条数据!";
+		return sb;
+	}
+
 	/**
 	 * 生成EBS退货单信息
-	 * @param beginDate 起始时间，表示检索数据范围从哪一天开始
+	 * 
+	 * @param beginDate
+	 *            起始时间，表示检索数据范围从哪一天开始
 	 * @return
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	@RequestMapping(value = "/return", produces = "application/json;charset=utf8")
 	@ResponseBody
-	public String generateCancelReturnOrderInf(String beginDate) throws ParseException{
+	public String generateCancelReturnOrderInf(String beginDate) throws ParseException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-		if(null == beginDate){
+		if (null == beginDate) {
 			return "起始时间有误!";
 		}
-		//开始处理取消订单未生成的退单数据
+		// 开始处理取消订单未生成的退单数据
 		List<TdReturnNote> notes = tdReturnNoteService.findMissedReturnOrder(sdf.parse(beginDate));
-		System.out.println("开始处理取消订单未生成的退货单,共"+notes.size()+"条数据！");
+		System.out.println("开始处理取消订单未生成的退货单,共" + notes.size() + "条数据！");
 		int monitor = 0;
 		for (TdReturnNote tdReturnNote : notes) {
-			System.out.println("取消订单共"+notes.size()+"条数据,正在处理第"+(++monitor)+"条数据！");
+			System.out.println("取消订单共" + notes.size() + "条数据,正在处理第" + (++monitor) + "条数据！");
 			TdOrder order = tdOrderService.findByOrderNumber(tdReturnNote.getOrderNumber());
 			tdInterfaceService.initReturnOrder(tdReturnNote, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
 			tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
 			tdInterfaceService.sendReturnOrderByAsyn(tdReturnNote);
-			System.out.println("取消订单第"+monitor+"条数据处理成功!");
+			System.out.println("取消订单第" + monitor + "条数据处理成功!");
 		}
 		System.out.println("取消订单未生成的退货单已处理完毕!");
 		monitor = 0;
-		
-		//开始处理拒签退货的数据
+
+		// 开始处理拒签退货的数据
 		List<TdReturnNote> refuseNotes = tdReturnNoteService.findRefusedReturnOrder(sdf.parse(beginDate));
-		System.out.println("开始处理拒签退货未生成的退货单，共"+refuseNotes.size()+"条数据!");
+		System.out.println("开始处理拒签退货未生成的退货单，共" + refuseNotes.size() + "条数据!");
 		for (TdReturnNote tdReturnNote : refuseNotes) {
-			System.out.println("拒签退货共"+refuseNotes.size()+"条数据,正在处理第"+(++monitor)+"条数据！");
+			System.out.println("拒签退货共" + refuseNotes.size() + "条数据,正在处理第" + (++monitor) + "条数据！");
 			TdOrder order = tdOrderService.findByOrderNumber(tdReturnNote.getOrderNumber());
 			tdInterfaceService.initReturnOrder(tdReturnNote, INFConstants.INF_RETURN_ORDER_SUB_INT);
 			tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
 			tdInterfaceService.sendReturnOrderByAsyn(tdReturnNote);
-			System.out.println("拒签退货第"+monitor+"条数据处理成功!");
+			System.out.println("拒签退货第" + monitor + "条数据处理成功!");
 		}
 		System.out.println("拒签退货未生成的退货单已处理完毕!");
 		monitor = 0;
-		
-		//处理正常退货单的数据
+
+		// 处理正常退货单的数据
 		List<TdReturnNote> returnNotes = tdReturnNoteService.findNormalReturnOrder(sdf.parse(beginDate));
-		System.out.println("开始处理正常退货未生成的退货单,共"+returnNotes.size()+"条数据!");
+		System.out.println("开始处理正常退货未生成的退货单,共" + returnNotes.size() + "条数据!");
 		for (TdReturnNote tdReturnNote : returnNotes) {
-			System.out.println("正常退货共"+returnNotes.size()+"条数据,正在处理第"+(++monitor)+"条数据！");
+			System.out.println("正常退货共" + returnNotes.size() + "条数据,正在处理第" + (++monitor) + "条数据！");
 			TdOrder order = tdOrderService.findByOrderNumber(tdReturnNote.getOrderNumber());
 			tdInterfaceService.initReturnOrder(tdReturnNote, INFConstants.INF_RETURN_ORDER_SUB_INT);
 			tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_SUB_INT);
 			tdInterfaceService.sendReturnOrderByAsyn(tdReturnNote);
-			System.out.println("正常退货第"+monitor+"条数据处理成功!");
-			
+			System.out.println("正常退货第" + monitor + "条数据处理成功!");
+
 		}
 		System.out.println("正常退货未生成的退货单已处理完毕！");
-		
-		String sb = "共处理了"+(notes.size()+refuseNotes.size()+returnNotes.size())+"条退货未生成数据";
+
+		String sb = "共处理了" + (notes.size() + refuseNotes.size() + returnNotes.size()) + "条退货未生成数据";
 		return sb;
-		
+
 	}
-	
-	
+
 	/**
 	 * 生成单条退货单信息
+	 * 
 	 * @param returnNumber
 	 * @return
 	 * @throws ParseException
 	 */
 	@RequestMapping(value = "/return/{returnNumber}", produces = "application/json;charset=utf8")
 	@ResponseBody
-	public String generateReturn(@PathVariable String returnNumber ) throws ParseException{
-		TdReturnNote  note = tdReturnNoteService.findByReturnNumber(returnNumber);
-		if(null != note){
+	public String generateReturn(@PathVariable String returnNumber) throws ParseException {
+		TdReturnNote note = tdReturnNoteService.findByReturnNumber(returnNumber);
+		if (null != note) {
 			TdOrder order = tdOrderService.findByOrderNumber(note.getOrderNumber());
 			switch (note.getRemarkInfo()) {
 			case "用户取消订单，退货":
@@ -170,7 +183,7 @@ public class TdGenerationController {
 				tdInterfaceService.initReturnOrder(note, INFConstants.INF_RETURN_ORDER_SUB_INT);
 				tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_CANCEL_INT);
 				tdInterfaceService.sendReturnOrderByAsyn(note);
-				break;		
+				break;
 			default:
 				tdInterfaceService.initReturnOrder(note, INFConstants.INF_RETURN_ORDER_SUB_INT);
 				tdInterfaceService.initReturnCouponInfByOrder(order, INFConstants.INF_RETURN_ORDER_SUB_INT);
@@ -178,23 +191,22 @@ public class TdGenerationController {
 				break;
 			}
 			return "处理成功!";
-		}else{
+		} else {
 			return "该退货单号不存在";
 		}
 	}
-	
-	
-	
+
 	/**
 	 * 生成收款接口表信息
+	 * 
 	 * @param beginDate
 	 * @return
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	@RequestMapping(value = "/cashreceipt", produces = "application/json;charset=utf8")
 	@ResponseBody
-	public String generateReceiptInfo(String beginDate) throws ParseException{
-		if(null ==beginDate){
+	public String generateReceiptInfo(String beginDate) throws ParseException {
+		if (null == beginDate) {
 			return "起止日期格式错误!";
 		}
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -203,12 +215,10 @@ public class TdGenerationController {
 		for (TdOwnMoneyRecord tdOwnMoneyRecord : owds) {
 			this.initCashReciptByTdOwnMoneyRecord(tdOwnMoneyRecord);
 		}
-		
-		
-		return "共处理"+owds.size()+"条数据!";
+
+		return "共处理" + owds.size() + "条数据!";
 	}
-	
-	
+
 	public TdCashReciptInf initCashReciptByTdOwnMoneyRecord(TdOwnMoneyRecord ownMoneyRecord) {
 		if (ownMoneyRecord == null) {
 			return null;
@@ -251,96 +261,96 @@ public class TdGenerationController {
 					pos = 0.00;
 				}
 			}
-			
-			//接口表已生成的各项收款数据值
-			Double intMoney=0.0;
-			Double intPos=0.0;
-			Double intBackMoney=0.0;
-			Double intBackPos=0.0;
-			Double intBackOther=0.0;
+
+			// 接口表已生成的各项收款数据值
+			Double intMoney = 0.0;
+			Double intPos = 0.0;
+			Double intBackMoney = 0.0;
+			Double intBackPos = 0.0;
+			Double intBackOther = 0.0;
 			List<TdCashReciptInf> receipts = tdCashReciptInfService.findByOrderNumber(tdOrder.getOrderNumber());
 			for (TdCashReciptInf tdCashReciptInf : receipts) {
-				if(tdCashReciptInf.getReceiptType().equalsIgnoreCase("配送现金")){
-					intMoney=tdCashReciptInf.getAmount();
-				}else if(tdCashReciptInf.getReceiptType().equalsIgnoreCase("配送POS")){
-					intPos=tdCashReciptInf.getAmount();
-				}else if(tdCashReciptInf.getReceiptType().equalsIgnoreCase("门店现金")){
-					intBackMoney=tdCashReciptInf.getAmount();
-				}else if(tdCashReciptInf.getReceiptType().equalsIgnoreCase("门店POS")){
-					intBackPos=tdCashReciptInf.getAmount();
-				}else if(tdCashReciptInf.getReceiptType().equalsIgnoreCase("门店其他")){
-					intBackOther=tdCashReciptInf.getAmount();
+				if (tdCashReciptInf.getReceiptType().equalsIgnoreCase("配送现金")) {
+					intMoney = tdCashReciptInf.getAmount();
+				} else if (tdCashReciptInf.getReceiptType().equalsIgnoreCase("配送POS")) {
+					intPos = tdCashReciptInf.getAmount();
+				} else if (tdCashReciptInf.getReceiptType().equalsIgnoreCase("门店现金")) {
+					intBackMoney = tdCashReciptInf.getAmount();
+				} else if (tdCashReciptInf.getReceiptType().equalsIgnoreCase("门店POS")) {
+					intBackPos = tdCashReciptInf.getAmount();
+				} else if (tdCashReciptInf.getReceiptType().equalsIgnoreCase("门店其他")) {
+					intBackOther = tdCashReciptInf.getAmount();
 				}
 			}
 
 			// 配送现金
-			if (intMoney==0.0 && ownMoneyRecord.getMoney() > 0) {
+			if (intMoney == 0.0 && ownMoneyRecord.getMoney() > 0) {
 				Double amount = totalPrice * ownMoneyRecord.getMoney() / (allTotalPay);
-				if(amount>0.0){
+				if (amount > 0.0) {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DELIVER_CASH, amount,ownMoneyRecord.getCreateTime());
+							TdCashReciptInf.RECEIPT_TYPE_DELIVER_CASH, amount, ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
 				}
-				
+
 			}
 			// 配送pos
-			if (intPos==0.0 && ownMoneyRecord.getPos() > 0) {
+			if (intPos == 0.0 && ownMoneyRecord.getPos() > 0) {
 				Double amount = totalPrice * ownMoneyRecord.getPos() / allTotalPay;
-				if(amount>0.0){
+				if (amount > 0.0) {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DELIVER_POS, amount,ownMoneyRecord.getCreateTime());
+							TdCashReciptInf.RECEIPT_TYPE_DELIVER_POS, amount, ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
 				}
-				
+
 			}
 			// 门店现金
-			if (intBackMoney==0.0 && money > 0) {
+			if (intBackMoney == 0.0 && money > 0) {
 				Double amount = totalPrice * money / allTotalPay;
-				if(amount>0.0){
+				if (amount > 0.0) {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_CASH, amount,ownMoneyRecord.getCreateTime());
+							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_CASH, amount, ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
 				}
-				
+
 			}
 			// 门店pos
-			if (intBackPos==0.0 && pos > 0) {
+			if (intBackPos == 0.0 && pos > 0) {
 				Double amount = totalPrice * pos / allTotalPay;
-				if(amount>0.0){
+				if (amount > 0.0) {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_POS, amount,ownMoneyRecord.getCreateTime());
+							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_POS, amount, ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
 				}
-				
+
 			}
 			// 新增：2016-08-25抛出门店其他还款金额
-			if (intBackOther==0.0 && backOther > 0) {
+			if (intBackOther == 0.0 && backOther > 0) {
 				Double amount = totalPrice * backOther / allTotalPay;
-				if(amount>0.0){
+				if (amount > 0.0) {
 					TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
-							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_OHTER, amount,ownMoneyRecord.getCreateTime());
+							TdCashReciptInf.RECEIPT_TYPE_DIYSITE_OHTER, amount, ownMoneyRecord.getCreateTime());
 					if (cashReciptInf != null) {
 						tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
 					}
 				}
-				
+
 			}
 
 		}
 
 		return null;
 	}
-	
+
 	public TdCashReciptInf initCashReceiptInfWithOrderAndReceiptTypeAndMoney(TdOrder tdOrder, String receiptTtpe,
-			Double amount,Date ownTime) {
+			Double amount, Date ownTime) {
 		TdOrderInf orderInf = tdOrderInfService.findByOrderNumber(tdOrder.getOrderNumber());
 		if (orderInf == null) {
 			return null;
@@ -367,5 +377,5 @@ public class TdGenerationController {
 		cashReciptInf.setAmount(amount);
 		return tdCashReciptInfService.save(cashReciptInf);
 	}
-	
+
 }

@@ -33,6 +33,9 @@ import com.ynyes.lyz.entity.TdAllocation;
 import com.ynyes.lyz.entity.TdAllocationCallRecord;
 import com.ynyes.lyz.entity.TdAllocationDetail;
 import com.ynyes.lyz.entity.TdDiySite;
+import com.ynyes.lyz.interfaces.entity.TdOrderCouponInf;
+import com.ynyes.lyz.interfaces.entity.TdOrderGoodsInf;
+import com.ynyes.lyz.interfaces.entity.TdOrderInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderReceiveInf;
 import com.ynyes.lyz.interfaces.entity.TdReturnTimeInf;
 import com.ynyes.lyz.repository.TdAllocationCallRecordRepo;
@@ -41,6 +44,9 @@ import com.ynyes.lyz.repository.TdDiySiteRepo;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationDetail;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationHeader;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationReceive;
+import cn.com.leyizhuang.ebs.entity.dto.Order;
+import cn.com.leyizhuang.ebs.entity.dto.OrderCoupon;
+import cn.com.leyizhuang.ebs.entity.dto.OrderGood;
 import cn.com.leyizhuang.ebs.entity.dto.StorePickUp;
 import cn.com.leyizhuang.ebs.entity.dto.StoreReturn;
 
@@ -69,6 +75,126 @@ public class TdEbsSenderService {
 	private TdReturnTimeInfService tdReturnTimeInfService;
     
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
+    
+    
+    /**
+	 * 发送【订单（订单头、订单产品、订单券）】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashRefundInf
+	 * @return
+	 */
+	public Map<String, Object> sendOrderToEbs(TdOrderInf orderInf,List<TdOrderGoodsInf> goodsInfs,List<TdOrderCouponInf> couponInfs) {
+		LOGGER.info("sendOrderToEbs, tdOrderInf=" + orderInf);
+		LOGGER.info("sendOrderToEbs,goodsInfs=" + goodsInfs );
+		LOGGER.info("sendOrderToEbs,couponInfs=" + couponInfs );
+		
+		Order order = new Order();
+		order.setAttribute1(toString(orderInf.getAttribute1()));
+		order.setAttribute2(toString(orderInf.getAttribute2()));
+		order.setAttribute3(toString(orderInf.getAttribute3()));
+		order.setAttribute4(toString(orderInf.getAttribute4()));
+		order.setAttribute5(toString(orderInf.getAttribute5()));
+		order.setCity(toString(orderInf.getCity()));
+		order.setCompanyDeliveryFee(toString(orderInf.getCompanyDeliveryFee()));
+		order.setCouponFlag(toString(orderInf.getCouponFlag()));
+		order.setDeliverTypeTitle(toString(orderInf.getDeliverTypeTitle()));
+		order.setDeliveryFee(toString(orderInf.getDeliveryFee()));
+		order.setDisctrict(toString(orderInf.getDisctrict()));
+		order.setDiySiteCode(toString(orderInf.getDiySiteCode()));
+		order.setDiySiteId(toString(orderInf.getDiySiteId()));
+		order.setDiySiteName(toString(orderInf.getDiySiteName()));
+		order.setDiySitePhone(toString(orderInf.getDiySitePhone()));
+		order.setIsonlinepay(toString(orderInf.getIsonlinepay()));
+		order.setMainOrderNumber(toString(orderInf.getMainOrderNumber()));
+		order.setOrderDate(DateFormatUtils.format(orderInf.getOrderDate(), DateUtil.FORMAT_DATETIME));
+		order.setOrderHeaderId(toString(orderInf.getHeaderId()));
+		order.setOrderNumber(toString(orderInf.getOrderNumber()));
+		order.setOrderTypeId(toString(orderInf.getOrderTypeId()));
+		order.setPayAmt(toString(orderInf.getPayAmt()));
+		order.setPayDate(DateFormatUtils.format(orderInf.getPayDate(), DateUtil.FORMAT_DATETIME));
+		order.setPayType(toString(orderInf.getPayType()));
+		order.setPrepayAmt(toString(orderInf.getPrepayAmt()));
+		order.setProductType(toString(orderInf.getProductType()));
+		order.setProvince(toString(orderInf.getProvince()));
+		order.setRecAmt(toString(orderInf.getRecAmt()));
+		order.setSellerName(toString(orderInf.getSellerName()));
+		order.setSellerPhone(toString(orderInf.getSellerPhone()));
+		order.setShippingAddress(toString(orderInf.getShippingAddress()));
+		order.setShippingName(toString(orderInf.getShippingName()));
+		order.setShippingPhone(toString(orderInf.getShippingPhone()));
+		order.setSobId(toString(orderInf.getSobId()));
+		order.setUserid(toString(orderInf.getUserid()));
+		order.setUsername(toString(orderInf.getUsername()));
+		order.setUserphone(toString(orderInf.getUserphone()));
+		
+		List<OrderGood> orderGoods = new ArrayList<>();
+		if(null != goodsInfs && goodsInfs.size()>0){
+			for (TdOrderGoodsInf orderGoodsInf : goodsInfs) {
+				OrderGood orderGood = new OrderGood();
+				orderGood.setAttribute1(toString(orderGoodsInf.getAttribute1()));
+				orderGood.setAttribute2(toString(orderGoodsInf.getAttribute2()));
+				orderGood.setAttribute3(toString(orderGoodsInf.getAttribute3()));
+				orderGood.setAttribute4(toString(orderGoodsInf.getAttribute4()));
+				orderGood.setAttribute5(toString(orderGoodsInf.getAttribute5()));
+				orderGood.setDeliveryFee("");
+				orderGood.setGiftFlag(toString(orderGoodsInf.getGiftFlag()));
+				orderGood.setGoodsId(toString(orderGoodsInf.getGoodsId()));
+				orderGood.setGoodsSubTitle(toString(orderGoodsInf.getGoodsSubTitle()));
+				orderGood.setGoodsTitle(toString(orderGoodsInf.getGoodsTitle()));
+				orderGood.setHyPrice(toString(orderGoodsInf.getHyPrice()));
+				orderGood.setJxPrice(toString(orderGoodsInf.getJxPrice()));
+				orderGood.setLsPrice(toString(orderGoodsInf.getLsPrice()));
+				orderGood.setOrderHeaderId(toString(orderGoodsInf.getOrderHeaderId()));
+				orderGood.setOrderLineId(toString(orderGoodsInf.getOrderLineId()));
+				orderGood.setProBreakFlag("");
+				orderGood.setPromotion(toString(orderGoodsInf.getPromotion()));
+				orderGood.setQuantity(toString(orderGoodsInf.getQuantity()));
+				orderGood.setSku(toString(orderGoodsInf.getSku()));
+				orderGoods.add(orderGood);
+			}
+		}
+		
+		List<OrderCoupon> orderCoupons = new ArrayList<>();
+		if(null != couponInfs && couponInfs.size()>0){
+			for (TdOrderCouponInf orderCouponInf : couponInfs) {
+				OrderCoupon orderCoupon = new OrderCoupon();
+				orderCoupon.setAttribute1(toString(orderCouponInf.getAttribute1()));
+				orderCoupon.setAttribute2(toString(orderCouponInf.getAttribute2()));
+				orderCoupon.setAttribute3(toString(orderCouponInf.getAttribute3()));
+				orderCoupon.setAttribute4(toString(orderCouponInf.getAttribute4()));
+				orderCoupon.setAttribute5(toString(orderCouponInf.getAttribute5()));
+				orderCoupon.setCouponTypeId(toString(orderCouponInf.getCouponTypeId()));
+				orderCoupon.setHistoryFlag(toString(orderCouponInf.getHistoryFlag()));
+				orderCoupon.setLineId(toString(orderCouponInf.getLineId()));
+				orderCoupon.setOrderHeaderId(toString(orderCouponInf.getOrderHeaderId()));
+				orderCoupon.setPrice(toString(orderCouponInf.getPrice()));
+				orderCoupon.setPromotion(toString(orderCouponInf.getPromotion()));
+				orderCoupon.setQuantity(toString(orderCouponInf.getQuantity()));
+				orderCoupon.setSku(toString(orderCouponInf.getSku()));
+				orderCoupons.add(orderCoupon);
+			}
+		}
+		String orderJson = JSON.toJSONString(order);
+		String orderGoodsJson = JSON.toJSONString(orderGoods);
+		String orderCouponsJson = JSON.toJSONString(orderCoupons);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("orderJson", orderJson));
+		parameters.add(new BasicNameValuePair("orderGoodsJson", orderGoodsJson));
+		parameters.add(new BasicNameValuePair("orderCouponsJson", orderCouponsJson));
+		
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callOrder", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("orderJson", orderJson);
+			content.put("orderGoodsJson", orderGoodsJson);
+			content.put("orderCouponsJson", orderCouponsJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendOrderToEbs, result=" + result);
+		return result;
+	}
 
     /**
      * 异步发送【调拨单(出库)】信息到EBS，并保存发送结果
