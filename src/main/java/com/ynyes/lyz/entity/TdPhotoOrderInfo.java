@@ -1,3 +1,4 @@
+
 package com.ynyes.lyz.entity;
 
 import java.util.Calendar;
@@ -117,6 +118,11 @@ public class TdPhotoOrderInfo {
 	// 门店名
 	@Column(length = 225)
 	private String diySiteName;
+	
+	// 导购id 代下单代沟的ID
+	@Column(length = 20 )
+	private Long sellerid;
+	
 	public static enum Status {
 		WAITING, ACTIONING, FINISHING
 	}
@@ -303,6 +309,14 @@ public class TdPhotoOrderInfo {
 
 	public void setDiySiteName(String diySiteName) {
 		this.diySiteName = diySiteName;
+	}
+
+	public Long getSellerid() {
+		return sellerid;
+	}
+
+	public void setSellerid(Long sellerid) {
+		this.sellerid = sellerid;
 	}
 	
 }

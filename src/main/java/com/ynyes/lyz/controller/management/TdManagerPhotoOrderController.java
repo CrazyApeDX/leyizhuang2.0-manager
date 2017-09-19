@@ -1,6 +1,7 @@
 package com.ynyes.lyz.controller.management;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -14,6 +15,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -172,6 +179,7 @@ public class TdManagerPhotoOrderController {
 	
 	/**
 	 * 跳转到下单页面
+	 * handleType 操作类型 0：新增 、1 ： 查看
 	 * @return
 	 */
 	@RequestMapping(value = "/toprocess/{handleType}")
@@ -340,9 +348,7 @@ public class TdManagerPhotoOrderController {
 
 		orderTemp = tdPriceCouintService.checkCouponIsUsed(orderTemp);
 
-		if (null != realUserId) {
-			orderTemp.setIsSellerOrder(true);
-		}
+		
 
 		// 获取真实用户
 		TdUser realUser = tdUserService.findOne(orderTemp.getRealUserId());
@@ -439,7 +445,7 @@ public class TdManagerPhotoOrderController {
 		}
 		
 		// 设置导购代下单标志为false
-		orderTemp.setIsSellerOrder(false);
+		// orderTemp.setIsSellerOrder(false);
 
 		tdOrderService.save(orderTemp);
 		
@@ -498,6 +504,13 @@ public class TdManagerPhotoOrderController {
 		return false;
 	}
 	
+	/**
+	 * 短信接口
+	 * @param req
+	 * @param phone
+	 * @param message
+	 * @param cityInfo
+	 */
 	private void sendSmsCaptcha(HttpServletRequest req, String phone, String message, String cityInfo) {
 		String content = null;
 		try {
@@ -548,6 +561,25 @@ public class TdManagerPhotoOrderController {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	/**
+	 *  hello world
+	 */
+	@RequestMapping(value = "/call")
+	public void helloWorld(){
+		 String url = "http://192.168.1.238:8080/photo/order/hello?msg=front";
+		 HttpPost httppost = new HttpPost(url);
+		 CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+		 
+		
+		 
+		 try {
+			 System.out.println("呼叫front");
+			 CloseableHttpResponse response = httpclient.execute(httppost);
+		} catch (IOException e) {
+			
 		}
 	}
 }
