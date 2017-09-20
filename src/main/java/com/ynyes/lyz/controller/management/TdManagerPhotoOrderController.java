@@ -452,8 +452,15 @@ public class TdManagerPhotoOrderController {
 		res.put("status", 0);
 		res.put("message", "提交订单成功！");
 		
-		// 订单提交成功 给客户发送短信通知
-		String phone = user.getUsername();
+		String phone = "";
+		if(orderTemp.getIsSellerOrder()){
+			// 导购代下单 短信发给导购
+			phone = orderTemp.getSellerUsername();
+		}else{
+			// 订单提交成功 给客户发送短信通知
+			phone = user.getUsername();
+		}
+		
 		if (null != phone && !"".equalsIgnoreCase(phone)) {
 				this.sendSmsCaptcha(req, phone, 
 						"亲爱的用户，您的拍照订单已生成，订单号: "+orderTemp.getOrderNumber()+"，请尽快前往乐易装APP支付订单", 
