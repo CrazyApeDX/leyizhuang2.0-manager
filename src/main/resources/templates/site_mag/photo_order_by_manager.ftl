@@ -245,6 +245,24 @@ function showPhotoOrderImg(node){
 			        </dl>
         		</td>
         	</tr>
+        	<tr>
+        		<td>
+        		 	<dl >
+			            <dt>导购姓名:</dt>
+			            <dd>
+			                <input id="sellerName" type="text" class="input normal" value="<#if seller??>${seller.realName!'' }</#if>" readonly="readonly">
+			            </dd>
+			        </dl>
+        		</td>
+        		<td>
+        		 	<dl >
+			            <dt>导购电话:</dt>
+			            <dd>
+			                <input id="sellerPhone" type="text" class="input normal" value="<#if seller??>${seller.username!'' }</#if>" readonly="readonly">
+			            </dd>
+			        </dl>
+        		</td>
+        	</tr>
         </table>
         <#if handleType?? && handleType == 0>
 			<dl>

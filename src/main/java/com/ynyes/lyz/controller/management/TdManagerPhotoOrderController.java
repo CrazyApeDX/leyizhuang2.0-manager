@@ -193,6 +193,12 @@ public class TdManagerPhotoOrderController {
 		map.addAttribute("photoOrder", photoOrderInfo);
 		map.addAttribute("shippingAddress",shippingAddress);
 		map.addAttribute("type", handleType);
+		
+		if(photoOrderInfo.getSellerid() != null){
+		   TdUser seller = tdUserService.findOne(photoOrderInfo.getSellerid());
+		   map.addAttribute("seller", seller);
+		}
+		
 		if(handleType == 1){//为查看状态
 			map.addAttribute("photoOrderGoods", tdPhotoOrderGoodsInfoService.findByPhotoOrderIdEquals(photoOrderInfo.getId()));
 		}
