@@ -189,6 +189,12 @@ public class TdManagerPhotoOrderController {
 		map.addAttribute("photoOrder", photoOrderInfo);
 		map.addAttribute("shippingAddress",shippingAddress);
 		map.addAttribute("type", handleType);
+		
+		if(photoOrderInfo.getSellerid() != null){
+		   TdUser seller = tdUserService.findOne(photoOrderInfo.getSellerid());
+		   map.addAttribute("seller", seller);
+		}
+		
 		if(handleType == 1){//为查看状态
 			map.addAttribute("photoOrderGoods", tdPhotoOrderGoodsInfoService.findByPhotoOrderIdEquals(photoOrderInfo.getId()));
 		}
@@ -344,9 +350,7 @@ public class TdManagerPhotoOrderController {
 
 		orderTemp = tdPriceCouintService.checkCouponIsUsed(orderTemp);
 
-		if (null != realUserId) {
-			orderTemp.setIsSellerOrder(true);
-		}
+		
 
 		// 获取真实用户
 		TdUser realUser = tdUserService.findOne(orderTemp.getRealUserId());
@@ -441,9 +445,6 @@ public class TdManagerPhotoOrderController {
 				}
 			}
 		}
-		
-		// 设置导购代下单标志为false
-		orderTemp.setIsSellerOrder(false);
 
 		tdOrderService.save(orderTemp);
 		
@@ -455,8 +456,15 @@ public class TdManagerPhotoOrderController {
 		res.put("status", 0);
 		res.put("message", "提交订单成功！");
 		
-		// 订单提交成功 给客户发送短信通知
-		String phone = user.getUsername();
+		String phone = "";
+		if(orderTemp.getIsSellerOrder()){
+			// 导购代下单 短信发给导购
+			phone = orderTemp.getSellerUsername();
+		}else{
+			// 订单提交成功 给客户发送短信通知
+			phone = user.getUsername();
+		}
+		
 		if (null != phone && !"".equalsIgnoreCase(phone)) {
 				this.sendSmsCaptcha(req, phone, 
 						"亲爱的用户，您的拍照订单已生成，订单号: "+orderTemp.getOrderNumber()+"，请尽快前往乐易装APP支付订单", 
@@ -507,6 +515,13 @@ public class TdManagerPhotoOrderController {
 		return false;
 	}
 	
+	/**
+	 * 短信接口
+	 * @param req
+	 * @param phone
+	 * @param message
+	 * @param cityInfo
+	 */
 	private void sendSmsCaptcha(HttpServletRequest req, String phone, String message, String cityInfo) {
 		String content = null;
 		try {

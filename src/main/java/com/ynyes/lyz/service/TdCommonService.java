@@ -4321,13 +4321,23 @@ public class TdCommonService {
 		TdDiySite defaultDiy = this.getDiySite(req);
 
 		TdUser seller = null;
+		TdPhotoOrderInfo photoOrderInfo = null;
 		// 获取用户的导购
 		if (1L == user.getUserType().longValue() || 2L == user.getUserType().longValue()) {
-			// 如果当前登录账户是销顾或者店长，则该单的seller是他自己
-			seller = user;
+			
 		} else {
+			 photoOrderInfo = tdPhotoOrderInfoService.findOne(photoOrderId);
 			Long id = user.getSellerId();
-			seller = tdUserService.findOne(id);
+			if(photoOrderInfo.getSellerid() != null){
+				// 拍照下单为代下单，则从拍照订单中取 seller
+				seller = tdUserService.findOne(photoOrderInfo.getSellerid());
+				virtual.setIsSellerOrder(true);
+			}else{
+				// 取用户默认sellerId
+				seller = tdUserService.findOne(id);
+				virtual.setIsSellerOrder(false);
+			}
+			
 			if (null == seller) {
 				seller = new TdUser();
 			}
@@ -4418,9 +4428,9 @@ public class TdCommonService {
 		// 导购代下单
 		TdUser realUser = tdUserService.findOne(realUserId);
 		// 要导购和会员都允许货到付款才可以选择货到付款 如果为会员--不能活到付款（2017-08-31）
-		if ((user.getIsCashOnDelivery() == null || user.getIsCashOnDelivery())
+		if ((seller.getIsCashOnDelivery() == null || seller.getIsCashOnDelivery())
 				&& (realUser == null || realUser.getIsCashOnDelivery() == null || realUser.getIsCashOnDelivery())
-				&& (user.getUserType() != 0L)) {
+				&& (photoOrderInfo.getSellerid() != null)) {
 			defaultType = tdPayTypeService.findByTitleAndIsEnableTrue("货到付款");
 		} else {
 			// 默认选择一个线上支付方式
@@ -4487,18 +4497,7 @@ public class TdCommonService {
 		virtual.setAgencyRefund(0d);
 		virtual.setMockReceivable(0d);
 
-		if (user.getUserType().equals(1L) || user.getUserType().equals(2L) || user.getUserType().equals(3L)
-				|| user.getUserType().equals(4L)) {
-			virtual.setIsSellerOrder(true);
-			// TdUser realUser = tdUserService.findOne(realUserId);
-			if (null != realUser) {
-				virtual.setRealUserId(realUser.getId());
-				virtual.setRealUserRealName(realUser.getRealName());
-				virtual.setRealUserUsername(realUser.getUsername());
-			}
-		} else {
-			virtual.setIsSellerOrder(false);
-		}
+		
 		// 遍历所有的已选商品，生成虚拟订单
 		for (TdCartGoods cart : select_goods) {
 			TdOrderGoods goods = new TdOrderGoods();
