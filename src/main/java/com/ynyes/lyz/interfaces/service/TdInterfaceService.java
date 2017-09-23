@@ -10,6 +10,7 @@ import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +24,8 @@ import org.apache.axis.client.Call;
 import org.apache.axis.encoding.XMLType;
 import org.apache.axis.message.SOAPHeaderElement;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,6 +67,7 @@ import com.ynyes.lyz.service.TdPriceListItemService;
 import com.ynyes.lyz.service.TdPriceListService;
 import com.ynyes.lyz.service.TdReturnNoteService;
 import com.ynyes.lyz.service.TdSettingService;
+import com.ynyes.lyz.service.TdUserService;
 
 @Service
 @Transactional
@@ -128,8 +132,13 @@ public class TdInterfaceService {
 
 	@Autowired
 	private FitCompanyService fitCompanyService;
+	
+	@Autowired
+	private TdUserService tdUserService;
 
 	private Call call;
+	
+	private final Logger LOG = LoggerFactory.getLogger(TdInterfaceService.class);
 
 	// private org.apache.axis.client.Service wbService = new
 	// org.apache.axis.client.Service();
@@ -1759,5 +1768,337 @@ public class TdInterfaceService {
 
 		return true;
 	}
+
+	/**
+	 * 根据订单生成销售订单相关数据
+	 * 
+	 * @param tdOrder
+	 */
+	public HashMap<String, Object> initOrderInfNew(TdOrder tdOrder) {
+		HashMap<String, Object> paramMap = new HashMap<>();
+		if (tdOrder == null) {
+			return null;
+		}
+
+		TdOrderInf orderInf = tdOrderInfService.findByOrderNumber(tdOrder.getOrderNumber());
+		if (orderInf != null) {
+			return null;
+		}
+		orderInf = new TdOrderInf();
+		// 获取在门店会员下单/装饰公司下单两种不同渠道下的SobId
+		Long sobId = 0L;
+		{
+			if (!tdOrder.getOrderNumber().contains("FIT")) {
+				TdDiySite diySite = tdDiySiteService.findOne(tdOrder.getDiySiteId());
+				if (diySite != null) {
+					sobId = diySite.getRegionId();
+				}
+			} else {
+				try {
+					FitCompany company = fitCompanyService.findOne(tdOrder.getDiySiteId());
+					if (null != company) {
+						sobId = company.getSobId();
+					}
+				} catch (Exception e) {
+					LOG.error(e.getMessage());
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		int orderTypeId = 4;
+		boolean fxFlag = false;
+		String realUserCode = null;
+		if (tdOrder.getDiySiteCode().startsWith("FX#")) {
+			fxFlag = true;
+			orderTypeId = 2;
+			// 查询真实用户的store_code，对应td_user表中的op_user字段
+			TdUser realUser = tdUserService.findOne(tdOrder.getRealUserId());
+			realUserCode = realUser.getOpUser();
+		} 
+
+		String payTypeTitle = tdOrder.getPayTypeTitle();
+		orderInf.setSobId(sobId);
+		orderInf.setOrderNumber(tdOrder.getOrderNumber());
+		orderInf.setOrderDate(tdOrder.getOrderTime());
+		orderInf.setMainOrderNumber(tdOrder.getMainOrderNumber());
+		orderInf.setProductType(StringTools.getProductStrByOrderNumber(tdOrder.getOrderNumber()));
+		orderInf.setOrderTypeId(orderTypeId);
+		orderInf.setUserid(tdOrder.getRealUserId());
+		orderInf.setUsername(tdOrder.getRealUserRealName());
+		orderInf.setUserphone(tdOrder.getRealUserUsername());
+		orderInf.setDiySiteId(tdOrder.getDiySiteId());
+		orderInf.setDiySiteCode(tdOrder.getDiySiteCode());
+		orderInf.setDiySiteName(tdOrder.getDiySiteName());
+		orderInf.setDiySitePhone(tdOrder.getDiySitePhone());
+		orderInf.setProvince(tdOrder.getProvince());
+		orderInf.setCity(tdOrder.getCity());
+		orderInf.setDisctrict(tdOrder.getDisctrict());
+		orderInf.setShippingName(tdOrder.getShippingName());
+		orderInf.setShippingPhone(tdOrder.getShippingPhone());
+		orderInf.setShippingAddress(tdOrder.getShippingAddress());
+		orderInf.setSellerPhone(tdOrder.getSellerUsername());
+		orderInf.setSellerName(tdOrder.getSellerRealName());
+		orderInf.setDeliverTypeTitle(tdOrder.getDeliverTypeTitle());
+		orderInf.setIsonlinepay(booleanStrByPayTypeId(tdOrder.getPayTypeId()));
+		orderInf.setPayType(("微信支付".equalsIgnoreCase(payTypeTitle) ? "微信" : payTypeTitle));
+		orderInf.setPayDate(tdOrder.getPayTime());
+		orderInf.setPayAmt(booleanByStr(orderInf.getIsonlinepay()) ? tdOrder.getTotalPrice() : 0);
+		if (tdOrder.getOrderNumber().contains("FIT")) {
+			orderInf.setCreditAmt(tdOrder.getCashBalanceUsed() + tdOrder.getUnCashBalanceUsed());
+			orderInf.setPrepayAmt(0d);
+		} else {
+			orderInf.setPrepayAmt(tdOrder.getCashBalanceUsed() + tdOrder.getUnCashBalanceUsed());
+		}
+		if ("支付宝".equalsIgnoreCase(payTypeTitle) || "银行卡".equalsIgnoreCase(payTypeTitle)
+				|| "微信支付".equalsIgnoreCase(payTypeTitle)) {
+			orderInf.setRecAmt(0.0);
+		} else {
+			orderInf.setRecAmt(tdOrder.getTotalPrice());
+		}
+		if (fxFlag){
+			orderInf.setAttribute3(realUserCode);
+		}
+
+		String cashCouponId = (null == tdOrder.getCashCouponId()) ? "" : tdOrder.getCashCouponId();
+		String productCouponId = (null == tdOrder.getProductCouponId()) ? "" : tdOrder.getProductCouponId();
+		String couponIdsStr = cashCouponId + productCouponId;
+		if (!couponIdsStr.equals("")) {
+			orderInf.setCouponFlag('Y');
+		} else {
+			orderInf.setCouponFlag('N');
+			;
+		}
+		Double deliverFee = tdOrder.getDeliverFee();
+		if (null != deliverFee && deliverFee > 0d) {
+			orderInf.setDeliveryFee(deliverFee);
+		} else {
+			orderInf.setDeliveryFee(0d);
+		}
+		Double companyDeliveryFee = tdOrder.getCompanyDeliveryFee();
+		if (null != companyDeliveryFee && companyDeliveryFee > 0d) {
+			orderInf.setCompanyDeliveryFee(companyDeliveryFee);
+		} else {
+			orderInf.setCompanyDeliveryFee(0d);
+		}
+		orderInf.setAttribute1(tdOrder.getCredit() + "");
+		tdOrderInfService.save(orderInf);
+
+		paramMap.put("orderInf", orderInf);
+
+		// 商品TdOrderGoodsInf
+		List<TdOrderGoodsInf> goodsInfs = new ArrayList<>();
+
+		List<TdOrderGoods> goodsList = tdOrder.getOrderGoodsList();
+		if (goodsList != null && goodsList.size() > 0) {
+			for (TdOrderGoods tdOrderGoods : goodsList) {
+				TdOrderGoodsInf goodsInf = new TdOrderGoodsInf();
+				goodsInf.setOrderHeaderId(orderInf.getHeaderId());
+				goodsInf.setGoodsId(tdOrderGoods.getGoodsId());
+				goodsInf.setGoodsTitle(tdOrderGoods.getGoodsTitle());
+				goodsInf.setGoodsSubTitle(tdOrderGoods.getGoodsSubTitle());
+				goodsInf.setSku(tdOrderGoods.getSku());
+				goodsInf.setQuantity(tdOrderGoods.getQuantity());
+
+				// 2017-09-11：lsPrice恒定设置零售价，hyPrice设置结算价
+				{
+					if (tdOrder.getOrderNumber().contains("FIT")) {
+						// 装饰公司订单，结算价恒定为"会员价"字段的值
+						goodsInf.setLsPrice(tdOrderGoods.getPrice());
+						goodsInf.setHyPrice(tdOrderGoods.getRealPrice());
+					} else {
+						goodsInf.setLsPrice(tdOrderGoods.getPrice());
+						// 导购/会员下单，要根据订单归属会员的身份来判定结算价
+						if (null != tdOrder.getDifFee() && tdOrder.getDifFee() > 0) {
+							goodsInf.setHyPrice(tdOrderGoods.getRealPrice());
+						} else {
+							goodsInf.setHyPrice(tdOrderGoods.getPrice());
+						}
+					}
+				}
+				goodsInf.setGiftFlag("N");
+				goodsInf.setPromotion(tdOrderGoods.getActivityId());
+				tdOrderGoodsInfService.save(goodsInf);
+				goodsInfs.add(goodsInf);
+			}
+		}
+		// 小辅料TdOrderGoodsInf
+		List<TdOrderGoods> gifList = tdOrder.getGiftGoodsList();
+		if (gifList != null && gifList.size() > 0) {
+			for (TdOrderGoods tdOrderGoods : gifList) {
+				TdOrderGoodsInf goodsInf = new TdOrderGoodsInf();
+				goodsInf.setOrderHeaderId(orderInf.getHeaderId());
+				goodsInf.setGoodsId(tdOrderGoods.getGoodsId());
+				goodsInf.setGoodsTitle(tdOrderGoods.getGoodsTitle());
+				goodsInf.setGoodsSubTitle(tdOrderGoods.getGoodsSubTitle());
+				goodsInf.setSku(tdOrderGoods.getSku());
+				goodsInf.setQuantity(tdOrderGoods.getQuantity());
+				goodsInf.setLsPrice(this.getGoodsPrice(sobId, tdOrderGoods));
+				// 小辅料的结算价恒定为0
+				goodsInf.setHyPrice(0d);
+				goodsInf.setGiftFlag("Y");
+				goodsInf.setPromotion(tdOrderGoods.getActivityId());
+				tdOrderGoodsInfService.save(goodsInf);
+				goodsInfs.add(goodsInf);
+			}
+		}
+		// 赠品TdOrderGoodsInf
+		List<TdOrderGoods> presentedList = tdOrder.getPresentedList();
+		if (presentedList != null && presentedList.size() > 0) {
+			for (TdOrderGoods tdOrderGoods : presentedList) {
+				TdOrderGoodsInf goodsInf = new TdOrderGoodsInf();
+				goodsInf.setOrderHeaderId(orderInf.getHeaderId());
+				goodsInf.setGoodsId(tdOrderGoods.getGoodsId());
+				goodsInf.setGoodsTitle(tdOrderGoods.getGoodsTitle());
+				goodsInf.setGoodsSubTitle(tdOrderGoods.getGoodsSubTitle());
+				goodsInf.setSku(tdOrderGoods.getSku());
+				goodsInf.setQuantity(tdOrderGoods.getQuantity());
+				goodsInf.setLsPrice(tdOrderGoods.getGiftPrice());
+				// 2017-09-09：赠品的结算价恒定为0
+				goodsInf.setHyPrice(0d);
+				goodsInf.setGiftFlag("Y");
+				goodsInf.setPromotion(tdOrderGoods.getActivityId());
+				tdOrderGoodsInfService.save(goodsInf);
+				goodsInfs.add(goodsInf);
+			}
+		}
+		paramMap.put("goodsInfs", goodsInfs);
+
+		List<TdOrderCouponInf> couponInfs = new ArrayList<>();
+		String[] couponIds = couponIdsStr.split(",");
+		for (String string : couponIds) {
+			if (org.apache.commons.lang3.StringUtils.isNotBlank(string)) {
+				Long couponId = Long.parseLong(string);
+				TdCoupon tdCoupon = tdCouponService.findOne(couponId);
+				if (tdCoupon != null) {
+					// 优惠券
+					TdOrderCouponInf couponInf = new TdOrderCouponInf();
+					couponInf.setOrderHeaderId(orderInf.getHeaderId());
+					couponInf.setCouponTypeId(StringTools.coupontypeWithCoupon(tdCoupon));
+					couponInf.setSku(null == tdCoupon.getSku() ? null : tdCoupon.getSku().trim());
+					couponInf.setQuantity(1L);
+					if (null != tdCoupon.getTypeCategoryId()) {
+						Long type = tdCoupon.getTypeCategoryId();
+						if (type.longValue() == 1L) {
+							couponInf.setPrice(tdCoupon.getRealPrice());
+						} else if (type.longValue() == 2L) {
+							couponInf.setPrice(tdCoupon.getRealPrice());
+						} else if (type.longValue() == 3L) {
+							if (null != tdCoupon.getIsBuy() && tdCoupon.getIsBuy()) {
+								couponInf.setPrice(tdCoupon.getBuyPrice());
+							} else {
+								couponInf.setPrice(0.00);
+							}
+						}
+					}
+					couponInf.setHistoryFlag(StringTools.getHistoryFlagByCouponType(tdCoupon.getTypeCategoryId()));
+					couponInf.setAttribute1(tdCoupon.getSign());
+					tdOrderCouponInfService.save(couponInf);
+					couponInfs.add(couponInf);
+				}
+			}
+		}
+
+		// 获取满金额赠金额
+		if (tdOrder.getActivitySubPrice() != null && tdOrder.getActivitySubPrice() > 0) {
+			TdOrderCouponInf couponInf = new TdOrderCouponInf();
+			couponInf.setOrderHeaderId(orderInf.getHeaderId());
+			couponInf.setCouponTypeId(3);
+			couponInf.setSku(null);
+			couponInf.setQuantity(1L);
+			couponInf.setPrice(tdOrder.getActivitySubPrice());
+			couponInf.setHistoryFlag("N");
+			tdOrderCouponInfService.save(couponInf);
+			couponInfs.add(couponInf);
+		}
+
+		paramMap.put("couponInfs", couponInfs);
+		List<TdCashReciptInf> cashReciptInfs = new ArrayList<>();
+		if (tdOrder.getUpstairsBalancePayed() > 0) {
+			TdCashReciptInf cashReciptInf = tdCashReciptInfService
+					.findByOrderNumberAndReceiptClassAndReceiptType(tdOrder.getMainOrderNumber(), "上楼费", "预收款");
+			if (null == cashReciptInf) {
+				if (tdOrder.getUpstairsBalancePayed() > 0) {
+					cashReciptInf = new TdCashReciptInf();
+					cashReciptInf.setSobId(sobId);
+					cashReciptInf.setReceiptNumber(tdOrder.getMainOrderNumber().replace("XN", "UPB"));
+					cashReciptInf.setUserid(tdOrder.getRealUserId());
+					cashReciptInf.setUsername(tdOrder.getRealUserRealName());
+					cashReciptInf.setUserphone(tdOrder.getRealUserUsername());
+					cashReciptInf.setDiySiteCode(tdOrder.getDiySiteCode());
+					cashReciptInf.setReceiptClass("上楼费");
+					cashReciptInf.setOrderNumber(tdOrder.getMainOrderNumber());
+					cashReciptInf.setProductType("UPSTAIRS");
+					cashReciptInf.setReceiptType("预收款");
+					cashReciptInf.setReceiptDate(new Date());
+					cashReciptInf.setAmount(tdOrder.getUpstairsBalancePayed());
+					if (fxFlag){
+						cashReciptInf.setAttribute3(realUserCode);
+					}
+					tdCashReciptInfService.save(cashReciptInf);
+				}
+			}
+			cashReciptInfs.add(cashReciptInf);
+		}
+		if (tdOrder.getUpstairsOtherPayed() > 0) {
+			TdCashReciptInf cashReciptInf = tdCashReciptInfService.findByOrderNumberAndReceiptClassAndReceiptType(
+					tdOrder.getMainOrderNumber(), "上楼费", tdOrder.getPayTypeTitle());
+			if (null == cashReciptInf) {
+				if (tdOrder.getUpstairsBalancePayed() > 0) {
+					cashReciptInf = new TdCashReciptInf();
+					cashReciptInf.setSobId(sobId);
+					cashReciptInf.setReceiptNumber(tdOrder.getMainOrderNumber().replace("XN", "UPO"));
+					cashReciptInf.setUserid(tdOrder.getRealUserId());
+					cashReciptInf.setUsername(tdOrder.getRealUserRealName());
+					cashReciptInf.setUserphone(tdOrder.getRealUserUsername());
+					cashReciptInf.setDiySiteCode(tdOrder.getDiySiteCode());
+					cashReciptInf.setReceiptClass("上楼费");
+					cashReciptInf.setOrderNumber(tdOrder.getMainOrderNumber());
+					cashReciptInf.setProductType("UPSTAIRS");
+					cashReciptInf.setReceiptType(tdOrder.getPayTypeTitle());
+					cashReciptInf.setReceiptDate(new Date());
+					cashReciptInf.setAmount(tdOrder.getUpstairsOtherPayed());
+					if (fxFlag){
+						cashReciptInf.setAttribute3(realUserCode);
+					}
+					tdCashReciptInfService.save(cashReciptInf);
+				}
+			}
+			cashReciptInfs.add(cashReciptInf);
+		}
+
+		// 2017-09-09：生成经销差价返还的cashReceipt
+		Double jxTotalPrice = tdOrder.getJxTotalPrice();
+		jxTotalPrice = null == jxTotalPrice ? 0d : jxTotalPrice;
+		if (jxTotalPrice > 0d) {
+			TdCashReciptInf cashReciptInf = tdCashReciptInfService
+					.findByOrderNumberAndReceiptClassAndReceiptType(tdOrder.getOrderNumber(), "经销差价", "预收款");
+			if (null == cashReciptInf) {
+				cashReciptInf = new TdCashReciptInf();
+				cashReciptInf.setSobId(sobId);
+				cashReciptInf.setReceiptNumber(TdCashReciptInf.createReceiptNumber());
+				cashReciptInf.setUserid(tdOrder.getRealUserId());
+				cashReciptInf.setUsername(tdOrder.getRealUserRealName());
+				cashReciptInf.setUserphone(tdOrder.getRealUserUsername());
+				cashReciptInf.setDiySiteCode(tdOrder.getDiySiteCode());
+				cashReciptInf.setReceiptClass("经销差价");
+				cashReciptInf.setOrderNumber(tdOrder.getOrderNumber());
+				cashReciptInf.setProductType("JXDIF");
+				cashReciptInf.setReceiptType("预收款");
+				cashReciptInf.setReceiptDate(new Date());
+				cashReciptInf.setAmount(jxTotalPrice);
+				cashReciptInf.setOrderHeaderId(orderInf.getHeaderId());
+				if (fxFlag){
+					cashReciptInf.setAttribute3(realUserCode);
+				}
+				tdCashReciptInfService.save(cashReciptInf);
+			}
+			cashReciptInfs.add(cashReciptInf);
+		}
+
+		paramMap.put("cashReciptInfs", cashReciptInfs);
+		return paramMap;
+	}
+
 
 }

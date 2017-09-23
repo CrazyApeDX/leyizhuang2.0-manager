@@ -1,5 +1,6 @@
 package com.ynyes.lyz.interfaces.entity;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -28,6 +29,8 @@ public class TdCashReciptInf extends TdInfBaseEntity{
 	public static final String RECEIPT_TYPE_DIYSITE_OHTER = "门店其他";
 	public static final String RECEIPT_TYPE_DELIVER_CASH	= "配送现金";
 	public static final String RECEIPT_TYPE_DELIVER_POS		= "配送POS";
+	
+	private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMddHHmmss");
 	
 	//分公司id
 	@Column
@@ -280,6 +283,14 @@ public class TdCashReciptInf extends TdInfBaseEntity{
 				+ orderNumber + ", productType=" + productType + ", receiptType=" + receiptType + ", receiptDate="
 				+ receiptDate + ", amount=" + amount + ", attribute1=" + attribute1 + ", attribute2=" + attribute2
 				+ ", attribute3=" + attribute3 + ", attribute4=" + attribute4 + ", attribute5=" + attribute5 + "]";
+	}
+	
+	public static String createReceiptNumber() {
+		Date now = new Date();
+		String middle = SDF.format(now);
+
+		int i = (int) (Math.random() * 900) + 100;
+		return "RC" + middle + i;
 	}
 	
 }

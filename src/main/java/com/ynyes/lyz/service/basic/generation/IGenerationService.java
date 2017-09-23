@@ -17,4 +17,6 @@ public interface IGenerationService {
 	
 	List<TdOrderCouponInf> generateOrderCouponInf(TdOrder order, TdOrderInf orderInf);
 
+	String generateOrderDataNew(TdOrder order);
+
 }
