@@ -43,6 +43,10 @@ public class TdWareHouse {
 	@Column
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Double sortId;
+	
+	// sobid
+	@Column
+	private Long sobId;
 
 	public Long getId() {
 		return id;
@@ -92,5 +96,11 @@ public class TdWareHouse {
 		this.updateTime = updateTime;
 	}
 
-	
+	public Long getSobId() {
+		return sobId;
+	}
+
+	public void setSobId(Long sobId) {
+		this.sobId = sobId;
+	}
 }
