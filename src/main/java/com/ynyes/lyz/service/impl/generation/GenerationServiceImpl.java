@@ -16,6 +16,7 @@ import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
+import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderCouponInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderGoodsInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderInf;
@@ -70,6 +71,29 @@ public class GenerationServiceImpl implements IGenerationService {
 		}
 		sb.append("优惠券信息").append("\n");
 		for (TdOrderCouponInf orderCouponInf : orderCoouponInfList) {
+			sb.append("\t").append(orderCouponInf.toString()).append("\n");
+		}
+		sb.append("--------------------------------------------------------------");
+		return sb.toString();
+	}
+	
+	@Override
+	public String generateOrderDataNew(TdOrder order) {
+		StringBuffer sb = new StringBuffer();
+		HashMap<String, Object> paramMap = tdInterfaceService.initOrderInfNew(order);
+		TdOrderInf orderInf = (TdOrderInf) paramMap.get("orderInf");
+		@SuppressWarnings("unchecked")
+		List<TdOrderGoodsInf> goodsInfs = (List<TdOrderGoodsInf>) paramMap.get("goodsInfs");
+		@SuppressWarnings("unchecked")
+		List<TdOrderCouponInf> couponInfs = (List<TdOrderCouponInf>) paramMap.get("couponInfs");
+		sb.append("订单信息").append("\n");
+		sb.append(orderInf.toString()).append("\n");
+		sb.append("商品信息").append("\n");
+		for (TdOrderGoodsInf orderGoodsInf : goodsInfs) {
+			sb.append("\t").append(orderGoodsInf.toString()).append("\n");
+		}
+		sb.append("优惠券信息").append("\n");
+		for (TdOrderCouponInf orderCouponInf : couponInfs) {
 			sb.append("\t").append(orderCouponInf.toString()).append("\n");
 		}
 		sb.append("--------------------------------------------------------------");

@@ -943,183 +943,173 @@ public class SettlementServiceImpl implements ISettlementService {
 	@Override
 	public Map<String, Double> countOrderDeliveryFee(TdUser user, TdOrder order) throws Exception {
 
-		Map<String, Double> deliveryMap = new HashMap<>();// 用map存储用户运费和公司运费
-
-		if (order.getDeliverTypeTitle().equals("门店自提")) {
-			return deliveryMap;
-		} else {
-
-			if (null != order.getIsFixedDeliveryFee() && order.getIsFixedDeliveryFee()) {
-				deliveryMap.put("user_delivery_fee", order.getDeliverFee());
-				deliveryMap.put("company_delivery_fee", order.getCompanyDeliveryFee());
+		Map<String, Double> deliveryMap = new HashMap<>();
+		if (order.getCity().equalsIgnoreCase("成都市") && !order.getOrderNumber().contains("FIT")) {
+			// 门店自提不收取运费，只有配送才收取运费
+			if (order.getDeliverTypeTitle().equals("门店自提")) {
 				return deliveryMap;
 			} else {
-				double bucketsOfPaintFee = 0;// 大桶漆配送费
-				double nitrolacquerFee = 0;// 硝基漆10L配送费
-				double carpentryPaintFee = 0;// 小桶漆/木器漆配送费
-				double belowFourKiloFee = 0;// 4kg以下漆类配送费
-				double wallAccessories = 0;// 订单辅料总金额
-				double consumerDeliveryFee = 0;// 客户承担的运费
-				double companyDeliveryFee = 0;// 公司承担的运费
+				// 如果后台有修改运费，那么，就按照修改的运费执行
+				if (null != order.getIsFixedDeliveryFee() && order.getIsFixedDeliveryFee()) {
+					deliveryMap.put("user_delivery_fee", order.getDeliverFee());
+					deliveryMap.put("company_delivery_fee", order.getCompanyDeliveryFee());
+					return deliveryMap;
+				} else {
 
-				long consumerAffordQuantity = 0;// 客户承担运费的漆桶数
+					TdOrderDeliveryFeeDetail detail = tdOrderDeliveryFeedetailService
+							.findByMainOrderNumber(order.getOrderNumber());
+					if (null == detail) {
+						detail = new TdOrderDeliveryFeeDetail();
+					}
+					detail.setMainOrderNumber(
+							null == order.getMainOrderNumber() ? order.getOrderNumber() : order.getMainOrderNumber());
+					detail.setDiySiteId(order.getDiySiteId());
+					detail.setDiySiteName(order.getDiySiteName());
+					detail.setOrderTime(null == order.getOrderTime() ? null : order.getOrderTime());
+					detail.setSellerUsername(order.getSellerUsername());
+					detail.setSellerRealName(order.getSellerRealName());
+					detail.setUsername(order.getUsername());
+					detail.setUserRealName(order.getRealUserRealName());
+					detail.setIsCustomerDeliveryFeeModified(false);
 
-				long companyAffordQuantity = 0;// 公司承担运费的漆桶数
-				TdOrderDeliveryFeeDetail detail = tdOrderDeliveryFeedetailService
-						.findByMainOrderNumber(order.getOrderNumber());
-				if (null == detail) {
-					detail = new TdOrderDeliveryFeeDetail();
-				}
-				detail.setMainOrderNumber(
-						null == order.getMainOrderNumber() ? order.getOrderNumber() : order.getMainOrderNumber());
-				detail.setDiySiteId(order.getDiySiteId());
-				detail.setDiySiteName(order.getDiySiteName());
-				detail.setOrderTime(null == order.getOrderTime() ? null : order.getOrderTime());
-				detail.setSellerUsername(order.getSellerUsername());
-				detail.setSellerRealName(order.getSellerRealName());
-				detail.setUsername(order.getUsername());
-				detail.setUserRealName(order.getRealUserRealName());
-				detail.setIsCustomerDeliveryFeeModified(false);
-
-				Double deliveryFee = 0d;// 运费总额
-
-				Map<Long, TdOrderGoods> orderGoodsMap = this.countOrderGoodsNumber(order);
-				for (TdOrderGoods orderGoods : orderGoodsMap.values()) {
-					TdDeliveryFeeHead tdDeliveryFeeHead = tdDeliveryFeeHeadService
-							.findBySobIdAndGoodsId(user.getCityId(), orderGoods.getGoodsId());
-					Double fee = this.countOrderGoodsDeliveryFee(user, orderGoods);
-					// 运费大于0 说明该产品有运费配置，则tdDeliveryFeeHead不为null
-					if (null != fee && fee > 0) {
-						switch (tdDeliveryFeeHead.getGoodsTypeId()) {
-						case 1:
-							bucketsOfPaintFee += fee;
-							break;
-						case 2:
-							nitrolacquerFee += fee;
-							break;
-						case 3:
-							carpentryPaintFee += fee;
-							break;
-						case 4:
-							belowFourKiloFee += fee;
-							break;
-						default:
-							break;
+					/*
+					 * 两种情况 一种是商品金额大于1000，不向会员收取运费，只向公司收取运费；
+					 * 另一种是商品金额小于1000，只向会员收取运费，不向公司收取运费
+					 */
+					Double totalGoodsPrice = null == order.getTotalGoodsPrice() ? 0d : order.getTotalGoodsPrice();
+					Double difFee = null == order.getDifFee() ? 0d : order.getDifFee();
+					Double cashCouponFee = null == order.getCashCoupon() ? 0d : order.getCashCoupon();
+					Double activitySubFee = null == order.getActivitySubPrice() ? 0d : order.getActivitySubPrice();
+					Double proCouponFee = 0d;
+					String productCouponId = order.getProductCouponId();
+					if (null != productCouponId) {
+						String[] split = productCouponId.split(",");
+						if (null != split && split.length > 0) {
+							for (String sId : split) {
+								if (null != sId && !sId.trim().equals("")) {
+									Long id = Long.parseLong(sId);
+									TdCoupon coupon = tdCouponService.findOne(id);
+									if (null != coupon && !(null != coupon.getIsBuy() && coupon.getIsBuy())) {
+										Double couponFee = null == coupon.getPrice() ? 0d : coupon.getPrice();
+										proCouponFee += couponFee;
+									}
+								}
+							}
 						}
 					}
 
-					if (null != tdDeliveryFeeHead && tdDeliveryFeeHead.getAssumedObjectId() == 1) {
-						consumerDeliveryFee += fee;
-						consumerAffordQuantity += orderGoods.getQuantity();
+					Double strandardFee = totalGoodsPrice - cashCouponFee - activitySubFee - proCouponFee - difFee;
 
-					} else if (null != tdDeliveryFeeHead && tdDeliveryFeeHead.getAssumedObjectId() == 2) {
-						companyDeliveryFee += fee;
-						companyAffordQuantity += orderGoods.getQuantity();
-					}
-					if (orderGoods.getIsWallAccessory() == true) {
-						wallAccessories += orderGoods.getPrice() * orderGoods.getQuantity();
-					}
+					if (strandardFee >= 1000) {
 
-				}
+						deliveryMap.put("user_delivery_fee", 0d);
+						double bucketsOfPaintFee = 0d;// 大桶漆配送费
+						double nitrolacquerFee = 0d;// 硝基漆10L配送费
+						double carpentryPaintFee = 0d;// 小桶漆/木器漆配送费
+						double belowFourKiloFee = 0d;// 4kg以下漆类配送费
 
-				// 设置各种类漆的运费金额
-				detail.setBucketsOfPaintFee(bucketsOfPaintFee);
-				detail.setNitrolacquerFee(nitrolacquerFee);
-				detail.setCarpentryPaintFee(carpentryPaintFee);
-				detail.setBelowFourKiloFee(belowFourKiloFee);
+						long count = 0;
 
-				// 设置本单墙面辅料总金额
-				detail.setWallAccessories(wallAccessories);
+						Map<Long, TdOrderGoods> orderGoodsMap = this.countOrderGoodsNumber(order);
+						for (TdOrderGoods orderGoods : orderGoodsMap.values()) {
+							TdDeliveryFeeHead tdDeliveryFeeHead = tdDeliveryFeeHeadService
+									.findBySobIdAndGoodsId(user.getCityId(), orderGoods.getGoodsId());
+							Double fee;
+							if (null != tdDeliveryFeeHead) {
+								fee = this.countOrderGoodsDeliveryFee(user, orderGoods);
+							} else {
+								fee = 0d;
+							}
 
-				detail.setConsumerDeliveryFee(consumerDeliveryFee);// 设置优惠前客户承担运费金额
-				detail.setCompanyDeliveryFee(companyDeliveryFee);// 设置优惠前公司承担运费金额
+							if (null != fee && fee > 0d) {
+								count += orderGoods.getQuantity();
+								switch (tdDeliveryFeeHead.getGoodsTypeId()) {
+								case 1:
+									bucketsOfPaintFee += fee;
+									break;
+								case 2:
+									nitrolacquerFee += fee;
+									break;
+								case 3:
+									carpentryPaintFee += fee;
+									break;
+								case 4:
+									belowFourKiloFee += fee;
+									break;
+								default:
+									break;
+								}
+							}
 
-				deliveryFee = consumerDeliveryFee + companyDeliveryFee;
+							double allDeliveryFee = bucketsOfPaintFee + nitrolacquerFee + carpentryPaintFee
+									+ belowFourKiloFee;
 
-				TdSetting setting = tdSettingService.findTopBy();
+							double discount = 1d;
+							if (count >= 20 && count <= 99) {
+								discount = 0.75d;
+							} else if (count >= 100) {
+								discount = 0.6d;
+							}
 
-				// 判断总运费金额是否大于等于20，如果小于20，则差额由华润公司承担
-				Double settingMinFee = null == setting.getMinDeliveryFee() ? 0d : setting.getMinDeliveryFee();
-				if (deliveryFee <= settingMinFee) {
-					if (consumerDeliveryFee > 0.00 && companyDeliveryFee == 0.00) { // 客户承担运费
-						detail.setConsumerDeliveryFeeAdjust(settingMinFee - deliveryFee);
-						detail.setCompanyDeliveryFeeAdjust(0.00);
-						consumerDeliveryFee = settingMinFee;
-					} else if (consumerDeliveryFee >= 0.00 && companyDeliveryFee > 0.00) {
-						detail.setConsumerDeliveryFeeAdjust(0.00);
-						detail.setCompanyDeliveryFeeAdjust(settingMinFee - deliveryFee);
-						companyDeliveryFee = settingMinFee - consumerDeliveryFee;
-					} else if (consumerDeliveryFee == 0.00 && companyDeliveryFee == 0.00) {
-						detail.setConsumerDeliveryFeeAdjust(0.00);
-						detail.setCompanyDeliveryFeeAdjust(0.00);
-					}
+							double discountedDeliveryFee = allDeliveryFee * discount;
+							double subDeliveryFee = allDeliveryFee * (1d - discount);
 
-				} else {
-					detail.setConsumerDeliveryFeeAdjust(0.00);
-					detail.setCompanyDeliveryFeeAdjust(0.00);
-				}
-				// 运费折扣优惠，如果用户承担运费的漆类桶数和华润承担运费的类桶数任意一个大于20桶，则双方运费都打7.5折；如果大于100桶，折扣为6折
-				if (20 <= (consumerAffordQuantity + companyAffordQuantity)
-						&& (consumerAffordQuantity + companyAffordQuantity) < 99) {
-					consumerDeliveryFee = consumerDeliveryFee * 0.75;
-					companyDeliveryFee = companyDeliveryFee * 0.75;
-					deliveryFee = consumerDeliveryFee + companyDeliveryFee;
-				} else if (consumerAffordQuantity >= 100 || companyAffordQuantity >= 100) {
-					consumerDeliveryFee = consumerDeliveryFee * 0.6;
-					companyDeliveryFee = companyDeliveryFee * 0.6;
-					deliveryFee = consumerDeliveryFee + companyDeliveryFee;
-				}
-				detail.setConsumerDeliveryFeeDiscount(
-						detail.getConsumerDeliveryFee() - detail.getConsumerDeliveryFeeAdjust() - consumerDeliveryFee);// 设置用户运费打折金额
-				detail.setCompanyDeliveryFeeDiscount(
-						detail.getCompanyDeliveryFee() + detail.getCompanyDeliveryFeeAdjust() - companyDeliveryFee);// 设置华润公司运费打折金额
-				// 墙面辅料金额以500为阶梯减免运费。500减20,1000减40，以此类推。其中减免的运费优先由用户享受，如果用户承担的运费小于优惠金额，则剩余的优惠金额才能由华润享受
-				if (wallAccessories >= 500) {
-					double reduceDeliveryFee = ((int) wallAccessories / 500) * 20;// 购辅料减免运费总额
-					if (reduceDeliveryFee <= deliveryFee) {
-						if (reduceDeliveryFee <= consumerDeliveryFee) {// 如果辅料减免的运费小于当前用户承担的运费，则全部用来减免用户用费
-							detail.setConsumerDeliveryFeeReduce(reduceDeliveryFee);
-							detail.setCompanyDeliveryFeeReduce(0.00);
+							deliveryMap.put("company_delivery_fee", discountedDeliveryFee);
 
-							consumerDeliveryFee -= reduceDeliveryFee;
-						} else {// 如果辅料减免运费大于用户承担的运费，则用户用费全免，剩余部分用来减免华润运费
-							detail.setConsumerDeliveryFeeReduce(consumerDeliveryFee);
-							detail.setCompanyDeliveryFeeReduce(reduceDeliveryFee - consumerDeliveryFee);
+							detail.setBucketsOfPaintFee(bucketsOfPaintFee);
+							detail.setNitrolacquerFee(nitrolacquerFee);
+							detail.setCarpentryPaintFee(carpentryPaintFee);
+							detail.setBelowFourKiloFee(belowFourKiloFee);
+							detail.setWallAccessories(0d);
+							detail.setConsumerDeliveryFee(0d);
+							detail.setCompanyDeliveryFee(allDeliveryFee);
+							detail.setConsumerDeliveryFeeAdjust(0d);
+							detail.setCompanyDeliveryFeeAdjust(0d);
+							detail.setConsumerDeliveryFeeDiscount(0d);
+							detail.setCompanyDeliveryFeeDiscount(subDeliveryFee);
+							detail.setConsumerDeliveryFeeReduce(0d);
+							detail.setCompanyDeliveryFeeReduce(0d);
+							detail.setConsumerDeliveryFeeFinal(0d);
+							detail.setCompanyDeliveryFeeFinal(discountedDeliveryFee);
+							detail.setCustomerDeliveryFeeBeforeModified(0d);
 
-							companyDeliveryFee -= (reduceDeliveryFee - consumerDeliveryFee);
-							consumerDeliveryFee = 0.0;
+							order.setDeliverFee(0d);
+							order.setReceivableFee(0d);
 
 						}
-					} else {// 如果运费减免大于当前运费总和，则运费全为0
-						detail.setConsumerDeliveryFeeReduce(consumerDeliveryFee);
-						detail.setCompanyDeliveryFeeReduce(companyDeliveryFee);
-						consumerDeliveryFee = 0.0;
-						companyDeliveryFee = 0.0;
+					} else {
+						deliveryMap.put("user_delivery_fee", 30d);
+						deliveryMap.put("company_delivery_fee", 0d);
 
+						detail.setBucketsOfPaintFee(0d);
+						detail.setNitrolacquerFee(0d);
+						detail.setCarpentryPaintFee(0d);
+						detail.setBelowFourKiloFee(0d);
+						detail.setWallAccessories(0d);
+						detail.setConsumerDeliveryFee(30d);
+						detail.setCompanyDeliveryFee(0d);
+						detail.setConsumerDeliveryFeeAdjust(0d);
+						detail.setCompanyDeliveryFeeAdjust(0d);
+						detail.setConsumerDeliveryFeeDiscount(0d);
+						detail.setCompanyDeliveryFeeDiscount(0d);
+						detail.setConsumerDeliveryFeeReduce(0d);
+						detail.setCompanyDeliveryFeeReduce(0d);
+						detail.setConsumerDeliveryFeeFinal(30d);
+						detail.setCompanyDeliveryFeeFinal(0d);
+						detail.setCustomerDeliveryFeeBeforeModified(30d);
+
+						order.setDeliverFee(30d);
+						order.setReceivableFee(30d);
 					}
-				} else {
-					detail.setConsumerDeliveryFeeReduce(0.00);
-					detail.setCompanyDeliveryFeeReduce(0.00);
+					tdOrderDeliveryFeedetailService.save(detail);
+
 				}
-				//
-				detail.setConsumerDeliveryFeeFinal(consumerDeliveryFee);
-				detail.setCompanyDeliveryFeeFinal(companyDeliveryFee);
-				detail.setCustomerDeliveryFeeBeforeModified(consumerDeliveryFee);
-				tdOrderDeliveryFeedetailService.save(detail);
-
-				/*
-				 * Double settingMaxFee = null == setting.getMaxDeliveryFee() ?
-				 * 0d : setting.getMaxDeliveryFee(); if (deliveryFee >
-				 * settingMaxFee) { deliveryFee = settingMaxFee; }
-				 */
-
-				order.setDeliverFee(consumerDeliveryFee);
-				order.setReceivableFee(consumerDeliveryFee);
-				deliveryMap.put("user_delivery_fee", consumerDeliveryFee);
-				deliveryMap.put("company_delivery_fee", companyDeliveryFee);
-				return deliveryMap;
 			}
+		} else {
+			deliveryMap.put("user_delivery_fee", 0d);
+			deliveryMap.put("company_delivery_fee", 0d);
 		}
+		return deliveryMap;
 	}
 
 	@Override

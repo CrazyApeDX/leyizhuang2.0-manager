@@ -462,6 +462,14 @@ public class TdOrder {
 	@Column(scale = 2)
 	private Double agencyRefund = 0d;
 
+	// 拍照下单标志
+	@Column
+	private Boolean isPhotoOrder = Boolean.FALSE;
+	
+	//使用钱包金额
+	@Column(scale = 2)
+	private Double walletMoney = 0d;
+
 	public Double getRefund() {
 		return refund;
 	}
@@ -1212,6 +1220,14 @@ public class TdOrder {
 		this.upstairsOtherPayed = upstairsOtherPayed;
 	}
 
+	public Boolean getIsPhotoOrder() {
+		return isPhotoOrder;
+	}
+
+	public void setIsPhotoOrder(Boolean isPhotoOrder) {
+		this.isPhotoOrder = isPhotoOrder;
+	}
+
 	public Double getUpstairsLeftFee() {
 		this.upstairsLeftFee = this.upstairsFee - this.upstairsBalancePayed - this.upstairsOtherPayed;
 		this.upstairsLeftFee = new BigDecimal(this.upstairsLeftFee).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
@@ -1331,6 +1347,14 @@ public class TdOrder {
 		otherPay = null == otherPay ? 0d : otherPay;
 		return CountUtil.add(activitySubPrice, cashCoupon, proCouponFee, difFee, cashBalanceUsed, unCashBalanceUsed,
 				otherPay);
+	}
+
+	public Double getWalletMoney() {
+		return walletMoney;
+	}
+
+	public void setWalletMoney(Double walletMoney) {
+		this.walletMoney = walletMoney;
 	}
 
 	/**

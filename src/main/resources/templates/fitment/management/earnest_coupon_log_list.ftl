@@ -138,6 +138,7 @@ function downloaddate()
 
     <#if balance_page??>
         <#list balance_page.content as item>
+        	<#if item.distinguish == 0 || item.distinguish == 1>
             <tr>
             	<td align="center">${item.companyTitle!''}</td>
                 <td align="left">${item.companyCode!''}</td>
@@ -148,6 +149,7 @@ function downloaddate()
                 <td align="left"><#if item.totalBalance??>${item.totalBalance?string("0.00")}<#else>0.00</#if></td>
                 <td align="left"><#if item.changeTime??>${item.changeTime?string("yyyy-MM-dd HH:mm:ss")}</#if></td>
 				<td align="center">${item.referenceNumber!''}</td>
+			</#if>
         </#list>
     </#if>
      

@@ -127,7 +127,7 @@ $(function () {
     <dl>
         <dt>链接地址</dt>
         <dd>
-            <input name="linkUri" type="text" value="<#if ad??>${ad.linkUri!""}</#if>" class="input normal" datatype="*1-100" sucmsg=" ">
+            <input name="linkUri" type="text" value="<#if ad??>${ad.linkUri!""}</#if>" class="input normal" datatype="*1-255" sucmsg=" ">
             <span class="Validform_checktip"></span>
         </dd>
     </dl>

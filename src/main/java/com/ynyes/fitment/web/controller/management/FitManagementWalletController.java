@@ -1,6 +1,5 @@
 package com.ynyes.fitment.web.controller.management;
 
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -45,41 +44,40 @@ import com.ynyes.lyz.service.TdSettingService;
 import com.ynyes.lyz.service.TdSmsAccountService;
 import com.ynyes.lyz.util.SiteMagConstant;
 
-
 @Controller
 @RequestMapping(value = "/Verwalter/fitment/wallet")
 public class FitManagementWalletController {
 
 	@Autowired
 	private FitCompanyService fitCompanyService;
-	
+
 	@Autowired
 	private TdManagerService tdManagerService;
-	
+
 	@Autowired
 	private TdSettingService tdSettingService;
-	
+
 	@Autowired
 	private TdCityService tdRegionService;
-	
+
 	@Autowired
 	private TdSmsAccountService tdSmsAccountService;
-	
+
 	@Autowired
 	private TdChangeBalanceLogService tdChangeBalanceLogService;
-	
+
 	@Autowired
 	private FitPromotionMoneyLogService fitPromotionMoneyLogService;
-	
+
 	@Autowired
 	private FitCreditChangeLogService fitCreditChangeLogService;
-	
+
 	@Autowired
 	private TdCityService tdCityService;
-	
+
 	@RequestMapping(value = "/list")
-	public String companyList(HttpServletRequest req, ModelMap map, String keywords, Integer page, Integer size, String __EVENTTARGET,
-			String __EVENTARGUMENT, String __VIEWSTATE) {
+	public String companyList(HttpServletRequest req, ModelMap map, String keywords, Integer page, Integer size,
+			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE) {
 
 		if (null != __EVENTTARGET) {
 			switch (__EVENTTARGET) {
@@ -105,28 +103,35 @@ public class FitManagementWalletController {
 		map.addAttribute("size", size);
 		return "/fitment/management/wallet_list";
 	}
-	
-	
+
 	@RequestMapping(value = "/goUpdate", produces = "text/html;charset=utf-8")
-	public String companyEdit(Long id, ModelMap map) {
+	public String companyEdit(Long id, ModelMap map, HttpServletRequest req) {
+		String manager = (String) req.getSession().getAttribute("manager");
+		if (null == manager) {
+			return "redirect:/Verwalter/login";
+		}
+
 		FitCompany company = null;
+		TdCity tdCity = null;
 		try {
 			company = this.fitCompanyService.findOne(id);
-
+			Long sobId = company.getSobId();
+			tdCity = tdCityService.findBySobIdCity(sobId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		map.addAttribute("tdCity", tdCity);
+		map.addAttribute("id", id);
 		map.addAttribute("company", company);
 		return "/fitment/management/update_wallet";
 	}
-	
-	
+
 	@RequestMapping(value = "/manager/check", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> managerCheck(HttpServletRequest req, String password, Long id) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
-		
+
 		String manager = (String) req.getSession().getAttribute("manager");
 		if (null == manager) {
 			res.put("message", "未能成功获取到登录管理员的信息，操作失败");
@@ -151,14 +156,12 @@ public class FitManagementWalletController {
 					if (null != phones && !"".equalsIgnoreCase(phones)) {
 						String[] allPhones = phones.split(",");
 						for (String phone : allPhones) {
-							this.sendSmsCaptcha(req, phone, 
-									"管理员" + tdManager.getUsername() + "修改装饰公司" + company.getName() 
-											+ "现金返利时，密码输入错误超过3次，为保证用户账户信息安全，现关闭管理员修改装饰公司钱包金额权限", 
-											company.getSobId());
+							this.sendSmsCaptcha(req, phone, "管理员" + tdManager.getUsername() + "修改装饰公司"
+									+ company.getName() + "现金返利时，密码输入错误超过3次，为保证用户账户信息安全，现关闭管理员修改装饰公司钱包金额权限",
+									company.getSobId());
 						}
 					}
-					
-					
+
 					// 在此存储错误操作信息
 					TdChangeBalanceLog log = new TdChangeBalanceLog();
 					if (null != company) {
@@ -182,11 +185,11 @@ public class FitManagementWalletController {
 				return res;
 			}
 		}
-		
+
 		res.put("status", 0);
 		return res;
 	}
-	
+
 	private void sendSmsCaptcha(HttpServletRequest req, String phone, String message, Long sobId) {
 		String content = null;
 		try {
@@ -197,7 +200,7 @@ public class FitManagementWalletController {
 
 		TdCity region = tdRegionService.findBySobIdCity(sobId);
 		if (null != region) {
-		
+
 			TdSmsAccount account = tdSmsAccountService.findOne(region.getSmsAccountId());
 			String url = "http://www.mob800.com/interface/Send.aspx?enCode=" + account.getEncode() + "&enPass="
 					+ account.getEnpass() + "&userName=" + account.getUserName() + "&mob=" + phone + "&msg=" + content;
@@ -213,16 +216,16 @@ public class FitManagementWalletController {
 				BufferedReader reader = null;
 				StringBuffer resultBuffer = new StringBuffer();
 				String tempLine = null;
-	
+
 				try {
 					inputStream = httpConn.getInputStream();
 					inputStreamReader = new InputStreamReader(inputStream);
 					reader = new BufferedReader(inputStreamReader);
-	
+
 					while ((tempLine = reader.readLine()) != null) {
 						resultBuffer.append(tempLine);
 					}
-	
+
 				} finally {
 					if (reader != null) {
 						reader.close();
@@ -239,33 +242,33 @@ public class FitManagementWalletController {
 			}
 		}
 	}
-	
+
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public String userBalanceChangeSave(HttpServletRequest req, Double money, 
-			String remark, String writtenRemarks, String code, String arrivalTime ) {
+	public String userBalanceChangeSave(HttpServletRequest req, Double money, String remark, String writtenRemarks,
+			String code, String arrivalTime) {
 		String managerUsername = (String) req.getSession().getAttribute("manager");
 		TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(managerUsername);
 		if (null == manager) {
 			return "redirect:/Verwalter/login";
 		}
-		
+
 		FitCompany company = this.fitCompanyService.findByCode(code);
 		if (null == company.getPromotionMoney() || "".equals(company.getPromotionMoney())) {
 			company.setPromotionMoney(0D);
 		}
-		
+
 		if (null == company.getCredit() || "".equals(company.getCredit())) {
 			company.setCredit(0D);
 		}
-		
-		if (null == company.getWalletMoney() || "".equals(company.getWalletMoney())){
+
+		if (null == company.getWalletMoney() || "".equals(company.getWalletMoney())) {
 			company.setWalletMoney(0D);
 		}
-		
+
 		TdCity region = tdRegionService.findBySobIdCity(company.getSobId());
-		
+
 		FitCreditChangeLog log = new FitCreditChangeLog();
-		
+
 		log.setBeforeChange(company.getWalletMoney());
 		log.setAfterChange(company.getCredit());
 		log.setMoney(money);
@@ -286,29 +289,29 @@ public class FitManagementWalletController {
 		log.setAfterChangePromotion(company.getPromotionMoney());
 		log.setDistinguish(2);
 		log.setAfterChangeWallet(company.getWalletMoney() + money);
-		
+
 		company.setWalletMoney(company.getWalletMoney() + money);
 		try {
 			this.fitCompanyService.save(company);
 			this.fitCreditChangeLogService.save(log);
 			if (money > 0) {
-				this.fitPromotionMoneyLogService.doReceipt(company, money, log.getReferenceNumber());
+				this.fitPromotionMoneyLogService.doReceipt(company, money, log.getReferenceNumber(),remark);
 			} else {
-				this.fitPromotionMoneyLogService.doRefund(company, money, log.getReferenceNumber());
+				this.fitPromotionMoneyLogService.doRefund(company, money, log.getReferenceNumber(),remark);
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return "redirect:/Verwalter/fitment/wallet/list";
 	}
-	
-	@RequestMapping(value="/wallet_detail")
-	public String earnestCouponDetail(String city, String companyCode,String keywords,String type, String startTime, String endTime, Integer page,
-			Integer size,  String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
-			ModelMap map, HttpServletRequest request) {
-		
+
+	@RequestMapping(value = "/wallet_detail")
+	public String earnestCouponDetail(String city, String companyCode, String keywords, String type, String startTime,
+			String endTime, Integer page, Integer size, String __EVENTTARGET, String __EVENTARGUMENT,
+			String __VIEWSTATE, ModelMap map, HttpServletRequest request) {
+
 		if (null == page || page < 0) {
 			page = 0;
 		}
@@ -317,13 +320,13 @@ public class FitManagementWalletController {
 				if (null != __EVENTARGUMENT) {
 					page = Integer.parseInt(__EVENTARGUMENT);
 				}
-			} 
+			}
 		}
 		if (null == size || size <= 0) {
 			size = SiteMagConstant.pageSize;
 		}
 		List<TdCity> cityList = this.tdCityService.findAll();
-		Page<FitCreditChangeLog> balance_page= null;
+		Page<FitCreditChangeLog> balance_page = null;
 		List<FitCompany> companyList = new ArrayList<FitCompany>();
 		TdCity tdCity = null;
 		try {
@@ -333,11 +336,12 @@ public class FitManagementWalletController {
 				tdCity = this.tdCityService.findByCityName(city);
 				companyList = fitCompanyService.findBySobId(tdCity.getSobIdCity());
 			}
-			balance_page = this.fitCreditChangeLogService.queryList(startTime, endTime, city, companyCode, keywords, type, page, size);
+			balance_page = this.fitCreditChangeLogService.queryListWallet(startTime, endTime, city, companyCode, keywords,
+					type, page, size);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		map.addAttribute("balance_page", balance_page);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
@@ -355,5 +359,5 @@ public class FitManagementWalletController {
 
 		return "/fitment/management/wallet_money_detail_list";
 	}
-	
+
 }

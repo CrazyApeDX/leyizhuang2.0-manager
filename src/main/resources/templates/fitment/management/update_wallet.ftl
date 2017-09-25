@@ -126,6 +126,7 @@ $(function () {
 				<dt>当前钱包余额</dt>
 				<dd>
 					<#if company??>￥${company.walletMoney?string("0.00")}</#if>
+					<input type="hidden" id="walletMoney" name="walletMoney" value="<#if company??>${company.walletMoney?string("0.00")}</#if>">
 				</dd>
 			</dl>
 				
@@ -133,7 +134,15 @@ $(function () {
 			    <dt>充值类型</dt>
 			    <dd>
 			        <select name="remark" id="remark" datatype="n">
-			            <option value="钱包充值">钱包充值</option>
+			            <option value="">请选择变更类型</option>
+			            <#if tdCity.cityName??&&tdCity.cityName=="成都市">
+			            <option value="装饰公司预存款充值1">装饰公司预存款充值1</option>
+			            <option value="装饰公司预存款充值2">装饰公司预存款充值2</option>
+			            <option value="装饰公司预存款充值3">装饰公司预存款充值3</option>
+			            </#if>
+			            <#if tdCity.cityName??&&tdCity.cityName=="郑州市">
+			            <option value="装饰公司预存款充值4">装饰公司预存款充值4</option>
+			            </#if>
 			        </select>
 			   	 </dd>
 			</dl>
@@ -188,7 +197,7 @@ $(function () {
 		var writtenRemarks = $('#writtenRemarks').val();
 		var myDate = new Date();  
 		var count = $("#count").val(); 
-		
+		var walletMoney = $("#walletMoney").val();
 		
 		if (isNaN(money)) {
 			$("#btnSubmit").attr("onclick","javascript:validate();");
@@ -203,6 +212,12 @@ $(function () {
 			$.dialog.alert("请输入一个有效的数字");
 			return;
 		}
+		if (Number(money)+Number(walletMoney) < 0 ) {
+			$("#btnSubmit").attr("onclick","javascript:validate();");
+			$.dialog.alert("扣减金额大于现有金额");
+			return;
+		}
+		
 		$("#money").val(money);
 		if(arrivalTime == ''){;
  			$("#btnSubmit").attr("onclick","javascript:validate();");
@@ -226,6 +241,7 @@ $(function () {
 			$.dialog.alert('不能重复提交');
 			return;
 		}else {
+			
 			$("#count").val(1);
 			$.ajax({
 				url : '/Verwalter/fitment/wallet/manager/check',

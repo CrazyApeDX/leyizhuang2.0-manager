@@ -1,5 +1,8 @@
 package com.ynyes.lyz.service;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -52,5 +55,25 @@ public class TdActiveRedPacketService {
 			return null;
 		}
 		return repository.findOne(id);
+	}
+	
+	/**
+	 * 根据城市和当前时间来查询活动时间有效的红包活动
+	 * @param cityName
+	 * @return
+	 */
+	public List<TdActiveRedPacket> findByCityNameEqualsAndBeginDateBeforeAndFinishDateAfterOrderBySortIdAsc(String cityName){
+		Date now = new Date();
+		return repository.findByCityNameEqualsAndBeginDateBeforeAndFinishDateAfterOrderBySortIdAsc(cityName, now, now);
+	}
+	
+	/**
+	 * 根据城市和当前时间来查询使用时间有效的红包活动
+	 * @param cityName
+	 * @return
+	 */
+	public List<TdActiveRedPacket> findByCityNameEqualsAndUseBeginDateBeforeAndUseFinishDateAfterOrderBySortIdAsc(String cityName){
+		Date now = new Date();
+		return repository.findByCityNameEqualsAndUseBeginDateBeforeAndUseFinishDateAfterOrderBySortIdAsc(cityName, now, now);
 	}
 }
