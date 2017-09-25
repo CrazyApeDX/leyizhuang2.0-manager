@@ -6,4 +6,6 @@
 
 **/*.classpath
 **/*.project
-lyz-manager.iml
+**/*.lyz.iml
+
+**/*.DS_Store

@@ -62,8 +62,9 @@ var theForm = document.forms['form1'];
   <tbody>
   <tr class="odd_bg">
     <th  width="8%">选择</th>
-   <th align="left" width="20%">仓库编号</th>
     <th align="left" width="20%">仓库名称</th>
+   <th align="left" width="20%">仓库编号</th>
+    <th align="left" width="20%">城市编码</th>
      <th align="left" width="20%">修改时间</th>
     <th align="center" width="10%">排序号</th>
   </tr>
@@ -77,8 +78,9 @@ var theForm = document.forms['form1'];
                     </span>
                     <input type="hidden" name="listId" id="listId" value="${item.id?c}">
                 </td>
+                <td align="left"><a href="/Verwalter/setting/warehouse/edit?id=${item.id?c}">${item.whName!""}</a></td>
                 <td align="left"><a href="/Verwalter/setting/warehouse/edit?id=${item.id?c}">${item.whNumber!""}</a></td>
-                <td align="left">${item.whName!""}</td>
+                <td align="left"><#if item??&&item.sobId??>${item.sobId?c}<#else>无</#if></td>
                  <td align="left">
                 ${item.updateTime!""}
                  </td>

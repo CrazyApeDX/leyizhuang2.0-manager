@@ -83,6 +83,13 @@ $(function () {
             <span class="Validform_checktip">仓库名称</span>
         </dd>
     </dl>
+    <dl>
+        <dt>城市编码（sob_id）</dt>
+        <dd>
+            <input name="sobId" type="text" value="<#if warehouse?? && warehouse.sobId??>${warehouse.sobId?c}</#if>" class="input normal" datatype="*" sucmsg=" ">
+            <span class="Validform_checktip">城市编码，由EBS提供</span>
+        </dd>
+    </dl>
   <dl style="display: none;">
     <dt>创建时间</dt>
     <dd>
