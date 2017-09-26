@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.excp.AppConcurrentExcp;
 import com.ynyes.lyz.repository.TdUserRepo;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
@@ -520,5 +521,34 @@ public class TdUserService {
 		PageRequest pageRequest = new PageRequest(page, size);
 		return repository.findByUsernameContainingOrRealNameContainingAndUserType(keywords, keywords,
 				pageRequest,userType);
+	}
+	
+	public TdUser modifyBalance(Double variableAmount, TdUser user) {
+
+		if (null == user) {
+			return user;
+		}
+		if (null == variableAmount || 0.0 == variableAmount || variableAmount > user.getBalance()) {
+			return user;
+		}
+
+		Double unCashBalance = user.getUnCashBalance();
+		Double cashBalance = user.getCashBalance();
+		// 先扣除不可提现预存款，在扣除可提现预存款
+		if (variableAmount <= unCashBalance) {
+			user.setUnCashBalance(unCashBalance - variableAmount);
+		} else {
+			variableAmount = variableAmount - unCashBalance;
+			user.setUnCashBalance(0.0);
+			user.setCashBalance(cashBalance - variableAmount);
+		}
+
+		int row = repository.update(user.getCashBalance(), user.getUnCashBalance(), user.getId(),
+				user.getVersion());
+		// 并发控制，判断version是否改变
+		if (1 != row) {
+			throw new AppConcurrentExcp("账号余额信息过期！");
+		}
+		return user;
 	}
 }

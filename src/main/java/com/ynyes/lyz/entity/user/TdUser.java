@@ -1,5 +1,6 @@
 package com.ynyes.lyz.entity.user;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -157,6 +158,10 @@ public class TdUser {
 	// 导购欠款额度限制
 	@Column(scale = 2, nullable = false)
 	private Double creditLimit = 0d;
+	
+	//更改版本
+	@Column(length = 15, nullable = false)
+	private Timestamp version;
 	
 	//红包标记 ： 0/null、无； 1、有红包；2、已使用红包
 	@Column(length = 1, nullable = false)
@@ -434,6 +439,14 @@ public class TdUser {
 
 	public void setCreditLimit(Double creditLimit) {
 		this.creditLimit = creditLimit;
+	}
+
+	public Timestamp getVersion() {
+		return version;
+	}
+
+	public void setVersion(Timestamp version) {
+		this.version = version;
 	}
 
 	@Override

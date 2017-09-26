@@ -1,13 +1,16 @@
 package com.ynyes.lyz.repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.ynyes.lyz.entity.user.TdUser;
 
@@ -177,5 +180,9 @@ public interface TdUserRepo extends PagingAndSortingRepository<TdUser, Long>, Jp
 
 	Page<TdUser> findByUsernameContainingOrRealNameContainingAndUserType(String keywords, String keywords2,
 			Pageable page, long userType);
+	
+	@Modifying
+	@Query("update TdUser set cash_balance = :cashBalance, un_cash_balance = :unCashBalance where id = :id and version = :version")
+	public int update(@Param("cashBalance")Double cashBalance, @Param("unCashBalance")Double unCashBalance, @Param("id")Long id, @Param("version")Timestamp version);
 	
 }

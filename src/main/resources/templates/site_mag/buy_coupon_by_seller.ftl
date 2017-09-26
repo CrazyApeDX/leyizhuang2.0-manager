@@ -26,7 +26,7 @@
 	left: 50%;
 	margin: -141px 0 0 -201px;
 	width: 400px;
-	height:350px;
+	height:400px;
 	line-height: 210px;
 	text-align:center;
 	font-size: 14px;
@@ -448,6 +448,7 @@ function checkDate(){
 <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="${__VIEWSTATE!""}" />
 <input type="hidden" id="hidden_username" name="hidden_username" />
 <input type="hidden" id="hidden_seller_username" name="hidden_seller_username" />
+<input type="hidden" id="hidden_balance" name="hidden_balance" />
 </div>
 <input name="menuId" type="text" value='${mid!""}' style="display:none;">
 <input name="channelId" type="text" value='${cid!""}' style="display:none">
@@ -683,9 +684,8 @@ function checkDate(){
 		    				if (0 === res.status) {
 		    					total = res.total;
 		    					$("#money").html(total);
-		    					<#--
-	    						$("#balance").attr("placeholder", "预存款（还剩余" + res.balance + "）");
-		    					-->
+	    						$("#balance").attr("placeholder", "预收款(余额:" + res.balance + ")");
+	    						$("#hidden_balance").val(res.balance);
 		    					$("#myDialog").show();
 		    				} else {
 		    					alert(res.message);
@@ -708,11 +708,9 @@ function checkDate(){
 		<div class="dialog_title">支付：<span id="money"></span></div>
 		<div class="dialog_row"><input placeholder="现金" id="cash" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="POS" id="pos" style="height:30px;width:175px;" type="number" /> </div>
+		<div class="dialog_row"><input placeholder="预收款" id="balance" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="其他" id="other" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row"><input placeholder="POS刷卡参考号后六位" id="serialNumber" style="height:30px;width:175px;" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/> </div>
-		<#--
-		<div class="dialog_row"><input placeholder="预存款" id="balance" style="height:30px;width:175px;" type="number" /> </div>
-		-->
 		<div class="dialog_row">
 			<div class="input-date">
 	            <input id="realPayTime" name="beginDate" placeholder="收款时间" id="beginDate" type="text" value="<#if activity??>${activity.beginDate?string("yyyy-MM-dd HH:mm:ss")}</#if>" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
@@ -743,14 +741,16 @@ function checkDate(){
 			var cash = $("#cash").val();
 			var pos = $("#pos").val();
 			var other = $("#other").val();
-			
+			var balance = $("#balance").val();
 			var money = $("#money").html();
+			
+			var hidden_balance = $("#hidden_balance").val();
 			
 			var realPayTime = $('#realPayTime').val();
 			var serialNumber = $('#serialNumber').val();
-        	var l=document.getElementById("serialNumber").value.length
+        	var l=document.getElementById("serialNumber").value.length;
         	
-        	var totalMoney = Number(cash) + Number(pos) + Number(other) 
+        	var totalMoney = Number(cash) + Number(pos) + Number(other) + Number(balance);
 				
 			if (!cash) {
 	    		cash = 0.0;
@@ -758,16 +758,24 @@ function checkDate(){
 	    	if (!pos) {
 	    		pos = 0.0;
 	    	}
+	    	if (!balance) {
+	    		balance = 0.0;
+	    	}
 	    	if (!other) {
 	    		other = 0.0;
 	    	}
-	    	if (!realPayTime) {
-	    		alert("请填写真实收款时间");
-	    		$("#submitBuy").attr("onclick", "buy();");
-	    		count = 0;
-	    		return;
-	    	}if (Number(pos) < 0) {
+	    	
+	    	if (Number(balance) > Number(hidden_balance)) {
+        		alert("预收款余额不足!");
+        		return;
+        	}
+	    	
+	    	if (Number(pos) < 0) {
         		alert("POS收款不能为负数");
+        		return;
+        	}
+        	if (Number(balance) < 0) {
+        		alert("预收款不能为负数");
         		return;
         	}
         	
@@ -790,15 +798,23 @@ function checkDate(){
         		alert("请填写POS金额");
         		return;
         	}
-        	if (Number(cash) + Number(pos) + Number(other) != Number(money)) {
+        	if (Number(cash) + Number(pos) + Number(other) + Number(balance) != Number(money)) {
         		alert("输入金额不正确");
         		return;
         	}
 			if (Number(totalMoney) != Number(money)) {
         		alert("输入金额不正确");
         		return;
-        	}			
-			if (Number(cash) + Number(pos) + Number(other) === Number(money)) {
+        	}	
+        	
+        	if (!realPayTime) {
+	    		alert("请填写真实收款时间");
+	    		$("#submitBuy").attr("onclick", "buy();");
+	    		count = 0;
+	    		return;
+	    	}
+        			
+			if (Number(cash) + Number(pos) + Number(other) + Number(balance) === Number(money)) {
 			
 				var username = $("#hidden_username").val();
 		    	var sellerUsername = $("#hidden_seller_username").val();
@@ -816,6 +832,7 @@ function checkDate(){
 		    				pos : pos,
 		    				cash : cash,
 		    				other : other,
+		    				balance : balance,
 		    				realPayTime: realPayTime,
 		    				serialNumber: serialNumber
 						},
