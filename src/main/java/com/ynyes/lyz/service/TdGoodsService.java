@@ -1658,6 +1658,15 @@ public class TdGoodsService {
 				pageRequest);
 	}
 
+	public Page<TdGoods> findByCodeContainingOrTitleContainingOrderBySortIdAsc(String keywords, int page,
+			int size) {
+		if (null == keywords) {
+			return null;
+		}
+		PageRequest pageRequest = new PageRequest(page, size);
+		return repository.findByCodeContainingOrTitleContainingOrderBySortIdAsc(keywords, keywords,pageRequest);
+	}
+	
 	public List<TdGoods> findByCodeContaining(String keywords) {
 		if (null == keywords) {
 			return null;
@@ -1746,4 +1755,8 @@ public class TdGoodsService {
 		}
 		return result;
 	}
+	
+	public List<TdGoods> getPhotoOrderGoods(String keywords){
+		return repository.getPhotoOrderGoods(keywords);
+	};
 }

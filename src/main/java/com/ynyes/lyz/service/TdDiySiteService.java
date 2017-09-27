@@ -293,4 +293,23 @@ public class TdDiySiteService {
 		}
 		return tdDiySites;
 	}
+	
+	public TdDiySite findDefaultDiyByCityInfo(String cityInfo) {
+		Long diySiteId = null;
+		if(null != cityInfo){
+			switch (cityInfo){
+				case "成都市":
+					diySiteId = 124L;
+					break;
+				case "郑州市":
+					diySiteId = 48L;
+					break;
+				default:
+					break;
+			}
+			TdDiySite diySite = this.findOne(diySiteId);
+			return diySite;
+		}
+		return null;
+	}
 }

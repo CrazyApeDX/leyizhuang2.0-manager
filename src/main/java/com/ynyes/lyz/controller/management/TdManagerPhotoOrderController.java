@@ -233,7 +233,7 @@ public class TdManagerPhotoOrderController {
 
 		Page<TdGoods> goods_page = null;
 		if (null != keywords) {
-			goods_page = tdGoodsService.findByCodeContainingOrTitleContainingOrSubTitleContaining(keywords, page,
+			goods_page = tdGoodsService.findByCodeContainingOrTitleContainingOrderBySortIdAsc(keywords, page,
 					size);
 		} else {
 			// goods_page = tdGoodsService.findAll(page, size);
