@@ -208,7 +208,7 @@ function __doPostBack(eventTarget, eventArgument) {
         
         <#if goods_page??>
             <#list goods_page as goods>
-            	<#if goods.salePrice??>
+            	<#if goods.salePrice?? && goods.salePrice != 0>
 	                <tr>
 	                    <td>
 	                        <a class="itemzengpin_select" style="cursor:pointer;" itemzengpin_title="${goods.title!""} ${goods.version!""} ${goods.color!""} ${goods.capacity!""} ${goods.saleType!""}" itemzengpin_id="${goods.id?c}" itemzengpin_price="<#if goods.salePrice??>${goods.salePrice?string("#.##")}<#else>0.00</#if>" itemzengpin_image="${goods.coverImageUri!''}">${goods.title!""} ${goods.version!""} ${goods.color!""} ${goods.capacity!""} ${goods.saleType!""}</a></td>

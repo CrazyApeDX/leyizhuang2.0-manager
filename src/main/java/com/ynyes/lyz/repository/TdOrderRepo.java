@@ -373,4 +373,13 @@ public interface TdOrderRepo extends PagingAndSortingRepository<TdOrder, Long>, 
 			+ " AND o.`order_time` < ?2	" + " ORDER BY " + " 	o.order_time DESC; ", nativeQuery = true)
 	List<TdOrder> findMissedOrders(Date beginDate, Date endDate);
 
+	@Query(value = "SELECT * from td_order where real_user_username = ?1"+ 
+			" and seller_id = ?2"+
+			" AND status_id BETWEEN 3 and 7",nativeQuery=true)
+	List<TdOrder> querySalesByusernameAndsellerId(String username,Long sellerId);
+	
+	@Query(value = "SELECT * from td_order where real_user_username = ?1"+ 
+			" and seller_id = ?2 and order_time > ?3"+
+			" AND status_id BETWEEN 3 and 7",nativeQuery=true)
+	List<TdOrder> querySalesByusernameAndsellerIdAndOrderTime(String username,Long sellerId,Date date);
 }

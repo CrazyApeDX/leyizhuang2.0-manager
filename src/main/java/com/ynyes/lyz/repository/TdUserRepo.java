@@ -1,10 +1,10 @@
 package com.ynyes.lyz.repository;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
@@ -185,4 +185,11 @@ public interface TdUserRepo extends PagingAndSortingRepository<TdUser, Long>, Jp
 	@Query("update TdUser set cash_balance = :cashBalance, un_cash_balance = :unCashBalance where id = :id and version = :version")
 	public int update(@Param("cashBalance")Double cashBalance, @Param("unCashBalance")Double unCashBalance, @Param("id")Long id, @Param("version")Timestamp version);
 	
+	/**
+	 * 查询所有的会员
+	 * 
+	 * @return
+	 */
+	@Query(value = "SELECT * from td_user where user_type = 0 and seller_id is NOT NULL and city_name = ?1 and register_time <= ?2 and seller_id != 0" , nativeQuery = true)
+	List<TdUser> queryAllUser(String cityName,Date date);
 }

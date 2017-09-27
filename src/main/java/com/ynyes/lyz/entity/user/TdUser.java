@@ -167,6 +167,13 @@ public class TdUser {
 	@Column(length = 1, nullable = false)
 	private Integer redPacketFlag;
 	
+	// 登陆标记 默认为0，登陆后为 1
+	@Column(length = 20)
+	private Long loginFlag = 0L;
+	
+	// 修改导购的时间
+	private Date changeSellerTime;
+	
 	public Integer getRedPacketFlag() {
 		return redPacketFlag;
 	}
@@ -439,6 +446,22 @@ public class TdUser {
 
 	public void setCreditLimit(Double creditLimit) {
 		this.creditLimit = creditLimit;
+	}
+
+	public Date getChangeSellerTime() {
+		return changeSellerTime;
+	}
+
+	public void setChangeSellerTime(Date changeSellerTime) {
+		this.changeSellerTime = changeSellerTime;
+	}
+
+	public Long getLoginFlag() {
+		return loginFlag;
+	}
+
+	public void setLoginFlag(Long loginFlag) {
+		this.loginFlag = loginFlag;
 	}
 
 	public Timestamp getVersion() {
