@@ -207,7 +207,7 @@ function __doPostBack(eventTarget, eventArgument) {
         </tr>
         
         <#if goods_page??>
-            <#list goods_page.content as goods>
+            <#list goods_page as goods>
             	<#if goods.salePrice?? && goods.salePrice != 0>
 	                <tr>
 	                    <td>

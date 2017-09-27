@@ -13,9 +13,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.ynyes.lyz.entity.TdCity;
+import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.entity.user.TdUserChangeSellerLog;
 import com.ynyes.lyz.repository.TdUserRepo;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
@@ -30,6 +33,15 @@ public class TdUserService {
 	@Autowired
 	private TdUserCreditLogService tdUserCreditService;
 
+	@Autowired
+	private TdCityService tdCityService;
+	
+	@Autowired
+	private TdDiySiteService tdDiySiteService;
+	
+	@Autowired
+	private TdUserChangeSellerLogService tdUserChangeSellerLogService;
+	
 	public TdUser save(TdUser user) {
 		if (null == user) {
 			return null;
@@ -520,5 +532,60 @@ public class TdUserService {
 		PageRequest pageRequest = new PageRequest(page, size);
 		return repository.findByUsernameContainingOrRealNameContainingAndUserType(keywords, keywords,
 				pageRequest,userType);
+	}
+	
+	/**
+	 * 查询所有的会员
+	 * @param cityName
+	 * @return
+	 */
+	public List<TdUser> queryAllUser(String cityName,Date date){
+		return repository.queryAllUser(cityName,date);
+	};
+	
+	/**
+	 * 清空导购 将门店设为默认门店
+	 */
+	public TdUser clearSeller(TdUser user){
+		if(user == null){
+			return new TdUser();
+		}
+		
+		// 创建日志对象，记录修改的导购信息
+		TdUserChangeSellerLog log = new TdUserChangeSellerLog();
+		log.setUsername(user.getUsername());
+		log.setUserRealName(user.getRealName());
+		log.setOldDiyCode(user.getDiyCode());
+		log.setOldDiyName(user.getDiyName());
+		log.setOldSellerId(user.getSellerId());
+		log.setOldSellerName(user.getSellerName());
+		log.setOldUpperDiySiteId(user.getUpperDiySiteId());
+		log.setCreateTime(new Date());
+		
+		if(user.getCityName().equals("成都市")){
+			
+			// 获取门店名称
+			TdDiySite defaultDiySite = tdDiySiteService.findDefaultDiyByCityInfo("成都市");
+			// 门店设置为默认门店
+			user.setDiyName(defaultDiySite.getTitle());
+			user.setDiyCode(defaultDiySite.getStoreCode());
+			user.setUpperDiySiteId(defaultDiySite.getId());
+			user.setCustomerId(defaultDiySite.getCustomerId());
+			// 清空导购
+			user.setSellerId(0L);
+			user.setSellerName("无");
+			user.setChangeSellerTime(new Date());
+			user.setLoginFlag(1L);
+			
+			log.setNewDiyCode(defaultDiySite.getStoreCode());
+			log.setNewDiyName(defaultDiySite.getTitle());
+			log.setNewSellerId(0L);
+			log.setNewSellerName("无");
+			log.setNewUpperDiySiteId(defaultDiySite.getId());
+			
+			tdUserChangeSellerLogService.save(log);
+		}
+		
+		return user;
 	}
 }

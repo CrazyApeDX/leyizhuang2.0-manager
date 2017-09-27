@@ -567,6 +567,9 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 
 	Page<TdGoods> findByCodeContainingOrTitleContainingOrSubTitleContaining(String keywords1, String keywords2,
 			String keywords3, Pageable page);
+	
+	Page<TdGoods> findByCodeContainingOrTitleContainingOrderBySortIdAsc(String keywords1, String keywords2,
+			Pageable page);
 
 	@Query("select goods from TdGoods goods where goods.categoryId = :categoryId and goods.id not in "
 			+ "(select un.goodsId from TdUnableSale un where un.diySiteId = :diySiteId) order by sortId asc")
@@ -583,4 +586,8 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			+ "goods.id = inventory.goodsId and inventory.regionId = :sobId and "
 			+ "inventory.diyCode is null and inventory.inventory > 0")
 	List<ClientGoodsResult> findGoodsByInventoryByCategoryId(@Param("categoryId") Long categoryId, @Param("sobId") Long sobId);
+	
+	@Query(value = "SELECT * from td_goods where title like :keywords1 or sub_title like :keywords1 or code like :keywords1 limit 20", nativeQuery = true)
+	List<TdGoods> getPhotoOrderGoods(@Param("keywords1")String keywords);
+	
 }

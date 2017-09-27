@@ -1233,4 +1233,24 @@ public class TdOrderService {
 		}
 		return orderPage;
 	}
+	
+	/**
+	 * 查询用户+导购下产生的销量
+	 * @param username
+	 * @param sellerId
+	 * @return
+	 */
+	public List<TdOrder> querySalesByusernameAndsellerId(String username,Long sellerId){
+		return repository.querySalesByusernameAndsellerId(username, sellerId);
+	};
+	
+	/**
+	 * 查询用户+导购下 并且在修改导购日期之后产生的销量 产生的销量
+	 * @param username
+	 * @param sellerId
+	 * @return
+	 */
+	public List<TdOrder> querySalesByusernameAndsellerIdAndOrderTime(String username,Long sellerId,Date changSellerTime){
+		return repository.querySalesByusernameAndsellerIdAndOrderTime(username, sellerId,changSellerTime);
+	};
 }

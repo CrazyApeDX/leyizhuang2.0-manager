@@ -231,13 +231,13 @@ public class TdManagerPhotoOrderController {
 			size = SiteMagConstant.pageSize;
 		}
 
-		if (null != keywords) {
+		if (null != keywords ) {
 			keywords = keywords.trim();
 		}
 
 		Page<TdGoods> goods_page = null;
-		if (null != keywords) {
-			goods_page = tdGoodsService.findByCodeContainingOrTitleContainingOrSubTitleContaining(keywords, page,
+		if (null != keywords && !keywords.equals("")) {
+			goods_page = tdGoodsService.findByCodeContainingOrTitleContainingOrderBySortIdAsc(keywords, page,
 					size);
 		} else {
 			// goods_page = tdGoodsService.findAll(page, size);
@@ -250,6 +250,8 @@ public class TdManagerPhotoOrderController {
 			//所属门店
 			TdDiySite diySite = tdDiySiteService.findOne(user.getUpperDiySiteId());
 			
+			List<TdGoods> goodsList = new ArrayList<TdGoods>();
+			
 			if (null != goods_page) {
 				
 				for (int i = 0; i < goods_page.getContent().size(); i++) {
@@ -257,11 +259,12 @@ public class TdManagerPhotoOrderController {
 					TdPriceListItem priceListItem = tdCommonService.secondGetGoodsPrice(diySite, goods,"ZY");
 					if(priceListItem != null){
 						goods.setSalePrice(priceListItem.getSalePrice());
+						goodsList.add(goods);
 					}
 				}
 			}
 
-			map.addAttribute("goods_page", goods_page);
+			map.addAttribute("goods_page", goodsList);
 		}
 		return "/site_mag/buy_goods_dialog";
 	}
@@ -454,6 +457,11 @@ public class TdManagerPhotoOrderController {
 		// orderTemp.setIsSellerOrder(false);
 
 		tdOrderService.save(orderTemp);
+		
+		// 清空已选
+		if ( null != ids && !"".equals(ids)) {
+			tdCommonService.clear(req, ids);
+		}
 		
 		res.put("status", 0);
 		res.put("message", "提交订单成功！");
