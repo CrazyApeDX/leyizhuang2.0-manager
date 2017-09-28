@@ -195,13 +195,13 @@ public class TdEbsResendController {
 		return Integer.valueOf(cashRefundInfs.size()).toString();
 	}
 
-/*	*//**
+	/**
 	 * 重传单条订单
 	 * 
 	 * @param orderNumber
 	 *            分单号
-	 *//*
-	@Deprecated
+	 */
+	@RequestMapping(value = "/oldMethodOrder")
 	public void resendOrder(String orderNumber) {
 		TdOrderInf orderInf = tdOrderInfService.findByOrderNumber(orderNumber);
 		if (orderInf == null || (orderInf.getSendFlag() != null && orderInf.getSendFlag() == 0)) {
@@ -258,15 +258,14 @@ public class TdEbsResendController {
 		}
 	}
 
-*/
 	/**
 	 * 重传传输失败全部订单
 	 * 
 	 * @param orderNumber
 	 *            分单号
 	 * @throws ParseException
-	 *//*
-	@Deprecated
+	 */
+	@RequestMapping(value = "/oldMethodAllOrder")
 	public void resendOrderAll(String beginDate) throws ParseException {
 		int count = 1;
 		log.info("开始重传" + beginDate + "之后所有传输失败的订单头(td_order_inf):");
@@ -337,7 +336,7 @@ public class TdEbsResendController {
 		}
 		log.info("处理完毕，共计处理 " + count + " 条记录");
 	}
-*/
+
 	/**
 	 * 重传单条订单(review)
 	 * 
@@ -366,7 +365,6 @@ public class TdEbsResendController {
 		}
 	}
 
-	
 	/**
 	 * 重传传输失败全部订单(review)
 	 * 
@@ -419,8 +417,8 @@ public class TdEbsResendController {
 	 * 重传订单商品
 	 * 
 	 * @param orderNumber
-	 *//*
-	@Deprecated
+	 */
+	@RequestMapping(value = "/oldMethodOrderGoods")
 	public void resendOrderGoods(String orderNumber) {
 		TdOrderInf orderInf = tdOrderInfService.findByOrderNumber(orderNumber);
 		if (orderInf == null) {
@@ -445,14 +443,14 @@ public class TdEbsResendController {
 			tdOrderGoodsInfService.save(goodsInfs);
 		}
 	}
-*/
+
 	/**
 	 * 重传订单券
 	 * 
 	 * @param orderNumber
 	 *            分单号
 	 */
-	/*@Deprecated
+	@RequestMapping(value = "/oldMethodOrderCoupon")
 	public void resendOrderCoupon(String orderNumber) {
 		TdOrderInf orderInf = tdOrderInfService.findByOrderNumber(orderNumber);
 		if (orderInf == null) {
@@ -475,7 +473,7 @@ public class TdEbsResendController {
 			}
 			tdOrderCouponInfService.save(couponInfs);
 		}
-	}*/
+	}
 
 	/**
 	 * 重传到店自提单收货时间表
