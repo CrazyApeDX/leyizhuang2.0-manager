@@ -162,9 +162,9 @@ public class TdUser {
 	@Column(length = 1, nullable = false)
 	private Integer redPacketFlag;
 	
-	// 登陆标记 默认为0，登陆后为 1
+	// 登陆标记 默认为1
 	@Column(length = 20)
-	private Long loginFlag = 0L;
+	private Long loginFlag = 1L;
 	
 	// 修改导购的时间
 	private Date changeSellerTime;
