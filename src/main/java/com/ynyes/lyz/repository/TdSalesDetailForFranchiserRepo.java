@@ -295,6 +295,7 @@ public interface TdSalesDetailForFranchiserRepo extends PagingAndSortingReposito
             + " FROM "
             + "   td_return_note rn "
             + "   INNER JOIN td_order o ON o.order_number = rn.order_number "
+            + "   AND rn.status_id != 6 "
             + "   INNER JOIN td_order_goods og ON rn.id = og.td_return_id "
             + "   INNER JOIN td_return_order_inf ri ON rn.return_number = ri.return_number "
             + "   LEFT JOIN td_return_goods_inf rgi "

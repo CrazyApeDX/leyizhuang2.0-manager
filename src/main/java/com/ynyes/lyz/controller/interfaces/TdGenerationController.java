@@ -76,8 +76,11 @@ public class TdGenerationController {
 	@ResponseBody
 	public String generationNew(@PathVariable String number) {
 		TdOrder order = tdOrderService.findByOrderNumber(number);
-		String result = generationService.generateOrderDataNew(order);
-		return result;
+		if(order != null){
+			String result = generationService.generateOrderDataNew(order);
+			return result;
+		}
+		return "该订单号不存在";
 	}
 
 	@RequestMapping(value = "/order", produces = "application/json;charset=utf8")
