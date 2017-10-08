@@ -334,7 +334,8 @@ public class TdManagerBuyCouponBySellerController {
 		// 获取用户的城市
 		Long cityId = user.getCityId();
 		TdCity city = tdCityService.findBySobIdCity(cityId);
-
+		
+		res.put("cityId", cityId);
 		String cityShortName = null;
 		switch (city.getCityName()) {
 		case "成都市":
@@ -1536,10 +1537,10 @@ public class TdManagerBuyCouponBySellerController {
 		// 获取原订单使用门店现金
 		Double cashPay = order_temp.getCashPay();
 		
-		// 获取原订单使用门店POS
+		// 获取原订单使用不可提现预收款
 		Double unCashBalanceUsed = order_temp.getUnCashBalanceUsed();
 
-		// 获取原订单使用门店现金
+		// 获取原订单使用可提现预收款
 		Double cashBalanceUsed = order_temp.getCashBalanceUsed();
 
 		// 获取原订单门店其他
@@ -1777,7 +1778,11 @@ public class TdManagerBuyCouponBySellerController {
 		}
 
 		if (!isSend) {
-			tdCommonService.getCoupon(order_temp, "门店");
+			if (unCashBalanceUsed > 0 || cashBalanceUsed > 0) {
+				tdCommonService.getCoupon(order_temp, "");
+			} else {
+				tdCommonService.getCoupon(order_temp, "门店");
+			}
 		}
 
 		// 删除虚拟订单
