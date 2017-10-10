@@ -14,6 +14,7 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.bcel.generic.NEW;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -674,7 +675,11 @@ public class TdManagerBuyCouponBySellerController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = null;
 		try {
-			date = sdf.parse(realPayTime);
+			if (null == realPayTime || "".equals(realPayTime)) {
+				date = new Date();
+			} else {
+				date = sdf.parse(realPayTime);
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

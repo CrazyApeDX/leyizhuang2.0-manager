@@ -684,12 +684,13 @@ function checkDate(){
 		    				if (0 === res.status) {
 		    					total = res.total;
 		    					$("#money").html(total);
-	    						$("#balance").attr("placeholder", "预收款(余额:" + res.balance + ")");
 	    						$("#hidden_balance").val(res.balance);
 		    					$("#myDialog").show();
 		    					if (res.cityId == 2033) {
 		    						$(".zengzhou").show();
 		    						$(".chengdu").hide();
+		    						$("#balance").val(total);
+		    						$("#span").html("预收款余额: " + res.balance);
 		    					} 
 		    					if (res.cityId == 2121) {
 		    						$(".zengzhou").hide();
@@ -716,10 +717,11 @@ function checkDate(){
 		<div class="dialog_title">支付：<span id="money"></span></div>
 		<div class="dialog_row chengdu"><input placeholder="现金" id="cash" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row chengdu"><input placeholder="POS" id="pos" style="height:30px;width:175px;" type="number" /> </div>
+		<div class="dialog_row zengzhou"><span id="span"></span></div>
 		<div class="dialog_row zengzhou"><input placeholder="预收款" id="balance" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row chengdu"><input placeholder="其他" id="other" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row chengdu"><input placeholder="POS刷卡参考号后六位" id="serialNumber" style="height:30px;width:175px;" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/> </div>
-		<div class="dialog_row">
+		<div class="dialog_row chengdu">
 			<div class="input-date">
 	            <input id="realPayTime" name="beginDate" placeholder="收款时间" id="beginDate" type="text" value="<#if activity??>${activity.beginDate?string("yyyy-MM-dd HH:mm:ss")}</#if>" class="input date" onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})" datatype="/^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/" errormsg="请选择正确的日期" sucmsg=" ">
 	            <i>日期</i>
@@ -815,7 +817,7 @@ function checkDate(){
         		return;
         	}	
         	
-        	if (!realPayTime) {
+        	if (!realPayTime && Number(balance)==0.00) {
 	    		alert("请填写真实收款时间");
 	    		$("#submitBuy").attr("onclick", "buy();");
 	    		count = 0;
