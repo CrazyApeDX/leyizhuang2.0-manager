@@ -596,7 +596,7 @@ function checkDate(){
             <dt>促销对象</dt>
             <dd>
                 <div class="rule-single-select">
-                    <select name="cityId" id="cityId"  datatype="*" sucmsg=" ">
+                    <select name="activityTarget" id="activityTarget"  datatype="*" sucmsg=" ">
                         <option value="0" <#if activity?? && activity.activityTarget==0>selected="selected"</#if>>全部</option>
                         <option value="1" <#if activity?? && activity.activityTarget==1>selected="selected"</#if>>导购</option>
                         <option value="2" <#if activity?? && activity.activityTarget==2>selected="selected"</#if>>会员</option>

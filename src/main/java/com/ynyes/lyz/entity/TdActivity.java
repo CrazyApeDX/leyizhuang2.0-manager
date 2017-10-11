@@ -369,6 +369,14 @@ public class TdActivity {
 		this.subPrice = subPrice;
 	}
 
+	public Integer getActivityTarget() {
+		return activityTarget;
+	}
+
+	public void setActivityTarget(Integer activityTarget) {
+		this.activityTarget = activityTarget;
+	}
+
 	@Override
 	public String toString() {
 		return "TdActivity [id=" + id + ", name=" + name + ", isCommendIndex=" + isCommendIndex + ", beginDate="
