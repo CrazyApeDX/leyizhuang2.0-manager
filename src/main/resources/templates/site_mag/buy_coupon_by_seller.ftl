@@ -686,13 +686,13 @@ function checkDate(){
 		    					$("#money").html(total);
 	    						$("#hidden_balance").val(res.balance);
 		    					$("#myDialog").show();
-		    					if (res.cityId == 2033) {
+		    					if (res.cityId == 2121) {
 		    						$(".zengzhou").show();
 		    						$(".chengdu").hide();
 		    						$("#balance").val(total);
 		    						$("#span").html("预收款余额: " + res.balance);
 		    					} 
-		    					if (res.cityId == 2121) {
+		    					if (res.cityId == 212) {
 		    						$(".zengzhou").hide();
 		    						$(".chengdu").show();
 		    					}
@@ -718,7 +718,7 @@ function checkDate(){
 		<div class="dialog_row chengdu"><input placeholder="现金" id="cash" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row chengdu"><input placeholder="POS" id="pos" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row zengzhou"><span id="span"></span></div>
-		<div class="dialog_row zengzhou"><input placeholder="预收款" id="balance" style="height:30px;width:175px;" type="number" /> </div>
+		<div class="dialog_row zengzhou">当前使用: <input placeholder="预收款" id="balance" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row chengdu"><input placeholder="其他" id="other" style="height:30px;width:175px;" type="number" /> </div>
 		<div class="dialog_row chengdu"><input placeholder="POS刷卡参考号后六位" id="serialNumber" style="height:30px;width:175px;" type="number" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')"/> </div>
 		<div class="dialog_row chengdu">

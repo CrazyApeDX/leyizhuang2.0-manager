@@ -450,7 +450,7 @@ public class TdManagerBuyCouponBySellerController {
 		res.put("total", order.getTotalPrice());
 
 		/* 2016-12-08修改：获取用户的预存款总额 */
-		res.put("balance", user.getBalance());
+		res.put("balance", CountUtil.HALF_UP_SCALE_2(user.getBalance()));
 
 		res.put("status", 0);
 		return res;
@@ -631,31 +631,8 @@ public class TdManagerBuyCouponBySellerController {
 			}
 			user = tdUserService.modifyBalance(balance, user);
 			
-			
 			tdUserService.save(user);
-			TdBalanceLog balanceLog = new TdBalanceLog();
-			balanceLog.setUserId(order.getRealUserId());
-			balanceLog.setUsername(order.getUsername());
-			balanceLog.setMoney(balance);
-			balanceLog.setType(3L);
-			balanceLog.setCreateTime(new Date());
-			balanceLog.setFinishTime(new Date());
-			balanceLog.setIsSuccess(true);
-			balanceLog.setReason("预收款买卷使用");
-			// 设置变更后的余额
-			balanceLog.setBalance(user.getUnCashBalance());
-			balanceLog.setBalanceType(2L);
-			balanceLog.setOperator(order.getUsername());
-			balanceLog.setOrderNumber(order.getOrderNumber());
-			balanceLog.setOperatorIp("");
-			balanceLog.setDiySiteId(user.getUpperDiySiteId());
-			balanceLog.setCityId(user.getCityId());
-			balanceLog.setCashLeft(user.getCashBalance());
-			balanceLog.setUnCashLeft(user.getUnCashBalance());
-			balanceLog.setAllLeft(user.getBalance());
-			tdBalanceLogService.save(balanceLog);
 		}
-		
 
 		tdOrderService.save(order);
 
@@ -688,6 +665,7 @@ public class TdManagerBuyCouponBySellerController {
 
 		this.dismantleOrder(order, username);
 
+		
 		res.put("status", 0);
 		return res;
 	}
@@ -1648,6 +1626,32 @@ public class TdManagerBuyCouponBySellerController {
 				Double cashBalance = new Double(order.getCashBalanceUsed() == null ? 0d : order.getCashBalanceUsed());
 				Double unCashBalance = new Double(order.getUnCashBalanceUsed() == null ? 0d : order.getUnCashBalanceUsed());
 				Double balance = cashBalance + unCashBalance;
+
+
+				if (balance > 0) {
+					TdBalanceLog balanceLog = new TdBalanceLog();
+					balanceLog.setUserId(order.getRealUserId());
+					balanceLog.setUsername(order.getUsername());
+					balanceLog.setMoney(balance);
+					balanceLog.setType(3L);
+					balanceLog.setCreateTime(new Date());
+					balanceLog.setFinishTime(new Date());
+					balanceLog.setIsSuccess(true);
+					balanceLog.setReason("预收款买卷使用");
+					// 设置变更后的余额
+					balanceLog.setBalance(user.getUnCashBalance());
+					balanceLog.setBalanceType(2L);
+					balanceLog.setOperator(order.getUsername());
+					balanceLog.setOrderNumber(order.getOrderNumber());
+					balanceLog.setOperatorIp("");
+					balanceLog.setDiySiteId(user.getUpperDiySiteId());
+					balanceLog.setCityId(user.getCityId());
+					balanceLog.setCashLeft(user.getCashBalance());
+					balanceLog.setUnCashLeft(user.getUnCashBalance());
+					balanceLog.setAllLeft(user.getBalance());
+					tdBalanceLogService.save(balanceLog);
+				}
+				
 				if (cash < 0) {
 					if (cash + pos >= 0) {
 						pos += cash;
