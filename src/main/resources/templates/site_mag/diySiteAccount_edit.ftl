@@ -92,7 +92,7 @@
     <dd>
         ${diySiteName!''}
          <input name="diySiteTitle" type="text" value="${diySiteName!''}" style="display:none">
-         <input name="diySiteId" type="text" value="${id!''}" style="display:none" >
+         <input name="diySiteId" type="text" value="${id?c}" style="display:none" >
     </dd>
   	<dt>选择门店管理账号:</dt>
     <dd>
