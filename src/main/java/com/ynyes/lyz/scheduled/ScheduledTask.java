@@ -47,8 +47,8 @@ public class ScheduledTask {
 	        if(now.after(begainDate)){
 	        	Calendar calendar = Calendar.getInstance();
 	        	calendar.setTime(now);
-			    calendar.add(Calendar.DATE,-90); 
-		        // 90天前日期
+			    calendar.add(Calendar.DATE,-60); 
+		        // 60天前日期 
 			    Date date = calendar.getTime();
 			    
 			    List<TdUser> list = tdUserService.queryAllUser("成都市",date);
