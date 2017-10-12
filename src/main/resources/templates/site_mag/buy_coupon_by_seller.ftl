@@ -686,13 +686,13 @@ function checkDate(){
 		    					$("#money").html(total);
 	    						$("#hidden_balance").val(res.balance);
 		    					$("#myDialog").show();
-		    					if (res.cityId == 2121) {
+		    					if (res.cityId == 2033) {
 		    						$(".zengzhou").show();
 		    						$(".chengdu").hide();
 		    						$("#balance").val(total);
 		    						$("#span").html("预收款余额: " + res.balance);
 		    					} 
-		    					if (res.cityId == 212) {
+		    					if (res.cityId == 2121) {
 		    						$(".zengzhou").hide();
 		    						$(".chengdu").show();
 		    					}
