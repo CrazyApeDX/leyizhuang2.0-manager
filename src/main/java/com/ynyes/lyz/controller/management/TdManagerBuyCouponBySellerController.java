@@ -558,7 +558,11 @@ public class TdManagerBuyCouponBySellerController {
 //			if (null != module && null != module.getPrice()) {
 //				subPrice = module.getPrice();
 //			}
-			subPrice = priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice();
+			//---
+			if (null != priceListItem) {
+				subPrice = priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice();
+			}
+			
 			total += (price * numbers[i]) - (subPrice * coupons[i]);
 			totalGoods += (price * numbers[i]);
 			totalCoupon += (subPrice * coupons[i]);
