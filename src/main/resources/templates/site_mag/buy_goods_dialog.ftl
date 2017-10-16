@@ -25,10 +25,10 @@
     //页面加载完成执行
     $(function () {
         if ($(api.data).length > 0) {
-            var parentObj = $(api.data).parent().parent(); //取得节点父对象            
+            var parentObj = $(api.data).parent().parent(); //取得节点父对象
             //开始赋值
-            $("#txtItemZengPin_Title").val($(parentObj).find("input[id='title']").val()); 
-            $("#txtItemZengPin_Id").val($(parentObj).find("input[id='id']").val()); 
+            $("#txtItemZengPin_Title").val($(parentObj).find("input[id='title']").val());
+            $("#txtItemZengPin_Id").val($(parentObj).find("input[id='id']").val());
             $("#txtItemZengPin_Price").val($(parentObj).find("input[id='price']").val());
             $("#txtItemZengPin_CurrentPrice").val($(parentObj).find("input[id='currentPrice']").val());
             $("#txtItemZengPin_CoverImageUri").val($(parentObj).find("input[id='image']").val());
@@ -53,12 +53,12 @@
             zengpinDialog.data = obj;
         }
     }
-    
+
     //删除促销赠品节点
     function del_goods_comb(obj) {
         $(obj).parent().parent().remove();
     }
-    
+
     //提交表单处理
     function submitForm() {
         //验证表单
@@ -66,12 +66,12 @@
             W.$.dialog.alert('请填写组合商品标题！', function () { $("#txtItemZengPin_Title").focus(); }, api);
             return false;
         }
-        
+
         if ($("#txtItemZengPin_CurrentPrice").val() == "") {
             W.$.dialog.alert('请填写商品数量！', function () { $("#txtItemZengPin_CurrentPrice").focus(); }, api);
             return false;
         }
-        
+
         //添加或修改
         if ($(api.data).length > 0) {
             var parentObj = $(api.data).parent().parent();
@@ -102,9 +102,9 @@
                 $("#totalComb", W.document).val(parseInt($("#totalComb", W.document).val())+1);
             }
         }
-        api.close();
+//        api.close();
     }
-    
+
     $(function () {
         $(".itemzengpin_select").click(function () {
 
@@ -133,7 +133,7 @@
         <input type="text" id="txtItemZengPin_Id" class="input normal">
         <span class="Validform_checktip">*</span>
       </dd>
-    </dl> 
+    </dl>
     <dl>
       <dt>商品标题</dt>
       <dd>
@@ -188,7 +188,7 @@ function __doPostBack(eventTarget, eventArgument) {
     </div>
     <div class="r-list">
       <input name="keywords" type="text" class="keyword" value="${keywords!""}">
-      <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>      
+      <a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>
     </div>
   </div>
 </div>
@@ -203,9 +203,9 @@ function __doPostBack(eventTarget, eventArgument) {
             <th align="left" width="12%">商品编码</th>
             <th align="left" width="12%">所属类别</th>
             <th align="left" width="12%">销售价</th>
-            <th align="left" width="16%">发布时间</th>    
+            <th align="left" width="16%">发布时间</th>
         </tr>
-        
+
         <#if goods_page??>
             <#list goods_page as goods>
             	<#if goods.salePrice?? && goods.salePrice != 0>
@@ -217,7 +217,7 @@ function __doPostBack(eventTarget, eventArgument) {
 	                    <td><#if goods.salePrice??>${goods.salePrice?string("#.##")}<#else>0.00</#if></td>
 	                    <td>${goods.onSaleTime!""}</td>
 	                </tr>
-	            	
+
                 </#if>
             </#list>
         </#if>
