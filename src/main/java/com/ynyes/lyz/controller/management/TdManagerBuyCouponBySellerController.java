@@ -14,7 +14,6 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.bcel.generic.NEW;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -217,7 +216,11 @@ public class TdManagerBuyCouponBySellerController {
 	}
 	
 	@RequestMapping(value = "/dialog/user")
-	public String getDialogUser(String keywords, Integer page, Integer size, ModelMap map, String username) {
+	public String getDialogUser(HttpServletRequest req, String keywords, Integer page, Integer size, ModelMap map, String username) {
+		
+		String manager = (String) req.getSession().getAttribute("manager");
+		TdManager tdManager = tdManagerService.findByUsernameAndIsEnableTrue(manager);
+		
 		if (null == page || page < 0) {
 			page = 0;
 		}
@@ -229,11 +232,26 @@ public class TdManagerBuyCouponBySellerController {
 		if (null != keywords) {
 			keywords = keywords.trim();
 		}
+		List<Long> diySiteIds = new ArrayList<>();
+		TdDiySite diySite = null ;
+		if (null != tdManager && null != tdManager.getDiyCode() && !"".equals(tdManager.getDiyCode())) {
+			diySite = this.tdDiySiteService.findByStoreCode(tdManager.getDiyCode());
+		}
+		if (null != diySite) {
+			diySiteIds.add(diySite.getId());
+			if (diySite.getRegionId() == 2033) {
+//				this.tdDiySiteService.findByTitleAndIsEnableTrue(regionId, title);
+				diySiteIds.add(48L);
+			} else {
+				diySiteIds.add(124L);
+			}
+		}
+		
 
 		Page<TdUser> user_page = null;
 		if (null != keywords) {
 			user_page = tdUserService.findByUsernameContainingOrRealNameContainingAndUserType(keywords, page,
-					size,0L);
+					size,0L, diySiteIds);
 		} else {
 			// goods_page = tdGoodsService.findAll(page, size);
 		}
@@ -539,7 +557,11 @@ public class TdManagerBuyCouponBySellerController {
 //			if (null != module && null != module.getPrice()) {
 //				subPrice = module.getPrice();
 //			}
-			subPrice = priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice();
+			//---
+			if (null != priceListItem) {
+				subPrice = priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice();
+			}
+			
 			total += (price * numbers[i]) - (subPrice * coupons[i]);
 			totalGoods += (price * numbers[i]);
 			totalCoupon += (subPrice * coupons[i]);

@@ -522,13 +522,30 @@ public class TdUserService {
 	}
 
 	public Page<TdUser> findByUsernameContainingOrRealNameContainingAndUserType(String keywords, Integer page,
-			Integer size, long userType) {
-		if (null == keywords) {
-			return null;
-		}
+			Integer size, Long userType, List<Long> diySiteIds) {
+		
 		PageRequest pageRequest = new PageRequest(page, size);
-		return repository.findByUsernameContainingOrRealNameContainingAndUserType(keywords, keywords,
-				pageRequest,userType);
+		Criteria<TdUser> c = new Criteria<TdUser>();
+		// 用户名
+		if (StringUtils.isNotBlank(keywords)) {
+			c.add(Restrictions.or(Restrictions.like("realName", keywords, true),
+					Restrictions.like("username", keywords, true)));
+		}
+		if (null != diySiteIds && diySiteIds.size() > 0) {
+			c.add(Restrictions.in("upperDiySiteId", diySiteIds, true));
+		}
+		if (null != userType) {
+			c.add(Restrictions.eq("userType", userType, true));
+		}
+
+		return repository.findAll(c, pageRequest);
+		
+//		if (null == keywords) {
+//			return null;
+//		}
+//		PageRequest pageRequest = new PageRequest(page, size);
+//		return repository.findByUsernameContainingOrRealNameContainingAndUserType(keywords, keywords,
+//				pageRequest,userType);
 	}
 	
 	public TdUser modifyBalance(Double variableAmount, TdUser user) {
