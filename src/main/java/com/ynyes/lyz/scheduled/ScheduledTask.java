@@ -57,7 +57,7 @@ public class ScheduledTask {
 		        
 		        for (TdUser user : list) {
 		        	// 排除默认门店下的用户
-		        	if(user.getDiyName() != null && !user.getDiyName().equals("鹏程店") 
+		        	if(user.getDiyName() != null && !user.getDiyCode().equals("MR001")
 		        			&& user.getSellerId() != null && !user.getSellerId().equals(0L)){
 		        		if(user.getChangeSellerTime() == null){
 			        		// 注册日期大于90以前
