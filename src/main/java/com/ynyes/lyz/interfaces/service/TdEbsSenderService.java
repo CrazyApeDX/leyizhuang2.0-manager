@@ -33,6 +33,8 @@ import com.ynyes.lyz.entity.TdAllocation;
 import com.ynyes.lyz.entity.TdAllocationCallRecord;
 import com.ynyes.lyz.entity.TdAllocationDetail;
 import com.ynyes.lyz.entity.TdDiySite;
+import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
+import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderCouponInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderGoodsInf;
 import com.ynyes.lyz.interfaces.entity.TdOrderInf;
@@ -44,6 +46,8 @@ import com.ynyes.lyz.repository.TdDiySiteRepo;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationDetail;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationHeader;
 import cn.com.leyizhuang.ebs.entity.dto.AllocationReceive;
+import cn.com.leyizhuang.ebs.entity.dto.CashReceipt;
+import cn.com.leyizhuang.ebs.entity.dto.CashRefund;
 import cn.com.leyizhuang.ebs.entity.dto.Order;
 import cn.com.leyizhuang.ebs.entity.dto.OrderCoupon;
 import cn.com.leyizhuang.ebs.entity.dto.OrderGood;
@@ -73,6 +77,12 @@ public class TdEbsSenderService {
     
     @Autowired
 	private TdReturnTimeInfService tdReturnTimeInfService;
+    
+	@Autowired
+	private TdCashReciptInfService tdCashReciptInfService;
+
+	@Autowired
+	private TdCashRefundInfService tdCashRefundInfService;
     
     private ExecutorService executorService = Executors.newFixedThreadPool(10);
     
@@ -518,4 +528,127 @@ public class TdEbsSenderService {
             return String.valueOf(obj);
         }
     }
+    
+    /**
+	 * 异步发送【收款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashReciptInf
+	 */
+	public void sendCashReciptToEbsAndRecord(final TdCashReciptInf tdCashReciptInf) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendCashReciptToEbs(tdCashReciptInf);
+				if (!(Boolean) result.get("success")) {
+					tdCashReciptInf.setSendFlag(1);
+					tdCashReciptInf.setErrorMsg((String) result.get("msg"));
+				} else {
+					tdCashReciptInf.setSendFlag(0);
+				}
+				tdCashReciptInfService.save(tdCashReciptInf);
+			}
+		});
+	}
+
+	/**
+	 * 异步发送【退款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashRefundInf
+	 */
+	public void sendCashRefundToEbsAndRecord(final TdCashRefundInf tdCashRefundInf) {
+		executorService.execute(new Runnable() {
+			public void run() {
+				Map<String, Object> result = sendCashRefundToEbs(tdCashRefundInf);
+				if (!(Boolean) result.get("success")) {
+					tdCashRefundInf.setSendFlag(1);
+					tdCashRefundInf.setErrorMsg((String) result.get("msg"));
+				} else {
+					tdCashRefundInf.setSendFlag(0);
+				}
+				tdCashRefundInfService.save(tdCashRefundInf);
+			}
+		});
+	}
+	
+	/**
+	 * 发送【收款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashReciptInf
+	 * @return
+	 */
+	public Map<String, Object> sendCashReciptToEbs(TdCashReciptInf tdCashReciptInf) {
+		LOGGER.info("sendCashReciptToEbs, tdCashReciptInf=" + tdCashReciptInf);
+
+		CashReceipt cashReceipt = new CashReceipt();
+		cashReceipt.setAmount(toString(tdCashReciptInf.getAmount()));
+		cashReceipt.setDescription("");
+		cashReceipt.setDiySiteCode(toString(tdCashReciptInf.getDiySiteCode()));
+		cashReceipt.setOrderHeaderId(toString(tdCashReciptInf.getOrderHeaderId()));
+		cashReceipt.setOrderNumber(toString(tdCashReciptInf.getOrderNumber()));
+		cashReceipt.setProductType(toString(tdCashReciptInf.getProductType()));
+		cashReceipt.setReceiptClass(toString(tdCashReciptInf.getReceiptClass()));
+		cashReceipt.setReceiptDate(DateFormatUtils.format(tdCashReciptInf.getReceiptDate(), DateUtil.FORMAT_DATETIME));
+		cashReceipt.setReceiptId(toString(tdCashReciptInf.getReceiptId()));
+		cashReceipt.setReceiptNumber(toString(tdCashReciptInf.getReceiptNumber()));
+		cashReceipt.setReceiptType(toString(tdCashReciptInf.getReceiptType()));
+		cashReceipt.setSobId(toString(tdCashReciptInf.getSobId()));
+		cashReceipt.setUserid(toString(tdCashReciptInf.getUserid()));
+		cashReceipt.setUsername(toString(tdCashReciptInf.getUsername()));
+		cashReceipt.setUserphone(toString(tdCashReciptInf.getUserphone()));
+
+		String allocationReceiveJson = JSON.toJSONString(cashReceipt);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("cashReceiptJson", allocationReceiveJson));
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callCashReceipt", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("cashReceiptJson", allocationReceiveJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendCashReciptToEbs, result=" + result);
+		return result;
+	}
+
+	/**
+	 * 发送【退款】信息到EBS，并保存发送结果
+	 * 
+	 * @param tdCashRefundInf
+	 * @return
+	 */
+	public Map<String, Object> sendCashRefundToEbs(TdCashRefundInf tdCashRefundInf) {
+		LOGGER.info("sendCashRefundToEbs, tdCashRefundInf=" + tdCashRefundInf);
+
+		CashRefund cashRefund = new CashRefund();
+		cashRefund.setAmount(toString(tdCashRefundInf.getAmount()));
+		cashRefund.setDescription(toString(tdCashRefundInf.getDescription()));
+		cashRefund.setDiySiteCode(toString(tdCashRefundInf.getDiySiteCode()));
+		cashRefund.setOrderHeaderId(toString(tdCashRefundInf.getOrderHeaderId()));
+		cashRefund.setProductType(toString(tdCashRefundInf.getProductType()));
+		cashRefund.setRefundClass(toString(tdCashRefundInf.getRefundClass()));
+		cashRefund.setRefundDate(DateFormatUtils.format(tdCashRefundInf.getRefundDate(), DateUtil.FORMAT_DATETIME));
+		cashRefund.setRefundId(toString(tdCashRefundInf.getRefundId()));
+		cashRefund.setRefundNumber(toString(tdCashRefundInf.getRefundNumber()));
+		cashRefund.setRefundType(toString(tdCashRefundInf.getRefundType()));
+		cashRefund.setReturnNumber(toString(tdCashRefundInf.getReturnNumber()));
+		cashRefund.setRtHeaderId(toString(tdCashRefundInf.getRtHeaderId()));
+		cashRefund.setSobId(toString(tdCashRefundInf.getSobId()));
+		cashRefund.setUserid(toString(tdCashRefundInf.getUserid()));
+		cashRefund.setUsername(toString(tdCashRefundInf.getUsername()));
+		cashRefund.setUserphone(toString(tdCashRefundInf.getUserphone()));
+
+		String allocationReceiveJson = JSON.toJSONString(cashRefund);
+		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
+		parameters.add(new BasicNameValuePair("cashRefundJson", allocationReceiveJson));
+		Map<String, Object> result = this.postToEbs(this.ebsUrl + "callCashRefund", parameters);
+
+		if (!(Boolean) result.get("success")) {
+			JSONObject content = new JSONObject();
+			content.put("cashRefundJson", allocationReceiveJson);
+			result.put("content", JSON.toJSONString(content));
+		}
+
+		LOGGER.info("sendCashRefundToEbs, result=" + result);
+		return result;
+	}
 }

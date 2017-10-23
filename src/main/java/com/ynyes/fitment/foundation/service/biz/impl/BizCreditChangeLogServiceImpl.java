@@ -5,13 +5,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ynyes.fitment.core.constant.CreditChangeType;
 import com.ynyes.fitment.core.constant.CreditOperator;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity.OriginType;
 import com.ynyes.fitment.foundation.entity.FitCompany;
@@ -30,8 +28,7 @@ import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
 import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
-import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 
 @Service
 @Transactional
@@ -50,10 +47,10 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 	private TdCashRefundInfService tdCashRefundInfService;
 	
 	@Autowired
-	private TdInterfaceService tdInterfaceService;
+	private FitPromotionMoneyLogRepo fitPromotionMoneyLogRepo;
 	
 	@Autowired
-	private FitPromotionMoneyLogRepo fitPromotionMoneyLogRepo;
+	private TdEbsSenderService tdEbsSenderService;
 
 	@Override
 	public FitCreditChangeLog consumeLog(FitCompany company, FitOrder order) throws Exception {
@@ -150,7 +147,8 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		refund.setUserphone("00000000000");
 		refund.setReturnNumber(referenceNumber);
 		refund = tdCashRefundInfService.save(refund);
-		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+//		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		tdEbsSenderService.sendCashRefundToEbsAndRecord(refund);
 		
 	}
 
@@ -172,14 +170,15 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		receipt.setUserphone("00000000000");
 		receipt.setOrderNumber(referenceNumber);
 		receipt = this.tdCashReciptInfService.save(receipt);
-		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			receipt.setSendFlag(0);
-		} else {
-			receipt.setSendFlag(1);
-			receipt.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(receipt);
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(receipt);
+//		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			receipt.setSendFlag(0);
+//		} else {
+//			receipt.setSendFlag(1);
+//			receipt.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(receipt);
 	}
 	
 	private void doReceipt(FitCompany company, Double inputCredit) {
@@ -199,14 +198,15 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		receipt.setUsername(company.getName());
 		receipt.setUserphone("00000000000");
 		receipt = this.tdCashReciptInfService.save(receipt);
-		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			receipt.setSendFlag(0);
-		} else {
-			receipt.setSendFlag(1);
-			receipt.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(receipt);
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(receipt);
+//		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			receipt.setSendFlag(0);
+//		} else {
+//			receipt.setSendFlag(1);
+//			receipt.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(receipt);
 	}
 
 
@@ -227,8 +227,9 @@ public class BizCreditChangeLogServiceImpl implements BizCreditChangeLogService 
 		refund.setUsername(company.getName());
 		refund.setUserphone("00000000000");
 		refund = tdCashRefundInfService.save(refund);
-		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
-		
+		tdEbsSenderService.sendCashRefundToEbsAndRecord(refund);
+//		tdInterfaceService.ebsWithObject(refund, INFTYPE.CASHREFUNDINF);
+		tdEbsSenderService.sendCashRefundToEbsAndRecord(refund);
 	}
 
 	private String getNumber(Date date, String type) {

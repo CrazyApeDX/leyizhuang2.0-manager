@@ -216,6 +216,7 @@ public class TdCommonService {
 	
 	@Autowired
 	private  TdPhotoOrderGoodsInfoService tdPhotoOrderGoodsInfoService;
+	
 	/**
 	 * 根据仓库编号获取仓库名
 	 * 

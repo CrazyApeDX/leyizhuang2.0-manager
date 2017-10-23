@@ -15,8 +15,8 @@ import com.ynyes.lyz.entity.TdCashReturnNote;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.service.TdCashReturnNoteService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdReturnNoteService;
@@ -51,6 +51,9 @@ public class TdManagerCashReturnNoteController {
 
 	@Autowired
 	private TdInterfaceService tdInterfaceService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 
 	@RequestMapping(value = "/list")
 	public String cashReturnNoteList(Integer page, Integer size, String keywords, Long type, String __EVENTTARGET,
@@ -140,7 +143,8 @@ public class TdManagerCashReturnNoteController {
 
 			// add Mdj
 			TdCashRefundInf cashRefundInf = tdInterfaceService.initCashRefundInf(note);
-			tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+//			tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+			tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 
 			// 第二步操作：修改分单状态
 			String orderNumber = note.getOrderNumber();

@@ -135,6 +135,9 @@ public class TdInterfaceService {
 	
 	@Autowired
 	private TdUserService tdUserService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 
 	private Call call;
 	
@@ -802,7 +805,8 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DELIVER_CASH, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 配送pos
@@ -811,7 +815,8 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DELIVER_POS, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 门店现金
@@ -820,7 +825,8 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DIYSITE_CASH, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 门店pos
@@ -838,7 +844,8 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DIYSITE_OHTER, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 

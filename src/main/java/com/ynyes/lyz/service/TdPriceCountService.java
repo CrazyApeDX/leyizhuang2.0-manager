@@ -13,7 +13,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,9 +32,8 @@ import com.ynyes.lyz.entity.TdRecharge;
 import com.ynyes.lyz.entity.TdReturnNote;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
-import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
 
@@ -77,9 +75,6 @@ public class TdPriceCountService {
 	private TdInterfaceService tdInterfaceService;
 
 	@Autowired
-	private TdCashReciptInfService tdCashReciptInfService;
-
-	@Autowired
 	private TdCommonService tdCommonService;
 
 	@Autowired
@@ -93,6 +88,9 @@ public class TdPriceCountService {
 
 	@Autowired
 	private TdUpstairsSettingService tdUpstairSettingService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 
 	/**
 	 * 计算订单价格和能使用的最大的预存款的方法
@@ -2381,19 +2379,21 @@ public class TdPriceCountService {
 			return;
 		}
 		TdCashReciptInf cashReciptInf = tdInterfaceService.initCashReciptByReCharge(tdRecharge, tdUser);
-		String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			cashReciptInf.setSendFlag(0);
-		} else {
-			cashReciptInf.setSendFlag(1);
-			cashReciptInf.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(cashReciptInf);
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
+//		String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			cashReciptInf.setSendFlag(0);
+//		} else {
+//			cashReciptInf.setSendFlag(1);
+//			cashReciptInf.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(cashReciptInf);
 	}
 
 	/**
 	 * 修改订单商品的价格为最新价格
 	 */
+	@SuppressWarnings("deprecation")
 	public void changeOrderToNewPrice(HttpServletRequest req, TdOrder order) {
 
 		List<TdOrderGoods> orderGoods = order.getOrderGoodsList();

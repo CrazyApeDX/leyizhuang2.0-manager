@@ -35,7 +35,6 @@ import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.entity.TdReturnTimeInf;
 import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.service.TdCashReturnNoteService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
@@ -431,7 +430,8 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 							List<TdCashRefundInf> cashRefundList = tdReturnNoteService
 									.doActionWithReturnCash(returnNote, user, diySite);
 							for (TdCashRefundInf cashRefundInf : cashRefundList) {
-								tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+//								tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+								tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 							}
 						}
 					}
@@ -444,7 +444,8 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					if (cashReturnNotes != null && cashReturnNotes.size() > 0) {
 						for (TdCashReturnNote tdCashReturnNote : cashReturnNotes) {
 							TdCashRefundInf cashRefundInf = tdInterfaceService.initCashRefundInf(tdCashReturnNote);
-							tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+//							tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+							tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 						}
 						for (int index = 0; index < cashReturnNotes.size(); index++) {
 							TdCashReturnNote cashReturnNote = cashReturnNotes.get(index);
