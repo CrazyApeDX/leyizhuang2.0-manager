@@ -13,7 +13,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.user.CreditChangeType;
@@ -32,9 +31,6 @@ public class TdUserService {
 
 	@Autowired
 	private TdUserCreditLogService tdUserCreditService;
-
-	@Autowired
-	private TdCityService tdCityService;
 	
 	@Autowired
 	private TdDiySiteService tdDiySiteService;
