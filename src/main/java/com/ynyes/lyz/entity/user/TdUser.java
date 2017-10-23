@@ -1,5 +1,6 @@
 package com.ynyes.lyz.entity.user;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -158,13 +159,17 @@ public class TdUser {
 	@Column(scale = 2, nullable = false)
 	private Double creditLimit = 0d;
 	
+	//更改版本
+	@Column(length = 15, nullable = false)
+	private Timestamp version;
+	
 	//红包标记 ： 0/null、无； 1、有红包；2、已使用红包
 	@Column(length = 1, nullable = false)
 	private Integer redPacketFlag;
 	
-	// 登陆标记 默认为0，登陆后为 1
+	// 登陆标记 默认为1
 	@Column(length = 20)
-	private Long loginFlag = 0L;
+	private Long loginFlag = 1L;
 	
 	// 修改导购的时间
 	private Date changeSellerTime;
@@ -457,6 +462,14 @@ public class TdUser {
 
 	public void setLoginFlag(Long loginFlag) {
 		this.loginFlag = loginFlag;
+	}
+
+	public Timestamp getVersion() {
+		return version;
+	}
+
+	public void setVersion(Timestamp version) {
+		this.version = version;
 	}
 
 	@Override

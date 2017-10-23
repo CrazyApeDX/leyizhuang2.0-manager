@@ -17,6 +17,7 @@ import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.excp.AppConcurrentExcp;
 import com.ynyes.lyz.entity.user.TdUserChangeSellerLog;
 import com.ynyes.lyz.repository.TdUserRepo;
 import com.ynyes.lyz.util.Criteria;
@@ -31,7 +32,7 @@ public class TdUserService {
 
 	@Autowired
 	private TdUserCreditLogService tdUserCreditService;
-	
+
 	@Autowired
 	private TdDiySiteService tdDiySiteService;
 	
@@ -521,15 +522,60 @@ public class TdUserService {
 	}
 
 	public Page<TdUser> findByUsernameContainingOrRealNameContainingAndUserType(String keywords, Integer page,
-			Integer size, long userType) {
-		if (null == keywords) {
-			return null;
-		}
+			Integer size, Long userType, List<Long> diySiteIds) {
+		
 		PageRequest pageRequest = new PageRequest(page, size);
-		return repository.findByUsernameContainingOrRealNameContainingAndUserType(keywords, keywords,
-				pageRequest,userType);
+		Criteria<TdUser> c = new Criteria<TdUser>();
+		// 用户名
+		if (StringUtils.isNotBlank(keywords)) {
+			c.add(Restrictions.or(Restrictions.like("realName", keywords, true),
+					Restrictions.like("username", keywords, true)));
+		}
+		if (null != diySiteIds && diySiteIds.size() > 0) {
+			c.add(Restrictions.in("upperDiySiteId", diySiteIds, true));
+		}
+		if (null != userType) {
+			c.add(Restrictions.eq("userType", userType, true));
+		}
+
+		return repository.findAll(c, pageRequest);
+		
+//		if (null == keywords) {
+//			return null;
+//		}
+//		PageRequest pageRequest = new PageRequest(page, size);
+//		return repository.findByUsernameContainingOrRealNameContainingAndUserType(keywords, keywords,
+//				pageRequest,userType);
 	}
 	
+	public TdUser modifyBalance(Double variableAmount, TdUser user) {
+
+		if (null == user) {
+			return user;
+		}
+		if (null == variableAmount || 0.0 == variableAmount || variableAmount > user.getBalance()) {
+			return user;
+		}
+
+		Double unCashBalance = user.getUnCashBalance();
+		Double cashBalance = user.getCashBalance();
+		// 先扣除不可提现预存款，在扣除可提现预存款
+		if (variableAmount <= unCashBalance) {
+			user.setUnCashBalance(unCashBalance - variableAmount);
+		} else {
+			variableAmount = variableAmount - unCashBalance;
+			user.setUnCashBalance(0.0);
+			user.setCashBalance(cashBalance - variableAmount);
+		}
+
+		int row = repository.update(user.getCashBalance(), user.getUnCashBalance(), user.getId(),
+				user.getVersion());
+		// 并发控制，判断version是否改变
+		if (1 != row) {
+			throw new AppConcurrentExcp("账号余额信息过期！");
+		}
+		return user;
+	}
 	/**
 	 * 查询所有的会员
 	 * @param cityName

@@ -140,6 +140,10 @@ public class TdActivity {
 	// 立减金额
 	@Column(scale = 2)
 	private Double subPrice;
+	
+	//促销对象
+	@Column
+	private Integer activityTarget;
 
 	public String getSiteName() {
 		return siteName;
@@ -363,6 +367,14 @@ public class TdActivity {
 
 	public void setSubPrice(Double subPrice) {
 		this.subPrice = subPrice;
+	}
+
+	public Integer getActivityTarget() {
+		return activityTarget;
+	}
+
+	public void setActivityTarget(Integer activityTarget) {
+		this.activityTarget = activityTarget;
 	}
 
 	@Override

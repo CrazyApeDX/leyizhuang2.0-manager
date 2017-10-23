@@ -28,6 +28,7 @@ import com.ibm.icu.math.BigDecimal;
 import com.ynyes.lyz.entity.TdActivity;
 import com.ynyes.lyz.entity.TdActivityGift;
 import com.ynyes.lyz.entity.TdActivityGiftList;
+import com.ynyes.lyz.entity.TdBalanceLog;
 import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
@@ -49,6 +50,7 @@ import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 import com.ynyes.lyz.interfaces.utils.StringTools;
 import com.ynyes.lyz.service.TdActivityGiftService;
 import com.ynyes.lyz.service.TdActivityService;
+import com.ynyes.lyz.service.TdBalanceLogService;
 import com.ynyes.lyz.service.TdBrandService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
@@ -64,6 +66,7 @@ import com.ynyes.lyz.service.TdPriceListItemService;
 import com.ynyes.lyz.service.TdPriceListService;
 import com.ynyes.lyz.service.TdProductCategoryService;
 import com.ynyes.lyz.service.TdUserService;
+import com.ynyes.lyz.util.CountUtil;
 import com.ynyes.lyz.util.SiteMagConstant;
 
 /**
@@ -134,6 +137,9 @@ public class TdManagerBuyCouponBySellerController {
 	
 	@Autowired
 	private TdManagerRoleService tdManagerRoleService;
+	
+	@Autowired
+	private TdBalanceLogService tdBalanceLogService;
 
 	@RequestMapping
 	public String index(HttpServletRequest req, ModelMap map) {
@@ -210,7 +216,11 @@ public class TdManagerBuyCouponBySellerController {
 	}
 	
 	@RequestMapping(value = "/dialog/user")
-	public String getDialogUser(String keywords, Integer page, Integer size, ModelMap map, String username) {
+	public String getDialogUser(HttpServletRequest req, String keywords, Integer page, Integer size, ModelMap map, String username) {
+		
+		String manager = (String) req.getSession().getAttribute("manager");
+		TdManager tdManager = tdManagerService.findByUsernameAndIsEnableTrue(manager);
+		
 		if (null == page || page < 0) {
 			page = 0;
 		}
@@ -222,11 +232,26 @@ public class TdManagerBuyCouponBySellerController {
 		if (null != keywords) {
 			keywords = keywords.trim();
 		}
+		List<Long> diySiteIds = new ArrayList<>();
+		TdDiySite diySite = null ;
+		if (null != tdManager && null != tdManager.getDiyCode() && !"".equals(tdManager.getDiyCode())) {
+			diySite = this.tdDiySiteService.findByStoreCode(tdManager.getDiyCode());
+		}
+		if (null != diySite) {
+			diySiteIds.add(diySite.getId());
+			if (diySite.getRegionId() == 2033) {
+//				this.tdDiySiteService.findByTitleAndIsEnableTrue(regionId, title);
+				diySiteIds.add(48L);
+			} else {
+				diySiteIds.add(124L);
+			}
+		}
+		
 
 		Page<TdUser> user_page = null;
 		if (null != keywords) {
 			user_page = tdUserService.findByUsernameContainingOrRealNameContainingAndUserType(keywords, page,
-					size,0L);
+					size,0L, diySiteIds);
 		} else {
 			// goods_page = tdGoodsService.findAll(page, size);
 		}
@@ -328,7 +353,8 @@ public class TdManagerBuyCouponBySellerController {
 		// 获取用户的城市
 		Long cityId = user.getCityId();
 		TdCity city = tdCityService.findBySobIdCity(cityId);
-
+		
+		res.put("cityId", cityId);
 		String cityShortName = null;
 		switch (city.getCityName()) {
 		case "成都市":
@@ -442,7 +468,7 @@ public class TdManagerBuyCouponBySellerController {
 		res.put("total", order.getTotalPrice());
 
 		/* 2016-12-08修改：获取用户的预存款总额 */
-		res.put("balance", user.getBalance());
+		res.put("balance", CountUtil.HALF_UP_SCALE_2(user.getBalance()));
 
 		res.put("status", 0);
 		return res;
@@ -531,7 +557,11 @@ public class TdManagerBuyCouponBySellerController {
 //			if (null != module && null != module.getPrice()) {
 //				subPrice = module.getPrice();
 //			}
-			subPrice = priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice();
+			//---
+			if (null != priceListItem) {
+				subPrice = priceListItem.getCouponPrice() - priceListItem.getCouponRealPrice();
+			}
+			
 			total += (price * numbers[i]) - (subPrice * coupons[i]);
 			totalGoods += (price * numbers[i]);
 			totalCoupon += (subPrice * coupons[i]);
@@ -596,7 +626,7 @@ public class TdManagerBuyCouponBySellerController {
 	@RequestMapping(value = "/create/order", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> createOrder(HttpServletRequest req, ModelMap map, String username, String sellerUsername,
-			Long[] ids, Long[] numbers, Long[] coupons, Double pos, Double cash, Double other, String realPayTime,Long serialNumber) {
+			Long[] ids, Long[] numbers, Long[] coupons, Double pos, Double cash, Double other, Double balance, String realPayTime,Long serialNumber) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 
@@ -605,10 +635,26 @@ public class TdManagerBuyCouponBySellerController {
 		pos = null == pos ? 0 : pos;
 		cash = null == cash ? 0 : cash;
 		other = null == other ? 0 : other;
+		balance = null == balance ? 0 : balance;
 
 		order.setPosPay(pos);
 		order.setCashPay(cash);
 		order.setBackOtherPay(other);
+		
+		//
+		if (balance > 0) {
+			TdUser user = tdUserService.findByUsername(username);
+			Double unCashBalance = null == user.getUnCashBalance() ? 0 :user.getUnCashBalance();
+			if (unCashBalance >= balance) {
+				order.setUnCashBalanceUsed(balance);
+			} else {
+				order.setUnCashBalanceUsed(unCashBalance);
+				order.setCashBalanceUsed(CountUtil.sub(balance, unCashBalance));
+			}
+			user = tdUserService.modifyBalance(balance, user);
+			
+			tdUserService.save(user);
+		}
 
 		tdOrderService.save(order);
 
@@ -628,7 +674,11 @@ public class TdManagerBuyCouponBySellerController {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date date = null;
 		try {
-			date = sdf.parse(realPayTime);
+			if (null == realPayTime || "".equals(realPayTime)) {
+				date = new Date();
+			} else {
+				date = sdf.parse(realPayTime);
+			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -637,6 +687,7 @@ public class TdManagerBuyCouponBySellerController {
 
 		this.dismantleOrder(order, username);
 
+		
 		res.put("status", 0);
 		return res;
 	}
@@ -1486,22 +1537,34 @@ public class TdManagerBuyCouponBySellerController {
 		}
 
 		// 获取原订单使用门店POS
-		Double unCashBalanceUsed = order_temp.getPosPay();
+		Double posPay = order_temp.getPosPay();
 
 		// 获取原订单使用门店现金
-		Double cashBalanceUsed = order_temp.getCashPay();
+		Double cashPay = order_temp.getCashPay();
+		
+		// 获取原订单使用不可提现预收款
+		Double unCashBalanceUsed = order_temp.getUnCashBalanceUsed();
+
+		// 获取原订单使用可提现预收款
+		Double cashBalanceUsed = order_temp.getCashBalanceUsed();
 
 		// 获取原订单门店其他
 		Double otherPay = order_temp.getBackOtherPay();
 
+		if (null == posPay) {
+			posPay = 0.00;
+		}
+		if (null == cashPay) {
+			cashPay = 0.00;
+		}
+		if (null == otherPay) {
+			otherPay = 0.00;
+		}
 		if (null == unCashBalanceUsed) {
 			unCashBalanceUsed = 0.00;
 		}
 		if (null == cashBalanceUsed) {
 			cashBalanceUsed = 0.00;
-		}
-		if (null == otherPay) {
-			otherPay = 0.00;
 		}
 
 		// totalPrice = totalPrice + cashBalanceUsed + unCashBalanceUsed;
@@ -1514,6 +1577,8 @@ public class TdManagerBuyCouponBySellerController {
 					order.setPosPay(0.00);
 					order.setCashPay(0.00);
 					order.setBackOtherPay(0.00);
+					order.setCashBalanceUsed(0.00);
+					order.setUnCashBalanceUsed(0.00);
 				} else {
 					// add MDJ
 					Double point;
@@ -1529,21 +1594,31 @@ public class TdManagerBuyCouponBySellerController {
 
 					if (null != point) {
 						DecimalFormat df = new DecimalFormat("#.00");
-						String scale2_uncash = df.format(unCashBalanceUsed * point);
-						String scale2_cash = df.format(cashBalanceUsed * point);
+						String scale2_posPay = df.format(posPay * point);
+						String scale2_cashPay = df.format(cashPay * point);
 						String scale2_other = df.format(otherPay * point);
-						if (null == scale2_uncash) {
-							scale2_uncash = "0.00";
+						String scale2_cashBalanceUsed = df.format(cashBalanceUsed * point);
+						String scale2_unCashBalanceUsed = df.format(unCashBalanceUsed * point);
+						if (null == scale2_posPay) {
+							scale2_posPay = "0.00";
 						}
-						if (null == scale2_cash) {
-							scale2_cash = "0.00";
+						if (null == scale2_cashPay) {
+							scale2_cashPay = "0.00";
 						}
 						if (null == scale2_other) {
 							scale2_other = "0.00";
 						}
-						order.setPosPay(Double.parseDouble(scale2_uncash));
-						order.setCashPay(Double.parseDouble(scale2_cash));
+						if (null == scale2_cashBalanceUsed) {
+							scale2_cashBalanceUsed = "0.00";
+						}
+						if (null == scale2_unCashBalanceUsed) {
+							scale2_unCashBalanceUsed = "0.00";
+						}
+						order.setPosPay(Double.parseDouble(scale2_posPay));
+						order.setCashPay(Double.parseDouble(scale2_cashPay));
 						order.setBackOtherPay(Double.parseDouble(scale2_other));
+						order.setCashBalanceUsed(Double.parseDouble(scale2_cashBalanceUsed));
+						order.setUnCashBalanceUsed(Double.parseDouble(scale2_unCashBalanceUsed));
 
 					}
 				}
@@ -1570,15 +1645,48 @@ public class TdManagerBuyCouponBySellerController {
 				Double cash = new Double(order.getCashPay() == null ? 0d : order.getCashPay());
 				Double pos = new Double(order.getPosPay() == null ? 0d : order.getPosPay());
 				Double other = new Double(order.getBackOtherPay() == null ? 0d : order.getBackOtherPay());
+				Double cashBalance = new Double(order.getCashBalanceUsed() == null ? 0d : order.getCashBalanceUsed());
+				Double unCashBalance = new Double(order.getUnCashBalanceUsed() == null ? 0d : order.getUnCashBalanceUsed());
+				Double balance = cashBalance + unCashBalance;
 
+
+				if (balance > 0) {
+					TdBalanceLog balanceLog = new TdBalanceLog();
+					balanceLog.setUserId(order.getRealUserId());
+					balanceLog.setUsername(order.getUsername());
+					balanceLog.setMoney(balance);
+					balanceLog.setType(3L);
+					balanceLog.setCreateTime(new Date());
+					balanceLog.setFinishTime(new Date());
+					balanceLog.setIsSuccess(true);
+					balanceLog.setReason("预收款买卷使用");
+					// 设置变更后的余额
+					balanceLog.setBalance(user.getUnCashBalance());
+					balanceLog.setBalanceType(2L);
+					balanceLog.setOperator(order.getUsername());
+					balanceLog.setOrderNumber(order.getOrderNumber());
+					balanceLog.setOperatorIp("");
+					balanceLog.setDiySiteId(user.getUpperDiySiteId());
+					balanceLog.setCityId(user.getCityId());
+					balanceLog.setCashLeft(user.getCashBalance());
+					balanceLog.setUnCashLeft(user.getUnCashBalance());
+					balanceLog.setAllLeft(user.getBalance());
+					tdBalanceLogService.save(balanceLog);
+				}
+				
 				if (cash < 0) {
 					if (cash + pos >= 0) {
 						pos += cash;
 						cash = 0.00;
-					} else {
+					} else if (other + cash + pos >= 0) {
 						other += (cash + pos);
 						cash = 0.00;
 						pos = 0.00;
+					} else {
+						balance += (other + cash + pos);
+						cash = 0.00;
+						pos = 0.00;
+						other = 0.00;
 					}
 				}
 
@@ -1664,6 +1772,33 @@ public class TdManagerBuyCouponBySellerController {
 					}
 					tdCashReciptInfService.save(cashReciptInf);
 				}
+				if (null != balance && balance > 0) {
+					TdCashReciptInf inf = new TdCashReciptInf();
+					inf.setSobId(user.getCityId());
+					TdCashReciptInf cashReciptInf = new TdCashReciptInf();
+					cashReciptInf.setSobId(user.getCityId());
+					cashReciptInf.setReceiptNumber("RC" + this.getTimestamp());
+					cashReciptInf.setUserid(order.getRealUserId());
+					cashReciptInf.setUsername(order.getRealUserRealName());
+					cashReciptInf.setUserphone(order.getRealUserUsername());
+					cashReciptInf.setDiySiteCode(order.getDiySiteCode());
+					cashReciptInf.setReceiptClass(StringTools.productClassStrByBoolean(order.getIsCoupon()));
+					cashReciptInf.setOrderHeaderId(order.getId());
+					cashReciptInf.setOrderNumber(order.getOrderNumber());
+					cashReciptInf.setProductType(StringTools.getProductStrByOrderNumber(order.getOrderNumber()));
+					cashReciptInf.setReceiptType("预收款");
+					cashReciptInf.setReceiptDate(new Date());
+					cashReciptInf.setAmount(balance);
+					tdCashReciptInfService.save(cashReciptInf);
+					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					if (StringUtils.isBlank(resultStr)) {
+						cashReciptInf.setSendFlag(0);
+					} else {
+						cashReciptInf.setSendFlag(1);
+						cashReciptInf.setErrorMsg(resultStr);
+					}
+					tdCashReciptInfService.save(cashReciptInf);
+				}
 			}
 		}
 
@@ -1674,7 +1809,11 @@ public class TdManagerBuyCouponBySellerController {
 		}
 
 		if (!isSend) {
-			tdCommonService.getCoupon(order_temp, "门店");
+			if (unCashBalanceUsed > 0 || cashBalanceUsed > 0) {
+				tdCommonService.getCoupon(order_temp, "");
+			} else {
+				tdCommonService.getCoupon(order_temp, "门店");
+			}
 		}
 
 		// 删除虚拟订单

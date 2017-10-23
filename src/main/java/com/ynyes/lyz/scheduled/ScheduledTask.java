@@ -47,8 +47,8 @@ public class ScheduledTask {
 	        if(now.after(begainDate)){
 	        	Calendar calendar = Calendar.getInstance();
 	        	calendar.setTime(now);
-			    calendar.add(Calendar.DATE,-90); 
-		        // 90天前日期
+			    calendar.add(Calendar.DATE,-60); 
+		        // 60天前日期 
 			    Date date = calendar.getTime();
 			    
 			    List<TdUser> list = tdUserService.queryAllUser("成都市",date);
@@ -57,7 +57,7 @@ public class ScheduledTask {
 		        
 		        for (TdUser user : list) {
 		        	// 排除默认门店下的用户
-		        	if(user.getDiyName() != null && !user.getDiyName().equals("鹏程店") 
+		        	if(user.getDiyName() != null && !user.getDiyCode().equals("MR001")
 		        			&& user.getSellerId() != null && !user.getSellerId().equals(0L)){
 		        		if(user.getChangeSellerTime() == null){
 			        		// 注册日期大于90以前

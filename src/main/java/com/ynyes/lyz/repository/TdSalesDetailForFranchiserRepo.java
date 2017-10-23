@@ -321,6 +321,7 @@ public interface TdSalesDetailForFranchiserRepo extends PagingAndSortingReposito
             + "     OR rn.remark_info IS NULL "
             + "   ) "
             + "   AND o.is_coupon IS NULL "
+            + "   AND rn.status_id != 6 "
             + "   AND rn.return_time >= ?1 "
             + "   AND rn.return_time <= ?2 "
             + "   AND diy.city LIKE ?3 "

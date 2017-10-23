@@ -469,6 +469,9 @@ public class TdOrder {
 	//使用钱包金额
 	@Column(scale = 2)
 	private Double walletMoney = 0d;
+	
+	@Column(nullable = false, scale = 2)
+	private Double alipayMoney = 0d;
 
 	public Double getRefund() {
 		return refund;
@@ -1387,6 +1390,14 @@ public class TdOrder {
 		}
 		this.mockReceivable = result;
 		return this.mockReceivable;
+	}
+
+	public Double getAlipayMoney() {
+		return alipayMoney;
+	}
+
+	public void setAlipayMoney(Double alipayMoney) {
+		this.alipayMoney = alipayMoney;
 	}
 
 	/**
