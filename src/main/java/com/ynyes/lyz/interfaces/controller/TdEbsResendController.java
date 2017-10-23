@@ -539,7 +539,7 @@ public class TdEbsResendController {
 	 * @param orderNumber
 	 *            退货单号
 	 */
-	@RequestMapping(value = "/returnOrder")
+	@RequestMapping(value = "/oldMethodReturnOrder")
 	public void resendReturnOrder(String returnNumber) {
 		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByReturnNumber(returnNumber);
 		if (returnOrderInf == null || returnOrderInf.getSendFlag() == null || returnOrderInf.getSendFlag() == 0) {
@@ -602,7 +602,7 @@ public class TdEbsResendController {
 	 * @throws ParseException
 	 * 
 	 */
-	@RequestMapping(value = "/returnOrderAll")
+	@RequestMapping(value = "/oldMethodReturnOrderAll")
 	@ResponseBody
 	public String resendReturnOrderAll(String initDateString) throws ParseException {
 
@@ -679,7 +679,7 @@ public class TdEbsResendController {
 	 * @param returnNumber
 	 *            退货单号
 	 */
-	@RequestMapping(value = "/returnGoods")
+	@RequestMapping(value = "/oldMethodReturnGoods")
 	public void resendReturnGoods(String returnNumber) {
 		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByReturnNumber(returnNumber);
 		if (returnOrderInf == null) {
@@ -710,7 +710,7 @@ public class TdEbsResendController {
 	 * @param returnNumber
 	 *            退货单号
 	 */
-	@RequestMapping(value = "/returnCoupon")
+	@RequestMapping(value = "/oldMethodReturnCoupon")
 	public void resendReturnCoupon(String returnNumber) {
 		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByReturnNumber(returnNumber);
 		if (returnOrderInf == null) {
@@ -734,6 +734,67 @@ public class TdEbsResendController {
 			}
 			tdReturnCouponInfService.save(returnCouponInfs);
 		}
+	}
+	
+	
+	/**
+	 * 重传退货单(review)
+	 * 
+	 * @param orderNumber
+	 *            退货单号
+	 */
+	@RequestMapping(value = "/returnOrder")
+	public void resendReturnOrderToEbs(String returnNumber) {
+		//退单头
+		TdReturnOrderInf returnOrderInf = tdReturnOrderInfService.findByReturnNumber(returnNumber);
+		if (returnOrderInf == null || returnOrderInf.getSendFlag() == null || returnOrderInf.getSendFlag() == 0) {
+			return;
+		}
+		// 行
+		List<TdReturnGoodsInf> returnGoodsInfs = tdReturnGoodsInfService
+				.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+		// 券
+		List<TdReturnCouponInf> returnCouponInfs = tdReturnCouponInfService
+				.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+		
+		tdEbsSenderService.sendReturnOrderToEbsAndRecord(returnOrderInf, returnGoodsInfs, returnCouponInfs);
+	}
+	
+	/**
+	 * 重传传输失败的全部退货单(review)
+	 * 
+	 * @throws ParseException
+	 * 
+	 */
+	@RequestMapping(value = "/returnOrderAll")
+	@ResponseBody
+	public String resendReturnOrderAllToEbs(String initDateString) throws ParseException {
+
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date initDate = null;
+		if (null == initDateString) {
+			initDateString = sdf.format(new Date());
+		}
+		initDate = sdf.parse(initDateString);
+		// 退单头
+		List<TdReturnOrderInf> returnOrderInfList = tdReturnOrderInfService.findFailedOrderList(1, initDate);
+		for (TdReturnOrderInf returnOrderInf : returnOrderInfList) {
+			if (returnOrderInf == null) {
+				return null;
+			}
+			// 行
+			List<TdReturnGoodsInf> returnGoodsInfs = tdReturnGoodsInfService
+					.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+		
+			// 券
+			List<TdReturnCouponInf> returnCouponInfs = tdReturnCouponInfService
+					.findByRtHeaderId(returnOrderInf.getRtHeaderId());
+			tdEbsSenderService.sendReturnOrderToEbsAndRecord(returnOrderInf, returnGoodsInfs, returnCouponInfs);
+		
+		}
+
+		return "处理退单个数：" + Integer.valueOf(returnOrderInfList.size()).toString();
+
 	}
 
 	/**
