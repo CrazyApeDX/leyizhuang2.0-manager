@@ -103,8 +103,16 @@
             }
         }
 //        api.close();
+        wipeForm();
     }
+    function wipeForm(){
+        $("#txtItemZengPin_Title").val("");
+        $("#txtItemZengPin_Id").val("");
+        $("#txtItemZengPin_Price").val("");
+        $("#txtItemZengPin_CurrentPrice").val("");
+        $("#txtItemZengPin_CoverImageUri").val("");
 
+    }
     $(function () {
         $(".itemzengpin_select").click(function () {
 
