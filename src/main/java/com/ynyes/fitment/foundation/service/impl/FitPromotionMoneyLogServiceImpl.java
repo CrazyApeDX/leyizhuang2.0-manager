@@ -4,7 +4,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,8 +17,6 @@ import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
 import com.ynyes.lyz.interfaces.service.TdCashRefundInfService;
 import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
-import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
 
 @Service
 @Transactional
@@ -30,9 +27,6 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 	
 	@Autowired
 	private TdCashRefundInfService tdCashRefundInfService;
-	
-	@Autowired
-	private TdInterfaceService tdInterfaceService;
 	
 	@Autowired
 	private TdCashReciptInfService tdCashReciptInfService;
@@ -140,14 +134,15 @@ public class FitPromotionMoneyLogServiceImpl implements FitPromotionMoneyLogServ
 		receipt.setUserphone("00000000000");
 		receipt.setOrderNumber(referenceNumber);
 		receipt = this.tdCashReciptInfService.save(receipt);
-		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
-		if (StringUtils.isBlank(resultStr)) {
-			receipt.setSendFlag(0);
-		} else {
-			receipt.setSendFlag(1);
-			receipt.setErrorMsg(resultStr);
-		}
-		tdCashReciptInfService.save(receipt);
+		tdEbsSenderService.sendCashReciptToEbsAndRecord(receipt);
+//		String resultStr = tdInterfaceService.ebsWithObject(receipt, INFTYPE.CASHRECEIPTINF);
+//		if (StringUtils.isBlank(resultStr)) {
+//			receipt.setSendFlag(0);
+//		} else {
+//			receipt.setSendFlag(1);
+//			receipt.setErrorMsg(resultStr);
+//		}
+//		tdCashReciptInfService.save(receipt);
 	}
 	private String getNumber(Date date, String type) {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
