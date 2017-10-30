@@ -3869,6 +3869,11 @@ public class TdCommonService {
 			}
 
 		}
+		
+		// 2017-10-15 计算红包满减
+		
+		
+		
 		// 修改2016-08-25：为了不出现重复满赠的情况，不保存新订单的信息
 		order.setPresentedList(presentedList);
 
@@ -4684,6 +4689,5 @@ public class TdCommonService {
 			}
 		}
 		return order;
-
 	}
 }
