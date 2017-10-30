@@ -14,7 +14,6 @@ import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
@@ -45,8 +44,7 @@ import com.ynyes.lyz.entity.TdProductCategory;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.service.TdCashReciptInfService;
-import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.utils.StringTools;
 import com.ynyes.lyz.service.TdActivityGiftService;
 import com.ynyes.lyz.service.TdActivityService;
@@ -121,9 +119,6 @@ public class TdManagerBuyCouponBySellerController {
 	private TdCommonService tdCommonService;
 
 	@Autowired
-	private TdInterfaceService tdInterfaceService;
-
-	@Autowired
 	private TdCashReciptInfService tdCashReciptInfService;
 
 	@Autowired
@@ -140,6 +135,9 @@ public class TdManagerBuyCouponBySellerController {
 	
 	@Autowired
 	private TdBalanceLogService tdBalanceLogService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 
 	@RequestMapping
 	public String index(HttpServletRequest req, ModelMap map) {
@@ -1692,8 +1690,8 @@ public class TdManagerBuyCouponBySellerController {
 
 				// 抛单给EBS
 				if (null != pos && pos > 0) {
-					TdCashReciptInf inf = new TdCashReciptInf();
-					inf.setSobId(user.getCityId());
+//					TdCashReciptInf inf = new TdCashReciptInf();
+//					inf.setSobId(user.getCityId());
 					TdCashReciptInf cashReciptInf = new TdCashReciptInf();
 					cashReciptInf.setSobId(user.getCityId());
 					cashReciptInf.setReceiptNumber("RC" + this.getTimestamp());
@@ -1709,18 +1707,19 @@ public class TdManagerBuyCouponBySellerController {
 					cashReciptInf.setReceiptDate(new Date());
 					cashReciptInf.setAmount(pos);
 					tdCashReciptInfService.save(cashReciptInf);
-					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-					if (StringUtils.isBlank(resultStr)) {
-						cashReciptInf.setSendFlag(0);
-					} else {
-						cashReciptInf.setSendFlag(1);
-						cashReciptInf.setErrorMsg(resultStr);
-					}
-					tdCashReciptInfService.save(cashReciptInf);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
+//					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					if (StringUtils.isBlank(resultStr)) {
+//						cashReciptInf.setSendFlag(0);
+//					} else {
+//						cashReciptInf.setSendFlag(1);
+//						cashReciptInf.setErrorMsg(resultStr);
+//					}
+//					tdCashReciptInfService.save(cashReciptInf);
 				}
 				if (null != cash && cash > 0) {
-					TdCashReciptInf inf = new TdCashReciptInf();
-					inf.setSobId(user.getCityId());
+//					TdCashReciptInf inf = new TdCashReciptInf();
+//					inf.setSobId(user.getCityId());
 					TdCashReciptInf cashReciptInf = new TdCashReciptInf();
 					cashReciptInf.setSobId(user.getCityId());
 					cashReciptInf.setReceiptNumber("RC" + this.getTimestamp());
@@ -1736,18 +1735,19 @@ public class TdManagerBuyCouponBySellerController {
 					cashReciptInf.setReceiptDate(new Date());
 					cashReciptInf.setAmount(cash);
 					tdCashReciptInfService.save(cashReciptInf);
-					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-					if (StringUtils.isBlank(resultStr)) {
-						cashReciptInf.setSendFlag(0);
-					} else {
-						cashReciptInf.setSendFlag(1);
-						cashReciptInf.setErrorMsg(resultStr);
-					}
-					tdCashReciptInfService.save(cashReciptInf);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
+//					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					if (StringUtils.isBlank(resultStr)) {
+//						cashReciptInf.setSendFlag(0);
+//					} else {
+//						cashReciptInf.setSendFlag(1);
+//						cashReciptInf.setErrorMsg(resultStr);
+//					}
+//					tdCashReciptInfService.save(cashReciptInf);
 				}
 				if (null != other && other > 0) {
-					TdCashReciptInf inf = new TdCashReciptInf();
-					inf.setSobId(user.getCityId());
+//					TdCashReciptInf inf = new TdCashReciptInf();
+//					inf.setSobId(user.getCityId());
 					TdCashReciptInf cashReciptInf = new TdCashReciptInf();
 					cashReciptInf.setSobId(user.getCityId());
 					cashReciptInf.setReceiptNumber("RC" + this.getTimestamp());
@@ -1763,14 +1763,15 @@ public class TdManagerBuyCouponBySellerController {
 					cashReciptInf.setReceiptDate(new Date());
 					cashReciptInf.setAmount(other);
 					tdCashReciptInfService.save(cashReciptInf);
-					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-					if (StringUtils.isBlank(resultStr)) {
-						cashReciptInf.setSendFlag(0);
-					} else {
-						cashReciptInf.setSendFlag(1);
-						cashReciptInf.setErrorMsg(resultStr);
-					}
-					tdCashReciptInfService.save(cashReciptInf);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
+//					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					if (StringUtils.isBlank(resultStr)) {
+//						cashReciptInf.setSendFlag(0);
+//					} else {
+//						cashReciptInf.setSendFlag(1);
+//						cashReciptInf.setErrorMsg(resultStr);
+//					}
+//					tdCashReciptInfService.save(cashReciptInf);
 				}
 				if (null != balance && balance > 0) {
 					TdCashReciptInf inf = new TdCashReciptInf();
@@ -1790,14 +1791,15 @@ public class TdManagerBuyCouponBySellerController {
 					cashReciptInf.setReceiptDate(new Date());
 					cashReciptInf.setAmount(balance);
 					tdCashReciptInfService.save(cashReciptInf);
-					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
-					if (StringUtils.isBlank(resultStr)) {
-						cashReciptInf.setSendFlag(0);
-					} else {
-						cashReciptInf.setSendFlag(1);
-						cashReciptInf.setErrorMsg(resultStr);
-					}
-					tdCashReciptInfService.save(cashReciptInf);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
+//					String resultStr = tdInterfaceService.ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					if (StringUtils.isBlank(resultStr)) {
+//						cashReciptInf.setSendFlag(0);
+//					} else {
+//						cashReciptInf.setSendFlag(1);
+//						cashReciptInf.setErrorMsg(resultStr);
+//					}
+//					tdCashReciptInfService.save(cashReciptInf);
 				}
 			}
 		}

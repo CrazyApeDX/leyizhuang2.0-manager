@@ -38,8 +38,7 @@ import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.TdSmsAccount;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
-import com.ynyes.lyz.interfaces.service.TdInterfaceService;
-import com.ynyes.lyz.interfaces.utils.EnumUtils.INFTYPE;
+import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.service.TdBalanceLogService;
 import com.ynyes.lyz.service.TdChangeBalanceLogService;
 import com.ynyes.lyz.service.TdCityService;
@@ -95,13 +94,13 @@ public class TdManagerUserBalanceChangeController {
 	private TdPriceCountService tdPriceCountService;
 	
 	@Autowired
-	private TdInterfaceService tdInterfaceService;
-	
-	@Autowired
 	private TdDepositService tdDepositService;
 	
 	@Autowired
 	private TdCommonService tdCommonService;
+	
+	@Autowired
+	private TdEbsSenderService tdEbsSenderService;
 	
 	/**
 	 * <p>描述：该控制器获取权限下的所有用户</p>
@@ -454,7 +453,8 @@ public class TdManagerUserBalanceChangeController {
 				
 				TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
 				
-				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+//				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+				tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 			}
 			
 			String unCashBalanceNumber = null;
@@ -492,7 +492,8 @@ public class TdManagerUserBalanceChangeController {
 				unCashBalanceNumber = deposit.getNumber();
 				deposit = tdDepositService.save(deposit);
 				TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
-				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+//				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+				tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
 			}
 //			Double subCashBalance = cashBalance - userCashBalance;
 //			Double subUnCashBalance = unCashBalance - userUnCashBalance;
