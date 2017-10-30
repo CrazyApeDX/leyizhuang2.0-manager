@@ -835,7 +835,8 @@ public class TdInterfaceService {
 				TdCashReciptInf cashReciptInf = this.initCashReceiptInfWithOrderAndReceiptTypeAndMoney(tdOrder,
 						TdCashReciptInf.RECEIPT_TYPE_DIYSITE_POS, amount);
 				if (cashReciptInf != null) {
-					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+//					ebsWithObject(cashReciptInf, INFTYPE.CASHRECEIPTINF);
+					tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
 				}
 			}
 			// 新增：2016-08-25抛出门店其他还款金额
