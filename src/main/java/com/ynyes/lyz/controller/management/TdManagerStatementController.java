@@ -662,8 +662,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
             //设置标题
             HSSFRow row = sheet.createRow((int) 0);
             //版本1.1
-            String[] cellValues={"城市","仓库","门店","门店类型","收货人","订单号","出货单号","导购","配送员姓名","订单代收金额","配送员实际收款现金",
-                    "配送员实际收款POS","配送员备注","门店是否审核通过欠款","应退门店"};
+            String[] cellValues={"城市","仓库","门店","门店类型","收货人","订单号","出货单号","收货地址",
+					"导购","配送员姓名","订单代收金额","配送员实际收款现金", "配送员实际收款POS","配送员备注",
+					"门店是否审核通过欠款","应退门店","仓库应存回公司货款","订单备注",};
             cellDates(cellValues, style, row);
             HSSFCellStyle cellStyle = wb.createCellStyle();
             cellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
