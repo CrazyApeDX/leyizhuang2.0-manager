@@ -32,6 +32,7 @@ import com.ynyes.lyz.entity.TdBrand;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdDiySite;
+import com.ynyes.lyz.entity.TdDiySitePrice;
 import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdManager;
 import com.ynyes.lyz.entity.TdManagerRole;
@@ -53,6 +54,7 @@ import com.ynyes.lyz.service.TdBrandService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
 import com.ynyes.lyz.service.TdCouponService;
+import com.ynyes.lyz.service.TdDiySitePriceService;
 import com.ynyes.lyz.service.TdDiySiteService;
 import com.ynyes.lyz.service.TdGoodsService;
 import com.ynyes.lyz.service.TdManagerRoleService;
@@ -138,6 +140,9 @@ public class TdManagerBuyCouponBySellerController {
 	
 	@Autowired
 	private TdEbsSenderService tdEbsSenderService;
+	
+	@Autowired
+	private TdDiySitePriceService tdDiySitePriceService;
 
 	@RequestMapping
 	public String index(HttpServletRequest req, ModelMap map) {
@@ -693,6 +698,16 @@ public class TdManagerBuyCouponBySellerController {
 	// 获取指定商品的券价格
 	private Double getRealPrice(TdGoods goods, String username) {
 		TdUser user = tdUserService.findByUsername(username);
+		
+		Long upperDiySiteId = user.getUpperDiySiteId();
+		TdDiySite diySite = tdDiySiteService.findOne(upperDiySiteId);
+
+		if (null == diySite) {
+			return null;
+		}
+		
+		// 获取门店编码
+		String storeCode = diySite.getStoreCode();
 		Long sobId = null;
 		if (null != user) {
 			sobId = user.getCityId();
@@ -711,28 +726,69 @@ public class TdManagerBuyCouponBySellerController {
 			return null;
 		}
 
+		String custType = null;
+		if (diySite.getCustTypeName().equalsIgnoreCase("经销商")) {
+			custType = "JX";
+		} else {
+			custType = "ZY";
+		}
+		
 		String priceType = null;
 
-		// 零售价
-		if (productFlag.equalsIgnoreCase("华润")) {
+//		// 零售价
+//		if (productFlag.equalsIgnoreCase("华润")) {
+//			priceType = "LS";
+//		}
+//		// 乐意装价
+//		else if (productFlag.equalsIgnoreCase("乐易装")) {
+//			priceType = "LYZ";
+//		}
+//		// 莹润价
+//		else if (productFlag.equalsIgnoreCase("莹润")) {
+//			priceType = "YR";
+//		}
+		
+		// 华润零售价
+		if (productFlag.equalsIgnoreCase("华润") && custType.equalsIgnoreCase("ZY")) {
 			priceType = "LS";
 		}
-		// 乐意装价
-		else if (productFlag.equalsIgnoreCase("乐易装")) {
+		// 华润经销价
+		else if (productFlag.equalsIgnoreCase("华润") && custType.equalsIgnoreCase("JX")) {
+			priceType = "JX_LS";
+		}
+		// 乐意装零售价
+		else if (productFlag.equalsIgnoreCase("乐易装") && custType.equalsIgnoreCase("ZY")) {
 			priceType = "LYZ";
 		}
-		// 莹润价
-		else if (productFlag.equalsIgnoreCase("莹润")) {
+		// 乐意装经销价
+		else if (productFlag.equalsIgnoreCase("乐易装") && custType.equalsIgnoreCase("JX")) {
+			priceType = "JX_LYZ";
+		}
+		// 莹润零售价
+		else if (productFlag.equalsIgnoreCase("莹润") && custType.equalsIgnoreCase("ZY")) {
 			priceType = "YR";
 		}
+		// 莹润经销价
+		else if (productFlag.equalsIgnoreCase("莹润") && custType.equalsIgnoreCase("JX")) {
+			priceType = "JX_YR";
+		}
+		// 喜鹊零售价
+		else if (productFlag.equalsIgnoreCase("喜鹊") && custType.equalsIgnoreCase("ZY")) {
+			priceType = "XQ";
+		}
+		
 		// 不支持的价格
 		else {
 			return null;
 		}
 
-		List<TdPriceList> priceList_list = tdPriceListService
-				.findBySobIdAndPriceTypeAndStartDateActiveAndEndDateActive(sobId, priceType, new Date(), new Date());
+//		List<TdPriceList> priceList_list = tdPriceListService
+//				.findBySobIdAndPriceTypeAndStartDateActiveAndEndDateActive(sobId, priceType, new Date(), new Date());
 
+		// 获取商品价格中间表信息
+		List<TdDiySitePrice> priceList_list = tdDiySitePriceService.getDiySitePrice(sobId, storeCode, priceType,
+						new Date(), new Date());
+		
 		if (null == priceList_list || priceList_list.size() == 0 || priceList_list.size() > 1) {
 			return null;
 		}

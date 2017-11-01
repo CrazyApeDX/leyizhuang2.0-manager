@@ -622,7 +622,6 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 
 		if (null == size || size <= 0) {
 			size = SiteMagConstant.pageSize;
-			;
 		}
 
 		if (null != keywords) {

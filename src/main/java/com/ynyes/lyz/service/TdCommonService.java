@@ -4050,7 +4050,13 @@ public class TdCommonService {
 			return null;
 		}
 
-		String custType = "ZY";
+		String custType = null;
+		if (diySite.getCustTypeName().equalsIgnoreCase("经销商")) {
+			custType = "JX";
+		} else {
+			custType = "ZY";
+		}
+		
 		String priceType = null;
 
 		// 华润零售价
@@ -4149,7 +4155,12 @@ public class TdCommonService {
 			return null;
 		}
 
-		String custType = "ZY";
+		String custType = null;
+		if (diySite.getCustTypeName().equalsIgnoreCase("经销商")) {
+			custType = "JX";
+		} else {
+			custType = "ZY";
+		}
 		String priceType = null;
 
 		// 华润零售价
