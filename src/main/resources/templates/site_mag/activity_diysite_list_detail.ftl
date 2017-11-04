@@ -76,7 +76,7 @@ function UncheckDiy(object)
                         	<label>${product.title!""}</label>
                     	
                     	<#elseif activity??>
-                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id?c}" datatype="*" <#if activity?? && activity.diySiteIds?? && activity.diySiteIds?contains(product.id?c)>checked="checked"</#if>>
+                    		<input type="checkbox" class="productIdRadio" name="diySiteIds" value="${product.id?c}" datatype="*" <#if activity?? && activity.diySiteIds?? && activity.diySiteIds?contains(product.id?c + ",")>checked="checked"</#if>>
                         	<label>${product.title!""}</label>
                     	
                     	<#else>
