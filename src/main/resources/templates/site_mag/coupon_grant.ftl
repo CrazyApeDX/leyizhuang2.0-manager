@@ -21,7 +21,7 @@
             var number = $.trim($("#quan"+userId).val());
             var leftNumber = $.trim($("#leftNumber").html());
             var couponId = $.trim($("#couponId").val());
-            
+            var sellerId = $.trim($("#sellerId" + userId).val());
             var re = /^[0-9]*[1-9][0-9]*$/;
             
             if(undefined == number || "" ==number || !re.test(number))
@@ -30,7 +30,7 @@
                 return ;
             }
             
-            var postData = { "number": number, "userId": userId ,"couponId":couponId};
+            var postData = { "number": number, "userId": userId, "couponId":couponId, "sellerId":sellerId};
             //发送AJAX请求
             sendAjaxUrl(dialog, postData, "/Verwalter/coupon/grantOne");
             return false;
@@ -172,6 +172,7 @@ function checkAllNumber(chkobj) {
             <th width="8%">选择</th>
             <th align="left" >用户名</th>
             <th align="left" >归属门店</th>
+            <th align="left" >归属导购</th>
             <th align="left" >发券数量</th>
             <th width="10%">操作</th>
           </tr>
@@ -191,6 +192,19 @@ function checkAllNumber(chkobj) {
                           </div>
                         </td>
                         <td align="left">${user.diyName!""}</td>
+                        <td align="left">
+	                        <select name="sellerId" id="sellerId${user.id?c}"  datatype="*" sucmsg=" " style="width:100px;">
+		                        <option value="">无归属导购</option>
+		                        <#if sellers??> 
+		                            <#list sellers as seller>
+		                            	<#if coupon?? && coupon.diySiteCode?? && coupon.diySiteCode==seller.diyCode>
+		                                	<option value="${seller.id?c}">${seller.realName!''}</option>
+	                                	</#if>
+		                            </#list>
+		                        </#if>
+		                        
+	                    	</select>
+                        </td>
                         <td id="quantityId"><input type="number" name="quantity" id="quan${user.id?c}"></td>
                         <td align="center">
                             <a href="javascript:grantCoupon(${user.id?c});">发券</a> 

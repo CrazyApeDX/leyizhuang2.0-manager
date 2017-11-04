@@ -630,4 +630,20 @@ public class TdUserService {
 		
 		return user;
 	}
+	
+	/**
+	 * 
+	 * @title 查询城市下的所有导购
+	 * @describe 
+	 * @author Generation Road
+	 * @date 2017年11月3日
+	 * @param cityId
+	 * @return
+	 */
+	public List<TdUser> findByUserTypeAndCityId(String diyCode) {
+		if (diyCode == null) {
+			return null;
+		}
+		return repository.findByUserTypeAndCityId(diyCode);
+	}
 }

@@ -192,4 +192,7 @@ public interface TdUserRepo extends PagingAndSortingRepository<TdUser, Long>, Jp
 	 */
 	@Query(value = "SELECT * from td_user where user_type = 0 and seller_id is NOT NULL and city_name = ?1 and register_time <= ?2 and seller_id != 0" , nativeQuery = true)
 	List<TdUser> queryAllUser(String cityName,Date date);
+	
+	@Query(value = "SELECT * from td_user WHERE user_type in (1,2,3,4) and diy_code = ?1 and is_enable is true", nativeQuery = true)
+	List<TdUser> findByUserTypeAndCityId(String diyCode);
 }

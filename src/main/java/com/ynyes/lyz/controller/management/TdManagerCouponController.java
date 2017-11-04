@@ -701,11 +701,11 @@ public class TdManagerCouponController extends TdManagerBaseController {
 			}
 		}
 
-		if (tdCoupon.getTypeCategoryId().longValue() == 3) {
-			TdDiySite diySite = tdDiySiteService.findOne(diyId);
-			tdCoupon.setDiySiteTital(diySite.getTitle());
-			tdCoupon.setDiySiteCode(diySite.getStoreCode());
-		}
+//		if (tdCoupon.getTypeCategoryId().longValue() == 3) {
+		TdDiySite diySite = tdDiySiteService.findOne(diyId);
+		tdCoupon.setDiySiteTital(diySite.getTitle());
+		tdCoupon.setDiySiteCode(diySite.getStoreCode());
+//		}
 
 		tdCouponService.save(tdCoupon);
 
@@ -858,8 +858,12 @@ public class TdManagerCouponController extends TdManagerBaseController {
 			TdCoupon coupon = tdCouponService.findOne(couponId);
 			if (null != coupon) {
 				cityName = coupon.getCityName();
-				System.out.println(cityName);
+				List<TdUser> users = null;
+				if (null != coupon.getDiySiteCode()) {
+					users = this.tdUseService.findByUserTypeAndCityId(coupon.getDiySiteCode());
+				}
 				map.addAttribute("cityName", cityName);
+				map.addAttribute("sellers", users);
 			}
 			map.addAttribute("coupon", coupon);
 		}
@@ -869,6 +873,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 		if (null == size) {
 			size = ClientConstant.pageSize;
 		}
+		
 		map.addAttribute("couponId", couponId);
 		map.addAttribute("page", page);
 		map.addAttribute("size", size);
@@ -895,7 +900,7 @@ public class TdManagerCouponController extends TdManagerBaseController {
 	 */
 	@RequestMapping(value = "grantOne", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> grantOne(Long userId, Long number, Long couponId, HttpServletRequest req) {
+	public Map<String, Object> grantOne(Long userId, Long number, Long couponId, Long sellerId, HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("code", 1);
 
@@ -946,6 +951,15 @@ public class TdManagerCouponController extends TdManagerBaseController {
 				TdGoods good = tdGoodsService.findOne(coupon.getGoodsId());
 				if (good != null) {
 					tdCoupon.setSku(good.getCode());
+				}
+				
+				if (null != sellerId) {
+					TdUser tdUser = this.tdUseService.findOne(sellerId);
+					if (null != tdUser) {
+						tdCoupon.setSellerId(tdUser.getId());
+						tdCoupon.setSellerRealName(tdUser.getRealName());
+						tdCoupon.setSellerUsername(tdUser.getUsername());
+					}
 				}
 
 				// 保存领取
