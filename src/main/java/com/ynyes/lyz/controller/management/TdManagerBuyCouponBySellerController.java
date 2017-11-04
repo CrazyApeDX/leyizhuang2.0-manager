@@ -2020,7 +2020,7 @@ public class TdManagerBuyCouponBySellerController {
 	private String getTimestamp() {
 		int i = (int) (Math.random() * 900) + 100;
 		Date date = new Date();
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 		String format = sdf.format(date);
 		return format + i;
 	}
