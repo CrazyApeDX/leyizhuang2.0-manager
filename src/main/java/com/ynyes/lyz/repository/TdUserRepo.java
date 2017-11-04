@@ -195,4 +195,28 @@ public interface TdUserRepo extends PagingAndSortingRepository<TdUser, Long>, Jp
 	
 	@Query(value = "SELECT * from td_user WHERE user_type in (1,2,3,4) and diy_code = ?1 and is_enable is true", nativeQuery = true)
 	List<TdUser> findByUserTypeAndCityId(String diyCode);
+
+	@Query(value = " SELECT "
+					+" 	u.city_name city_name, "
+					+" 	u.diy_code diy_code, "
+					+" 	u.diy_name diy_name, "
+					+" 	u.seller_name seller_name, "
+					+" 	s.username sell_phone, "
+					+" 	u.real_name real_name, "
+					+" 	u.username username, "
+					+" 	u.register_time "
+					+" FROM "
+					+" 	td_user u "
+					+" INNER JOIN td_user s ON u.seller_id = s.id "
+                    +" INNER JOIN td_diy_site diy ON diy.store_code = u.diy_code "
+					+" WHERE "
+					+" 	u.diy_code LIKE '%FX%' "
+					+" AND u.user_type = 0 "
+					+" AND u.register_time >= ?1 "
+					+" AND u.register_time < ?2 "
+					+" AND u.city_name LIKE ?3 "
+					+" AND u.diy_code LIKE ?4 "
+					+" AND diy.id IN ?5 "
+			,nativeQuery = true)
+    List<Object> queryFXMemberDownList(Date begin, Date end, String cityName, String diyCode, List<String> roleDiyIds);
 }

@@ -165,4 +165,31 @@ public interface TdSalesDetailRepo extends PagingAndSortingRepository<TdSalesDet
 			+" 	ORDER BY "
 			+" 		order_time DESC;",nativeQuery = true)
 	List<TdSalesDetail> queryDownList(Date begin,Date end,String cityName,String diySiteCode,List<String> roleDiyIds);
+
+	@Query(value = " SELECT "
+            +" 	o.order_time, "
+            +" 	o.pay_type_title, "
+            +" 	o.deliver_type_title, "
+            +" 	o.pay_time, "
+            +" 	o.status_id, "
+            +" 	o.total_goods_price, "
+            +" 	o.deliver_fee, "
+            +" 	o.total_goods_price + deliver_fee AS total_price, "
+            +" 	o.not_payed_fee, "
+            +" 	o.username, "
+            +" 	o.seller_real_name, "
+            +" 	o.seller_username, "
+            +" 	o.real_user_real_name, "
+            +" 	o.real_user_username "
+            +" FROM "
+            +" 	td_order o "
+            +" WHERE "
+            +" 	o.diy_site_code LIKE '%FX%' "
+            +" AND o.status_id NOT IN (7, 8) "
+            +" AND o.order_time >= ?1 "
+            +" AND o.order_time < ?2 "
+            +" AND o.city LIKE ?3 "
+            +" AND o.diy_site_code LIKE ?4 "
+            +" AND o.diy_site_id IN ?5 ",nativeQuery = true)
+    List<Object> queryStoreSalesDownList(Date begin, Date end, String cityName, String diyCode, List<String> roleDiyIds);
 }

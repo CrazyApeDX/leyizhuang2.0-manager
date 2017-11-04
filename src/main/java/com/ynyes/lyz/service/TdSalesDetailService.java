@@ -128,4 +128,24 @@ public class TdSalesDetailService {
 		}
 		return repository.queryDownList(begin, end, cityName, diySiteCode, roleDiyIds);
 	}
+
+	public List<Object> queryStoreSalesDownList(Date begin, Date end, String cityName, String diyCode, List<String> roleDiyIds) {
+		//判断空值
+		if(begin==null){
+			begin=Utils.getSysStartDate();
+		}
+		if(end==null){
+			end=new Date();
+		}
+		if(StringUtils.isBlank(cityName)){
+			cityName="%";
+		}
+		if(StringUtils.isBlank(diyCode)){
+			diyCode="%";
+		}
+		if(roleDiyIds==null || roleDiyIds.size()==0){
+			roleDiyIds.add("0");
+		}
+		return repository.queryStoreSalesDownList(begin, end, cityName, diyCode, roleDiyIds);
+	}
 }

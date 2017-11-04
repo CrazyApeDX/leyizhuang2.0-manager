@@ -97,7 +97,7 @@ function downloaddate(type)
                 <#elseif 11==statusId>
                     <span>配送考核报表</span>
                 <#elseif 12==statusId>
-                    <span>加盟商对账报表</span>    
+                    <span>加盟商对账报表</span>
                 <#elseif 14==statusId>
                     <span>乐易装华润运费报表</span>
                 <#elseif 15==statusId>
@@ -112,8 +112,13 @@ function downloaddate(type)
                     <span>配送员代收款日报表
                 <#elseif 20==statusId>
                     <span>门店代收款报表</span>
+                <#elseif 21==statusId>
+                    <span>经销门店</span>
+                <#elseif 22==statusId>
+                    <span>分销销售统计表</span>
                 </#if>
-            </#if> 
+
+            </#if>
     </div>
     <!--/导航栏-->
     <!--工具栏-->
@@ -127,7 +132,7 @@ function downloaddate(type)
 							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})"
 							datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/"
 							errormsg="请选择正确的日期" sucmsg=" " />
-							<input type="hidden" name="oldOrderStartTime" id="oldOrderStartTime" value="${oldOrderStartTime!"" }" /> 
+							<input type="hidden" name="oldOrderStartTime" id="oldOrderStartTime" value="${oldOrderStartTime!"" }" />
 					</div>
 					<div class="odiv">
 						<span class="span1">结束时间：</span> <input name="orderEndTime"
@@ -135,15 +140,15 @@ function downloaddate(type)
 							onfocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',lang:'zh-cn'})"
 							datatype="/^\s*$|^\d{4}\-\d{1,2}\-\d{1,2}\s{1}(\d{1,2}:){2}\d{1,2}$/"
 							errormsg="请选择正确的日期" sucmsg=" " />
-							<input type="hidden" name="oldOrderEndTime" id="oldOrderEndTime" value="${oldOrderEndTime!"" }" /> 
+							<input type="hidden" name="oldOrderEndTime" id="oldOrderEndTime" value="${oldOrderEndTime!"" }" />
 					</div>
-					
+
 					<#if cityList?? && cityList?size gt 0 >
 					<div class="odiv" style="float: left; width: 310px;">
 						<span class="span1">城市名称：</span>
 						<div class="rule-single-select">
 							<select name="cityName" id="cityName" onchange="javascript:setTimeout(__doPostBack('changeCity',''), 0)">
-								<option value="">请选择</option> 
+								<option value="">请选择</option>
 								<#list cityList as city>
 								<option value="${city.cityName }"<#if cityName?? && cityName==city.cityName>selected</#if> >${city.cityName }</option>
 								</#list>
@@ -151,35 +156,35 @@ function downloaddate(type)
 						</div>
 					</div>
 					</#if>
-							
+
 					<#if diySiteList?? && diySiteList?size gt 0 && statusId != 11 >
 					<div class="odiv" style="float: left; width: 310px;">
 						<span class="span1">门店名称：</span>
 						<div class="rule-single-select">
 							<select name="diyCode" id="diyCode" onchange="javascript:setTimeout(__doPostBack('changeDiy',''), 0)">
-								<option value="" >请选择</option> 
+								<option value="" >请选择</option>
 								<#list diySiteList as diySite>
 								<option city="${diySite.city!'' }" value="${diySite.storeCode }"<#if diyCode?? && diyCode==diySite.storeCode>selected</#if> >${diySite.title }</option>
 								</#list>
 							</select>
 						</div>
 					</div>
-					</#if> 
-					
+					</#if>
+
 					<div class="odiv" style="width: 420px; float: right">
 						<div style="float: left;">
 							<span class="span1">订单号：</span><input name="keywords" type="text"
 								class="input" value="${orderNumber!"" }">
 						</div>
-						<a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a> 
-						<a style="color: black;" href="javascript:downloaddate(${statusId!'' });" class="a1">报表下载</a> 
+						<a id="lbtnSearch" class="btn-search" href="javascript:__doPostBack('btnSearch','')">查询</a>
+						<a style="color: black;" href="javascript:downloaddate(${statusId!'' });" class="a1">报表下载</a>
 					</div>
 
 				</div>
 			</div>
     <!--/工具栏-->
     <!--列表-->
-    
+
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ltable">
 <tbody>
     <tr class="odd_bg">
@@ -215,7 +220,7 @@ function downloaddate(type)
             总金额
         </th>
         </#if>
-        
+
         <th align="left" width="10%">
             下单时间
         </th>
@@ -289,7 +294,7 @@ function downloaddate(type)
 	                    </#if>
                     </#if>
                 </td>
-                
+
                  <#if statusId==1>
                     <td align="center" width="10%"><font color="#C30000"><#if order??&& order.payPrice??>${order.payPrice?string("currency")}<#else>0.00</#if></font></td>
                  <#elseif statusId==2>
@@ -309,7 +314,7 @@ function downloaddate(type)
     </#if>
 </tbody>
 </table>
-        
+
 <!--/列表-->
 <!--内容底部-->
 <#if order_page??>
