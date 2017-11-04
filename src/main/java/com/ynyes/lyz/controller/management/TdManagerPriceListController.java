@@ -107,17 +107,48 @@ public class TdManagerPriceListController {
 	 * @return
 	 */
 	@RequestMapping(value="/list")
-	public String pricelist(ModelMap map, HttpServletRequest req,String keywords)
+	public String pricelist(Integer page,Integer size,String __EVENTTARGET,String __EVENTARGUMENT,
+            String __VIEWSTATE,ModelMap map, HttpServletRequest req,String keywords)
 	{
-		 String username = (String) req.getSession().getAttribute("manager");
-	     if (null == username) {
-	         return "redirect:/Verwalter/login";
-	     }
-         int  page = 0;
-         int  size = SiteMagConstant.pageSize;
-
-	     map.addAttribute("page", page);
-	     map.addAttribute("size", size);
+		String username = (String) req.getSession().getAttribute("manager");
+        if (null == username)
+        {
+            return "redirect:/Verwalter/login";
+        }
+        if (null != __EVENTTARGET)
+        {
+            if (__EVENTTARGET.equalsIgnoreCase("btnDelete"))
+            {
+                tdManagerLogService.addLog("delete", "删除价目表头", req);
+            }
+            else if (__EVENTTARGET.equalsIgnoreCase("btnPage"))
+            {
+                if (null != __EVENTARGUMENT)
+                {
+                    page = Integer.parseInt(__EVENTARGUMENT);
+                }
+            }
+            else if (__EVENTTARGET.equalsIgnoreCase("btnSearch"))
+            {//点击查询按钮当前页修改为第一页
+            	page=0;
+            }
+        }
+        if (null == page || page < 0)
+        {
+            page = 0;
+        }
+        
+        if (null == size || size <= 0)
+        {
+            size = SiteMagConstant.pageSize;;
+        }
+        
+        map.addAttribute("keywords", keywords);
+        map.addAttribute("page", page);
+        map.addAttribute("size", size);
+        map.addAttribute("__EVENTTARGET", __EVENTTARGET);
+        map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
+        map.addAttribute("__VIEWSTATE", __VIEWSTATE);
 
 	     if (StringUtils.isNotBlank(keywords))
 	     {
