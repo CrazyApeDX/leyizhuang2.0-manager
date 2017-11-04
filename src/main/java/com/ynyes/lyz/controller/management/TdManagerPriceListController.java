@@ -119,7 +119,7 @@ public class TdManagerPriceListController {
         {
             if (__EVENTTARGET.equalsIgnoreCase("btnDelete"))
             {
-                tdManagerLogService.addLog("delete", "删除行政区划", req);
+                tdManagerLogService.addLog("delete", "删除价目表头", req);
             }
             else if (__EVENTTARGET.equalsIgnoreCase("btnPage"))
             {
@@ -133,7 +133,6 @@ public class TdManagerPriceListController {
             	page=0;
             }
         }
-        
         if (null == page || page < 0)
         {
             page = 0;
