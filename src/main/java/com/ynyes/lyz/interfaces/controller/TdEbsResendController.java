@@ -85,7 +85,7 @@ public class TdEbsResendController {
 	 * @param orderNumber
 	 *            分单号
 	 */
-	@RequestMapping(value = "/cashReceipt")
+	@RequestMapping(value = "/oldMethodCashReceipt")
 	public void resendCashReceipt(String orderNumber) {
 		if (orderNumber == null) {
 			return;
@@ -116,7 +116,7 @@ public class TdEbsResendController {
 	 * @param orderNumber
 	 *            分单号
 	 */
-	@RequestMapping(value = "/cashReceiptAll")
+	@RequestMapping(value = "/oldMethodCashReceiptAll")
 	@ResponseBody
 	public String resendCashReceiptAll() {
 
@@ -134,6 +134,49 @@ public class TdEbsResendController {
 				}
 			}
 			tdCashReciptInfService.save(cashReciptInfs);
+		}
+		return Integer.valueOf(cashReciptInfs.size()).toString();
+	}
+	
+	/**
+	 * 收款重传(review)
+	 * 
+	 * @param orderNumber
+	 *            分单号
+	 */
+	@RequestMapping(value = "/cashReceipt")
+	public void resendCashReceiptToEbs(String orderNumber) {
+		if (orderNumber == null) {
+			return;
+		}
+		List<TdCashReciptInf> cashReciptInfs = tdCashReciptInfService.findByOrderNumber(orderNumber);
+		if (cashReciptInfs != null && cashReciptInfs.size() > 0) {
+			for (int i = 0; i < cashReciptInfs.size(); i++) {
+				TdCashReciptInf cashReciptInf = cashReciptInfs.get(i);
+				if (cashReciptInf.getSendFlag() != null && cashReciptInf.getSendFlag() == 0) {
+					continue;
+				}
+				tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
+			}
+		}
+	}
+	
+	/**
+	 * 收款传输失败的全部重传(review)
+	 * 
+	 * @param orderNumber
+	 *            分单号
+	 */
+	@RequestMapping(value = "/oldMethodCashReceiptAll")
+	@ResponseBody
+	public String resendCashReceiptAllToEbs() {
+
+		List<TdCashReciptInf> cashReciptInfs = tdCashReciptInfService.findBySendFlagIsTrueOrSendFlagIsNull(1);
+		if (cashReciptInfs != null && cashReciptInfs.size() > 0) {
+			for (int i = 0; i < cashReciptInfs.size(); i++) {
+				TdCashReciptInf cashReciptInf = cashReciptInfs.get(i);
+				tdEbsSenderService.sendCashReciptToEbsAndRecord(cashReciptInf);
+			}
 		}
 		return Integer.valueOf(cashReciptInfs.size()).toString();
 	}
