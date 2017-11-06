@@ -231,7 +231,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 
         //管理员获取管辖的城市和门店
         tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, diySiteRole, tdManagerRole, tdManager);
-        if (statusId == 21) {
+        if (statusId == 21 || statusId == 22) {
             Iterator<TdDiySite> iterator = diyList.iterator();
             while (iterator.hasNext()) {
                 TdDiySite diy = iterator.next();
@@ -489,7 +489,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
             fileName = "门店代收款报表";
         } else if (statusId == 21) {
             fileName = "经销门店会员注册统计表";
-        }else if (statusId == 22) {
+        } else if (statusId == 22) {
             fileName = "分销销售统计表";
         }
         return fileName;
@@ -1841,7 +1841,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 //商品子分类
                 row.createCell(17).setCellValue(objToString(goodsInOut.getGoodsTypeTitle()));
                 //配送方式
-	        	/*row.createCell(18).setCellValue(objToString(goodsInOut.getDeliverTypeTitle()));
+                /*row.createCell(18).setCellValue(objToString(goodsInOut.getDeliverTypeTitle()));
 				//中转仓
 	            row.createCell(19).setCellValue(objToString(goodsInOut.getWhName()));
 	    		//配送人员
@@ -4362,7 +4362,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
             //设置标题
             HSSFRow row = sheet.createRow((int) 0);
             //版本1.1
-            String[] cellValues = {"城市","门店编码","门店名称","订单号","下单时间", "支付方式", "送货方式", "支付时间", "订单状态", "订单金额", "运费",
+            String[] cellValues = {"城市", "门店编码", "门店名称", "订单号", "下单时间", "支付方式", "送货方式", "支付时间", "订单状态", "订单金额", "运费",
                     "总金额", "未支付金额", "下单人电话", "导购", "导购电话", "会员", "会员电话"};
             cellDates(cellValues, style, row);
             HSSFCellStyle cellStyle = wb.createCellStyle();
