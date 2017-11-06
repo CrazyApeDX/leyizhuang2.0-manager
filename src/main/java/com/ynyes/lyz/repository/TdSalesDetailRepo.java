@@ -167,15 +167,26 @@ public interface TdSalesDetailRepo extends PagingAndSortingRepository<TdSalesDet
 	List<TdSalesDetail> queryDownList(Date begin,Date end,String cityName,String diySiteCode,List<String> roleDiyIds);
 
 	@Query(value = " SELECT "
+            +" 	o.city, "
+            +" 	o.diy_site_code, "
+            +" 	o.diy_site_name, "
+            +" 	IFNULL( "
+            +" 		o.main_order_number, "
+            +" 		o.order_number "
+            +" 	) order_number, "
             +" 	o.order_time, "
             +" 	o.pay_type_title, "
             +" 	o.deliver_type_title, "
             +" 	o.pay_time, "
             +" 	o.status_id, "
-            +" 	o.total_goods_price, "
-            +" 	o.deliver_fee, "
-            +" 	o.total_goods_price + deliver_fee AS total_price, "
-            +" 	o.not_payed_fee, "
+            +" 	sum( "
+            +" 		IFNULL(o.total_goods_price, 0) "
+            +" 	) total_goods_price, "
+            +" 	sum(IFNULL(o.deliver_fee, 0)) deliver_fee, "
+            +" 	sum( "
+            +" 		IFNULL(o.total_goods_price, 0) "
+            +" 	) + sum(IFNULL(o.deliver_fee, 0)) AS total_price, "
+            +" 	sum(IFNULL(o.not_payed_fee, 0)) not_payed_fee, "
             +" 	o.username, "
             +" 	o.seller_real_name, "
             +" 	o.seller_username, "
@@ -190,6 +201,8 @@ public interface TdSalesDetailRepo extends PagingAndSortingRepository<TdSalesDet
             +" AND o.order_time < ?2 "
             +" AND o.city LIKE ?3 "
             +" AND o.diy_site_code LIKE ?4 "
-            +" AND o.diy_site_id IN ?5 ",nativeQuery = true)
+            +" AND o.diy_site_id IN ?5 "
+            +" GROUP BY "
+            +" 	o.main_order_number ",nativeQuery = true)
     List<Object> queryStoreSalesDownList(Date begin, Date end, String cityName, String diyCode, List<String> roleDiyIds);
 }
