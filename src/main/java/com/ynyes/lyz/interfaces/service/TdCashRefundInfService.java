@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.repository.TdCashRefundInfRepo;
 
@@ -144,6 +145,11 @@ public class TdCashRefundInfService {
 	public List<TdCashRefundInf> findBySendFlagOrSendFlagIsNull(Integer sendFlag) {
 		
 		return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
+	}
+	public List<TdCashRefundInf> findBySendFlagOrSendFlagIsNullAndInitDateGreaterThan(Integer sendFlag,
+			Date beginDateFormat) {
+
+		return repository.findFailedCashRefundList(beginDateFormat, sendFlag);
 	}
     
 }

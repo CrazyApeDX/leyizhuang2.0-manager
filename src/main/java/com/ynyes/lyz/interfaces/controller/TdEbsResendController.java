@@ -164,14 +164,21 @@ public class TdEbsResendController {
 	/**
 	 * 收款传输失败的全部重传(review)
 	 * 
-	 * @param orderNumber
-	 *            分单号
+	 * @param beginDate 开始时间
+	 * @throws ParseException 
 	 */
 	@RequestMapping(value = "/oldMethodCashReceiptAll")
 	@ResponseBody
-	public String resendCashReceiptAllToEbs() {
+	public String resendCashReceiptAllToEbs(String beginDate) throws ParseException {
 
-		List<TdCashReciptInf> cashReciptInfs = tdCashReciptInfService.findBySendFlagIsTrueOrSendFlagIsNull(1);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String beginDateFormat = null;
+		if (null == beginDate || "".equals(beginDate.toString().trim())) {
+			beginDateFormat = format.format(new Date());
+		}
+		beginDateFormat = beginDate;
+		Date beginDateFinal = format.parse(beginDateFormat);
+		List<TdCashReciptInf> cashReciptInfs = tdCashReciptInfService.findBySendFlagOrSendFlagIsNullAndInitDateGreaterThan(1, beginDateFinal);
 		if (cashReciptInfs != null && cashReciptInfs.size() > 0) {
 			for (int i = 0; i < cashReciptInfs.size(); i++) {
 				TdCashReciptInf cashReciptInf = cashReciptInfs.get(i);
@@ -215,10 +222,18 @@ public class TdEbsResendController {
 	 * 重传全部退款
 	 * 
 	 * @return
+	 * @throws ParseException 
 	 */
 	@RequestMapping(value = "/cashRefundAll")
-	public String resendCashRefundAll() {
-		List<TdCashRefundInf> cashRefundInfs = tdCashRefundInfService.findBySendFlagOrSendFlagIsNull(1);
+	public String resendCashRefundAll(String beginDate) throws ParseException {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String beginDateFormat = null;
+		if (null == beginDate || "".equals(beginDate.toString().trim())) {
+			beginDateFormat = format.format(new Date());
+		}
+		beginDateFormat = beginDate;
+		Date beginDateFinal = format.parse(beginDateFormat);
+		List<TdCashRefundInf> cashRefundInfs = tdCashRefundInfService.findBySendFlagOrSendFlagIsNullAndInitDateGreaterThan(1, beginDateFinal);
 		if (cashRefundInfs != null && cashRefundInfs.size() > 0) {
 			for (int i = 0; i < cashRefundInfs.size(); i++) {
 				TdCashRefundInf cashRefundInf = cashRefundInfs.get(i);

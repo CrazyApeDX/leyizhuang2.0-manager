@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ynyes.lyz.interfaces.entity.TdCashReciptInf;
+import com.ynyes.lyz.interfaces.entity.TdOrderInf;
 import com.ynyes.lyz.interfaces.repository.TdCashReciptInfRepo;
 
 /**
@@ -131,9 +132,15 @@ public class TdCashReciptInfService {
 		}
 		return repository.findBySendFlag(flag);
 	}
-	
+
 	public List<TdCashReciptInf> findBySendFlagIsTrueOrSendFlagIsNull(Integer sendFlag) {
 		return repository.findBySendFlagOrSendFlagIsNull(sendFlag);
+	}
+
+	public List<TdCashReciptInf> findBySendFlagOrSendFlagIsNullAndInitDateGreaterThan(Integer sendFlag,
+			Date beginDateFormat) {
+
+		return repository.findFailedCashReciptList(beginDateFormat, sendFlag);
 	}
 
 	public TdCashReciptInf findByOrderNumberAndReceiptClassAndReceiptType(String orderNumber, String receiptClass,
