@@ -116,7 +116,7 @@ public class TdEbsResendController {
 	 * @param orderNumber
 	 *            分单号
 	 */
-	@RequestMapping(value = "/oldMethodCashReceiptAll")
+	@RequestMapping(value = "/cashReceiptAll")
 	@ResponseBody
 	public String resendCashReceiptAll() {
 
