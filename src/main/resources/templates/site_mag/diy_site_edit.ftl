@@ -209,6 +209,18 @@
        </dd>
   </dl>
   <dl>
+       <dt>门店类别</dt>
+       <dd>
+         <div id="address">
+             <select id="info" name="info" class="dist" style="width: 100px;">
+                <option value="ZY" <#if diy_site??&&diy_site.info??&&diy_site.info=='ZY'>selected="selected"</#if>>直营门店</option>
+                <option value="JM" <#if diy_site??&&diy_site.info??&&diy_site.info=='JM'>selected="selected"</#if>>加盟门店</option>
+                <option value="FX" <#if diy_site??&&diy_site.info??&&diy_site.info=='JX'>selected="selected"</#if>>经销门店</option>
+             </select>
+         </div>
+       </dd>
+  </dl>
+  <dl>
     <dt>门店位置</dt>
     <dd>
       <input name="address" type="text" value="<#if diy_site??>${diy_site.address!""}</#if>" class="input normal" datatype="*" errormsg="" sucmsg=" ">

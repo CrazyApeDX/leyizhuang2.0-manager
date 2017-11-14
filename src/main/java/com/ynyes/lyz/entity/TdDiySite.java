@@ -18,7 +18,7 @@ public class TdDiySite {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
-
+ 
 	// 门店名称
 	@Column
 	private String title;
@@ -79,7 +79,7 @@ public class TdDiySite {
 	@Column
 	private Double latitude;
 
-	// 描述说明
+	// 描述说明（门店类别：ZY、JM、JX）
 	@Column
 	private String info;
 
