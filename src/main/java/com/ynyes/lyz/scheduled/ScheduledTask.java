@@ -59,7 +59,7 @@ public class ScheduledTask {
 		        	// 排除默认门店下的用户 以及分销用户 
 		        	if(user.getDiyName() != null && !user.getDiyCode().equals("MR001")
 		        			&& user.getSellerId() != null && !user.getSellerId().equals(0L)
-		        			&& !user.getDiyCode().contains("FX#")){
+		        			&& !user.getDiyCode().contains("FX")){
 		        		if(user.getChangeSellerTime() == null){
 			        		// 注册日期大于90以前
 		        			if(user.getRegisterTime() != null && user.getRegisterTime().before(date)){
