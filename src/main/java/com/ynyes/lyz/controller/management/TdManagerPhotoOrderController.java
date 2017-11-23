@@ -157,7 +157,7 @@ public class TdManagerPhotoOrderController {
 				|| null != __EVENTTARGET && __EVENTTARGET.equalsIgnoreCase("lbtnViewImg")) {
 			__VIEWSTATE = __EVENTTARGET;
 		}
-		
+		cityInfo = "成都市";
 		Page<TdPhotoOrderInfo> photoOrderage = tdPhotoOrderInfoService.findAllAddCondition(page, size,keywords,status,cityInfo);
 		
 		
@@ -172,6 +172,67 @@ public class TdManagerPhotoOrderController {
 		map.addAttribute("status", status);
 		map.addAttribute("cityInfo",cityInfo);
 		return "/site_mag/photo_order_list";
+		
+	} 
+	@RequestMapping(value="/list/zz")
+	public String photoOrderListZz(Integer page, Integer size,  String keywords,String status,String cityInfo,
+			Long[] listId,Integer[] listChkId,String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
+			Long[] listSortId, ModelMap map, HttpServletRequest req){
+		String username = (String) req.getSession().getAttribute("manager");
+		if (null == username) {
+			return "redirect:/Verwalter/login";
+		}
+
+		if (null == page || page < 0) {
+			page = 0;
+		}
+
+		if (null == size || size <= 0) {
+			size = SiteMagConstant.pageSize;
+		}
+
+		if (null != keywords) {
+			keywords = keywords.trim();
+		}
+		if (null != __EVENTTARGET) {
+			switch (__EVENTTARGET) {
+			case "lbtnViewTxt":
+			case "lbtnViewImg":
+				__VIEWSTATE = __EVENTTARGET;
+				break;
+
+			case "btnDelete":
+				//btnDelete(listId, listChkId);
+				
+				break;
+
+			case "btnPage":
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+				break;
+			}
+		}
+		
+		if (null != __EVENTTARGET && __EVENTTARGET.equalsIgnoreCase("lbtnViewTxt")
+				|| null != __EVENTTARGET && __EVENTTARGET.equalsIgnoreCase("lbtnViewImg")) {
+			__VIEWSTATE = __EVENTTARGET;
+		}
+		cityInfo = "郑州市";
+		Page<TdPhotoOrderInfo> photoOrderage = tdPhotoOrderInfoService.findAllAddCondition(page, size,keywords,status,cityInfo);
+		
+		
+		// 参数注回
+		map.addAttribute("page", page);
+		map.addAttribute("size", size);
+		map.addAttribute("keywords", keywords);
+		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
+		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
+		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		map.addAttribute("photoOrderPage", photoOrderage);
+		map.addAttribute("status", status);
+		map.addAttribute("cityInfo",cityInfo);
+		return "/site_mag/photo_order_list_zz";
 		
 	} 
 	

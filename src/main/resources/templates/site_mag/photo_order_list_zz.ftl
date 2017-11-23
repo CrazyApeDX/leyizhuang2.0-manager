@@ -29,7 +29,7 @@ td {
 
 <body class="mainbody">
 <div style="left: 0px; top: 0px; visibility: hidden; position: absolute;" class=""><table class="ui_border"><tbody><tr><td class="ui_lt"></td><td class="ui_t"></td><td class="ui_rt"></td></tr><tr><td class="ui_l"></td><td class="ui_c"><div class="ui_inner"><table class="ui_dialog"><tbody><tr><td colspan="2"><div class="ui_title_bar"><div class="ui_title" unselectable="on" style="cursor: move;"></div><div class="ui_title_buttons"><a class="ui_min" href="javascript:void(0);" title="最小化" style="display: inline-block;"><b class="ui_min_b"></b></a><a class="ui_max" href="javascript:void(0);" title="最大化" style="display: inline-block;"><b class="ui_max_b"></b></a><a class="ui_res" href="javascript:void(0);" title="还原"><b class="ui_res_b"></b><b class="ui_res_t"></b></a><a class="ui_close" href="javascript:void(0);" title="关闭(esc键)" style="display: inline-block;">×</a></div></div></td></tr><tr><td class="ui_icon" style="display: none;"></td><td class="ui_main" style="width: auto; height: auto;"><div class="ui_content" style="padding: 10px;"></div></td></tr><tr><td colspan="2"><div class="ui_buttons" style="display: none;"></div></td></tr></tbody></table></div></td><td class="ui_r"></td></tr><tr><td class="ui_lb"></td><td class="ui_b"></td><td class="ui_rb" style="cursor: se-resize;"></td></tr></tbody></table></div>
-<form name="form1"  action="/Verwalter/photo/order/list" id="form1">
+<form name="form1"  action="/Verwalter/photo/order/list/zz" id="form1">
 <div>
 <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="${__EVENTTARGET!""}" />
 <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}" />
@@ -86,11 +86,10 @@ function __doPostBack(eventTarget, eventArgument) {
         <div class="rule-single-select">
             <select name="cityInfo" onchange="javascript:setTimeout(__doPostBack('cityInfo', ''), 0)">
             	<!--
-                <option <#if cityInfo??><#else>selected="selected"</#if> value="">城市</option>
-                <option value="郑州市" <#if cityInfo?? && "郑州市"==cityInfo>selected="selected"</#if> >郑州市</option>
-                <option value="成都市" <#if cityInfo?? && "成都市"==cityInfo>selected="selected"</#if> >成都市</option>
-            	-->
-                <option value="成都市" <#if cityInfo?? && "成都市"==cityInfo>selected="selected"</#if> >成都市</option>    
+                <option <#if cityInfo??><#else>selected="selected"</#if> value="">城市</option>-->
+            
+            	<option value="郑州市" <#if cityInfo?? && "郑州市"==cityInfo>selected="selected"</#if> >郑州市</option>
+                    
             </select>
         </div>
         
