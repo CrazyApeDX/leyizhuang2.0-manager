@@ -65,7 +65,7 @@ public class TdPhotoOrderInfoService {
 	 * @param keywords
 	 * @return
 	 */
-	public Page<TdPhotoOrderInfo> findAllAddCondition(int page, int size,String keywords,String status) {
+	public Page<TdPhotoOrderInfo> findAllAddCondition(int page, int size,String keywords,String status,String cityInfo) {
 		PageRequest pageRequest = new PageRequest(page, size,new Sort(Direction.DESC, "createTime"));
 		Criteria<TdPhotoOrderInfo> c = new Criteria<TdPhotoOrderInfo>();
 		
@@ -76,6 +76,10 @@ public class TdPhotoOrderInfoService {
 		if(null != status && !status.equalsIgnoreCase("")){
 			
 			c.add(Restrictions.eq("status", TdPhotoOrderInfo.Status.valueOf(status), true));
+		}
+		if(null != cityInfo && !cityInfo.equalsIgnoreCase("")){
+			
+			c.add(Restrictions.eq("city", cityInfo, true));
 		}
 		return repository.findAll(c, pageRequest);
 	}

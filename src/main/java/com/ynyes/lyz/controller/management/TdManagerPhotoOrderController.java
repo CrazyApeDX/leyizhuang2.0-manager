@@ -114,7 +114,7 @@ public class TdManagerPhotoOrderController {
 	 * @return
 	 */
 	@RequestMapping(value="/list")
-	public String photoOrderList(Integer page, Integer size,  String keywords,String status,
+	public String photoOrderList(Integer page, Integer size,  String keywords,String status,String cityInfo,
 			Long[] listId,Integer[] listChkId,String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
 			Long[] listSortId, ModelMap map, HttpServletRequest req){
 		String username = (String) req.getSession().getAttribute("manager");
@@ -158,7 +158,7 @@ public class TdManagerPhotoOrderController {
 			__VIEWSTATE = __EVENTTARGET;
 		}
 		
-		Page<TdPhotoOrderInfo> photoOrderage = tdPhotoOrderInfoService.findAllAddCondition(page, size,keywords,status);
+		Page<TdPhotoOrderInfo> photoOrderage = tdPhotoOrderInfoService.findAllAddCondition(page, size,keywords,status,cityInfo);
 		
 		
 		// 参数注回
@@ -170,6 +170,7 @@ public class TdManagerPhotoOrderController {
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
 		map.addAttribute("photoOrderPage", photoOrderage);
 		map.addAttribute("status", status);
+		map.addAttribute("cityInfo",cityInfo);
 		return "/site_mag/photo_order_list";
 		
 	} 

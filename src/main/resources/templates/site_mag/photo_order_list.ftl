@@ -83,6 +83,16 @@ function __doPostBack(eventTarget, eventArgument) {
                     
             </select>
         </div>
+        <div class="rule-single-select">
+            <select name="cityInfo" onchange="javascript:setTimeout(__doPostBack('cityInfo', ''), 0)">
+                <option <#if cityInfo??><#else>selected="selected"</#if> value="">城市</option>
+                
+                <option value="成都市" <#if cityInfo?? && "成都市"==cityInfo>selected="selected"</#if> >成都市</option>
+            
+            	<option value="郑州市" <#if cityInfo?? && "郑州市"==cityInfo>selected="selected"</#if> >郑州市</option>
+                    
+            </select>
+        </div>
         
       </div>
     </div>
