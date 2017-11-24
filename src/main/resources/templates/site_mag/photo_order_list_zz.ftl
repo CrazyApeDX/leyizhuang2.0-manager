@@ -80,7 +80,8 @@ function __doPostBack(eventTarget, eventArgument) {
             	<option value="ACTIONING" <#if status?? && "ACTIONING"==status>selected="selected"</#if> >处理中</option>
             
             	<option value="FINISHING" <#if status?? && "FINISHING"==status>selected="selected"</#if> >已完成</option>
-                    
+                   
+                <option value="INVALID" <#if status?? && "INVALID"==status>selected="selected"</#if> >已作废</option> 
             </select>
         </div>
         <div class="rule-single-select">
@@ -141,6 +142,8 @@ function __doPostBack(eventTarget, eventArgument) {
             		处理中
             	<#elseif order.status?? && order.status == 'FINISHING'>
             		已完成
+            	<#elseif order.status?? && order.status == 'INVALID'>
+            		已作废
             	</#if>
             </td>
             <td align="center">
@@ -149,6 +152,8 @@ function __doPostBack(eventTarget, eventArgument) {
             	<#elseif order.status?? && order.status == 'ACTIONING'>
             		<a href="/Verwalter/photo/order/toprocess/1?id=${order.id?c}">查看</a>
             	<#elseif order.status?? && order.status == 'FINISHING'>
+            		<a href="/Verwalter/photo/order/toprocess/1?id=${order.id?c}">查看</a>
+            	<#elseif order.status?? && order.status == 'INVALID'>
             		<a href="/Verwalter/photo/order/toprocess/1?id=${order.id?c}">查看</a>
             	</#if>
             </td>

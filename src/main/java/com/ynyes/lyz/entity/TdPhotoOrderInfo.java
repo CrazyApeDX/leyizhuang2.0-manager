@@ -123,7 +123,7 @@ public class TdPhotoOrderInfo {
 	private Long sellerid;
 	
 	public static enum Status {
-		WAITING, ACTIONING, FINISHING
+		WAITING, ACTIONING, FINISHING,INVALID
 	}
 
 	public Long getId() {

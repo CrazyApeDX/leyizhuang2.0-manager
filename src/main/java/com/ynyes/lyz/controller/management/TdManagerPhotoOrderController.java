@@ -32,6 +32,7 @@ import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdPhotoOrderInfo;
+import com.ynyes.lyz.entity.TdPhotoOrderInfo.Status;
 import com.ynyes.lyz.entity.TdPriceListItem;
 import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.TdShippingAddress;
@@ -635,5 +636,28 @@ public class TdManagerPhotoOrderController {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	/**
+	 * 作废订单
+	 */
+	@RequestMapping(value = "/invalid/order")
+	@ResponseBody
+	public Map<String,Object> invalidOrder(Long id){
+		Map<String,Object> res = new HashMap<>();
+		
+		if(id == null){
+			res.put("status", -1);
+			res.put("msg","订单不存在");
+			return res;
+		}
+		
+		TdPhotoOrderInfo photoOrderInfo = tdPhotoOrderInfoService.findOne(id);
+		
+		photoOrderInfo.setStatus(Status.INVALID);
+		tdPhotoOrderInfoService.save(photoOrderInfo);
+		
+		res.put("status", 0);
+		return res;
 	}
 }

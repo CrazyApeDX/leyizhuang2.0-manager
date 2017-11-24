@@ -170,6 +170,7 @@ function showPhotoOrderImg(node){
     </div>
     <div id="id-first-tab" class="tab-content" style="display: block;">
     	<input type="hidden" id="photoOrderId" value="<#if photoOrder??>${photoOrder.id!'' }</#if>"/>
+    	<input type="hidden" id="cityInfo" value="<#if photoOrder??>${photoOrder.city!'' }</#if>"/>
         <table>
         	<#if photoOrder?? && photoOrder.orderNumber??>
         		<tr>
@@ -349,6 +350,9 @@ function showPhotoOrderImg(node){
         	<#if handleType?? && handleType == 0>
         		<input type="button" onclick="createOrder()" name="btnSubmit" value="提交保存" id="btnSubmit" class="btn" >
         	</#if>
+        	<#if photoOrder.status?? && photoOrder.status == 'WAITING'>
+        	<input name="btnReturn" type="button" value="作废此订单" class="btn yellow" onclick="invalidOrder()">
+        	</#if>
             <input name="btnReturn" type="button" value="返回上一页" class="btn yellow" onclick="javascript:history.back(-1);">
         </div>
         <div class="clear">
@@ -421,7 +425,12 @@ function showPhotoOrderImg(node){
 	            			success : function(res) {
 	            				if (0 === res.status) {
 	            					alert("提交订单成功！");
-	            					window.location.href = "/Verwalter/photo/order/list";
+	            					if($("#cityInfo").val() == "成都市"){
+	            						window.location.href = "/Verwalter/photo/order/list";
+	            					}else if($("#cityInfo").val() == "郑州市"){
+	            						window.location.href = "/Verwalter/photo/order/list/zz";
+	            					}
+	            					
 	            				}else if(-1 == res.status){
 	            					alert(res.message);
 	            					
@@ -445,7 +454,49 @@ function showPhotoOrderImg(node){
 	   return /(\x0f[^\x0f]+)\x0f[\s\S]*\1/.test("\x0f"+a.join("\x0f\x0f") +"\x0f");
 	}    			
 			
-					
+	// 作废订单
+	function invalidOrder(){
+		var id = $("#photoOrderId").val();
+		var dialog = $.dialog({
+            title: '作废订单',
+            content: '操作提示信息：<br />作废后不可恢复，确认作废？；<br />',
+            min: false,
+            max: false,
+            lock: true,
+            icon: 'confirm.gif',
+            button: [{
+                name: '确认',
+                callback: function () {
+                	
+                	$.ajax({
+            			url : '/Verwalter/photo/order/invalid/order',
+            			method : 'POST',
+            			traditional : true,
+            			data : {
+            				id : id,
+            			},
+            			success : function(res) {
+            				if (0 === res.status) {
+            					alert("作废订单成功！");
+            					if($("#cityInfo").val() == "成都市"){
+            						window.location.href = "/Verwalter/photo/order/list";
+            					}else if($("#cityInfo").val() == "郑州市"){
+            						window.location.href = "/Verwalter/photo/order/list/zz";
+            					}
+            				}else if(-1 == res.status){
+            					alert(res.msg);
+            					
+            				} 
+            			}
+            		});
+                },
+                focus: true
+            }, {
+                name: '关闭'
+            }]
+        });
+		
+	}
 			
 	</script>
 </body>
