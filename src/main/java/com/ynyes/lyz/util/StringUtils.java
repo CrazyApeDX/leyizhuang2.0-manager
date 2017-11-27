@@ -279,4 +279,12 @@ public class StringUtils {
 		String last = (int) (Math.random() * 900 + 100) + "";
 		return new StringBuilder().append(prefix).append(mid).append(last).toString();
 	}
+
+
+	public String replaceNullWithSpace(String s){
+		if (null == s){
+			return "";
+		}
+		return  s;
+	}
 }

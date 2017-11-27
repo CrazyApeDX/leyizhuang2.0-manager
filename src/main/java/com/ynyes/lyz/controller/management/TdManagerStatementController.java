@@ -168,18 +168,24 @@ public class TdManagerStatementController extends TdManagerBaseController {
             cityName = null;
         }
 
-        LOGGER.info("dowmDataGoodsInOut, start export excel...");
         //获取到导出的excel
-        HSSFWorkbook wb = acquireHSSWorkBook(statusId, begin, end, diyCode, cityName, username, tdDiySiteRoleService.userRoleDiyId(tdManagerRole, tdManager), code);
-        LOGGER.info("dowmDataGoodsInOut, start download excel...");
-
-        String exportAllUrl = SiteMagConstant.backupPath;
-        if (statusId == 7) {
-            downloadForSale(wb, exportAllUrl, response, acquireFileName(statusId));
-        } else {
-            download(wb, exportAllUrl, response, acquireFileName(statusId));
+        try {
+            LOGGER.info("dowmDataGoodsInOut, start export excel...");
+            HSSFWorkbook wb = acquireHSSWorkBook(statusId, begin, end, diyCode, cityName, username,
+                    tdDiySiteRoleService.userRoleDiyId(tdManagerRole, tdManager), code);
+            LOGGER.info("dowmDataGoodsInOut, start download excel...");
+            String exportAllUrl = SiteMagConstant.backupPath;
+            if (statusId == 7) {
+                downloadForSale(wb, exportAllUrl, response, acquireFileName(statusId));
+            } else {
+                download(wb, exportAllUrl, response, acquireFileName(statusId));
+            }
+            LOGGER.info("dowmDataGoodsInOut, download complete!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("{}", e);
+            return e.getMessage();
         }
-        LOGGER.info("dowmDataGoodsInOut, download complete!");
         return "";
     }
 
@@ -741,7 +747,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
                         case 5:
                             cell.setCellValue("待评价");
                         case 6:
-                            row.createCell(6).setCellValue("已完成");
+                            cell.setCellValue("已完成");
                             break;
                         case 7:
                             cell.setCellValue("已取消");
@@ -1842,7 +1848,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 row.createCell(17).setCellValue(objToString(goodsInOut.getGoodsTypeTitle()));
                 //配送方式
                 /*row.createCell(18).setCellValue(objToString(goodsInOut.getDeliverTypeTitle()));
-				//中转仓
+                //中转仓
 	            row.createCell(19).setCellValue(objToString(goodsInOut.getWhName()));
 	    		//配送人员
 	        	row.createCell(20).setCellValue(objToString(goodsInOut.getDeliverRealName()));
