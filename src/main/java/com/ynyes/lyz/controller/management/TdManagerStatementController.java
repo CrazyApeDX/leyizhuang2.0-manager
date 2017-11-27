@@ -1527,9 +1527,12 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 if (j + i * maxRowNum >= maxSize) {
                     break;
                 }
-                TdSalesDetail salesDetail = null;
+                TdSalesDetail salesDetail;
                 if (salesDetailList != null && salesDetailList.size()>0) {
                     salesDetail = salesDetailList.get(j + i * maxRowNum);
+                    if (salesDetail == null ){
+                        continue;
+                    }
                     row = sheet.createRow((int) j + 1);
                     //门店名称
                     row.createCell(0).setCellValue(objToString(salesDetail.getDiySiteName()));

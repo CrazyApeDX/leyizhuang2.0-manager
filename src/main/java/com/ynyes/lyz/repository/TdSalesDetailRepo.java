@@ -162,6 +162,7 @@ public interface TdSalesDetailRepo extends PagingAndSortingRepository<TdSalesDet
             + " 	AND diy.city LIKE ?3 "
             + " 	AND o.diy_site_code LIKE ?4 "
             + " 	AND o.diy_site_id IN ?5 "
+            + "     AND  o.order_number is not NULL "
             + " 	ORDER BY "
             + " 		order_time DESC;", nativeQuery = true)
     List<TdSalesDetail> queryDownList(Date begin, Date end, String cityName, String diySiteCode, List<String> roleDiyIds);
