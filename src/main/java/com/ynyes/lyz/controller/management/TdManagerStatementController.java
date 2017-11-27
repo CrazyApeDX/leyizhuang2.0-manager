@@ -1527,71 +1527,73 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 if (j + i * maxRowNum >= maxSize) {
                     break;
                 }
-                TdSalesDetail salesDetail = salesDetailList.get(j + i * maxRowNum);
-                row = sheet.createRow((int) j + 1);
-                //门店名称
-                row.createCell(0).setCellValue(objToString(salesDetail.getDiySiteName()));
+                TdSalesDetail salesDetail = null;
+                if (salesDetailList != null && salesDetailList.size()>0) {
+                    salesDetail = salesDetailList.get(j + i * maxRowNum);
+                    row = sheet.createRow((int) j + 1);
+                    //门店名称
+                    row.createCell(0).setCellValue(objToString(salesDetail.getDiySiteName()));
 
-                //代付款订单没有主单号  分单号显示到主单号位置
-                if (salesDetail.getStatusId() != null && salesDetail.getStatusId().equals(2L)) {
-                    row.createCell(1).setCellValue(objToString(salesDetail.getOrderNumber()));
-                } else {
-                    row.createCell(1).setCellValue(objToString(salesDetail.getMainOrderNumber()));
-                    row.createCell(2).setCellValue(objToString(salesDetail.getOrderNumber()));
+                    //代付款订单没有主单号  分单号显示到主单号位置
+                    if (salesDetail.getStatusId() != null && salesDetail.getStatusId().equals(2L)) {
+                        row.createCell(1).setCellValue(objToString(salesDetail.getOrderNumber()));
+                    } else {
+                        row.createCell(1).setCellValue(objToString(salesDetail.getMainOrderNumber()));
+                        row.createCell(2).setCellValue(objToString(salesDetail.getOrderNumber()));
+                    }
+                    //下单时间
+                    row.createCell(3).setCellValue(objToString(salesDetail.getOrderTime()));
+                    //订单状态
+                    row.createCell(4).setCellValue(orderStatus(salesDetail.getStatusId()));
+                    //导购
+                    row.createCell(5).setCellValue(objToString(salesDetail.getSellerRealName()));
+                    //客户编号
+                    row.createCell(6).setCellValue(objToString(salesDetail.getUserId()));
+                    //客户名称
+                    row.createCell(7).setCellValue(objToString(salesDetail.getRealName()));
+                    //客户电话
+                    row.createCell(8).setCellValue(objToString(replacePhoneNumberWithStar(salesDetail.getUsername())));
+                    //产品编号
+                    row.createCell(9).setCellValue(objToString(salesDetail.getSku()));
+                    //产品名称
+                    row.createCell(10).setCellValue(objToString(salesDetail.getGoodsTitle()));
+                    //产品数量
+                    row.createCell(11).setCellValue(objToString(salesDetail.getQuantity()));
+                    //产品价格
+                    row.createCell(12).setCellValue(objToString(salesDetail.getPrice()));
+                    //产品总价
+                    row.createCell(13).setCellValue((salesDetail.getTotalPrice() * 100) / 100);
+                    //现金卷
+                    //row.createCell(14).setCellValue(objToString(salesDetail.getCashCoupon()));
+                    //品牌
+                    row.createCell(14).setCellValue(objToString(salesDetail.getBrandTitle()));
+                    //商品父分类
+                    row.createCell(15).setCellValue(objToString(salesDetail.getGoodsParentTypeTitle()));
+                    //商品子分类
+                    row.createCell(16).setCellValue(objToString(salesDetail.getGoodsTypeTitle()));
+                    //配送方式
+                    row.createCell(17).setCellValue(objToString(salesDetail.getDeliverTypeTitle()));
+                    //中转仓
+                    row.createCell(18).setCellValue(objToString(salesDetail.getWhName()));
+                    //配送人员
+                    row.createCell(19).setCellValue(objToString(salesDetail.getDeliverRealName()));
+                    //配送人员电话
+                    row.createCell(20).setCellValue(objToString(salesDetail.getDeliverUsername()));
+                    //收货人姓名
+                    if (!"门店自提".equals(salesDetail.getDeliverTypeTitle())) {
+                        row.createCell(21).setCellValue(objToString(salesDetail.getShippingName()));
+                    }
+                    //收货人电话
+                    if (!"门店自提".equals(salesDetail.getDeliverTypeTitle())) {
+                        row.createCell(22).setCellValue(objToString(salesDetail.getShippingPhone()));
+                    }
+                    //收货人地址
+                    if (!"门店自提".equals(salesDetail.getDeliverTypeTitle())) {
+                        row.createCell(23).setCellValue(objToString(salesDetail.getShippingAddress()));
+                    }
+                    //订单备注
+                    row.createCell(24).setCellValue(objToString(salesDetail.getRemark()));
                 }
-                //下单时间
-                row.createCell(3).setCellValue(objToString(salesDetail.getOrderTime()));
-                //订单状态
-                row.createCell(4).setCellValue(orderStatus(salesDetail.getStatusId()));
-                //导购
-                row.createCell(5).setCellValue(objToString(salesDetail.getSellerRealName()));
-                //客户编号
-                row.createCell(6).setCellValue(objToString(salesDetail.getUserId()));
-                //客户名称
-                row.createCell(7).setCellValue(objToString(salesDetail.getRealName()));
-                //客户电话
-                row.createCell(8).setCellValue(objToString(replacePhoneNumberWithStar(salesDetail.getUsername())));
-                //产品编号
-                row.createCell(9).setCellValue(objToString(salesDetail.getSku()));
-                //产品名称
-                row.createCell(10).setCellValue(objToString(salesDetail.getGoodsTitle()));
-                //产品数量
-                row.createCell(11).setCellValue(objToString(salesDetail.getQuantity()));
-                //产品价格
-                row.createCell(12).setCellValue(objToString(salesDetail.getPrice()));
-                //产品总价
-                row.createCell(13).setCellValue((salesDetail.getTotalPrice() * 100) / 100);
-                //现金卷
-                //row.createCell(14).setCellValue(objToString(salesDetail.getCashCoupon()));
-                //品牌
-                row.createCell(14).setCellValue(objToString(salesDetail.getBrandTitle()));
-                //商品父分类
-                row.createCell(15).setCellValue(objToString(salesDetail.getGoodsParentTypeTitle()));
-                //商品子分类
-                row.createCell(16).setCellValue(objToString(salesDetail.getGoodsTypeTitle()));
-                //配送方式
-                row.createCell(17).setCellValue(objToString(salesDetail.getDeliverTypeTitle()));
-                //中转仓
-                row.createCell(18).setCellValue(objToString(salesDetail.getWhName()));
-                //配送人员
-                row.createCell(19).setCellValue(objToString(salesDetail.getDeliverRealName()));
-                //配送人员电话
-                row.createCell(20).setCellValue(objToString(salesDetail.getDeliverUsername()));
-                //收货人姓名
-                if (!"门店自提".equals(salesDetail.getDeliverTypeTitle())) {
-                    row.createCell(21).setCellValue(objToString(salesDetail.getShippingName()));
-                }
-                //收货人电话
-                if (!"门店自提".equals(salesDetail.getDeliverTypeTitle())) {
-                    row.createCell(22).setCellValue(objToString(salesDetail.getShippingPhone()));
-                }
-                //收货人地址
-                if (!"门店自提".equals(salesDetail.getDeliverTypeTitle())) {
-                    row.createCell(23).setCellValue(objToString(salesDetail.getShippingAddress()));
-                }
-                //订单备注
-                row.createCell(24).setCellValue(objToString(salesDetail.getRemark()));
-
 //	            System.out.println("正在生成excel文件的 sheet"+(i+1)+"第"+(j+1)+"行");
             }
 //			System.out.println("正在生成excel文件的 sheet"+(i+1));
