@@ -553,11 +553,11 @@ public class TdManagerStatementController extends TdManagerBaseController {
             wb = franchiseesGoodsInOutWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
         } else if (statusId == 19) {//配送员代收款报表
             wb = deliveryAgencyFundWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
-        } else if (statusId == 20) {
+        } else if (statusId == 20) {//门店代收款报表
             wb = storeAgencyFundWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
-        } else if (statusId == 21) {
+        } else if (statusId == 21) {//分销会员报表
             wb = FXMemberWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
-        } else if (statusId == 22) {
+        } else if (statusId == 22) {//分销销售明细报表
             wb = FXStoreSalesWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
         }
         return wb;
@@ -675,7 +675,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
             //设置标题
             HSSFRow row = sheet.createRow((int) 0);
             //版本1.1
-            String[] cellValues = {"城市", "仓库", "门店", "门店类型", "收货人", "订单号", "出货单号", "收货地址",
+            String[] cellValues = {"城市", "仓库", "门店", "门店类型", "收货人", "订单号", "出货单号", "封车出库时间","收货地址",
                     "导购", "配送员姓名", "订单代收金额", "配送员实际收款现金", "配送员实际收款POS", "配送员备注",
                     "门店是否审核通过欠款", "应退门店", "仓库应存回公司货款", "订单备注",};
             cellDates(cellValues, style, row);
