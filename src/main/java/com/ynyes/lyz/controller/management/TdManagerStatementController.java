@@ -730,7 +730,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
         if (null != cells && cells.length > 0) {
             for (int i = 0; i < cells.length; i++) {
                 cell = row.createCell(i);
-                if (i == 8) {
+                if (i == 9) {
                     switch (Integer.parseInt(cells[i].toString())) {
                         case 1:
                             cell.setCellValue("待审核");
@@ -4373,7 +4373,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
             //设置标题
             HSSFRow row = sheet.createRow((int) 0);
             //版本1.1
-            String[] cellValues = {"城市", "门店编码", "门店名称", "订单号", "下单时间", "支付方式", "送货方式", "支付时间", "订单状态", "订单金额", "运费",
+            String[] cellValues = {"城市", "门店编码", "门店名称", "订单号", "下单时间","下单日期", "支付方式", "送货方式", "支付时间", "订单状态", "订单金额", "运费",
                     "总金额", "未支付金额", "下单人电话", "导购", "导购电话", "会员", "会员电话"};
             cellDates(cellValues, style, row);
             HSSFCellStyle cellStyle = wb.createCellStyle();
