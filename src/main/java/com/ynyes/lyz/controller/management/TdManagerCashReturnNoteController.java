@@ -191,7 +191,7 @@ public class TdManagerCashReturnNoteController {
 			// ------------------------操作结束------------------------------
 			
 			String phone = "";
-			if(null != order.getIsSellerOrder() || order.getIsSellerOrder()){
+			if(null != order.getIsSellerOrder() && order.getIsSellerOrder()){
 				phone = order.getSellerUsername();
 			} else {
 				phone = order.getRealUserUsername();
