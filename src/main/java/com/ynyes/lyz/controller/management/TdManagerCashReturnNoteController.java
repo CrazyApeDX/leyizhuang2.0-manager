@@ -190,7 +190,13 @@ public class TdManagerCashReturnNoteController {
 			tdReturnNoteService.save(returnNote);
 			// ------------------------操作结束------------------------------
 			
-			String phone = order.getUsername();
+			String phone = "";
+			if(null != order.getIsSellerOrder() || order.getIsSellerOrder()){
+				phone = order.getSellerUsername();
+			} else {
+				phone = order.getRealUserUsername();
+			}
+			
 			TdUser user = tdUserService.findByUsernameAndIsEnableTrue(phone);
 			//发送短信通知
 			if (null != phone && !"".equalsIgnoreCase(phone)) {
