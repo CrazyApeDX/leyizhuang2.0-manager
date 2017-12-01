@@ -159,6 +159,21 @@ $(function () {
         </dd>
     </dl>
     <dl>
+        <dt>所属城市</dt>
+        <dd>
+            <div class="rule-single-select single-select">
+            <select name="cityId" datatype="*" sucmsg=" ">
+                <option value="" <#if !city??>selected="selected"</#if>>请选择</option>
+                <#if city??>
+                    <#list city as item>
+                        <option value="${item.sobIdCity?c}" <#if ad?? && ad.cityId?? && ad.cityId?c == item.sobIdCity?c>selected="selected"</#if>>${item.cityName}</option>
+                    </#list>
+                </#if>
+            </select>
+            </div>
+        </dd>
+    </dl>
+    <dl>
         <dt>备注</dt>
         <dd>
             <textarea name="mark" rows="2" cols="20" class="input" datatype="*0-255" sucmsg=" "><#if ad??>${ad.mark!""}</#if></textarea>

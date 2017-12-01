@@ -67,6 +67,7 @@ var theForm = document.forms['form1'];
     <th align="center" width="15%">开始时间</th>
     <th align="center" width="15%">到期时间</th>
     <th align="center" width="10%">链接</th>
+    <th align="center" width="6%">城市代码</th>
     <th align="center" width="8%">状态</th>
     <th align="center" width="15%">发布时间</th>
     <th width="8%">排序</th>
@@ -86,6 +87,7 @@ var theForm = document.forms['form1'];
                 <td align="center">${item.startTime!""}</td>
                 <td align="center">${item.endTime!""}</td>
                 <td align="center"><a target="_blank" href="${item.linkUri!""}">广告链接</a></td>
+                <td align="center">${item.cityId!}</td>
                 <td align="center"><#if item.isEnable?? && item.isEnable><font color="#009900">正常</font><#else>待审核</#if></td>
                 <td align="center">${item.createTime!""}</td>
                 <td align="center">

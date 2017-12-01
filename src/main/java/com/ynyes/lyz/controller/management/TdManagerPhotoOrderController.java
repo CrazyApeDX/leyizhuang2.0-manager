@@ -296,7 +296,7 @@ public class TdManagerPhotoOrderController {
 
 		Page<TdGoods> goods_page = null;
 		if (null != keywords) {
-			goods_page = tdGoodsService.findByCodeContainingOrTitleContainingOrderBySortIdAsc(keywords, page,
+			goods_page = tdGoodsService.findByCodeContainingOrTitleContainingAndIsOnSaleIsTrueOrderBySortIdAsc(keywords, page,
 					size);
 		} else {
 			// goods_page = tdGoodsService.findAll(page, size);
@@ -342,7 +342,7 @@ public class TdManagerPhotoOrderController {
 	@RequestMapping(value = "/create/order")
 	@ResponseBody
 	public Map<String, Object> createOrder(HttpServletRequest req,String username,Long photoOrderId,
-			 String ids,String numbers) {
+			 String ids,String numbers,String remark) {
 		Map<String, Object> res = new HashMap<>();
 		req.getSession().setAttribute("username", username);
 		String mangername = (String) req.getSession().getAttribute("manager");
@@ -361,7 +361,7 @@ public class TdManagerPhotoOrderController {
 
 		// 通过方法生成一个虚拟订单
 		try {
-			orderTemp = tdCommonService.createVirtual(req, realUserId, ids,numbers,photoOrderId);
+			orderTemp = tdCommonService.createVirtual(req, realUserId, ids,numbers,photoOrderId,remark);
 		} catch (Exception e) {
 			e.printStackTrace();
 			LOG.error(e.getMessage());

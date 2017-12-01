@@ -212,7 +212,7 @@ function showPhotoOrderImg(node){
 			       <dl >
 			            <dt>备注:</dt>
 			            <dd>
-			         		<textarea id="remark" name="remark" row="2" cols="20" class="input" readonly="readonly"><#if photoOrder??>${photoOrder.remark!'' }</#if></textarea>
+			         		<textarea id="remark" name="remark" row="2" cols="20" class="input"><#if photoOrder??>${photoOrder.remark!'' }</#if></textarea>
 			            </dd>
 			        </dl>
         		</td>
@@ -370,7 +370,7 @@ function showPhotoOrderImg(node){
 		
 		var username = $("#username").val();
 		var photoOrderId = $("#photoOrderId").val();
-		
+		var remark = $("#remark").val();
 		var ids = [];
 		var numbers = [];
 		var idArray = $("input[name='combList[${comb_index!'0'}].goodsId']");
@@ -420,7 +420,8 @@ function showPhotoOrderImg(node){
 	            				username : username,
 	            				ids : ids,
 	            				numbers : numbers,
-	            				photoOrderId : photoOrderId
+	            				photoOrderId : photoOrderId,
+	            				remark : remark
 	            			},
 	            			success : function(res) {
 	            				if (0 === res.status) {
@@ -457,6 +458,7 @@ function showPhotoOrderImg(node){
 	// 作废订单
 	function invalidOrder(){
 		var id = $("#photoOrderId").val();
+		var remark = $("#remark").val();
 		var dialog = $.dialog({
             title: '作废订单',
             content: '操作提示信息：<br />作废后不可恢复，确认作废？；<br />',
@@ -474,6 +476,7 @@ function showPhotoOrderImg(node){
             			traditional : true,
             			data : {
             				id : id,
+            				remark : remark
             			},
             			success : function(res) {
             				if (0 === res.status) {
