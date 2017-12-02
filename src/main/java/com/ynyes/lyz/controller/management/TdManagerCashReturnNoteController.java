@@ -1,5 +1,12 @@
 package com.ynyes.lyz.controller.management;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,14 +19,20 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ynyes.lyz.entity.TdCashReturnNote;
+import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdReturnNote;
+import com.ynyes.lyz.entity.TdSmsAccount;
+import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.service.TdCashReturnNoteService;
+import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdReturnNoteService;
+import com.ynyes.lyz.service.TdSmsAccountService;
+import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.util.SiteMagConstant;
 
 /**
@@ -54,6 +67,15 @@ public class TdManagerCashReturnNoteController {
 	
 	@Autowired
 	private TdEbsSenderService tdEbsSenderService;
+	
+	@Autowired
+	private TdCityService tdRegionService;
+	
+	@Autowired
+	private TdSmsAccountService tdSmsAccountService;
+	
+	@Autowired
+	private TdUserService tdUserService;
 
 	@RequestMapping(value = "/list")
 	public String cashReturnNoteList(Integer page, Integer size, String keywords, Long type, String __EVENTTARGET,
@@ -87,7 +109,7 @@ public class TdManagerCashReturnNoteController {
 			} else if (__EVENTTARGET.equals("btnSearch")) {
 				page = 0;
 			} else if (__EVENTTARGET.equals("returnMoney")) {
-				returnMoney(__EVENTARGUMENT);
+				returnMoney(__EVENTARGUMENT, req);
 			}
 		}
 
@@ -128,7 +150,7 @@ public class TdManagerCashReturnNoteController {
 	 * @author 作者：DengXiao
 	 * @version 版本：2016年6月17日上午11:38:07
 	 */
-	private void returnMoney(String sId) {
+	private void returnMoney(String sId, HttpServletRequest req) {
 		if (null == sId) {
 			return;
 		}
@@ -167,10 +189,85 @@ public class TdManagerCashReturnNoteController {
 
 			tdReturnNoteService.save(returnNote);
 			// ------------------------操作结束------------------------------
+			
+			String phone = "";
+			if(null != order.getIsSellerOrder() && order.getIsSellerOrder()){
+				phone = order.getSellerUsername();
+			} else {
+				phone = order.getRealUserUsername();
+			}
+			
+			TdUser user = tdUserService.findByUsernameAndIsEnableTrue(phone);
+			//发送短信通知
+			if (null != phone && !"".equalsIgnoreCase(phone)) {
+				this.sendSmsCaptcha(req, phone, 
+						"亲爱的用户，您的订单"+order.getOrderNumber()+"退款成功，请您到原支付账户确认退款到账情况。", 
+							user.getCityName());
+			}
 		} catch (Exception e) {
 			// 转换类型失败之后也不继续处理
 			e.printStackTrace();
 			return;
+		}
+	}
+	
+	/**
+	 * 短信接口
+	 * @param req
+	 * @param phone
+	 * @param message
+	 * @param cityInfo
+	 */
+	private void sendSmsCaptcha(HttpServletRequest req, String phone, String message, String cityInfo) {
+		String content = null;
+		try {
+			content = URLEncoder.encode(message, "GB2312");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		TdCity region = tdRegionService.findByCityName(cityInfo);
+		if (null != region) {
+		
+			TdSmsAccount account = tdSmsAccountService.findOne(region.getSmsAccountId());
+			String url = "http://www.mob800.com/interface/Send.aspx?enCode=" + account.getEncode() + "&enPass="
+					+ account.getEnpass() + "&userName=" + account.getUserName() + "&mob=" + phone + "&msg=" + content;
+			try {
+				URL u = new URL(url);
+				URLConnection connection = u.openConnection();
+				HttpURLConnection httpConn = (HttpURLConnection) connection;
+				httpConn.setRequestProperty("Content-type", "text/html");
+				httpConn.setRequestProperty("Accept-Charset", "utf-8");
+				httpConn.setRequestProperty("contentType", "utf-8");
+				InputStream inputStream = null;
+				InputStreamReader inputStreamReader = null;
+				BufferedReader reader = null;
+				StringBuffer resultBuffer = new StringBuffer();
+				String tempLine = null;
+	
+				try {
+					inputStream = httpConn.getInputStream();
+					inputStreamReader = new InputStreamReader(inputStream);
+					reader = new BufferedReader(inputStreamReader);
+	
+					while ((tempLine = reader.readLine()) != null) {
+						resultBuffer.append(tempLine);
+					}
+	
+				} finally {
+					if (reader != null) {
+						reader.close();
+					}
+					if (inputStreamReader != null) {
+						inputStreamReader.close();
+					}
+					if (inputStream != null) {
+						inputStream.close();
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }

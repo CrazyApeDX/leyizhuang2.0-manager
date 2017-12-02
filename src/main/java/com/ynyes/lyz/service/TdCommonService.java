@@ -4237,7 +4237,7 @@ public class TdCommonService {
 	 * @author dengxiao
 	 * @throws Exception
 	 */
-	public TdOrder createVirtual(HttpServletRequest req, Long realUserId, String ids,String numbers,Long photoOrderId) throws Exception {
+	public TdOrder createVirtual(HttpServletRequest req, Long realUserId, String ids,String numbers,Long photoOrderId,String remark) throws Exception {
 		String mangername = (String) req.getSession().getAttribute("manager");
 		TdManager manager = tdManagerService.findByUsername(mangername);
 		
@@ -4615,6 +4615,7 @@ public class TdCommonService {
 		tdPhotoOrderInfo.setManagerUsername(manager.getUsername());
 		tdPhotoOrderInfo.setStartActionTime(Calendar.getInstance().getTime());
 		tdPhotoOrderInfo.setOrderNumber(virtual.getOrderNumber());
+		tdPhotoOrderInfo.setRemark(remark);
 		tdPhotoOrderInfoService.save(tdPhotoOrderInfo);
 		
 		return virtual;

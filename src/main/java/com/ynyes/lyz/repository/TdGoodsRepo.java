@@ -570,6 +570,8 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 	
 	Page<TdGoods> findByCodeContainingOrTitleContainingOrderBySortIdAsc(String keywords1, String keywords2,
 			Pageable page);
+	Page<TdGoods> findByCodeContainingOrTitleContainingAndIsOnSaleIsTrueOrderBySortIdAsc(String keywords1, String keywords2,
+			Pageable page);
 
 	@Query("select goods from TdGoods goods where goods.categoryId = :categoryId and goods.id not in "
 			+ "(select un.goodsId from TdUnableSale un where un.diySiteId = :diySiteId) order by sortId asc")

@@ -78,6 +78,10 @@ public class TdAd {
 	// 备注
 	@Column
 	private String mark;
+	
+	// 城市代码
+	@Column
+	private Long cityId;
 
 	public Long getId() {
 		return id;
@@ -189,6 +193,14 @@ public class TdAd {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public Long getCityId() {
+		return cityId;
+	}
+
+	public void setCityId(Long cityId) {
+		this.cityId = cityId;
 	}
 	
 }
