@@ -19,6 +19,9 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -577,8 +580,8 @@ public class TdUserService {
      * @param cityName
      * @return
      */
-    public List<TdUser> queryAllUser(String cityName, Date date) {
-        return repository.queryAllUser(cityName, date);
+    public List<TdUser> queryAllUser( Date date) {
+        return repository.queryAllUser( date);
     }
 
     ;
@@ -589,6 +592,19 @@ public class TdUserService {
     public TdUser clearSeller(TdUser user) {
         if (user == null) {
             return new TdUser();
+        }
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date();
+        try {
+        	date = sdf.parse("2017-11-26 00:00:00");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        if(user.getCityName().equals("郑州市") && user.getRegisterTime().before(date)){
+        	// 郑州存在虚拟门店帐号 2017-11-26 号以前注册的都是虚拟帐号
+        	return user;
         }
 
         // 创建日志对象，记录修改的导购信息
@@ -602,29 +618,26 @@ public class TdUserService {
         log.setOldUpperDiySiteId(user.getUpperDiySiteId());
         log.setCreateTime(new Date());
 
-        if (user.getCityName().equals("成都市")) {
+        // 获取门店名称
+        TdDiySite defaultDiySite = tdDiySiteService.findDefaultDiyByCityInfo(user.getCityName());
+        // 门店设置为默认门店
+        user.setDiyName(defaultDiySite.getTitle());
+        user.setDiyCode(defaultDiySite.getStoreCode());
+        user.setUpperDiySiteId(defaultDiySite.getId());
+        user.setCustomerId(defaultDiySite.getCustomerId());
+        // 清空导购
+        user.setSellerId(0L);
+        user.setSellerName("无");
+        user.setChangeSellerTime(new Date());
+        user.setLoginFlag(1L);
 
-            // 获取门店名称
-            TdDiySite defaultDiySite = tdDiySiteService.findDefaultDiyByCityInfo("成都市");
-            // 门店设置为默认门店
-            user.setDiyName(defaultDiySite.getTitle());
-            user.setDiyCode(defaultDiySite.getStoreCode());
-            user.setUpperDiySiteId(defaultDiySite.getId());
-            user.setCustomerId(defaultDiySite.getCustomerId());
-            // 清空导购
-            user.setSellerId(0L);
-            user.setSellerName("无");
-            user.setChangeSellerTime(new Date());
-            user.setLoginFlag(1L);
+        log.setNewDiyCode(defaultDiySite.getStoreCode());
+        log.setNewDiyName(defaultDiySite.getTitle());
+        log.setNewSellerId(0L);
+        log.setNewSellerName("无");
+        log.setNewUpperDiySiteId(defaultDiySite.getId());
 
-            log.setNewDiyCode(defaultDiySite.getStoreCode());
-            log.setNewDiyName(defaultDiySite.getTitle());
-            log.setNewSellerId(0L);
-            log.setNewSellerName("无");
-            log.setNewUpperDiySiteId(defaultDiySite.getId());
-
-            tdUserChangeSellerLogService.save(log);
-        }
+        tdUserChangeSellerLogService.save(log);
 
         return user;
     }

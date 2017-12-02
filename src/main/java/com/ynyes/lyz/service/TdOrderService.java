@@ -1240,8 +1240,8 @@ public class TdOrderService {
 	 * @param sellerId
 	 * @return
 	 */
-	public List<TdOrder> querySalesByusernameAndsellerId(String username,Long sellerId){
-		return repository.querySalesByusernameAndsellerId(username, sellerId);
+	public List<TdOrder> querySalesByusernameAndsellerId(String username,Long sellerId,Date date){
+		return repository.querySalesByusernameAndsellerId(username, sellerId,date);
 	};
 	
 	/**

@@ -31,7 +31,7 @@ public class ScheduledTask {
 		private TdOrderService tdOrderService;
 		
 		// 修改导购 每天晚上1点执行
-	 	@Scheduled(cron="0 0 1 * * ?") 
+	 	@Scheduled(cron="0 0 1 * * ?")
 	    public void executeTask() {
 	        LOG.info("修改导购定时任务:"+new Date());
 	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); 
@@ -51,20 +51,20 @@ public class ScheduledTask {
 		        // 60天前日期 
 			    Date date = calendar.getTime();
 			    
-			    List<TdUser> list = tdUserService.queryAllUser("成都市",date);
+			    List<TdUser> list = tdUserService.queryAllUser(date);
 			    
 		        int count = 0;
 		        
 		        for (TdUser user : list) {
 		        	// 排除默认门店下的用户 以及分销用户 
-		        	if(user.getDiyName() != null && !user.getDiyCode().equals("MR001")
+		        	if(user.getDiyName() != null && !user.getDiyCode().equals("MR001") && !user.getDiyCode().equals("1000")
 		        			&& user.getSellerId() != null && !user.getSellerId().equals(0L)
-		        			&& !user.getDiyCode().contains("FX")){
+		        			&& !user.getDiyCode().contains("FX#")){
 		        		if(user.getChangeSellerTime() == null){
-			        		// 注册日期大于90以前
+			        		// 注册日期大于60以前
 		        			if(user.getRegisterTime() != null && user.getRegisterTime().before(date)){
 		        				//检查销量
-		    		        	List<TdOrder> tdOrderList = tdOrderService.querySalesByusernameAndsellerId(user.getUsername(), user.getSellerId());
+		    		        	List<TdOrder> tdOrderList = tdOrderService.querySalesByusernameAndsellerId(user.getUsername(), user.getSellerId(), date);
 		    		        	
 		    		        	if(tdOrderList == null || tdOrderList.size() == 0 ){
 		    		        			count++;
@@ -76,7 +76,7 @@ public class ScheduledTask {
 		    		        	}
 			        		}
 			        	}else{
-			        		// 修改导购日期大于90天
+			        		// 修改导购日期大于60天
 			        		if(user.getChangeSellerTime().before(date)){
 			        			//检查销量
 		    		        	List<TdOrder> tdOrderList = tdOrderService.querySalesByusernameAndsellerIdAndOrderTime(
