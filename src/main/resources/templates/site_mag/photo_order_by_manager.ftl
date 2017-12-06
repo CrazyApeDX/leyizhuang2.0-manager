@@ -61,13 +61,13 @@
     position: fixed;
     z-index: 9999;
     top: 10px;
-    right: 50px;
-    width: 100px;
+    right: 20px;
+    width: 900px;
     height: 25%;
 }
 .float_right img {
-	width: 100%;
-    height: 100%;
+	width: 80px;
+    height: 50%;
    
 }
 </style>
@@ -122,12 +122,12 @@ function del_goods_comb(obj) {
 function showPhotoOrderImg(node){
 	var width = $(node).css("width");
 	
-	if(width == "100px"){
-		$(node).css("width","400px");
-		$(node).css("height","95%");
+	if(width == "80px"){
+		$(node).css("width","900px");
+		$(node).css("height","340%");
 	}else{
-		$(node).css("width","100px");
-		$(node).css("height","25%");
+		$(node).css("width","80px");
+		$(node).css("height","50%");
 	}
 }
 
@@ -338,8 +338,12 @@ function showPhotoOrderImg(node){
     </div>
     
     <!-- 浮动窗口 -->
-    <div class="float_right" onclick="showPhotoOrderImg(this)">
-    		<img  src="<#if photoOrder??>${photoOrder.photoUri!'' }</#if>"></img>
+    <div class="float_right" >
+    	<#if photoUrl??>
+    		<#list photoUrl as item>
+    			<img onclick="showPhotoOrderImg(this)" src="${item!'' }"></img>
+			</#list>
+		</#if>
     </div>
     
     

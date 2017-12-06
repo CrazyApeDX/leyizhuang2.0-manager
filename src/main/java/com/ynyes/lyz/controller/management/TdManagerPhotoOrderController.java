@@ -252,7 +252,12 @@ public class TdManagerPhotoOrderController {
 		map.addAttribute("photoOrder", photoOrderInfo);
 		map.addAttribute("shippingAddress",shippingAddress);
 		map.addAttribute("type", handleType);
-		
+		if(null == photoOrderInfo.getPhotoUri()){
+			map.addAttribute("photoUrl", null);
+		} else {
+			String[] photoUrl = photoOrderInfo.getPhotoUri().split(",");
+			map.addAttribute("photoUrl", photoUrl);
+		}
 		if(photoOrderInfo.getSellerid() != null){
 		   TdUser seller = tdUserService.findOne(photoOrderInfo.getSellerid());
 		   map.addAttribute("seller", seller);
