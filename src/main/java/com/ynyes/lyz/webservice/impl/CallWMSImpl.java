@@ -1901,8 +1901,23 @@ public class CallWMSImpl implements ICallWMS {
 						if(null != dInventory){
 							dInventory.setInventory(dInventory.getInventory() + cInQtyTemp.longValue());
 						}else{
-							return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + cDGcode
-									+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
+							TdGoods tdGoods = this.tdGoodsService.findByCode(cDGcode);
+							if (null != tdGoods) {
+								dInventory = new TdDiySiteInventory();
+								TdCity city = tdCityService.findOne(cCompanyId);
+								dInventory.setRegionId(city.getId());
+								dInventory.setRegionName(city.getCityName());
+								dInventory.setGoodsId(tdGoods.getId());
+								dInventory.setGoodsTitle(tdGoods.getTitle());
+								dInventory.setGoodsCode(tdGoods.getCode());
+								dInventory.setInventory(cInQtyTemp.longValue());
+								dInventory.setCategoryId(tdGoods.getCategoryId());
+								dInventory.setCategoryTitle(tdGoods.getCategoryTitle());
+								dInventory.setCategoryIdTree(tdGoods.getCategoryIdTree());
+							} else{
+								return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>城市编码为：" + cCompanyId + "的城市不存在或SKU为" + cDGcode
+										+ "的商品不存在</MESSAGE></STATUS></RESULTS>";
+							}
 						}
 					}else{
 						return "<RESULTS><STATUS><CODE>1</CODE><MESSAGE>商品编码cDGcode不能不为空！</MESSAGE></STATUS></RESULTS>";
