@@ -1450,6 +1450,18 @@ public class TdManagerOrderController {
 		order.setPosPay(pos);
 		order.setBackOtherPay(other);
 		tdOrderService.save(order);
+		
+		// 查找TdOrderData，如果存在，则设置TdOrderData的值
+		TdOrderData orderData = tdOrderDataService.findByMainOrderNumber(order.getMainOrderNumber());
+		if (null != orderData) {
+			orderData.setSellerCash(CountUtil.add(orderData.getSellerCash(), money));
+			orderData.setSellerPos(CountUtil.add(orderData.getSellerPos(), pos));
+			orderData.setSellerOther(CountUtil.add(orderData.getSellerOther(), other));
+			orderData.setDue(orderData.countDue());
+			tdOrderDataService.save(orderData);
+		} else {
+			LOG.warn("未查找到主单号为{}的TdOrderData数据", order.getOrderNumber());
+		}
 
 		// 2017-02-13：增加信用额度
 		TdUser seller = this.tdUserService.findOne(order.getSellerId());

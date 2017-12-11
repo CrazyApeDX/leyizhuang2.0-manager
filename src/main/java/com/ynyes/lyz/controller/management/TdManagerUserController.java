@@ -336,6 +336,8 @@ public class TdManagerUserController {
 		// 管理员获取管辖的城市和门店
 		tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
 
+		diyList = this.tdDiySiteService.findByRegionIdAndIsEnableOrderBySortIdAsc(user.getCityId());
+		
 		map.addAttribute("city_list", cityList);
 		map.addAttribute("site_list", diyList);
 

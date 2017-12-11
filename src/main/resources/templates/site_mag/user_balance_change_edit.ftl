@@ -213,7 +213,13 @@ $(function () {
     <dt>变更类型</dt>
     <dd>
         <select name="changeType" id="changeType" datatype="n">
-            <option value="">请选择变更类型</option>
+        	<option value="">请选择变更类型</option>
+        	<#if city?? && city==2033>
+        	
+        	</#if>
+        	<#if city?? && city==2121>
+        	
+        	</#if>
             <option value="1">公司刷POS充值</option>
             <option value="2">网银转账充值</option>
             <option value="3">交现金充值</option>

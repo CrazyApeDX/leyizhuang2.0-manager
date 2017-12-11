@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ynyes.lyz.entity.TdBalanceLog;
+import com.ynyes.lyz.entity.TdCashWithdraw;
 import com.ynyes.lyz.entity.TdChangeBalanceLog;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDeposit;
@@ -40,6 +41,7 @@ import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.interfaces.entity.TdCashRefundInf;
 import com.ynyes.lyz.interfaces.service.TdEbsSenderService;
 import com.ynyes.lyz.service.TdBalanceLogService;
+import com.ynyes.lyz.service.TdCashWithdrawService;
 import com.ynyes.lyz.service.TdChangeBalanceLogService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
@@ -101,6 +103,9 @@ public class TdManagerUserBalanceChangeController {
 	
 	@Autowired
 	private TdEbsSenderService tdEbsSenderService;
+	
+	@Autowired
+	private TdCashWithdrawService tdCashWithdrawService;
 	
 	/**
 	 * <p>描述：该控制器获取权限下的所有用户</p>
@@ -210,6 +215,7 @@ public class TdManagerUserBalanceChangeController {
 			Double cashBalance = user.getCashBalance();
 			Double unCashBalance = user.getUnCashBalance();
 			
+			map.addAttribute("city", user.getCityId());
 			map.addAttribute("username", username);
 			map.addAttribute("realName", realName);
 			map.addAttribute("cashBalance", cashBalance);
@@ -332,6 +338,9 @@ public class TdManagerUserBalanceChangeController {
 			case 12:
 				description="郑州返利预存款";
 				break;
+			case 13:
+				description="预存款提现";
+				break;
 			default:
 				break;
 			}
@@ -361,7 +370,7 @@ public class TdManagerUserBalanceChangeController {
 				changeTypeTitle="线上银联";
 				break;
 			case 7:
-				changeTypeTitle="线上银联";
+				changeTypeTitle="订单支付宝";
 				break;
 			case 8:
 				changeTypeTitle="订单微信";
@@ -377,6 +386,9 @@ public class TdManagerUserBalanceChangeController {
 				break;
 			case 12:
 				changeTypeTitle="郑州返利预存款";
+				break;
+			case 13:
+				changeTypeTitle="预存款提现";
 				break;
 			default:
 				break;
@@ -743,4 +755,554 @@ public class TdManagerUserBalanceChangeController {
 			}
 		}
 	}
+	
+	
+	@RequestMapping(value = "/withdraw/list")
+	public String userCashTithdrawList(Integer page, Integer size, String keywords, Long roleId, Long userType,
+			String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE, Long[] listId, Integer[] listChkId,
+			ModelMap map, HttpServletRequest req, Long cityCode, Long diyCode) {
+		String username = (String) req.getSession().getAttribute("manager");
+		if (null == username) {
+			return "redirect:/Verwalter/login";
+		}
+		// 获取管理员管辖城市
+		List<TdCity> cityList = new ArrayList<TdCity>();
+		// 获取管理员管辖门店
+		List<TdDiySite> diyList = new ArrayList<TdDiySite>();
+
+		// 管理员获取管辖的城市和门店
+		tdDiySiteRoleService.userRoleCityAndDiy(cityList, diyList, username);
+
+		if (null != __EVENTTARGET) {
+			if (__EVENTTARGET.equalsIgnoreCase("btnPage")) {
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+			} else if (__EVENTTARGET.equalsIgnoreCase("btnSearch")) {
+				page = 0;
+			}
+		}
+
+		// 修改城市刷新门店列表
+		if (cityCode != null) {
+			// 需要删除的diy
+			List<TdDiySite> diyRemoveList = new ArrayList<TdDiySite>();
+			for (TdDiySite tdDiySite : diyList) {
+				if (!cityCode.equals(tdDiySite.getRegionId())) {
+					diyRemoveList.add(tdDiySite);
+					if (tdDiySite.getId() == diyCode) {
+						diyCode = null;
+					}
+				}
+			}
+			diyList.removeAll(diyRemoveList);
+		}
+
+		if (null == page || page < 0) {
+			page = 0;
+		}
+
+		if (null == size || size <= 0) {
+			size = SiteMagConstant.pageSize;
+			;
+		}
+
+		if (null != keywords) {
+			keywords = keywords.trim();
+		}
+
+		map.addAttribute("cityList", cityList);
+		map.addAttribute("diySiteList", diyList);
+		map.addAttribute("cityCode", cityCode);
+		map.addAttribute("diyCode", diyCode);
+		map.addAttribute("page", page);
+		map.addAttribute("size", size);
+		map.addAttribute("keywords", keywords);
+		map.addAttribute("roleId", roleId);
+		map.addAttribute("userType", userType);
+		map.addAttribute("__EVENTTARGET", __EVENTTARGET);
+		map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
+		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+
+		Page<TdCashWithdraw> userPage = null;
+
+		if (null == roleId) {
+			// 获取管辖门店id列表
+			List<Long> roleDiyIds = new ArrayList<Long>();
+			if (diyList != null && diyList.size() > 0) {
+				for (TdDiySite diy : diyList) {
+					roleDiyIds.add(diy.getId());
+				}
+			}
+			// 获取分页数据
+			userPage = tdCashWithdrawService.searchList(keywords, size, page);
+		}
+
+		map.addAttribute("user_page", userPage);
+
+		return "/site_mag/user_withdraw_list";
+	}
+	
+	@RequestMapping(value = "/withdraw/edit")
+	public String userCashWithdrawEdit(Long id, Long roleId, String action, Long withdrawId, String __VIEWSTATE, ModelMap map,
+			HttpServletRequest req) {
+		String manager = (String) req.getSession().getAttribute("manager");
+		if (null == manager) {
+			return "redirect:/Verwalter/login";
+		}
+		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+		map.addAttribute("roleId", roleId);
+		
+		TdUser user = tdUserService.findOne(id);
+		if (null != user) {
+			TdCashWithdraw tdCashWithdraw = this.tdCashWithdrawService.findOne(withdrawId);
+			
+			String username = user.getUsername();
+			String realName = user.getRealName();
+			Double cashBalance = user.getCashBalance();
+			Double unCashBalance = user.getUnCashBalance();
+			
+			map.addAttribute("city", user.getCityId());
+			map.addAttribute("username", username);
+			map.addAttribute("realName", realName);
+			map.addAttribute("cashBalance", cashBalance);
+			map.addAttribute("unCashBalance", unCashBalance);
+			if (null != tdCashWithdraw) {
+				map.addAttribute("amount", tdCashWithdraw.getAmount() * -1);
+				map.addAttribute("withdrawId", tdCashWithdraw.getId());
+			}
+			
+		}
+		return "/site_mag/user_balance_change_withdraw_edit";
+	}
+	
+	@RequestMapping(value = "/withdraw/invalid")
+	@ResponseBody
+	public Map<String, Object> withdraw(HttpServletRequest req,ModelMap map,String remarks, Long withdrawId){
+		Map<String, Object> res = new HashMap<>();
+		res.put("status", -1);
+		TdCashWithdraw tdCashWithdraw = this.tdCashWithdrawService.findOne(withdrawId);
+		if (null == tdCashWithdraw) {
+			res.put("status", -2);
+			res.put("message", "未能成功获取到转出申请的信息");
+			return res;
+		}
+		tdCashWithdraw.setRemarks(remarks);
+		tdCashWithdraw.setUpdateTime(new Date());
+		tdCashWithdraw.setStatus("INVALID");
+		
+		this.tdCashWithdrawService.save(tdCashWithdraw);
+		TdUser user = tdUserService.findByUsername(tdCashWithdraw.getUsername());
+		String referPhone = tdCashWithdraw.getUsername();
+		if (null != referPhone && !"".equalsIgnoreCase(referPhone)) {
+			this.sendSmsCaptcha(referPhone, "尊敬的客户，您的钱包余额转出申请未通过审核，您可前往乐易装app查看审核未通过原因。谢谢您的耐心等候。", user.getCityName());
+		}
+		
+		res.put("status", 0);
+		return res;
+	}
+	
+	
+	@RequestMapping(value = "/withdraw/save", method = RequestMethod.POST)
+	public String userBalanceWithdrawSave(HttpServletRequest req, Double cashBalance, Double unCashBalance, Long withdrawId, String username, String remark,Integer changeType,String userOrderNumber,String transferTime ) {
+		String managerUsername = (String) req.getSession().getAttribute("manager");
+		TdManager manager = tdManagerService.findByUsernameAndIsEnableTrue(managerUsername);
+		if (null == manager) {
+			return "redirect:/Verwalter/login";
+		}
+		
+		TdCashWithdraw tdCashWithdraw = this.tdCashWithdrawService.findOne(withdrawId);
+		if (null != tdCashWithdraw) {
+			TdUser user = tdUserService.findByUsername(username);
+			String description = null;
+			if(null !=changeType){
+				switch (changeType) {
+				case 1:
+					description="公司刷POS充值";
+					break;
+				case 2:
+					description="网银转账充值";
+					break;
+				case 3:
+					description="交现金充值";
+					break;
+				case 4:
+					description="线上支付宝充值失败";
+					break;
+				case 5:
+					description="线上微信充值失败";
+					break;
+				case 6:
+					description="线上银联充值失败";
+					break;
+				case 7:
+					description="取消订单退支付宝第三方支付";
+					break;
+				case 8:
+					description="取消订单退微信第三方支付";
+					break;
+				case 9:
+					description="取消订单退银联第三方支付";
+					break;
+				case 10:
+					description="装饰公司信用额度充值";
+					break;
+				case 11:
+					description="CRM积分转预存款";
+					break;
+				case 12:
+					description="郑州返利预存款";
+					break;
+				case 13:
+					description="预存款提现";
+					break;
+				default:
+					break;
+				}
+			}else{
+				description="NULL";
+			}
+			
+			String changeTypeTitle = null;
+			if(null != changeType){
+				switch (changeType) {
+				case 1:
+					changeTypeTitle="公司POS";
+					break;
+				case 2:
+					changeTypeTitle="网银转账";
+					break;
+				case 3:
+					changeTypeTitle="现金";
+					break;
+				case 4:
+					changeTypeTitle="线上支付宝";
+					break;
+				case 5:
+					changeTypeTitle="线上微信";
+					break;
+				case 6:
+					changeTypeTitle="线上银联";
+					break;
+				case 7:
+					changeTypeTitle="订单支付宝";
+					break;
+				case 8:
+					changeTypeTitle="订单微信";
+					break;
+				case 9:
+					changeTypeTitle="订单银联";
+					break;
+				case 10:
+					changeTypeTitle="信用额度";
+					break;
+				case 11:
+					changeTypeTitle="CRM积分";
+					break;
+				case 12:
+					changeTypeTitle="郑州返利预存款";
+					break;
+				case 13:
+					changeTypeTitle="预存款提现";
+					break;
+				default:
+					break;
+				}
+			}
+			
+			String type = null;
+			if(changeTypeTitle.equals("信用额度")){
+				type = "CREDIT";
+			/*}else if(changeTypeTitle.equals("CRM积分")){
+				type = "CRM";  */
+			}else{
+				type ="PREPAY";
+			}
+			
+			if (null != user) {
+				Double userCashBalance = user.getCashBalance();
+				Double userUnCashBalance = user.getUnCashBalance();
+				if (null == userCashBalance) {
+					userCashBalance = 0.00;
+				}
+				if (null == userUnCashBalance) {
+					userUnCashBalance = 0.00;
+				}
+				if (null == unCashBalance) {
+					unCashBalance = 0.00;
+				}
+				if (null == cashBalance) {
+					cashBalance = 0.00;
+				}
+				
+				// 生成单号
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+				Date now = new Date();
+				String sDate = sdf.format(now);
+				Random random = new Random();
+				String orderNum = null;
+				
+				// 在此抛接口
+				String cashBalanceNumber = null;
+				if (cashBalance > 0) {
+					Integer suiji = random.nextInt(900) + 100;
+					orderNum = sDate + suiji;
+					// 生成充值单
+					TdRecharge recharge = new TdRecharge();
+					recharge.setUsername(user.getUsername());
+					recharge.setUserId(user.getId());
+					recharge.setNumber("CZ" + orderNum);
+					recharge.setTotalPrice(cashBalance);
+					recharge.setTypeId(-1L);
+					recharge.setTypeTitle(changeTypeTitle);
+					recharge.setCreateTime(new Date());
+					recharge.setFinishTime(recharge.getCreateTime());
+					recharge.setStatusId(2L);
+					cashBalanceNumber = recharge.getNumber();
+					tdReChargeService.save(recharge);
+					tdPriceCountService.saveCashReceiptAndSendToEBS(recharge,user);
+				} else if (cashBalance < 0) {
+					Integer suiji = random.nextInt(900) + 100;
+					orderNum = sDate + suiji;
+					// 生成提现单
+					TdDeposit deposit = new TdDeposit();
+					deposit.setUsername(user.getUsername());
+					deposit.setUserId(user.getId());
+					deposit.setNumber(tdCashWithdraw.getWithdrawNumber());
+					deposit.setMoney(cashBalance * (-1));
+					deposit.setIsAgree(true);
+					deposit.setIsRemit(true);
+					deposit.setCreateTime(new Date());
+					deposit.setAgreeTime(deposit.getCreateTime());
+					deposit.setRemitTime(deposit.getRemitTime());
+					cashBalanceNumber = deposit.getNumber();
+					deposit = tdDepositService.save(deposit);
+					
+					TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
+					
+	//				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+					tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
+				}
+				
+				String unCashBalanceNumber = null;
+				
+				if (unCashBalance > 0) {
+					Integer suiji = random.nextInt(900) + 100;
+					orderNum = sDate + suiji;
+					// 生成充值单
+					TdRecharge recharge = new TdRecharge();
+					recharge.setUsername(user.getUsername());
+					recharge.setUserId(user.getId());
+					recharge.setNumber("CZ" + orderNum);
+					recharge.setTotalPrice(unCashBalance);
+					recharge.setTypeId(-1L);
+					recharge.setTypeTitle(changeTypeTitle);
+					recharge.setCreateTime(new Date());
+					recharge.setFinishTime(recharge.getCreateTime());
+					recharge.setStatusId(2L);
+					unCashBalanceNumber = recharge.getNumber();
+					tdReChargeService.save(recharge);
+					tdPriceCountService.saveCashReceiptAndSendToEBS(recharge,user);
+				} else if (unCashBalance < 0) {
+					Integer suiji = random.nextInt(900) + 100;
+					orderNum = sDate + suiji;
+					TdDeposit deposit = new TdDeposit();
+					deposit.setUsername(user.getUsername());
+					deposit.setUserId(user.getId());
+					deposit.setNumber("TX" + orderNum);
+					deposit.setMoney(unCashBalance * (-1));
+					deposit.setIsAgree(true);
+					deposit.setIsRemit(true);
+					deposit.setCreateTime(new Date());
+					deposit.setAgreeTime(deposit.getCreateTime());
+					deposit.setRemitTime(deposit.getRemitTime());
+					unCashBalanceNumber = deposit.getNumber();
+					deposit = tdDepositService.save(deposit);
+					TdCashRefundInf cashRefundInf = tdCommonService.createCashRefundInfoAccordingToDeposit(deposit, user, changeTypeTitle,type);
+	//				tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+					tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
+				}
+	//			Double subCashBalance = cashBalance - userCashBalance;
+	//			Double subUnCashBalance = unCashBalance - userUnCashBalance;
+				user.setCashBalance(userCashBalance + cashBalance);
+				
+				if (cashBalance.doubleValue() != 0.00) {
+					TdBalanceLog log = new TdBalanceLog();
+					log.setUserId(user.getId());
+					log.setUsername(user.getUsername());
+					log.setMoney(cashBalance);
+					log.setType(2L);
+					log.setCreateTime(new Date());
+					log.setFinishTime(log.getCreateTime());
+					log.setIsSuccess(true);
+					log.setReason("管理员修改调整("+description+")");
+					log.setDetailReason(description);
+					log.setBalance(user.getCashBalance());
+					log.setBalanceType(1L);
+					log.setOperator(managerUsername);
+					if(null != userOrderNumber){
+						log.setUserOrderNumber(userOrderNumber);
+					}else{
+						log.setUserOrderNumber("NULL");
+					}
+					if(null != transferTime){
+						log.setTransferTime(transferTime);
+					}else{
+						log.setTransferTime("NULL");
+					}
+					try {
+						log.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					}
+					log.setDiySiteId(user.getUpperDiySiteId());
+					log.setCityId(user.getCityId());
+					log.setCashLeft(user.getCashBalance());
+					log.setUnCashLeft(user.getUnCashBalance());
+					log.setAllLeft(user.getBalance());
+					if(null != cashBalanceNumber){
+						log.setOrderNumber(cashBalanceNumber);
+					}
+					tdBalanceLogService.save(log);
+				}
+				
+				user.setUnCashBalance(userUnCashBalance + unCashBalance);
+				
+				if (unCashBalance.doubleValue() != 0.00) {
+					TdBalanceLog log = new TdBalanceLog();
+					log.setUserId(user.getId());
+					log.setUsername(user.getUsername());
+					log.setMoney(unCashBalance);
+					log.setType(2L);
+					log.setCreateTime(new Date());
+					log.setFinishTime(log.getCreateTime());
+					log.setIsSuccess(true);
+					log.setReason("管理员修改调整("+description+")");
+					log.setDetailReason(description);
+					log.setBalance(user.getUnCashBalance());
+					log.setBalanceType(2L);
+					log.setOperator(managerUsername);
+					if(null != userOrderNumber){
+						log.setUserOrderNumber(userOrderNumber);
+					}else{
+						log.setUserOrderNumber("NULL");
+					}
+					if(null != transferTime){
+						log.setTransferTime(transferTime);
+					}else{
+						log.setTransferTime("NULL");
+					}
+					try {
+						log.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					}
+					log.setDiySiteId(user.getUpperDiySiteId());
+					log.setCityId(user.getCityId());
+					log.setCashLeft(user.getCashBalance());
+					log.setUnCashLeft(user.getUnCashBalance());
+					log.setAllLeft(user.getBalance());
+					if(null != unCashBalanceNumber){
+						log.setOrderNumber(unCashBalanceNumber);
+					}
+					tdBalanceLogService.save(log);
+				}
+				user.setBalance(user.getCashBalance() + user.getUnCashBalance());
+				tdUserService.save(user);
+				
+				TdChangeBalanceLog log = new TdChangeBalanceLog();
+				if (null != user) {
+					log.setUsername(user.getUsername());
+					log.setRealName(user.getRealName());
+					log.setDiySiteTitle(user.getDiyName());
+					log.setManager(manager.getUsername());
+					log.setIsSuccess(true);
+					log.setOperateTime(new Date());
+					try {
+						log.setOperateIp(InetAddress.getLocalHost().getHostAddress());
+					} catch (UnknownHostException e) {
+						e.printStackTrace();
+					}
+					log.setRemark(remark);
+					tdChangeBalanceLogService.save(log);
+				}
+			}
+			tdCashWithdraw.setTransactionNumber(userOrderNumber);
+			tdCashWithdraw.setRemarks(remark);
+			tdCashWithdraw.setUpdateTime(new Date());
+			tdCashWithdraw.setStatus("FINISHING");
+			
+			this.tdCashWithdrawService.save(tdCashWithdraw);
+			String referPhone = tdCashWithdraw.getUsername();
+			if (null != referPhone && !"".equalsIgnoreCase(referPhone)) {
+				this.sendSmsCaptcha(referPhone, "尊敬的客户，您的钱包余额转出申请已通过审核，您可前往申请中填写的对应银行账户查看款项是否到账。谢谢您的耐心等候。", user.getCityName());
+			}
+			
+			
+		}
+//		this.saveCashReceiptAndSendToEBS(recharge,user);
+		
+		return "redirect:/Verwalter/user/balance/change/withdraw/list";
+	}
+	
+	/**
+	 * 短信接口
+	 * @param phone
+	 * @param message
+	 * @param cityInfo
+	 */
+	private void sendSmsCaptcha(String phone, String message, String cityInfo) {
+		String content = null;
+		try {
+			content = URLEncoder.encode(message, "GB2312");
+			System.err.println(content);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		TdCity region = tdRegionService.findByCityName(cityInfo);
+		if (null != region) {
+		
+			TdSmsAccount account = tdSmsAccountService.findOne(region.getSmsAccountId());
+			String url = "http://www.mob800.com/interface/Send.aspx?enCode=" + account.getEncode() + "&enPass="
+					+ account.getEnpass() + "&userName=" + account.getUserName() + "&mob=" + phone + "&msg=" + content;
+			try {
+				URL u = new URL(url);
+				URLConnection connection = u.openConnection();
+				HttpURLConnection httpConn = (HttpURLConnection) connection;
+				httpConn.setRequestProperty("Content-type", "text/html");
+				httpConn.setRequestProperty("Accept-Charset", "utf-8");
+				httpConn.setRequestProperty("contentType", "utf-8");
+				InputStream inputStream = null;
+				InputStreamReader inputStreamReader = null;
+				BufferedReader reader = null;
+				StringBuffer resultBuffer = new StringBuffer();
+				String tempLine = null;
+	
+				try {
+					inputStream = httpConn.getInputStream();
+					inputStreamReader = new InputStreamReader(inputStream);
+					reader = new BufferedReader(inputStreamReader);
+	
+					while ((tempLine = reader.readLine()) != null) {
+						resultBuffer.append(tempLine);
+					}
+	
+				} finally {
+					if (reader != null) {
+						reader.close();
+					}
+					if (inputStreamReader != null) {
+						inputStreamReader.close();
+					}
+					if (inputStream != null) {
+						inputStream.close();
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 }
