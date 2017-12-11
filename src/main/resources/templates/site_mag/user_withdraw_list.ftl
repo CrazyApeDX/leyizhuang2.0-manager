@@ -241,7 +241,7 @@ var theForm = document.forms['form1'];
 	<div class="turn_div">
 		<input type="hidden" value="" id="withdrawId" name="withdrawId">
         <div style="height:205px;margin-top:160px;">                   
-            <p id="title">退货原因</p>
+            <p id="title">申请退回原因</p>
             <textarea name="remark" id="remark" style="background-color:#f3f4f6"></textarea>
             <span>
                 <input type="button" style="background:#666;" name="" id="" value="是" onclick="send();" />
