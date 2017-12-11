@@ -3931,7 +3931,7 @@ public class TdCommonService {
 			cashRefundInf.setSobId(user.getCityId());
 			cashRefundInf.setRefundNumber(deposit.getNumber());
 			cashRefundInf.setUserid(user.getId());
-			cashRefundInf.setUsername(user.getUsername());
+			cashRefundInf.setUsername(user.getRealName());
 			cashRefundInf.setUserphone(user.getUsername());
 			cashRefundInf.setDiySiteCode(user.getDiyCode());
 			if (desc.equals("信用额度")) {
