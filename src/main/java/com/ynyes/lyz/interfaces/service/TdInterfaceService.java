@@ -881,6 +881,12 @@ public class TdInterfaceService {
 		cashReciptInf.setReceiptType(receiptTtpe);
 		cashReciptInf.setReceiptDate(new Date());
 		cashReciptInf.setAmount(amount);
+		if(null != tdOrder.getDiySiteCode() && tdOrder.getDiySiteCode().contains("FX#")){
+			TdUser user = this.tdUserService.findByUsername(tdOrder.getRealUserUsername());
+			if (null != user) {
+				cashReciptInf.setAttribute3(user.getOpUser());
+			}
+		}
 		return tdCashReciptInfService.save(cashReciptInf);
 	}
 
