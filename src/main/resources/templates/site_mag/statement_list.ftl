@@ -62,7 +62,9 @@ function downloaddate(type)
         alert("请选择开始时间！");
         return;
     }
-    window.open("/Verwalter/statement/downdata?begindata="+ begain + "&enddata=" + end+"&diyCode="+diyCode+"&cityName="+city+"&statusId="+type);
+    var url = "/Verwalter/statement/downdata?begindata="+ begain + "&enddata=" + end+"&diyCode="+diyCode+"&cityName="+city+"&statusId="+type;
+    var escapeUrl=url.replace(/\#/g,"%23");
+    window.open(escapeUrl);
 }
 
 </script>

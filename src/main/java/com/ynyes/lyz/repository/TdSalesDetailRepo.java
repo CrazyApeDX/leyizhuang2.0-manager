@@ -177,6 +177,8 @@ public interface TdSalesDetailRepo extends PagingAndSortingRepository<TdSalesDet
             + " 	'双流' "
             + " WHEN '南充分销仓库' THEN "
             + " 	'南充市' "
+            + " WHEN '郫县分销仓库' THEN "
+            + " 	'郫县' "
             + " ELSE "
             + " 	o.city "
             + " END AS city, "
