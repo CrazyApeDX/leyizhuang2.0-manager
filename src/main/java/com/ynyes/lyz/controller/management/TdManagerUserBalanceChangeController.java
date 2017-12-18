@@ -341,6 +341,9 @@ public class TdManagerUserBalanceChangeController {
 			case 13:
 				description="预存款提现";
 				break;
+			case 15:
+				description="HR代收充值";
+				break;
 			default:
 				break;
 			}
@@ -389,6 +392,9 @@ public class TdManagerUserBalanceChangeController {
 				break;
 			case 13:
 				changeTypeTitle="预存款提现";
+				break;
+			case 15:
+				changeTypeTitle="HR代收充值";
 				break;
 			default:
 				break;

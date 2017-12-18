@@ -232,6 +232,7 @@ $(function () {
             <!#-- <option value="10">装饰公司信用额度充值</option> -->
             <option value="11">CRM积分转预存款</option>
             <!#-- <option value="12">郑州返利预存款</option> -->
+            <option value="15">HR代收充值</option>
         </select>
     </dd>
   </dl>
