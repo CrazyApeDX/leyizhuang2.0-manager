@@ -193,10 +193,10 @@ function checkDate(){
     <#list allocation_page.content as allocation>
         <tr>
             <td align="center"><a href="/Verwalter/allocation/edit?id=${allocation.id?c}">${allocation.number!''}</td>
-            <td><a href="/Verwalter/allocation/edit?id=${allocation.id!''}">${allocation.cityName!"无"}</a></td>
-            <td><a href="/Verwalter/allocation/edit?id=${allocation.id!''}">${allocation.allocationFromName!"无"}</td>
-            <td><a href="/Verwalter/allocation/edit?id=${allocation.id!''}"><#if allocation.allocationFrom??>${allocation.allocationToName!''}</#if></td>
-            <td><a href="/Verwalter/allocation/edit?id=${allocation.id!''}">${allocation.statusDisplay!"无"}</td>
+            <td><a href="/Verwalter/allocation/edit?id=${allocation.id?c}">${allocation.cityName!"无"}</a></td>
+            <td><a href="/Verwalter/allocation/edit?id=${allocation.id?c}">${allocation.allocationFromName!"无"}</td>
+            <td><a href="/Verwalter/allocation/edit?id=${allocation.id?c}"><#if allocation.allocationFrom??>${allocation.allocationToName!''}</#if></td>
+            <td><a href="/Verwalter/allocation/edit?id=${allocation.id?c}">${allocation.statusDisplay!"无"}</td>
             <td>${allocation.updatedTime!"无"}</td>
         </tr>
     </#list>

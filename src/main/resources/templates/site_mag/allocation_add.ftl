@@ -130,7 +130,7 @@ function del_goods_comb(obj) {
 <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="${__EVENTARGUMENT!""}" />
 <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="${__VIEWSTATE!""}" />
 </div>
-<input id="cityId" name="cityId" type="text" value='${cityId!""}' style="display:none">
+<input id="cityId" name="cityId" type="text" value='${cityId?c}' style="display:none">
 <input id="cityName" name="cityName" type="text" value='${cityName!""}' style="display:none">
 <!--导航栏-->
 <div class="location">
