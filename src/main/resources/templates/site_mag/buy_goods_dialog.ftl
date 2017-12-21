@@ -45,7 +45,7 @@
             min: false,
             title: "商品组合",
             content: 'url:/Verwalter/buy/coupon/by/seller/dialog?username=' + $("#username").val(),
-            width: 800,
+            width: 850,
             height: 550
         });
         //如果是修改状态，将对象传进去
@@ -208,14 +208,14 @@ function __doPostBack(eventTarget, eventArgument) {
     <tbody>
         <tr class="odd_bg">
             <th align="left">标题</th>
-            <th align="left" width="12%">商品编码</th>
+            <th align="left" width="20%">商品编码</th>
             <th align="left" width="12%">所属类别</th>
             <th align="left" width="12%">销售价</th>
             <th align="left" width="16%">发布时间</th>
         </tr>
 
-        <#if goods_page??>
-            <#list goods_page as goods>
+        <#if goods_page??  && goods_page.content??>
+            <#list goods_page.content as goods>
             	<#if goods.salePrice?? && goods.salePrice != 0>
 	                <tr>
 	                    <td>
@@ -235,12 +235,12 @@ function __doPostBack(eventTarget, eventArgument) {
 <!--/文字列表-->
 
 <!--内容底部-->
-<#--
+
 <#if goods_page??>
 <#assign PAGE_DATA=goods_page />
 <#include "/site_mag/list_footer.ftl" />
 </#if>
--->
+
 <!--/内容底部-->
 </form>
 

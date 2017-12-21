@@ -80,15 +80,16 @@ public class TdProductCategoryService {
 			List<TdProductCategory> childList = repository.findByParentIdOrderBySortIdAsc(top.getId());
 
 			if (null != childList && childList.size() > 0) {
-				for (TdProductCategory child : childList) {
-					resList.add(child);
-
-					List<TdProductCategory> grandChildList = repository.findByParentIdOrderBySortIdAsc(child.getId());
-
-					if (null != grandChildList && grandChildList.size() > 0) {
-						resList.addAll(grandChildList);
-					}
-				}
+				resList.addAll(childList);
+//				for (TdProductCategory child : childList) {
+//					resList.add(child);
+//
+//					List<TdProductCategory> grandChildList = repository.findByParentIdOrderBySortIdAsc(child.getId());
+//
+//					if (null != grandChildList && grandChildList.size() > 0) {
+//						resList.addAll(grandChildList);
+//					}
+//				}
 			}
 		}
 
@@ -226,6 +227,13 @@ public class TdProductCategoryService {
 		}
 
 		return repository.findByTitleAndParentId(title,parentId);
+	}
+	
+	public List<TdProductCategory> findByMainNumberOrderBySortIdAsc(String mainNumber){
+		if (null == mainNumber) {
+			return null;
+		}
+		return repository.findByMainNumberOrderBySortIdAsc(mainNumber);
 	}
 
 }

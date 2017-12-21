@@ -280,7 +280,7 @@ public class TdManagerPhotoOrderController {
 	 * @return
 	 */
 	@RequestMapping(value = "/dialog")
-	public String getDialog(HttpServletRequest req,String keywords, Integer page, Integer size, ModelMap map,String username ) {
+	public String getDialog(HttpServletRequest req,String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,String keywords, Integer page, Integer size, ModelMap map,String username ) {
 		//管理员
 		String manager = (String) req.getSession().getAttribute("manager");
 		if (null == manager) {
@@ -298,7 +298,30 @@ public class TdManagerPhotoOrderController {
 		if (null != keywords) {
 			keywords = keywords.trim();
 		}
+		if (null != __EVENTTARGET) {
+			switch (__EVENTTARGET) {
+			case "lbtnViewTxt":
+			case "lbtnViewImg":
+				__VIEWSTATE = __EVENTTARGET;
+				break;
 
+			case "btnDelete":
+				//btnDelete(listId, listChkId);
+				
+				break;
+
+			case "btnPage":
+				if (null != __EVENTARGUMENT) {
+					page = Integer.parseInt(__EVENTARGUMENT);
+				}
+				break;
+			}
+		}
+		
+		if (null != __EVENTTARGET && __EVENTTARGET.equalsIgnoreCase("lbtnViewTxt")
+				|| null != __EVENTTARGET && __EVENTTARGET.equalsIgnoreCase("lbtnViewImg")) {
+			__VIEWSTATE = __EVENTTARGET;
+		}
 		Page<TdGoods> goods_page = null;
 		if (null != keywords) {
 			goods_page = tdGoodsService.findByCodeContainingOrTitleContainingAndIsOnSaleIsTrueOrderBySortIdAsc(keywords, page,
@@ -317,18 +340,26 @@ public class TdManagerPhotoOrderController {
 			List<TdGoods> goodsList = new ArrayList<TdGoods>();
 			
 			if (null != goods_page) {
-				
+//				List<TdGoods> tdGoodsList = goods_page.getContent();
 				for (int i = 0; i < goods_page.getContent().size(); i++) {
 					TdGoods goods = goods_page.getContent().get(i);
 					TdPriceListItem priceListItem = tdCommonService.secondGetGoodsPrice(diySite, goods,"ZY");
 					if(priceListItem != null){
-						goods.setSalePrice(priceListItem.getSalePrice());
-						goodsList.add(goods);
+						goods_page.getContent().get(i).setSalePrice(priceListItem.getSalePrice());
+//						goodsList.add(goods);
+					} else {
+						goods_page.getContent().get(i).setSalePrice(0D);
 					}
 				}
 			}
 
-			map.addAttribute("goods_page", goodsList);
+			map.addAttribute("page", page);
+			map.addAttribute("size", size);
+			map.addAttribute("keywords", keywords);
+			map.addAttribute("__EVENTTARGET", __EVENTTARGET);
+			map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
+			map.addAttribute("__VIEWSTATE", __VIEWSTATE);
+			map.addAttribute("goods_page", goods_page);
 		}
 		return "/site_mag/buy_goods_dialog";
 	}

@@ -659,8 +659,20 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 				}
 			}
 		}
-		
-		if (null == categoryId || categoryId==-1){
+		if (null == categoryId){
+			TdProductCategory productCategory= tdProductCategoryService.findOne(88L);
+			//1级目录
+			if(productCategory!=null &&productCategory.getParentId()==null){
+				//查询2级目录
+				 List<TdProductCategory> productCategoryList= tdProductCategoryService.findByParentIdOrderBySortIdAsc(productCategory.getId());
+				//循环商品类型id添加到查询条件中
+				 for (TdProductCategory tdProductCategory : productCategoryList) {
+					 categoryIdList.add(tdProductCategory.getId());
+				}
+			}else{//2级目录
+				 categoryIdList.add(productCategory.getId());
+			}
+		} else if (categoryId==-1){
 			List<TdProductCategory> productCategoryList= tdProductCategoryService.findAll();
 			if(productCategoryList!=null && productCategoryList.size()>0){
 				//循环商品类型id添加到查询条件中

@@ -192,7 +192,7 @@ function checkDate(){
     <#if allocation_page?? && allocation_page.content??>
     <#list allocation_page.content as allocation>
         <tr>
-            <td align="center"><a href="/Verwalter/allocation/edit?id=${allocation.id!''}">${allocation.number!''}</td>
+            <td align="center"><a href="/Verwalter/allocation/edit?id=${allocation.id?c}">${allocation.number!''}</td>
             <td><a href="/Verwalter/allocation/edit?id=${allocation.id!''}">${allocation.cityName!"无"}</a></td>
             <td><a href="/Verwalter/allocation/edit?id=${allocation.id!''}">${allocation.allocationFromName!"无"}</td>
             <td><a href="/Verwalter/allocation/edit?id=${allocation.id!''}"><#if allocation.allocationFrom??>${allocation.allocationToName!''}</#if></td>

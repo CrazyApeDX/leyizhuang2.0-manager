@@ -440,7 +440,22 @@ public class TdGoods {
 	@Column(nullable=false)
 	private Boolean isWallAccessory;
 	
-	
+	public TdGoods(){
+		super();
+	}
+
+	public TdGoods(Long id, String title, String coverImageUri, String categoryTitle, String saleType, Double salePrice,
+			String code, Date onSaleTime) {
+		super();
+		this.id = id;
+		this.title = title;
+		this.coverImageUri = coverImageUri;
+		this.categoryTitle = categoryTitle;
+		this.saleType = saleType;
+		this.salePrice = salePrice;
+		this.onSaleTime = onSaleTime;
+		this.code = code;
+	}
 
 	public List<TdDiySiteInventory> getInventoryList() {
 		return inventoryList;
