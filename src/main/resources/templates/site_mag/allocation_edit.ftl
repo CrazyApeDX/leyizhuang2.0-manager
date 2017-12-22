@@ -138,7 +138,7 @@ function receive() {
 <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="${__VIEWSTATE!""}" />
 <input type="hidden" id="__id" value="${allocation.id?c}" />
 </div>
-<input id="cityId" name="cityId" type="text" value='${cityId?c}' style="display:none">
+<input id="cityId" name="cityId" type="text" value='${cityId!""}' style="display:none">
 <input name="cityName" type="text" value='${cityName!""}' style="display:none">
 <!--导航栏-->
 <div class="location">
