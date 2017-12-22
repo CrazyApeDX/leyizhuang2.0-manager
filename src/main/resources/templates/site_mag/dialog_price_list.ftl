@@ -318,7 +318,7 @@ function __doPostBack(eventTarget, eventArgument) {
       <div class="menu-list">
         <div class="rule-single-select single-select">
             <select name="categoryId" onchange="javascript:setTimeout(__doPostBack('categoryId',''), 0)" id="ddlCategoryId" style="display: none;">
-                <option <#if !categoryId??>selected="selected"</#if> value="">所有类别</option>
+                <option <#if !categoryId??>selected="selected"</#if> value="-1">所有类别</option>
                 <#if category_list??>
                     <#list category_list as cat>
                         <option value="${cat.id}" <#if categoryId?? && categoryId==cat.id>selected="selected"</#if> >${cat.title!""}</option>
