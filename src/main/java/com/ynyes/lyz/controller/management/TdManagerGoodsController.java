@@ -1,5 +1,7 @@
 package com.ynyes.lyz.controller.management;
 
+import static org.hamcrest.CoreMatchers.nullValue;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -761,6 +763,9 @@ public class TdManagerGoodsController extends TdManagerBaseController{
 
 		if (null != keywords) {
 			keywords = keywords.trim();
+		}
+		if(null != categoryId && categoryId == -1){
+			categoryId = null;
 		}
 
 		Page<TdGoods> goodsPage = tdGoodsService.queryAllByDiySiteId(diySiteId, categoryId, keywords, page, size);
