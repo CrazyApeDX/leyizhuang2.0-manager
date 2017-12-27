@@ -1565,7 +1565,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
                     //产品价格
                     row.createCell(12).setCellValue(objToString(salesDetail.getPrice()));
                     //产品总价
-                    row.createCell(13).setCellValue((salesDetail.getTotalPrice() * 100) / 100);
+//                    row.createCell(13).setCellValue((salesDetail.getTotalPrice() * 100) / 100);
+                    row.createCell(13).setCellValue((null == salesDetail.getPrice() ? 0D : salesDetail.getPrice()) 
+                    		* (null == salesDetail.getQuantity() ? 0 : salesDetail.getQuantity()));
                     //现金卷
                     //row.createCell(14).setCellValue(objToString(salesDetail.getCashCoupon()));
                     //品牌
