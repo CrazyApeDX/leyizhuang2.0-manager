@@ -62,10 +62,11 @@ var theForm = document.forms['form1'];
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ltable">
   <tbody>
   <tr class="odd_bg">
-    <th width="8%">选择</th>
-    <th align="center" width="20%">名称</th>
+    <th width="5%">选择</th>
+    <th align="center" width="15%">名称</th>
     <th align="center" width="10%">图标</th>
     <th align="center">跳转地址</th>
+    <th align="center" width="10%">类型</th>
     <th align="center" width="10%">是否使能</th>
     <th width="8%">排序</th>
     <th width="6%">操作</th>
@@ -82,6 +83,7 @@ var theForm = document.forms['form1'];
             <td align="center"><a href="/Verwalter/view/navi/edit?id=${item.id?c}">${item.title!""}</a></td>
             <td align="center"><img src="${item.iconUri!""}" width="25 height="25"/></td>
             <td align="center">${item.linkUri!""}</td>
+            <td align="center"><#if item.type?? && item.type == 0>会员APP<#else>装饰公司APP</#if></td>
             <td align="center"><#if item.isEnable?? && item.isEnable>是<#else>否</#if></td>
             <td align="center">
                 <input name="listSortId" type="text" disabled="" value="${item.sortId!""}" class="sort" onkeydown="return checkNumber(event);">

@@ -40,6 +40,10 @@ public class TdNaviBarItem {
     // 链接地址
     @Column
     private String linkUri;
+    
+    // 类型
+    @Column
+    private Integer type;
 
     public Long getId() {
         return id;
@@ -88,4 +92,12 @@ public class TdNaviBarItem {
     public void setLinkUri(String linkUri) {
         this.linkUri = linkUri;
     }
+
+	public Integer getType() {
+		return type;
+	}
+
+	public void setType(Integer type) {
+		this.type = type;
+	}
 }
