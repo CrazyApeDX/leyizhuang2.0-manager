@@ -3,6 +3,46 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <link href="/mag/style/idialog.css" rel="stylesheet" id="lhgdialoglink">
+	<style type="text/css">
+		.dialog{
+			position: fixed;
+			_position:absolute;
+			z-index:1;
+			top: 55%;
+			left: 50%;
+			margin: -141px 0 0 -201px;
+			width: 250px;
+			height:200px;
+			line-height: 210px;
+			text-align:center;
+			font-size: 14px;
+			background-color:#FFF;
+			overflow:hidden;
+			border: 1px solid #cccccc;
+			display: none;
+			box-shadow: 10px 10px 5px #888888;
+			color: #333;
+		}	
+		.dialog_row{
+			width: 100%;
+			height: 30px;
+			line-height: 30px;
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+		.dialog_title{
+			width: 100%;
+			height: 50px;
+			line-height: 50px;
+		}
+		.dialog_btn{
+			width:60px;
+			height: 30px;
+			line-height: 30px;
+			margin-left: 20px;
+		    margin-top: 30px;
+		}
+		</style>
 <title>查看订单信息</title>
 <script type="text/javascript" src="/mag/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="/mag/js/Validform_v5.3.2_min.js"></script>
@@ -15,18 +55,20 @@
             $("#btnPayment").click(function () { OrderPayment(); });   //通知物流
 
             $("#btnOrderExpress").click(function () { OrderExpress(); });   // 验货确认
-            $("#btnOrderReceive").click(function () { OrderReceive(); }); // 确认退款
+            $("#btnOrderReceive").click(function () { showDialog(); }); // 确认退款
             $("#btnEditRemark").click(function () { EditOrderRemark(); });    //修改退货单备注
         });
 
         // 确认退款
         function OrderReceive() {
         	var receiveCount = 0;
+        	var turnType = 1;
             var dialog = $.dialog.confirm('该步骤将确认退款，确认要继续吗？', function () {
             	receiveCount ++;
             	console.log(receiveCount);
                 var returnNumber = $.trim($("#returnNumber").text());
-                var postData = { "returnNumber": returnNumber, "type": "refund" };
+                turnType = $("input[name='turnType']:checked").val();
+                var postData = { "returnNumber": returnNumber, "type": "refund", "turnType": turnType };
                 //发送AJAX请求
                 if (1 === receiveCount) {
                 	console.log(receiveCount);
@@ -36,6 +78,19 @@
             });
         }
         
+         //打开还款窗口
+        function showDialog(){
+        	var flag = $("#flag").val();
+        	if(flag == 2){
+        		$(".dialog").show();
+        	} else {
+        		OrderReceive();
+        	}
+        }
+        //关闭还款窗口
+        function hiddenDialog(){
+        	$(".dialog").hide();
+        }
         var confirmCount = 0;
         // 确认取货
         function OrderConfirm() {
@@ -133,6 +188,7 @@
 <body class="mainbody"><div style="position: absolute; left: -9999em; top: 236px; visibility: visible; width: auto; z-index: 1976;"><table class="ui_border ui_state_visible ui_state_focus"><tbody><tr><td class="ui_lt"></td><td class="ui_t"></td><td class="ui_rt"></td></tr><tr><td class="ui_l"></td><td class="ui_c"><div class="ui_inner"><table class="ui_dialog"><tbody><tr><td colspan="2"><div class="ui_title_bar"><div class="ui_title" unselectable="on" style="cursor: move;">视窗 </div><div class="ui_title_buttons"><a class="ui_min" href="javascript:void(0);" title="最小化" style="display: inline-block;"><b class="ui_min_b"></b></a><a class="ui_max" href="javascript:void(0);" title="最大化" style="display: inline-block;"><b class="ui_max_b"></b></a><a class="ui_res" href="javascript:void(0);" title="还原"><b class="ui_res_b"></b><b class="ui_res_t"></b></a><a class="ui_close" href="javascript:void(0);" title="关闭(esc键)" style="display: inline-block;">×</a></div></div></td></tr><tr><td class="ui_icon" style="display: none;"></td><td class="ui_main" style="width: auto; height: auto;"><div class="ui_content" style="padding: 10px;"><div class="ui_loading"><span>loading...</span></div></div></td></tr><tr><td colspan="2"><div class="ui_buttons" style="display: none;"></div></td></tr></tbody></table></div></td><td class="ui_r"></td></tr><tr><td class="ui_lb"></td><td class="ui_b"></td><td class="ui_rb" style="cursor: se-resize;"></td></tr></tbody></table></div>
 <form name="form1" method="post" action="/Verwalter/returnNote/save" id="form1">
     <!--导航栏-->
+    <input type="hidden" value="${flag?c}" id="flag" name="flag">
     <div class="location" style="position: fixed; top: 0px;">
         <a href="/Verwalter/returnNote/returnNote/list" class="back"><i></i><span>返回列表页</span></a>
         <a href="/Verwalter/center" class="home"><i></i><span>首页</span></a>
@@ -386,6 +442,11 @@
     </div>
     <!--/工具栏-->
     </form>
-
+	<div class="dialog">
+		<div class="dialog_title">选择还款方式</div>
+		<div class="dialog_row"><input type="radio" name="turnType" id="" value="1" checked="checked"/> 退门店现金</div>
+		<div class="dialog_row"><input type="radio" name="turnType" id="" value="2"/> 原路退回&nbsp;&nbsp;&nbsp;</div>
+		<div class="dialog_row"><input onclick="OrderReceive()" class="dialog_btn btn" type="button" value="确定" /><input onclick="hiddenDialog()" class="dialog_btn btn" type="button" value="取消" /> </div>
+	</div>
 
 </body></html>

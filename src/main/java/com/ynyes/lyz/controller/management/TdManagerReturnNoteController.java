@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.common.util.DateUtil;
 import com.ynyes.lyz.entity.TdCashReturnNote;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdDiySite;
@@ -312,6 +313,18 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					TdReturnNote returnNote = tdReturnNoteService.findOne(id);
 					map.addAttribute("returnNote", returnNote);
 					map.addAttribute("user", tdUserService.findByUsername(returnNote.getUsername()));
+					Integer flag = 1;
+					if (null != returnNote) {
+						TdOrder tdOrder = tdOrderService.findByOrderNumber(returnNote.getOrderNumber());
+						if (null != tdOrder) {
+							Double otherPay = tdOrder.getOtherPay();
+							if (null != otherPay && otherPay > 0 && null != tdOrder.getPayTime() 
+									&& DateUtil.intervalDay(tdOrder.getPayTime(), new Date()) < 90) {
+								flag = 2;
+							}
+						}
+					}
+					map.addAttribute("flag", flag);
 					// map.addAttribute("order",
 					// tdOrderService.findByOrderNumber(returnNote.getOrderNumber()));
 				}
@@ -331,7 +344,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 	 */
 	@RequestMapping(value = "/param/edit", method = RequestMethod.POST)
 	@ResponseBody
-	public Map<String, Object> returnNoteParam(String returnNumber, String type, String data, HttpServletRequest req) {
+	public Map<String, Object> returnNoteParam(String returnNumber, String type, String data, HttpServletRequest req, Integer turnType) {
 		Map<String, Object> res = new HashMap<>();
 
 		res.put("code", 1);
@@ -437,7 +450,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					}
 
 					List<TdCashReturnNote> cashReturnNotes = tdPriceCountService.actAccordingWMS(returnNote,
-							order.getId());
+							order.getId(), turnType);
 					order.setStatusId(12L);
 					returnNote.setReturnTime(new Date());
 					tdOrderService.save(order);

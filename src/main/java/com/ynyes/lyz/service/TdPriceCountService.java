@@ -1120,7 +1120,7 @@ public class TdPriceCountService {
 	 * @param params的规则为【商品id】-【退货数量】-【退货单价】
 	 * @author DengXiao
 	 */
-	public List<TdCashReturnNote> returnCashOrCoupon(Long orderId, String params, String returnNoteNumber) {
+	public List<TdCashReturnNote> returnCashOrCoupon(Long orderId, String params, String returnNoteNumber, Integer turnType) {
 		List<TdCashReturnNote> tdCashReturnNotes = new ArrayList<>();
 		TdOrder order = tdOrderService.findOne(orderId);
 		Long userId = order.getRealUserId();
@@ -1179,6 +1179,23 @@ public class TdPriceCountService {
 			new_return_note.setUsername(user.getUsername());
 			new_return_note.setIsOperated(true);
 			new_return_note.setFinishTime(new Date());
+			
+			TdCashReturnNote tdCashReturnNote = null;
+			if (null != otherPay && otherPay > 0 && turnType == 2) {
+				tdCashReturnNote = new TdCashReturnNote();
+				tdCashReturnNote.setCreateTime(new Date());
+				tdCashReturnNote.setMoney(0.00);
+				tdCashReturnNote.setTypeId(-1L);
+				tdCashReturnNote.setTypeTitle(order.getPayTypeTitle());
+				tdCashReturnNote.setOrderNumber(order.getOrderNumber());
+				tdCashReturnNote.setMainOrderNumber(order.getMainOrderNumber());
+				tdCashReturnNote.setReturnNoteNumber(returnNoteNumber);
+				tdCashReturnNote.setUserId(user.getId());
+				tdCashReturnNote.setUsername(user.getUsername());
+				tdCashReturnNote.setIsOperated(false);
+				tdCashReturnNote.setFinishTime(new Date());
+			}
+			
 			// 修改结束
 
 			Map<Long, Double> price_difference = new HashMap<>();
@@ -1580,7 +1597,12 @@ public class TdPriceCountService {
 											// 2016-07-05修改：以现金的方式退还第三方的钱，不做持久化操作
 											// note =
 											// tdCashReturnNoteService.save(note);
-											new_return_note.setMoney(new_return_note.getMoney() + otherReturn);
+											if (null != tdCashReturnNote) {
+												tdCashReturnNote.setMoney(tdCashReturnNote.getMoney() + otherReturn);
+											} else {
+												new_return_note.setMoney(new_return_note.getMoney() + otherReturn);
+											}
+											
 											// 修改结束
 
 											otherPay -= otherReturn;
@@ -1715,6 +1737,10 @@ public class TdPriceCountService {
 				if (new_return_note != null) {
 					tdCashReturnNotes.add(new_return_note);
 				}
+				
+				if (null != tdCashReturnNote) {
+					tdCashReturnNoteService.save(tdCashReturnNote);
+				}
 				// 修改结束
 			}
 			tdUserService.save(user);
@@ -1730,7 +1756,7 @@ public class TdPriceCountService {
 	 * 
 	 * @author DengXiao
 	 */
-	public List<TdCashReturnNote> actAccordingWMS(TdReturnNote returnNote, Long orderId) {
+	public List<TdCashReturnNote> actAccordingWMS(TdReturnNote returnNote, Long orderId, Integer turnType) {
 		if (null != returnNote) {
 			List<TdOrderGoods> returnGoodsList = returnNote.getReturnGoodsList();
 			if (null != returnGoodsList && returnGoodsList.size() > 0) {
@@ -1742,7 +1768,7 @@ public class TdPriceCountService {
 								+ ",";
 					}
 				}
-				return this.returnCashOrCoupon(orderId, params, returnNote.getReturnNumber());
+				return this.returnCashOrCoupon(orderId, params, returnNote.getReturnNumber(), turnType);
 			}
 		}
 		return null;

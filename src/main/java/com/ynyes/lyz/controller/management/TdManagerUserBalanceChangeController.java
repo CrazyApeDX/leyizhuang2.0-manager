@@ -208,6 +208,12 @@ public class TdManagerUserBalanceChangeController {
 		map.addAttribute("__VIEWSTATE", __VIEWSTATE);
 		map.addAttribute("roleId", roleId);
 		
+		TdManager tdManager = null;
+		if (null != manager) {
+			tdManager = tdManagerService.findByUsernameAndIsEnableTrue(manager);
+		}
+		map.addAttribute("tdManager", tdManager);
+		
 		TdUser user = tdUserService.findOne(id);
 		if (null != user) {
 			String username = user.getUsername();
