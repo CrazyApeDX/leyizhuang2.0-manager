@@ -635,7 +635,7 @@ public class TdManagerManagerController {
 				return res;
 			} 
 		}
-		else if (null !=manager&&id!=manager.getId()){
+		else if (null !=manager&&!(id.equals(manager.getId()))){
 			res.put("info", "输入用户名重复");
 			return res;
 	}
