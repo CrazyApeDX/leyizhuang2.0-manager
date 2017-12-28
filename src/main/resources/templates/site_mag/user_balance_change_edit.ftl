@@ -220,18 +220,23 @@ $(function () {
         	<#if city?? && city==2121>
         	
         	</#if>
-            <option value="1">公司刷POS充值</option>
-            <option value="2">网银转账充值</option>
-            <option value="3">交现金充值</option>
-            <option value="4">线上支付宝充值失败</option>
-            <option value="5">线上微信充值失败</option>
-            <option value="6">线上银联充值失败</option>
-            <option value="7">取消订单退支付宝第三方支付</option>
-            <option value="8">取消订单退微信第三方支付</option>
-            <option value="9">取消订单退银联第三方支付</option>
-            <!#-- <option value="10">装饰公司信用额度充值</option> -->
-            <option value="11">CRM积分转预存款</option>
-            <!#-- <option value="12">郑州返利预存款</option> -->
+        	<#if tdManager?? && tdManager.roleId?? && tdManager.roleId == 24>
+	            <option value="15">HR代收充值</option>
+            <#else>
+            	<option value="1">公司刷POS充值</option>
+	            <option value="2">网银转账充值</option>
+	            <option value="3">交现金充值</option>
+	            <option value="4">线上支付宝充值失败</option>
+	            <option value="5">线上微信充值失败</option>
+	            <option value="6">线上银联充值失败</option>
+	            <option value="7">取消订单退支付宝第三方支付</option>
+	            <option value="8">取消订单退微信第三方支付</option>
+	            <option value="9">取消订单退银联第三方支付</option>
+	            <!#-- <option value="10">装饰公司信用额度充值</option> -->
+	            <option value="11">CRM积分转预存款</option>
+	            <!#-- <option value="12">郑州返利预存款</option> -->
+            	<option value="15">HR代收充值</option>
+            </#if>
         </select>
     </dd>
   </dl>

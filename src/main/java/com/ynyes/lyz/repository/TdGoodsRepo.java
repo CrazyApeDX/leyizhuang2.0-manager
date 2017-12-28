@@ -499,8 +499,11 @@ public interface TdGoodsRepo extends PagingAndSortingRepository<TdGoods, Long>, 
 			+ "OR (pl.endDateActive is null AND pl.startDateActive < SYSDATE()) ) and g.code = pi.itemNum and pi.priceListId=pl.listHeaderId and pl.cityId= ?1 ")
 	List<TdGoods> findBySobId(Long sobId);
 
-	@Query("select g from TdGoods g,TdPriceListItem pli where "
-			+ "g.categoryId in ?2 and g.inventoryItemId=pli.goodsId and pli.priceListId in ?1 and "
+	@Query("select distinct new com.ynyes.lyz.entity.TdGoods(g.id,g.title,g.coverImageUri,"
+			+ "g.categoryTitle,g.saleType,g.salePrice,g.code,g.onSaleTime) "
+			+ "from TdGoods g,TdPriceListItem pli where "
+			+ "g.inventoryItemId=pli.goodsId and "
+			+ "g.categoryId in ?2 and pli.priceListId in ?1 and "
 			+ "(g.title like %?3% or g.subTitle like %?3% or g.detail like %?3% or g.code like %?3% ) "
 			+ "and pli.startDateActive<=SYSDATE() and (pli.endDateActive>=SYSDATE() "
 			+ "or pli.endDateActive is null ) and g.isOnSale =1 and (g.isCoupon=0 or g.isCoupon is null)")

@@ -68,4 +68,7 @@ public interface TdProductCategoryRepo
 	 * @author zp
 	 */
 	TdProductCategory findByTitleAndParentId(String title,Long parentId);
+	
+	
+	List<TdProductCategory> findByMainNumberOrderBySortIdAsc(String mainNumber);
 }

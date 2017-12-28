@@ -1273,7 +1273,7 @@
     <div class="page-footer">
         <div class="btn-list">
     		<#if order.deliverTypeTitle?? && order.deliverTypeTitle=="门店自提">
-	        	<#if isown==false && !(order.isCoupon??&&order.isCoupon) && !(order.statusId==7||order.statusId==8)>
+	        	<#if isown==false && !(order.isCoupon??&&order.isCoupon) && !(order.statusId==7||order.statusId==8||order.statusId==2)>
 	         		<input type="button" id="backMoney" value="填写收款" class="btn">
 	        	</#if>
         	</#if>

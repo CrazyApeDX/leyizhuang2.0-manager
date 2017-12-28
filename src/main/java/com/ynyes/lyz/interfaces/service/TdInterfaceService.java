@@ -927,6 +927,13 @@ public class TdInterfaceService {
 		cashRefundInf.setRefundDate(new Date());
 		cashRefundInf.setAmount(cashReturnNote.getMoney());
 		cashRefundInf.setDescription("订单退款");
+		TdReturnNote tdReturnNote = this.tdReturnNoteService.findByReturnNumber(cashReturnNote.getReturnNoteNumber());
+		if(null != tdReturnNote.getDiyCode() && tdReturnNote.getDiyCode().contains("FX#")){
+			TdUser user = this.tdUserService.findByUsername(tdReturnNote.getUsername());
+			if (null != user) {
+				cashRefundInf.setAttribute3(user.getOpUser());
+			}
+		}
 		return tdCashRefundInfService.save(cashRefundInf);
 
 	}

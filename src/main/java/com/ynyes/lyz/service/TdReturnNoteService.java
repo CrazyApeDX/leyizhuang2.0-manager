@@ -494,6 +494,12 @@ public class TdReturnNoteService {
 			cashRefund.setRefundType("预收款");
 			cashRefund.setRefundDate(now);
 			cashRefund.setAmount(unCashCost);
+			if(null != returnNote.getDiyCode() && returnNote.getDiyCode().contains("FX#")){
+				TdUser tdUser = this.tdUserService.findByUsername(returnNote.getUsername());
+				if (null != tdUser) {
+					cashRefund.setAttribute3(tdUser.getOpUser());
+				}
+			}
 			tdCashRefundService.save(cashRefund);
 			result.add(cashRefund);
 		}
@@ -532,6 +538,12 @@ public class TdReturnNoteService {
 			cashRefund.setRefundType("预收款");
 			cashRefund.setRefundDate(now);
 			cashRefund.setAmount(cashCost);
+			if(null != returnNote.getDiyCode() && returnNote.getDiyCode().contains("FX#")){
+				TdUser tdUser = this.tdUserService.findByUsername(returnNote.getUsername());
+				if (null != tdUser) {
+					cashRefund.setAttribute3(tdUser.getOpUser());
+				}
+			}
 			tdCashRefundService.save(cashRefund);
 			result.add(cashRefund);
 		}
