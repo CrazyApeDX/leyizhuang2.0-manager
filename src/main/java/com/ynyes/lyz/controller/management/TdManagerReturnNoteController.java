@@ -314,6 +314,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					map.addAttribute("returnNote", returnNote);
 					map.addAttribute("user", tdUserService.findByUsername(returnNote.getUsername()));
 					Integer flag = 1;
+					String str = "退门店现金";
 					if (null != returnNote) {
 						TdOrder tdOrder = tdOrderService.findByOrderNumber(returnNote.getOrderNumber());
 						if (null != tdOrder) {
@@ -321,10 +322,15 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 							if (null != otherPay && otherPay > 0 && null != tdOrder.getPayTime() 
 									&& DateUtil.intervalDay(tdOrder.getPayTime(), new Date()) < 90) {
 								flag = 2;
+								TdDiySite tdDiySite = this.tdDiySiteService.findOne(tdOrder.getDiySiteId());
+								if (null != tdDiySite && !("直营".equals(tdDiySite.getCustTypeName()))) {
+									str = "退预存款&nbsp;&nbsp;&nbsp;";
+								}
 							}
 						}
 					}
 					map.addAttribute("flag", flag);
+					map.addAttribute("str", str);
 					// map.addAttribute("order",
 					// tdOrderService.findByOrderNumber(returnNote.getOrderNumber()));
 				}

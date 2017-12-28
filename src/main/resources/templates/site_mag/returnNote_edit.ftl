@@ -444,7 +444,7 @@
     </form>
 	<div class="dialog">
 		<div class="dialog_title">选择还款方式</div>
-		<div class="dialog_row"><input type="radio" name="turnType" id="" value="1" checked="checked"/> 退门店现金</div>
+		<div class="dialog_row"><input type="radio" name="turnType" id="" value="1" checked="checked"/> ${str!'退门店现金'}</div>
 		<div class="dialog_row"><input type="radio" name="turnType" id="" value="2"/> 原路退回&nbsp;&nbsp;&nbsp;</div>
 		<div class="dialog_row"><input onclick="OrderReceive()" class="dialog_btn btn" type="button" value="确定" /><input onclick="hiddenDialog()" class="dialog_btn btn" type="button" value="取消" /> </div>
 	</div>

@@ -22,6 +22,7 @@ import com.ynyes.lyz.entity.TdCashReturnNote;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdCouponModule;
+import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdGoods;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
@@ -91,6 +92,9 @@ public class TdPriceCountService {
 	
 	@Autowired
 	private TdEbsSenderService tdEbsSenderService;
+	
+	@Autowired
+	private TdDiySiteService tdDiySiteService;
 
 	/**
 	 * 计算订单价格和能使用的最大的预存款的方法
@@ -1600,7 +1604,42 @@ public class TdPriceCountService {
 											if (null != tdCashReturnNote) {
 												tdCashReturnNote.setMoney(tdCashReturnNote.getMoney() + otherReturn);
 											} else {
-												new_return_note.setMoney(new_return_note.getMoney() + otherReturn);
+												TdDiySite tdDiySite = this.tdDiySiteService.findOne(order.getDiySiteId());
+												if (null != tdDiySite && "直营".equals(tdDiySite.getCustTypeName())) {
+													new_return_note.setMoney(new_return_note.getMoney() + otherReturn);
+												} else {
+													BigDecimal bd = new BigDecimal(otherReturn);
+													otherReturn = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+													user.setCashBalance(user.getCashBalance() + otherReturn);
+													user.setBalance(user.getBalance() + otherReturn);
+													// 记录余额变更明细
+													TdBalanceLog balanceLog = new TdBalanceLog();
+													balanceLog.setUserId(user.getId());
+													balanceLog.setUsername(user.getUsername());
+													balanceLog.setMoney(otherReturn);
+													balanceLog.setType(4L);
+													balanceLog.setCreateTime(new Date());
+													balanceLog.setFinishTime(new Date());
+													balanceLog.setIsSuccess(true);
+													balanceLog.setBalanceType(3L);
+													balanceLog.setBalance(user.getCashBalance());
+													balanceLog.setOperator(user.getUsername());
+													try {
+														balanceLog.setOperatorIp(InetAddress.getLocalHost().getHostAddress());
+													} catch (UnknownHostException e) {
+														System.out.println("获取ip地址报错");
+														e.printStackTrace();
+													}
+													balanceLog.setReason("订单退货退款");
+													balanceLog.setOrderNumber(order.getOrderNumber());
+													balanceLog.setDiySiteId(user.getUpperDiySiteId());
+													balanceLog.setCityId(user.getCityId());
+													balanceLog.setCashLeft(user.getCashBalance());
+													balanceLog.setUnCashLeft(user.getUnCashBalance());
+													balanceLog.setAllLeft(user.getBalance());
+													tdBalanceLogService.save(balanceLog);
+												}
+												
 											}
 											
 											// 修改结束
