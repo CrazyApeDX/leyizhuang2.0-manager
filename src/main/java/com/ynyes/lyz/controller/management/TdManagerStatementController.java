@@ -145,7 +145,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
             LOGGER.warn("dowmDataGoodsInOut, permission denied!");
             return "redirect:/Verwalter/login";
         }
-
+        diyCode = "undefined".equalsIgnoreCase(diyCode) ? "" : diyCode;
+        cityName = "undefined".equalsIgnoreCase(cityName) ? "" : cityName;
         Date begin = new Date();
         Date end = new Date();
         if (statusId == 9) {
