@@ -179,7 +179,7 @@ public interface TdAgencyFundRepo extends PagingAndSortingRepository<TdAgencyFun
             + " AND diy.city LIKE ?3 "
             + " AND diy.store_code LIKE ?4 "
             + " AND diy.id IN ?5 "
-            + " AND m.c_wh_no LIKE ?6 ; ", nativeQuery = true)
+            + " AND m.c_wh_no LIKE ?6 GROUP BY o.main_order_number; ", nativeQuery = true)
     List<Object> queryDeliveryDownList(Date begin, Date end, String cityName, String diyCode, List<String> roleDiyIds, String warehouse);
 
     @Query(value = " SELECT "
