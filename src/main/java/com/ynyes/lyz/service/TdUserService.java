@@ -2,10 +2,13 @@ package com.ynyes.lyz.service;
 
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.entity.TdOwnMoneyRecord;
 import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.entity.user.TdUserChangeSellerLog;
 import com.ynyes.lyz.excp.AppConcurrentExcp;
+import com.ynyes.lyz.interfaces.service.TdInterfaceService;
+import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.repository.TdUserRepo;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
@@ -17,8 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-
-import javax.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -40,6 +42,9 @@ public class TdUserService {
 
     @Autowired
     private TdUserChangeSellerLogService tdUserChangeSellerLogService;
+    
+    @Autowired
+	private TdInterfaceService tdInterfaceService;
 
     public TdUser save(TdUser user) {
         if (null == user) {
@@ -454,6 +459,7 @@ public class TdUserService {
         }
     }
 
+    @Transactional(rollbackFor = Exception.class)
     public void repayCredit(CreditChangeType type, TdUser seller, Double amount, String orderNumber) {
         if (amount > 0) {
             seller.setCredit(seller.getCredit() + amount);
@@ -675,5 +681,14 @@ public class TdUserService {
             roleDiyIds.add("0");
         }
         return repository.queryFXMemberDownList(begin, end, cityName, diyCode, roleDiyIds);
+    }
+    
+    public void backMoney(TdOrder tdOrder, TdOwnMoneyRecord ownMoneyRecord,Double amount){
+    	TdUser seller = this.findOne(tdOrder.getSellerId());
+		this.repayCredit(CreditChangeType.REPAY, seller, amount,
+				tdOrder.getMainOrderNumber());
+		
+		//记录收款并发ebs
+		this.tdInterfaceService.initCashReciptByTdOwnMoneyRecord(ownMoneyRecord, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
     }
 }

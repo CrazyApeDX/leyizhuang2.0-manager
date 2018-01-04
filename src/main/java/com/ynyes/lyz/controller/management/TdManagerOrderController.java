@@ -1464,13 +1464,25 @@ public class TdManagerOrderController {
 		}
 
 		// 2017-02-13：增加信用额度
-		TdUser seller = this.tdUserService.findOne(order.getSellerId());
-		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
-				order.getMainOrderNumber());
+//		TdUser seller = this.tdUserService.findOne(order.getSellerId());
+//		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
+//				order.getMainOrderNumber());
+//
+//		// 记录收款并发ebs
+//		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
 
-		// 记录收款并发ebs
-		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
-
+		try {
+            //执行取消订单事务
+			this.tdUserService.backMoney(order, rec, (money + pos + other));
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            res.put("message","系统繁忙,请稍后重试!");
+        }catch (Exception e) {
+            e.printStackTrace();
+            if (res.get("message") == null) {
+                res.put("message", "发生未知异常,订单取消失败");
+            }
+        }
 		res.put("code", 0);
 		res.put("message", "已收款");
 		return res;
