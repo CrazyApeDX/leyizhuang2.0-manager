@@ -3951,6 +3951,9 @@ public class TdCommonService {
 			cashRefundInf.setAmount(deposit.getMoney());
 			cashRefundInf.setDescription(desc);
 			cashRefundInf.setRefundDate(new Date());
+			if(null != user.getDiyCode() && user.getDiyCode().contains("FX#")){
+				cashRefundInf.setAttribute3(user.getOpUser());
+			}
 			tdCashRefundInfService.save(cashRefundInf);
 			return cashRefundInf;
 		}

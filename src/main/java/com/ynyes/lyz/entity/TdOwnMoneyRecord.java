@@ -85,7 +85,7 @@ public class TdOwnMoneyRecord {
     private Double backPos;
     //POS刷卡流水号
     @Column
-    private Long serialNumber;
+    private String serialNumber;
     
     // 新增：2016-08-25增加还款方式其他（门店）
     @Column
@@ -219,11 +219,11 @@ public class TdOwnMoneyRecord {
 		this.pos = pos;
 	}
 
-	public Long getSerialNumber() {
+	public String getSerialNumber() {
 		return serialNumber;
 	}
 
-	public void setSerialNumber(Long serialNumber) {
+	public void setSerialNumber(String serialNumber) {
 		this.serialNumber = serialNumber;
 	}
 

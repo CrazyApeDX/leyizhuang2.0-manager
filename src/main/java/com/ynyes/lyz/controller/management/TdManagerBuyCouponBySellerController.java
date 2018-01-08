@@ -629,7 +629,7 @@ public class TdManagerBuyCouponBySellerController {
 	@RequestMapping(value = "/create/order", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> createOrder(HttpServletRequest req, ModelMap map, String username, String sellerUsername,
-			Long[] ids, Long[] numbers, Long[] coupons, Double pos, Double cash, Double other, Double balance, String realPayTime,Long serialNumber) {
+			Long[] ids, Long[] numbers, Long[] coupons, Double pos, Double cash, Double other, Double balance, String realPayTime,String serialNumber) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 

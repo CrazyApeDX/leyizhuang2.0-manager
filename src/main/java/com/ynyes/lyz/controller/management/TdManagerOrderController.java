@@ -1258,7 +1258,7 @@ public class TdManagerOrderController {
 	@RequestMapping(value = "/own/money")
 	@ResponseBody
 	public Map<String, Object> ownMoney(Long id, Double money, Double pos, Double other, String realPayTime,
-			Long serialNumber, HttpServletRequest req) {
+			String serialNumber, HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
 		// 判断登录
@@ -1371,7 +1371,7 @@ public class TdManagerOrderController {
 	@RequestMapping(value = "/backMoney")
 	@ResponseBody
 	public Map<String, Object> backMoney(Long id, Double money, Double pos, Double other, String realPayTime,
-			Long serialNumber, HttpServletRequest req) {
+			String serialNumber, HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
 		// 判断登录
