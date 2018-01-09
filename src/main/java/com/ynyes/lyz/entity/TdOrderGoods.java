@@ -160,15 +160,30 @@ public class TdOrderGoods {
 	@Column(nullable = false)
 	private Boolean isWallAccessory = false;
 
-	// order表id
-	private Long tdOrderId;
-
-	// returnNote表id
-	private Long tdReturnId;
+//	// order表id
+//	private Long tdOrderId;
+//
+//	// returnNote表id
+//	private Long tdReturnId;
 
 	// 经销价
 	@Column(scale = 2)
 	private Double jxPrice = 0d;
+	
+	// 经销差价
+	@Column(scale = 2)
+	private Double jxDif = 0d;
+	
+	// 单品经销差价总额
+	@Column(scale = 2)
+	private Double difTotal = 0d;
+
+	// 如果参加 折扣促销 则记录id
+	@Column
+	private Long act_id;
+	
+	// 分类树
+	private String categoryTree;
 
 	public String getSubOrderNumber() {
 		return subOrderNumber;
@@ -458,21 +473,21 @@ public class TdOrderGoods {
 		this.isWallAccessory = isWallAccessory;
 	}
 
-	public Long getTdOrderId() {
-		return tdOrderId;
-	}
-
-	public void setTdOrderId(Long tdOrderId) {
-		this.tdOrderId = tdOrderId;
-	}
-
-	public Long getTdReturnId() {
-		return tdReturnId;
-	}
-
-	public void setTdReturnId(Long tdReturnId) {
-		this.tdReturnId = tdReturnId;
-	}
+//	public Long getTdOrderId() {
+//		return tdOrderId;
+//	}
+//
+//	public void setTdOrderId(Long tdOrderId) {
+//		this.tdOrderId = tdOrderId;
+//	}
+//
+//	public Long getTdReturnId() {
+//		return tdReturnId;
+//	}
+//
+//	public void setTdReturnId(Long tdReturnId) {
+//		this.tdReturnId = tdReturnId;
+//	}
 
 	public Double getJxPrice() {
 		return jxPrice;
@@ -481,5 +496,36 @@ public class TdOrderGoods {
 	public void setJxPrice(Double jxPrice) {
 		this.jxPrice = jxPrice;
 	}
+	
+	public Double getJxDif() {
+		return jxDif;
+	}
 
+	public void setJxDif(Double jxDif) {
+		this.jxDif = jxDif;
+	}
+
+	public Double getDifTotal() {
+		return difTotal;
+	}
+
+	public void setDifTotal(Double difTotal) {
+		this.difTotal = difTotal;
+	}
+
+	public Long getAct_id() {
+		return act_id;
+	}
+
+	public void setAct_id(Long act_id) {
+		this.act_id = act_id;
+	}
+	
+	public String getCategoryTree() {
+		return categoryTree;
+	}
+
+	public void setCategoryTree(String categoryTree) {
+		this.categoryTree = categoryTree;
+	}
 }

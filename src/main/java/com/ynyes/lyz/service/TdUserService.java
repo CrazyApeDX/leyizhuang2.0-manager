@@ -2,6 +2,7 @@ package com.ynyes.lyz.service;
 
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdOrder;
+import com.ynyes.lyz.entity.TdOrderData;
 import com.ynyes.lyz.entity.TdOwnMoneyRecord;
 import com.ynyes.lyz.entity.user.CreditChangeType;
 import com.ynyes.lyz.entity.user.TdUser;
@@ -10,6 +11,7 @@ import com.ynyes.lyz.excp.AppConcurrentExcp;
 import com.ynyes.lyz.interfaces.service.TdInterfaceService;
 import com.ynyes.lyz.interfaces.utils.INFConstants;
 import com.ynyes.lyz.repository.TdUserRepo;
+import com.ynyes.lyz.util.CountUtil;
 import com.ynyes.lyz.util.Criteria;
 import com.ynyes.lyz.util.Restrictions;
 import com.ynyes.lyz.util.Utils;
@@ -45,6 +47,15 @@ public class TdUserService {
     
     @Autowired
 	private TdInterfaceService tdInterfaceService;
+    
+    @Autowired
+	private TdOrderDataService tdOrderDataService;
+    
+    @Autowired
+	private TdOwnMoneyRecordService tdOwnMoneyRecordService;
+    
+    @Autowired
+	TdOrderService tdOrderService;
 
     public TdUser save(TdUser user) {
         if (null == user) {
@@ -683,12 +694,64 @@ public class TdUserService {
         return repository.queryFXMemberDownList(begin, end, cityName, diyCode, roleDiyIds);
     }
     
-    public void backMoney(TdOrder tdOrder, TdOwnMoneyRecord ownMoneyRecord,Double amount){
+    public void backMoney(TdOrder tdOrder, String serialNumber, Double money, Double pos, Double other, String realPayTime){
+    	TdOwnMoneyRecord ownMoneyRecord = this.generateOwnMoneyRecord(serialNumber, tdOrder, money, pos, other, realPayTime);
+    	
     	TdUser seller = this.findOne(tdOrder.getSellerId());
-		this.repayCredit(CreditChangeType.REPAY, seller, amount,
+		this.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
 				tdOrder.getMainOrderNumber());
 		
 		//记录收款并发ebs
 		this.tdInterfaceService.initCashReciptByTdOwnMoneyRecord(ownMoneyRecord, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
+    }
+    
+    
+    @Transactional(rollbackFor = Exception.class)
+    public TdOwnMoneyRecord generateOwnMoneyRecord(String serialNumber,TdOrder order, Double money, Double pos, Double other, String realPayTime){
+	    TdOwnMoneyRecord rec = new TdOwnMoneyRecord();
+		if (null != serialNumber) {
+			rec.setSerialNumber(serialNumber);
+		}
+		rec.setCreateTime(new Date());
+		rec.setOrderNumber(order.getMainOrderNumber());
+		rec.setDiyCode(order.getDiySiteCode());
+		rec.setOwned(0.0);
+		rec.setPayed(money + pos + other);
+		rec.setBackMoney(money);
+		rec.setBackPos(pos);
+		rec.setBackOther(other);
+		rec.setUsername(order.getUsername());
+		rec.setIsOwn(false);
+		rec.setIsEnable(false);
+		rec.setIsPayed(false);
+		rec.setSortId(99L);
+		rec.setPayTime(new Date());
+	
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date date = null;
+		try {
+			date = sdf.parse(realPayTime);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		rec.setRealPayTime(date);
+		tdOwnMoneyRecordService.save(rec);
+	
+		// 门店收款保存到订单
+		order.setCashPay(money);
+		order.setPosPay(pos);
+		order.setBackOtherPay(other);
+		tdOrderService.save(order);
+		
+		// 查找TdOrderData，如果存在，则设置TdOrderData的值
+		TdOrderData orderData = tdOrderDataService.findByMainOrderNumber(order.getMainOrderNumber());
+		if (null != orderData) {
+			orderData.setSellerCash(CountUtil.add(orderData.getSellerCash(), money));
+			orderData.setSellerPos(CountUtil.add(orderData.getSellerPos(), pos));
+			orderData.setSellerOther(CountUtil.add(orderData.getSellerOther(), other));
+			orderData.setDue(orderData.countDue());
+			tdOrderDataService.save(orderData);
+		}
+		return rec;
     }
 }
