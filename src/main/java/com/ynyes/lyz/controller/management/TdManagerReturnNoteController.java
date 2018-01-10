@@ -462,9 +462,12 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					tdOrderService.save(order);
 					if (cashReturnNotes != null && cashReturnNotes.size() > 0) {
 						for (TdCashReturnNote tdCashReturnNote : cashReturnNotes) {
-							TdCashRefundInf cashRefundInf = tdInterfaceService.initCashRefundInf(tdCashReturnNote);
-//							tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-							tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
+							if (null != tdCashReturnNote && null != tdCashReturnNote.getMoney() 
+									&& tdCashReturnNote.getMoney() > 0d) {
+								TdCashRefundInf cashRefundInf = tdInterfaceService.initCashRefundInf(tdCashReturnNote);
+	//							tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+								tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
+							}
 						}
 						for (int index = 0; index < cashReturnNotes.size(); index++) {
 							TdCashReturnNote cashReturnNote = cashReturnNotes.get(index);
