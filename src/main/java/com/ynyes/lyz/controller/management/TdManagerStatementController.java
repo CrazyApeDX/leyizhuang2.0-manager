@@ -801,7 +801,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
             HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
             // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
             //列宽
-            int[] widths = {25, 25, 25, 20, 20, 15, 15, 15, 15, 15, 15, 15, 15, 10, 10, 10, 10, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 50};
+            int[] widths = {25, 25, 25, 20, 20, 15, 15, 15, 15, 15, 15, 15, 15, 10, 10, 10, 10, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 50, 20};
             sheetColumnWidth(sheet, widths);
 
             // 第四步，创建单元格，并设置值表头 设置表头居中
@@ -815,7 +815,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
 
             String[] cellValues = {"装饰公司名称", "主单号", "分单号", "下单日期", "出&退货日期", "配送状态", "订单状态", "采购经理", "客户编号", "工头姓名", "工头电话", "产品编号",
                     "产品名称", "数量", "零售单价", "零售总价", "结算单价", "结算总价", "品牌", "商品父分类", "商品子分类", "配送方式", "中转仓",
-                    "配送人员", "配送人员电话", "收货人姓名", "收货人电话", "收货人地址", "订单备注"};
+                    "配送人员", "配送人员电话", "收货人姓名", "收货人电话", "收货人地址", "订单备注", "销售经理"};
             cellDates(cellValues, style, row);
 
             for (int j = 0; j < maxRowNum; j++) {
@@ -1057,6 +1057,12 @@ public class TdManagerStatementController extends TdManagerBaseController {
                     row.createCell(28).setCellValue(objToString(fitGoodsInOut.getRemark()));
                 } else {
                     row.createCell(28).setCellValue(objToString(""));
+                }
+                //销售经理
+                if (null != fitGoodsInOut.getSalesManager()) {
+                    row.createCell(29).setCellValue(objToString(fitGoodsInOut.getSalesManager()));
+                } else {
+                    row.createCell(29).setCellValue(objToString(""));
                 }
 
             }

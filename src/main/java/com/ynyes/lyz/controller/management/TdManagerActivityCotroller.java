@@ -192,6 +192,7 @@ public class TdManagerActivityCotroller {
 			tdActivity.setSiteList(siteLists);
 		}
 		List<TdGoodsCombination> comb_List = tdActivity.getCombList();
+		List<TdGoodsCombination> comb_List1 = new ArrayList<>();
 		for (TdGoodsCombination tdGoodsCombination : comb_List) {
 			//判断商品是否存在
 			TdGoods goods=null;
@@ -200,14 +201,15 @@ public class TdManagerActivityCotroller {
 			}
 			if(goods!=null){
 				goodsAndNumber += tdGoodsCombination.getGoodsId() + "_" + tdGoodsCombination.getNumber() + ",";
+				comb_List1.add(tdGoodsCombination);
 			}
 			
 		}
-
+		tdActivity.setCombList(comb_List1);
 		tdActivity.setGoodsNumber(goodsAndNumber);
 
 		List<TdGoodsGift> gift_List = tdActivity.getGiftList();
-
+		List<TdGoodsGift> gift_List1 = new ArrayList<>();
 		if (null != gift_List && gift_List.size() > 0) {
 			for (TdGoodsGift tdGoodsGift : gift_List) {
 				//判断商品是否存在
@@ -217,11 +219,12 @@ public class TdManagerActivityCotroller {
 				}
 				if(goods!=null){
 					giftAndNumber += tdGoodsGift.getGoodsId() + "_" + tdGoodsGift.getNumber() + ",";
+					gift_List1.add(tdGoodsGift);
 				}
 			}
 		}
 		tdActivity.setGiftNumber(giftAndNumber);
-
+		tdActivity.setGiftList(gift_List1);
 		if (null == tdActivity.getId()) {
 			type = "add";
 		} else {

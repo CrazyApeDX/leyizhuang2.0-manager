@@ -64,6 +64,9 @@ public class FitCompany extends TableEntity {
 
 	@Column(nullable = false)
 	private Long xqPriceHeaderId = 0l;
+	
+	@Column(nullable = false)
+	private Long salesManagerId;
 
 	public String getName() {
 		return name;
@@ -167,5 +170,13 @@ public class FitCompany extends TableEntity {
 
 	public void setWalletMoney(Double walletMoney) {
 		this.walletMoney = walletMoney;
+	}
+
+	public Long getSalesManagerId() {
+		return salesManagerId;
+	}
+
+	public void setSalesManagerId(Long salesManagerId) {
+		this.salesManagerId = salesManagerId;
 	}
 }
