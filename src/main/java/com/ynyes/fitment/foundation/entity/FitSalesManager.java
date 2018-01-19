@@ -7,21 +7,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
 import javax.persistence.Table;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.ynyes.fitment.core.entity.ApplicationEntity;
+import com.ynyes.fitment.core.entity.persistent.table.TableEntity;
+
 @Entity
 @Table(name = "FIT_SALES_MANAGER")
-public class FitSalesManager {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-	
-	@Column(nullable = false, updatable = false)
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	private Date createTime = new Date();
-	
+public class FitSalesManager extends TableEntity{
 	// 姓名
 	@Column(length = 50, nullable = false)
 	private String name;
@@ -37,22 +33,6 @@ public class FitSalesManager {
 	// 是否有效
 	@Column(length = 1, nullable = false)
 	private Boolean isEnable;
-
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public Date getCreateTime() {
-		return createTime;
-	}
-
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
 
 	public String getName() {
 		return name;

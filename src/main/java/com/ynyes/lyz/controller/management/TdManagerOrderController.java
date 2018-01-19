@@ -1426,7 +1426,6 @@ public class TdManagerOrderController {
 //		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
 
 		try {
-            //执行取消订单事务
 			this.tdUserService.backMoney(order, serialNumber, money, pos, other,realPayTime);
         }catch (RuntimeException e){
             e.printStackTrace();
