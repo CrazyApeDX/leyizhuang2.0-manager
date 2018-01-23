@@ -801,7 +801,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
             HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
             // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
             //列宽
-            int[] widths = {25, 25, 25, 20, 20, 15, 15, 15, 15, 15, 15, 15, 15, 10, 10, 10, 10, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 50, 20};
+            int[] widths = {25, 25, 25, 20, 20, 20, 15, 15, 15, 15, 15, 15, 15, 15, 10, 10, 10, 10, 10, 15, 15, 15, 15, 15, 15, 15, 15, 15, 30, 50};
             sheetColumnWidth(sheet, widths);
 
             // 第四步，创建单元格，并设置值表头 设置表头居中
@@ -813,9 +813,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
             //设置标题
             HSSFRow row = sheet.createRow((int) 0);
 
-            String[] cellValues = {"装饰公司名称", "主单号", "分单号", "下单日期", "出&退货日期", "配送状态", "订单状态", "采购经理", "客户编号", "工头姓名", "工头电话", "产品编号",
+            String[] cellValues = {"装饰公司名称", "主单号", "分单号", "下单日期", "出&退货日期", "销售经理", "配送状态", "订单状态", "采购经理", "客户编号", "工头姓名", "工头电话", "产品编号",
                     "产品名称", "数量", "零售单价", "零售总价", "结算单价", "结算总价", "品牌", "商品父分类", "商品子分类", "配送方式", "中转仓",
-                    "配送人员", "配送人员电话", "收货人姓名", "收货人电话", "收货人地址", "订单备注", "销售经理"};
+                    "配送人员", "配送人员电话", "收货人姓名", "收货人电话", "收货人地址", "订单备注"};
             cellDates(cellValues, style, row);
 
             for (int j = 0; j < maxRowNum; j++) {
@@ -853,217 +853,219 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 } else {
                     row.createCell(4).setCellValue("");
                 }
+                
+                //销售经理
+                if (null != fitGoodsInOut.getSalesManager()) {
+                    row.createCell(5).setCellValue(objToString(fitGoodsInOut.getSalesManager()));
+                } else {
+                    row.createCell(5).setCellValue(objToString(""));
+                }
 
                 //配送状态
                 if (fitGoodsInOut.getStatusId() >= 4 && fitGoodsInOut.getStatusId() != 7 && fitGoodsInOut.getStatusId() != 8) {
-                    row.createCell(5).setCellValue("已出货");
+                    row.createCell(6).setCellValue("已出货");
                 } else {
-                    row.createCell(5).setCellValue("未出货");
+                    row.createCell(6).setCellValue("未出货");
                 }
                 //订单状态
                 if (null != fitGoodsInOut.getStatusId()) {
                     switch (fitGoodsInOut.getStatusId()) {
                         case 1:
-                            row.createCell(6).setCellValue("待审核");
+                            row.createCell(7).setCellValue("待审核");
                             break;
                         case 2:
-                            row.createCell(6).setCellValue("待付款");
+                            row.createCell(7).setCellValue("待付款");
                             break;
                         case 3:
-                            row.createCell(6).setCellValue("待出库");
+                            row.createCell(7).setCellValue("待出库");
                             break;
                         case 4:
-                            row.createCell(6).setCellValue("待签收");
+                            row.createCell(7).setCellValue("待签收");
                             break;
                         case 5:
-                            row.createCell(6).setCellValue("待评价");
+                            row.createCell(7).setCellValue("待评价");
                         case 6:
-                            row.createCell(6).setCellValue("已完成");
+                            row.createCell(7).setCellValue("已完成");
                             break;
                         case 7:
-                            row.createCell(6).setCellValue("已取消");
+                            row.createCell(7).setCellValue("已取消");
                             break;
                         case 8:
-                            row.createCell(6).setCellValue("已删除");
+                            row.createCell(7).setCellValue("已删除");
                             break;
                         case 9:
-                            row.createCell(6).setCellValue("退货中");
+                            row.createCell(7).setCellValue("退货中");
                             break;
                         case 10:
-                            row.createCell(6).setCellValue("退货确认");
+                            row.createCell(7).setCellValue("退货确认");
                             break;
                         case 11:
-                            row.createCell(6).setCellValue("退货取消");
+                            row.createCell(7).setCellValue("退货取消");
                             break;
                         case 12:
-                            row.createCell(6).setCellValue("退货完成");
+                            row.createCell(7).setCellValue("退货完成");
                             break;
                         default:
                             break;
                     }
                 } else {
-                    row.createCell(6).setCellValue("");
+                    row.createCell(7).setCellValue("");
                 }
 
 
                 //采购经理
                 if (null != fitGoodsInOut.getSellerRealName()) {
-                    row.createCell(7).setCellValue(objToString(fitGoodsInOut.getSellerRealName()));
-                } else {
-                    row.createCell(7).setCellValue("");
-                }
-
-                //客户编号
-                if (null != fitGoodsInOut.getRealUserUsername()) {
-                    row.createCell(8).setCellValue(objToString(fitGoodsInOut.getRealUserUsername()));
+                    row.createCell(8).setCellValue(objToString(fitGoodsInOut.getSellerRealName()));
                 } else {
                     row.createCell(8).setCellValue("");
                 }
 
-                //工头姓名
-                if (null != fitGoodsInOut.getRealUserRealName()) {
-                    row.createCell(9).setCellValue(objToString(fitGoodsInOut.getRealUserRealName()));
+                //客户编号
+                if (null != fitGoodsInOut.getRealUserUsername()) {
+                    row.createCell(9).setCellValue(objToString(fitGoodsInOut.getRealUserUsername()));
                 } else {
                     row.createCell(9).setCellValue("");
                 }
 
-                //工头电话
-                if (null != fitGoodsInOut.getRealUserUsername()) {
-                    row.createCell(10).setCellValue(objToString(fitGoodsInOut.getRealUserUsername()));
+                //工头姓名
+                if (null != fitGoodsInOut.getRealUserRealName()) {
+                    row.createCell(10).setCellValue(objToString(fitGoodsInOut.getRealUserRealName()));
                 } else {
                     row.createCell(10).setCellValue("");
                 }
 
-                //产品编号
-                if (null != fitGoodsInOut.getSku()) {
-                    row.createCell(11).setCellValue(objToString(fitGoodsInOut.getSku()));
+                //工头电话
+                if (null != fitGoodsInOut.getRealUserUsername()) {
+                    row.createCell(11).setCellValue(objToString(fitGoodsInOut.getRealUserUsername()));
                 } else {
                     row.createCell(11).setCellValue("");
                 }
 
-                //产品名称
-                if (null != fitGoodsInOut.getGoodsTitle()) {
-                    row.createCell(12).setCellValue(objToString(fitGoodsInOut.getGoodsTitle()));
+                //产品编号
+                if (null != fitGoodsInOut.getSku()) {
+                    row.createCell(12).setCellValue(objToString(fitGoodsInOut.getSku()));
                 } else {
                     row.createCell(12).setCellValue("");
                 }
 
-                //数量
-                if (null != fitGoodsInOut.getQuantity()) {
-                    row.createCell(13).setCellValue(objToString(fitGoodsInOut.getQuantity()));
+                //产品名称
+                if (null != fitGoodsInOut.getGoodsTitle()) {
+                    row.createCell(13).setCellValue(objToString(fitGoodsInOut.getGoodsTitle()));
                 } else {
                     row.createCell(13).setCellValue("");
+                }
+
+                //数量
+                if (null != fitGoodsInOut.getQuantity()) {
+                    row.createCell(14).setCellValue(objToString(fitGoodsInOut.getQuantity()));
+                } else {
+                    row.createCell(14).setCellValue("");
                 }
 
 
                 //零售单价
                 if (null != fitGoodsInOut.getPrice()) {
-                    row.createCell(14).setCellValue(objToString(fitGoodsInOut.getPrice()));
-                } else {
-                    row.createCell(14).setCellValue("");
-                }
-
-                //零售总价
-                if (null != fitGoodsInOut.getPrice() && null != fitGoodsInOut.getQuantity()) {
-                    row.createCell(15).setCellValue(objToString(fitGoodsInOut.getPrice() * fitGoodsInOut.getQuantity()));
+                    row.createCell(15).setCellValue(objToString(fitGoodsInOut.getPrice()));
                 } else {
                     row.createCell(15).setCellValue("");
                 }
 
-                //结算单价
-                if (null != fitGoodsInOut.getRealPrice()) {
-                    row.createCell(16).setCellValue(objToString(fitGoodsInOut.getRealPrice()));
+                //零售总价
+                if (null != fitGoodsInOut.getPrice() && null != fitGoodsInOut.getQuantity()) {
+                    row.createCell(16).setCellValue(objToString(fitGoodsInOut.getPrice() * fitGoodsInOut.getQuantity()));
                 } else {
                     row.createCell(16).setCellValue("");
+                }
+
+                //结算单价
+                if (null != fitGoodsInOut.getRealPrice()) {
+                    row.createCell(17).setCellValue(objToString(fitGoodsInOut.getRealPrice()));
+                } else {
+                    row.createCell(17).setCellValue("");
                 }
 
 
                 //结算总价
                 if (null != fitGoodsInOut.getRealPrice() && null != fitGoodsInOut.getQuantity()) {
-                    row.createCell(17).setCellValue(objToString(fitGoodsInOut.getRealPrice() * fitGoodsInOut.getQuantity()));
-                } else {
-                    row.createCell(17).setCellValue("");
-                }
-
-                //品牌
-                if (null != fitGoodsInOut.getBrandTitle()) {
-                    row.createCell(18).setCellValue(objToString(fitGoodsInOut.getBrandTitle()));
+                    row.createCell(18).setCellValue(objToString(fitGoodsInOut.getRealPrice() * fitGoodsInOut.getQuantity()));
                 } else {
                     row.createCell(18).setCellValue("");
                 }
 
-                //商品父分类
-                if (null != fitGoodsInOut.getGoodsParentTypeTitle()) {
-                    row.createCell(19).setCellValue(objToString(fitGoodsInOut.getGoodsParentTypeTitle()));
+                //品牌
+                if (null != fitGoodsInOut.getBrandTitle()) {
+                    row.createCell(19).setCellValue(objToString(fitGoodsInOut.getBrandTitle()));
                 } else {
                     row.createCell(19).setCellValue("");
                 }
 
-                //商品子分类
-                if (null != fitGoodsInOut.getGoodsTypeTitle()) {
-                    row.createCell(20).setCellValue(objToString(fitGoodsInOut.getGoodsTypeTitle()));
+                //商品父分类
+                if (null != fitGoodsInOut.getGoodsParentTypeTitle()) {
+                    row.createCell(20).setCellValue(objToString(fitGoodsInOut.getGoodsParentTypeTitle()));
                 } else {
                     row.createCell(20).setCellValue("");
                 }
 
-                //配送方式	　
-                if (null != fitGoodsInOut.getDeliverTypeTitle()) {
-                    row.createCell(21).setCellValue(objToString(fitGoodsInOut.getDeliverTypeTitle()));
+                //商品子分类
+                if (null != fitGoodsInOut.getGoodsTypeTitle()) {
+                    row.createCell(21).setCellValue(objToString(fitGoodsInOut.getGoodsTypeTitle()));
                 } else {
                     row.createCell(21).setCellValue("");
                 }
 
-                //中转仓
-                if (null != fitGoodsInOut.getWhName()) {
-                    row.createCell(22).setCellValue(objToString(fitGoodsInOut.getWhName()));
+                //配送方式	　
+                if (null != fitGoodsInOut.getDeliverTypeTitle()) {
+                    row.createCell(22).setCellValue(objToString(fitGoodsInOut.getDeliverTypeTitle()));
                 } else {
                     row.createCell(22).setCellValue("");
                 }
 
-                //配送人员
-                if (null != fitGoodsInOut.getDeliverRealName()) {
-                    row.createCell(23).setCellValue(objToString(fitGoodsInOut.getDeliverRealName()));
+                //中转仓
+                if (null != fitGoodsInOut.getWhName()) {
+                    row.createCell(23).setCellValue(objToString(fitGoodsInOut.getWhName()));
                 } else {
                     row.createCell(23).setCellValue("");
                 }
 
+                //配送人员
+                if (null != fitGoodsInOut.getDeliverRealName()) {
+                    row.createCell(24).setCellValue(objToString(fitGoodsInOut.getDeliverRealName()));
+                } else {
+                    row.createCell(24).setCellValue("");
+                }
+
                 //配送人员电话
                 if (null != fitGoodsInOut.getDeliverUsername()) {
-                    row.createCell(24).setCellValue(objToString(fitGoodsInOut.getDeliverUsername()));
-                } else {
-                    row.createCell(24).setCellValue(objToString(""));
-                }
-                //收货人姓名
-                if (null != fitGoodsInOut.getShippingName()) {
-                    row.createCell(25).setCellValue(objToString(fitGoodsInOut.getShippingName()));
+                    row.createCell(25).setCellValue(objToString(fitGoodsInOut.getDeliverUsername()));
                 } else {
                     row.createCell(25).setCellValue(objToString(""));
                 }
-                //收货人电话
-                if (null != fitGoodsInOut.getShippingPhone()) {
-                    row.createCell(26).setCellValue(objToString(fitGoodsInOut.getShippingPhone()));
+                //收货人姓名
+                if (null != fitGoodsInOut.getShippingName()) {
+                    row.createCell(26).setCellValue(objToString(fitGoodsInOut.getShippingName()));
                 } else {
                     row.createCell(26).setCellValue(objToString(""));
                 }
-                //收货人地址
-                if (null != fitGoodsInOut.getShippingAddress()) {
-                    row.createCell(27).setCellValue(objToString(fitGoodsInOut.getShippingAddress()));
+                //收货人电话
+                if (null != fitGoodsInOut.getShippingPhone()) {
+                    row.createCell(27).setCellValue(objToString(fitGoodsInOut.getShippingPhone()));
                 } else {
                     row.createCell(27).setCellValue(objToString(""));
+                }
+                //收货人地址
+                if (null != fitGoodsInOut.getShippingAddress()) {
+                    row.createCell(28).setCellValue(objToString(fitGoodsInOut.getShippingAddress()));
+                } else {
+                    row.createCell(28).setCellValue(objToString(""));
                 }
 
                 //订单备注
                 if (null != fitGoodsInOut.getRemark()) {
-                    row.createCell(28).setCellValue(objToString(fitGoodsInOut.getRemark()));
-                } else {
-                    row.createCell(28).setCellValue(objToString(""));
-                }
-                //销售经理
-                if (null != fitGoodsInOut.getSalesManager()) {
-                    row.createCell(29).setCellValue(objToString(fitGoodsInOut.getSalesManager()));
+                    row.createCell(29).setCellValue(objToString(fitGoodsInOut.getRemark()));
                 } else {
                     row.createCell(29).setCellValue(objToString(""));
                 }
+                
 
             }
         }
