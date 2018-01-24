@@ -1151,7 +1151,7 @@
             </dd>
         </dl>
         
-        <#if order.deliverTypeTitle?? && order.deliverTypeTitle!='门店自提'>
+        <#if order.deliverTypeTitle??>
         <dl>
             <dt>收货信息</dt>
             <dd>
