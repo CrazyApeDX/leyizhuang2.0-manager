@@ -1001,6 +1001,7 @@ public class TdManagerOrderController {
 			if (type.equalsIgnoreCase("editMark")) {
 				order.setRemarkInfo(data);
 			}
+			
 			// 修改商品总金额
 			else if (type.equalsIgnoreCase("editTotalGoodsPrice")) {
 				double goodsPrice = Double.parseDouble(data);
@@ -1158,6 +1159,48 @@ public class TdManagerOrderController {
 		return res;
 	}
 
+	
+	
+	@RequestMapping(value = "/paperSalesNumber/edit", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> paperSalesNumberEdit(String orderNumber, String paperSalesNumber, 
+			ModelMap map, HttpServletRequest req) {
+
+		Map<String, Object> res = new HashMap<String, Object>();
+
+		res.put("code", 1);
+
+		String username = (String) req.getSession().getAttribute("manager");
+		if (null == username) {
+			res.put("message", "请重新登录");
+			return res;
+		}
+
+		if (null != orderNumber && !orderNumber.isEmpty()) {
+			TdOrder order = tdOrderService.findByOrderNumber(orderNumber);
+			if (null != paperSalesNumber) {
+				List<TdOrder> tdOrders = this.tdOrderService.findByMainOrderNumberIgnoreCase(order.getMainOrderNumber());
+				if (null != tdOrders) {
+					for (int i = 0; i < tdOrders.size(); i++) {
+						TdOrder tdOrder = tdOrders.get(i);
+						tdOrder.setPaperSalesNumber(paperSalesNumber);
+						tdOrderService.save(tdOrder);
+					}
+				}
+			}
+			// 修改纸质销货单号
+			order.setPaperSalesNumber(paperSalesNumber);
+			tdOrderService.save(order);
+			tdManagerLogService.addLog("edit", "修改订单", req);
+
+			res.put("code", 0);
+			res.put("message", "修改成功!");
+			return res;
+		}
+
+		res.put("message", "参数错误!");
+		return res;
+	}
 	/*---------------------------------------导入表格 begin -------------------------------*/
 
 	/**************

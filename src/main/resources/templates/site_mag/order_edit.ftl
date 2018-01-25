@@ -70,6 +70,7 @@
             $("#btnHDFKReceive").click(function () { OrderHDFKReceive(); }); //货到付款确认收货
             $("#btnEditAcceptInfo").click(function () { EditAcceptInfo(); }); //修改收货信息
             $("#btnEditRemark").click(function () { EditOrderRemark(); });    //修改订单备注
+            $("#btnEditPaperSalesNumber").click(function () { EditPaperSalesNumber(); });    //修改订单备注
             $("#btnEditRealAmount").click(function () { EditRealAmount(); }); //修改商品总金额
             $("#btnEditExpressFee").click(function () { EditExpressFee(); }); //修改配送费用
             $("#btnEditPaymentFee").click(function () { EditPaymentFee(); }); //修改支付手续费
@@ -266,6 +267,36 @@
                 cancel: true
             });
         }
+        
+        //修改纸质销货单号
+        function EditPaperSalesNumber() {
+            var dialog = $.dialog({
+                title: '订单备注',
+                content: '<textarea id="paperSalesNumber" name="paperSalesNumber" rows="2" cols="20" class="input">${order.paperSalesNumber!''}</textarea>',
+                min: false,
+                max: false,
+                lock: true,
+                ok: function () {
+                    var paperSalesNumber = $("#paperSalesNumber", parent.document).val();
+                    if (paperSalesNumber == "") {
+                        $.dialog.alert('对不起，请输入纸质销货单号！', function () { }, dialog);
+                        return false;
+                    }
+                    if (paperSalesNumber.length > 255) {
+                        $.dialog.alert('对不起，输入的纸质销货单号过长！', function () { }, dialog);
+                        return false;
+                    }
+                    var orderNumber = $.trim($("#spanOrderNumber").text());
+                    var postData = { "orderNumber": orderNumber, "paperSalesNumber": paperSalesNumber };
+                    //发送AJAX请求
+                    sendAjaxUrl(dialog, postData, "/Verwalter/order/paperSalesNumber/edit");
+                    return false;
+                },
+                cancel: true
+            });
+        }
+        
+        
         //修改商品总金额
         function EditRealAmount() {
             var pop = $.dialog.prompt('请修改商品总金额',
@@ -1260,6 +1291,17 @@
                             <div class="position">
                                 <div>${order.remarkInfo!""}</div>
                                 <input name="btnEditRemark" type="button" id="btnEditRemark" class="ibtn" value="修改" style="margin-top: 2px;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th valign="top">
+                            纸质销货单号
+                        </th>
+                        <td>
+                            <div class="position">
+                                <div>${order.paperSalesNumber!""}</div>
+                                <input name="btnEditPaperSalesNumber" type="button" id="btnEditPaperSalesNumber" class="ibtn" value="修改" style="margin-top: 2px;">
                             </div>
                         </td>
                     </tr>

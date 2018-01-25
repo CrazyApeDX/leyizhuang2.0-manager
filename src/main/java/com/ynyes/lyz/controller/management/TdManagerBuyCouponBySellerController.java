@@ -306,6 +306,7 @@ public class TdManagerBuyCouponBySellerController {
 		} else {
 			// goods_page = tdGoodsService.findAll(page, size);
 		}
+		//判断是否成都直营
 		Integer flag = 1;
 		if (null != tdDiySite && tdDiySite.getRegionId().equals(2121L) 
 				&& "直营".equals(tdDiySite.getCustTypeName())) {
