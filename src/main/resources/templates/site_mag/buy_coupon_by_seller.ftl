@@ -449,6 +449,7 @@ function checkDate(){
 <input type="hidden" id="hidden_username" name="hidden_username" />
 <input type="hidden" id="hidden_seller_username" name="hidden_seller_username" />
 <input type="hidden" id="hidden_balance" name="hidden_balance" />
+<input type="hidden" id="hidden_flag" name="hidden_flag" />
 </div>
 <input name="menuId" type="text" value='${mid!""}' style="display:none;">
 <input name="channelId" type="text" value='${cid!""}' style="display:none">
@@ -615,6 +616,13 @@ function checkDate(){
                 <span class="Validform_checktip"></span>
             </dd>
         </dl>
+        <dl>
+            <dt>纸质销货单号</dt>
+            <dd>
+                <input name="paperSalesNumber" id="paperSalesNumber" type="text" class="input normal">
+                <span class="Validform_checktip"></span>
+            </dd>
+        </dl>
     </div>
     
     <!--/内容-->
@@ -636,12 +644,20 @@ function checkDate(){
 	    			
 		    		var username = $("#hidden_username").val();
 		    		var sellerUsername = $("#hidden_seller_username").val();
+		    		var paperSalesNumber = $("#paperSalesNumber").val();
+		    		var flag = $("#hidden_flag").val();
 		    		
 		    		if (!username || !sellerUsername || username.length != 11 || sellerUsername.length != 11) {
 		    			$("#btnSubmit").attr("onclick", "getInfo();");
 		    			return;
 		    		}
-		    	
+		    		if(null != flag && flag != "" && flag == 2){
+			    		if(null == paperSalesNumber || paperSalesNumber == ""){
+			    			$("#btnSubmit").attr("onclick", "getInfo();");
+			    			alert("请填写纸质销货单号");
+			    			return;
+			    		}
+			    	}
 		    		ids = [];
 		    		numbers = [];
 		    		coupons = [];
@@ -678,7 +694,8 @@ function checkDate(){
 		    				ids : ids,
 		    				numbers : numbers,
 		    				coupons : coupons,
-		    				remark : remark
+		    				remark : remark,
+		    				paperSalesNumber : paperSalesNumber
 		    			},
 		    			success : function(res) {
 		    				if (0 === res.status) {

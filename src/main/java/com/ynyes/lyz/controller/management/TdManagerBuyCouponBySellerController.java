@@ -39,7 +39,6 @@ import com.ynyes.lyz.entity.TdManagerRole;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdOwnMoneyRecord;
-import com.ynyes.lyz.entity.TdPriceList;
 import com.ynyes.lyz.entity.TdPriceListItem;
 import com.ynyes.lyz.entity.TdProductCategory;
 import com.ynyes.lyz.entity.user.TdUser;
@@ -63,7 +62,6 @@ import com.ynyes.lyz.service.TdOrderGoodsService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdOwnMoneyRecordService;
 import com.ynyes.lyz.service.TdPriceListItemService;
-import com.ynyes.lyz.service.TdPriceListService;
 import com.ynyes.lyz.service.TdProductCategoryService;
 import com.ynyes.lyz.service.TdUserService;
 import com.ynyes.lyz.util.CountUtil;
@@ -83,9 +81,6 @@ public class TdManagerBuyCouponBySellerController {
 
 	@Autowired
 	private TdGoodsService tdGoodsService;
-
-	@Autowired
-	private TdPriceListService tdPriceListService;
 
 	@Autowired
 	private TdPriceListItemService tdPriceListItemService;
@@ -296,10 +291,12 @@ public class TdManagerBuyCouponBySellerController {
 		List<Long> userTypeList = new ArrayList<>();
 		userTypeList.add(1L);
 		userTypeList.add(2L);
+		TdDiySite tdDiySite = null;
 		if (null != keywords) {
 			if(null != diyCode){
 				seller_page = tdUserService.findByUsernameContainingOrRealNameContainingAndDiyCodeAndUserTypeIn(keywords, page,
 						size,diyCode,userTypeList);
+				tdDiySite = this.tdDiySiteService.findByStoreCode(diyCode);
 			}else{
 				
 				seller_page = tdUserService.findByUsernameContainingOrRealNameContainingAndCityAndUserTypeIn(keywords, page,
@@ -309,7 +306,12 @@ public class TdManagerBuyCouponBySellerController {
 		} else {
 			// goods_page = tdGoodsService.findAll(page, size);
 		}
-
+		Integer flag = 1;
+		if (null != tdDiySite && tdDiySite.getRegionId().equals(2121L) 
+				&& "直营".equals(tdDiySite.getCustTypeName())) {
+			flag = 2;
+		}
+		map.addAttribute("flag", flag);
 		map.addAttribute("seller_page", seller_page);
 		return "/site_mag/buy_coupon_dialog_seller";
 	}
@@ -318,7 +320,7 @@ public class TdManagerBuyCouponBySellerController {
 	@RequestMapping(value = "/count", method = RequestMethod.POST)
 	@ResponseBody
 	public Map<String, Object> countPrice(HttpServletRequest req, String username, String sellerUsername, Long[] ids,
-			Long[] numbers, Long[] coupons, String remark) {
+			Long[] numbers, Long[] coupons, String remark, String paperSalesNumber) {
 		Map<String, Object> res = new HashMap<>();
 		res.put("status", -1);
 
@@ -391,7 +393,7 @@ public class TdManagerBuyCouponBySellerController {
 		// order.setStatusId(5L);
 		order.setUsername(sellerUsername);
 		order.setRemark(remark);
-
+		order.setPaperSalesNumber(paperSalesNumber);
 		for (int i = 0; i < ids.length; i++) {
 			Long id = ids[i];
 			// 获取指定的商品
@@ -1456,6 +1458,7 @@ public class TdManagerBuyCouponBySellerController {
 				TdOrder order = new TdOrder();
 				order.setOrderNumber(order_temp.getOrderNumber().replace("XN", brand.getShortName()));
 
+				order.setPaperSalesNumber(order_temp.getPaperSalesNumber());
 				order.setRemark(order_temp.getRemark());
 				order.setDiySiteId(order_temp.getDiySiteId());
 				order.setDiySiteCode(order_temp.getDiySiteCode());

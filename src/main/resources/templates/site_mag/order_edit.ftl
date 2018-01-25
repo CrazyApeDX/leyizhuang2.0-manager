@@ -1163,7 +1163,7 @@
                         <td>
                             <div class="position">
                                 <span id="spanAcceptName">${order.shippingName!""}</span>
-                                <#if order.statusId lt 4>
+                                <#if order.statusId lt 4 && order.deliverTypeTitle?? && order.deliverTypeTitle=='门店自提'>
                                 <input name="btnEditAcceptInfo" type="button" id="btnEditAcceptInfo" class="ibtn" value="修改">
                                 </#if>
                             </div>
