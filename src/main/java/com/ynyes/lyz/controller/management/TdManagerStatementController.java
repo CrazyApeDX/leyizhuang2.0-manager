@@ -11,6 +11,7 @@ import com.ynyes.lyz.entity.report.TdAgencyFund;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.service.*;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
+import com.ynyes.lyz.util.CountUtil;
 import com.ynyes.lyz.util.SiteMagConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
@@ -2189,21 +2190,31 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 Double diyReceipt = 0.0; //门店收款总额
                 for (TdSubOwn tdSubOwn : tdSubOwnList) {
                     if (tdSubOwn.getOrderNumber().contains("HR")) {
-                        HRTotalPrice += tdSubOwn.getTotalPrice();
-                        HRotherPay += tdSubOwn.getOtherPay();
+//                        HRTotalPrice +=  tdSubOwn.getTotalPrice();
+//                        HRotherPay += tdSubOwn.getOtherPay();
+                        HRTotalPrice = CountUtil.add(tdSubOwn.getTotalPrice(), HRTotalPrice);
+                        HRotherPay = CountUtil.add(tdSubOwn.getOtherPay(), HRotherPay);
                     } else if (tdSubOwn.getOrderNumber().contains("LYZ") || tdSubOwn.getOrderNumber().contains("YR") || tdSubOwn.getOrderNumber().contains("YF")) {
-                        OtherTotalPrice += tdSubOwn.getTotalPrice();
-                        elseOtherPay += tdSubOwn.getOtherPay();
+//                        OtherTotalPrice += tdSubOwn.getTotalPrice();
+//                        elseOtherPay += tdSubOwn.getOtherPay();
+                    	OtherTotalPrice = CountUtil.add(tdSubOwn.getTotalPrice(), OtherTotalPrice);
+                    	elseOtherPay = CountUtil.add(tdSubOwn.getOtherPay(), elseOtherPay);
                     }
-                    deliveryReceipt = tdSubOwn.getMoney() + tdSubOwn.getPos();
-                    diyReceipt = tdSubOwn.getBackMoney() + tdSubOwn.getBackPos() + tdSubOwn.getBackOther();
+//                    deliveryReceipt = tdSubOwn.getMoney() + tdSubOwn.getPos();
+//                    diyReceipt = tdSubOwn.getBackMoney() + tdSubOwn.getBackPos() + tdSubOwn.getBackOther();
+                    deliveryReceipt = CountUtil.add(tdSubOwn.getMoney(), tdSubOwn.getPos());
+                    diyReceipt = CountUtil.add(tdSubOwn.getBackMoney(), tdSubOwn.getBackPos(),tdSubOwn.getBackOther());
                 }
 
                 if ((deliveryReceipt + diyReceipt) <= (OtherTotalPrice - elseOtherPay)) {
-                    HROwn = HRTotalPrice - HRotherPay;
-                    otherOwn = OtherTotalPrice - elseOtherPay - deliveryReceipt - diyReceipt;
+//                    HROwn = HRTotalPrice - HRotherPay;
+//                    otherOwn = OtherTotalPrice - elseOtherPay - deliveryReceipt - diyReceipt;
+                	HROwn = CountUtil.sub(HRTotalPrice, HRotherPay);
+                	otherOwn = CountUtil.sub(OtherTotalPrice, elseOtherPay, deliveryReceipt, diyReceipt);
+                	
                 } else {
-                    HROwn = HRTotalPrice + OtherTotalPrice - HRotherPay - elseOtherPay - deliveryReceipt - diyReceipt;
+//                    HROwn = HRTotalPrice + OtherTotalPrice - HRotherPay - elseOtherPay - deliveryReceipt - diyReceipt;
+                	HROwn = CountUtil.sub(CountUtil.add(HRTotalPrice, OtherTotalPrice), OtherTotalPrice, elseOtherPay, deliveryReceipt, diyReceipt);
                     otherOwn = 0.0;
                 }
 
