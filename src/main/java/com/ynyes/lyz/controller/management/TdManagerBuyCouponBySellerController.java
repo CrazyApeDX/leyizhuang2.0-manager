@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.common.util.DateUtil;
 import com.ibm.icu.math.BigDecimal;
 import com.ynyes.lyz.entity.TdActivity;
 import com.ynyes.lyz.entity.TdActivityGift;
@@ -145,7 +146,18 @@ public class TdManagerBuyCouponBySellerController {
 		if (null == username) {
 			return "redirect:/Verwalter/login";
 		}
-
+		TdManager tdManager = tdManagerService.findByUsernameAndIsEnableTrue(username);
+		String diyCode = tdManager.getDiyCode();
+		TdDiySite tdDiySite = null;
+		if(null != diyCode){
+			tdDiySite = this.tdDiySiteService.findByStoreCode(diyCode);
+		}
+		if (null != tdDiySite && tdDiySite.getRegionId().equals(2121L) 
+				&& "直营".equals(tdDiySite.getCustTypeName())  && !(tdDiySite.getStoreCode().contains("FX#"))
+				&& (DateUtil.getHour() < 6 || DateUtil.getHour() > 19)) {
+			return "/site_mag/suspend";
+		}
+		
 		return "/site_mag/buy_coupon_by_seller";
 	}
 
@@ -309,7 +321,7 @@ public class TdManagerBuyCouponBySellerController {
 		//判断是否成都直营
 		Integer flag = 1;
 		if (null != tdDiySite && tdDiySite.getRegionId().equals(2121L) 
-				&& "直营".equals(tdDiySite.getCustTypeName())) {
+				&& "直营".equals(tdDiySite.getCustTypeName()) && !(tdDiySite.getStoreCode().contains("FX#"))) {
 			flag = 2;
 		}
 		map.addAttribute("flag", flag);

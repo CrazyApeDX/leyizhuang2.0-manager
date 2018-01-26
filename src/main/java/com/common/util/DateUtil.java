@@ -461,5 +461,17 @@ public class DateUtil {
 		calendar.set(Calendar.SECOND, calendar.getMaximum(Calendar.SECOND));
 		return calendar.getTime();
 	}
+	
+	/**
+	* 得到现在小时
+	*/
+	public static Integer getHour() {
+		Date currentTime = new Date();
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String dateString = formatter.format(currentTime);
+		String hour;
+		hour = dateString.substring(11, 13);
+		return Integer.parseInt(hour);
+	}
 
 }
