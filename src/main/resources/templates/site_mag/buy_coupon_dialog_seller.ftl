@@ -74,6 +74,7 @@
         $("#seller_name", W.document).append("<dd id='sellerRealName' name='sellerRealName'>"+$("#seller_name").val()+"</dd>")
         $("#seller_phone", W.document).append("<dd id='sellerUsername' name='sellerUsername'>"+$("#seller_phone").val()+"</dd>")
         $("#hidden_seller_username", W.document).val($("#seller_phone").val())
+        $("#hidden_flag", W.document).val($("#flag").val())
         api.close();
     }
     
@@ -108,7 +109,7 @@
       </dd>
     </dl>
     <dl>
-      <dt>会员电话</dt>
+      <dt>导购电话</dt>
       <dd>
         <input type="text" id="seller_phone" class="input normal">
         <span class="Validform_checktip">*</span>
@@ -154,7 +155,7 @@ function __doPostBack(eventTarget, eventArgument) {
 <!--/工具栏-->
 
 <!--文字列表-->
-
+<input type="text" id="flag" name="flag" value="${flag!""}"/>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ltable">
     <tbody>
         <tr class="odd_bg">

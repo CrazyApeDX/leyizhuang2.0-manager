@@ -18,7 +18,7 @@ public interface TdSalesRepo extends
         PagingAndSortingRepository<TdSales, Long>,
         JpaSpecificationExecutor<TdSales> {
 
-    @Query(value = " SELECT "
+    @Query(value = " SELECT temp.* FROM (SELECT "
             + "   uuid()                              id, "
             + "   diy.city                            city_name, "
             + "   o.diy_site_name                     diy_site_name, "
@@ -714,7 +714,10 @@ public interface TdSalesRepo extends
             + " ORDER BY "
             + "   order_time, "
             + "   main_order_number, "
-            + "   order_number DESC;  ", nativeQuery = true)
+            + "   order_number DESC) temp "
+            + "			GROUP BY temp.main_order_number, temp.order_number, temp.sku, "
+			+ "			temp.goods_quantity,temp.user_id, temp.seller_username, "
+			+ "			temp.goods_price, temp.order_time, temp.stype;  ", nativeQuery = true)
     List<TdSales> queryDownList(Date begin, Date end, String cityName,
                                 String diySiteCode, List<String> roleDiyIds);
 

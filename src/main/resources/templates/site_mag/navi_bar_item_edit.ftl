@@ -95,6 +95,17 @@ $(function () {
         </dd>
     </dl>
     <dl>
+        <dt>类型</dt>
+        <dd>
+        	<div class="rule-single-select">
+                <select name="type" datatype="*" sucmsg=" ">
+                    <option value="0" <#if navi_bar_item?? && navi_bar_item.type?? && navi_bar_item.type == 0>selected="selected"</#if> >会员APP</option>
+                    <option value="1" <#if navi_bar_item?? && navi_bar_item.type?? && navi_bar_item.type == 1>selected="selected"</#if> >装饰公司APP</option>
+                </select>
+            </div>
+        </dd>
+    </dl>
+    <dl>
         <dt>是否使能</dt>
         <dd>
             <div class="rule-multi-radio multi-radio">

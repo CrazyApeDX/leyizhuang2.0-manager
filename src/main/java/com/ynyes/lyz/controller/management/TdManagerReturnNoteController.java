@@ -314,7 +314,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					map.addAttribute("returnNote", returnNote);
 					map.addAttribute("user", tdUserService.findByUsername(returnNote.getUsername()));
 					Integer flag = 1;
-					String str = "退门店现金";
+					String str = "退门店现金（门店退现金给客户）";
 					if (null != returnNote) {
 						TdOrder tdOrder = tdOrderService.findByOrderNumber(returnNote.getOrderNumber());
 						if (null != tdOrder) {
@@ -324,7 +324,7 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 								flag = 2;
 								TdDiySite tdDiySite = this.tdDiySiteService.findOne(tdOrder.getDiySiteId());
 								if (null != tdDiySite && !("直营".equals(tdDiySite.getCustTypeName()))) {
-									str = "退预存款&nbsp;&nbsp;&nbsp;";
+									str = "退预存款（立刻到账，退回原订单会员系统预存款账户中）";
 								}
 							}
 						}
@@ -462,9 +462,12 @@ public class TdManagerReturnNoteController extends TdManagerBaseController {
 					tdOrderService.save(order);
 					if (cashReturnNotes != null && cashReturnNotes.size() > 0) {
 						for (TdCashReturnNote tdCashReturnNote : cashReturnNotes) {
-							TdCashRefundInf cashRefundInf = tdInterfaceService.initCashRefundInf(tdCashReturnNote);
-//							tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
-							tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
+							if (null != tdCashReturnNote && null != tdCashReturnNote.getMoney() 
+									&& tdCashReturnNote.getMoney() > 0d) {
+								TdCashRefundInf cashRefundInf = tdInterfaceService.initCashRefundInf(tdCashReturnNote);
+	//							tdInterfaceService.ebsWithObject(cashRefundInf, INFTYPE.CASHREFUNDINF);
+								tdEbsSenderService.sendCashRefundToEbsAndRecord(cashRefundInf);
+							}
 						}
 						for (int index = 0; index < cashReturnNotes.size(); index++) {
 							TdCashReturnNote cashReturnNote = cashReturnNotes.get(index);

@@ -17,6 +17,21 @@
 	    //初始化表单验证
 	    $("#form1").initValidform();
 	});
+	//根据城市选择销售经理
+    function getSalesManagerList(){
+        $.ajax({
+            url : '/Verwalter/fitment/company/salesManager?regionId='+$(cityId).val(),
+            type : 'POST',
+            
+            error: function(res){
+                alert("error code : -1 + " + res);
+            },
+            success : function(res){
+            	$("#salesManager").html(res);
+                
+            }
+        });
+    }
 </script>
 </head>
 
@@ -106,7 +121,7 @@
         		<dt>所属城市</dt>
         		<dd>
             		<div class="rule-single-select">
-                		<select name="sobId" datatype="*" sucmsg=" ">
+                		<select name="sobId" id="cityId" onchange="getSalesManagerList();" datatype="*" sucmsg=" ">
                 			<#--
                     		<#if (!company?? || (company?? && company.sobId = 0))>
                     			<option value="0">请选择...</option>
@@ -121,6 +136,11 @@
             		</div>
         		</dd>
     		</dl>
+    		<div id="salesManager">
+	    		<#if fitSalesManagers??>
+	                <#include "/fitment/management/sales_manager.ftl" />
+	            </#if>
+    		</div>
     		<dl>
         		<dt>华润价目表</dt>
         		<dd>

@@ -224,10 +224,10 @@ public class TdManagerAllocationController {
 			if (StringUtils.isNotBlank(tdManager.getDiyCode())) {
 				TdDiySite diy = tdDiySiteService.findByStoreCode(tdManager.getDiyCode());
 				if (null != diy) {
-					if (diy.getId() == tdAllocation.getAllocationFrom()) {
+					if (diy.getId().equals(tdAllocation.getAllocationFrom())) {
 						map.addAttribute("allocationFromFlag", true);
 					}
-					if (diy.getId() == tdAllocation.getAllocationTo()) {
+					if (diy.getId().equals(tdAllocation.getAllocationTo())) {
 						map.addAttribute("allocationToFlag", true);
 					}
 				}

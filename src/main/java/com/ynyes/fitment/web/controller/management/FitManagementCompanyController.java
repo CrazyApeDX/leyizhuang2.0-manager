@@ -22,8 +22,10 @@ import com.ynyes.fitment.core.entity.client.result.ClientResult.ActionCode;
 import com.ynyes.fitment.core.entity.persistent.table.TableEntity.OriginType;
 import com.ynyes.fitment.foundation.entity.FitCompany;
 import com.ynyes.fitment.foundation.entity.FitPriceHeader;
+import com.ynyes.fitment.foundation.entity.FitSalesManager;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
 import com.ynyes.fitment.foundation.service.FitPriceHeaderService;
+import com.ynyes.fitment.foundation.service.FitSalesManagerService;
 import com.ynyes.fitment.foundation.service.biz.BizCreditChangeLogService;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdManager;
@@ -48,6 +50,9 @@ public class FitManagementCompanyController {
 
 	@Autowired
 	private TdManagerService tdManagerService;
+	
+	@Autowired
+	private FitSalesManagerService fitSalesManagerService;
 
 	@RequestMapping(value = "/list", produces = "text/html;charset=utf-8")
 	public String companyList(HttpServletRequest req, ModelMap map, Integer page, Integer size, String __EVENTTARGET,
@@ -88,6 +93,7 @@ public class FitManagementCompanyController {
 		List<FitPriceHeader> yrPriceHeaderList = null;
 		List<FitPriceHeader> xqPriceHeaderList = null;
 		List<TdCity> cityList = null;
+		List<FitSalesManager> fitSalesManagers = null;
 		try {
 			company = this.fitCompanyService.findOne(id);
 			lyzPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("LYZ");
@@ -95,6 +101,7 @@ public class FitManagementCompanyController {
 			yrPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("YR");
 			xqPriceHeaderList = this.fitPriceHeaderService.findActivePriceHeaderByProductType("XQ");
 			cityList = this.tdCityService.findAll();
+			fitSalesManagers = this.fitSalesManagerService.findByCityCode(company.getSobId().toString());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,6 +111,7 @@ public class FitManagementCompanyController {
 		map.addAttribute("yrPriceHeaderList", yrPriceHeaderList);
 		map.addAttribute("xqPriceHeaderList", xqPriceHeaderList);
 		map.addAttribute("cityList", cityList);
+		map.addAttribute("fitSalesManagers", fitSalesManagers);
 		return "/fitment/management/company_edit";
 	}
 
@@ -196,5 +204,13 @@ public class FitManagementCompanyController {
 			e.printStackTrace();
 			return new ClientResult(ActionCode.FAILURE, "出现意外的错误，请稍后重试或联系管理员");
 		}
+	}
+	
+	
+	@RequestMapping(value = "/salesManager", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+	public String companySalesManagerValidate(String regionId, ModelMap map, HttpServletRequest request) {
+		List<FitSalesManager> fitSalesManagers = this.fitSalesManagerService.findByCityCode(regionId);
+		map.addAttribute("fitSalesManagers", fitSalesManagers);
+		return "/fitment/management/sales_manager";
 	}
 }

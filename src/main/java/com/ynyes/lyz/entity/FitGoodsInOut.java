@@ -118,6 +118,10 @@ public class FitGoodsInOut {
 	// 城市
 	@Column
 	private String cityName;
+	// 销售经理
+	@Column
+	private String salesManager;
+	
 	public Long getId() {
 		return id;
 	}
@@ -291,25 +295,25 @@ public class FitGoodsInOut {
 	public void setCityName(String cityName) {
 		this.cityName = cityName;
 	}
+	public String getSalesManager() {
+		return salesManager;
+	}
+	public void setSalesManager(String salesManager) {
+		this.salesManager = salesManager;
+	}
 	@Override
 	public String toString() {
-		return "FitGoodsInOut [id=" + id + ", mainOrderNumber=" + mainOrderNumber + ", orderNumber=" + orderNumber
-				+ ", orderTime=" + orderTime + ", salesTime=" + salesTime + ", statusId=" + statusId
-				+ ", sellerRealName=" + sellerRealName + ", realUserRealName=" + realUserRealName
-				+ ", realUserUsername=" + realUserUsername + ", userId=" + userId + ", sku=" + sku + ", goodsTitle="
-				+ goodsTitle + ", quantity=" + quantity + ", price=" + price + ", realPrice=" + realPrice
-				+ ", brandTitle=" + brandTitle + ", goodsParentTypeTitle=" + goodsParentTypeTitle + ", goodsTypeTitle="
-				+ goodsTypeTitle + ", deliverTypeTitle=" + deliverTypeTitle + ", whName=" + whName
+		return "FitGoodsInOut [id=" + id + ", diySiteName=" + diySiteName + ", mainOrderNumber=" + mainOrderNumber
+				+ ", orderNumber=" + orderNumber + ", orderTime=" + orderTime + ", salesTime=" + salesTime
+				+ ", statusId=" + statusId + ", sellerRealName=" + sellerRealName + ", realUserRealName="
+				+ realUserRealName + ", realUserUsername=" + realUserUsername + ", userId=" + userId + ", sku=" + sku
+				+ ", goodsTitle=" + goodsTitle + ", quantity=" + quantity + ", price=" + price + ", realPrice="
+				+ realPrice + ", brandTitle=" + brandTitle + ", goodsParentTypeTitle=" + goodsParentTypeTitle
+				+ ", goodsTypeTitle=" + goodsTypeTitle + ", deliverTypeTitle=" + deliverTypeTitle + ", whName=" + whName
 				+ ", deliverRealName=" + deliverRealName + ", deliverUsername=" + deliverUsername + ", shippingName="
 				+ shippingName + ", shippingPhone=" + shippingPhone + ", shippingAddress=" + shippingAddress
-				+ ", remark=" + remark + ", cityName=" + cityName + "]";
+				+ ", remark=" + remark + ", cityName=" + cityName + ", salesManager=" + salesManager + "]";
 	}
-	
-	
-	
-
-	
-	
 	
 
 }

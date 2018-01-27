@@ -1001,6 +1001,7 @@ public class TdManagerOrderController {
 			if (type.equalsIgnoreCase("editMark")) {
 				order.setRemarkInfo(data);
 			}
+			
 			// 修改商品总金额
 			else if (type.equalsIgnoreCase("editTotalGoodsPrice")) {
 				double goodsPrice = Double.parseDouble(data);
@@ -1158,6 +1159,48 @@ public class TdManagerOrderController {
 		return res;
 	}
 
+	
+	
+	@RequestMapping(value = "/paperSalesNumber/edit", method = RequestMethod.POST)
+	@ResponseBody
+	public Map<String, Object> paperSalesNumberEdit(String orderNumber, String paperSalesNumber, 
+			ModelMap map, HttpServletRequest req) {
+
+		Map<String, Object> res = new HashMap<String, Object>();
+
+		res.put("code", 1);
+
+		String username = (String) req.getSession().getAttribute("manager");
+		if (null == username) {
+			res.put("message", "请重新登录");
+			return res;
+		}
+
+		if (null != orderNumber && !orderNumber.isEmpty()) {
+			TdOrder order = tdOrderService.findByOrderNumber(orderNumber);
+			if (null != paperSalesNumber) {
+				List<TdOrder> tdOrders = this.tdOrderService.findByMainOrderNumberIgnoreCase(order.getMainOrderNumber());
+				if (null != tdOrders) {
+					for (int i = 0; i < tdOrders.size(); i++) {
+						TdOrder tdOrder = tdOrders.get(i);
+						tdOrder.setPaperSalesNumber(paperSalesNumber);
+						tdOrderService.save(tdOrder);
+					}
+				}
+			}
+			// 修改纸质销货单号
+			order.setPaperSalesNumber(paperSalesNumber);
+			tdOrderService.save(order);
+			tdManagerLogService.addLog("edit", "修改订单", req);
+
+			res.put("code", 0);
+			res.put("message", "修改成功!");
+			return res;
+		}
+
+		res.put("message", "参数错误!");
+		return res;
+	}
 	/*---------------------------------------导入表格 begin -------------------------------*/
 
 	/**************
@@ -1258,7 +1301,7 @@ public class TdManagerOrderController {
 	@RequestMapping(value = "/own/money")
 	@ResponseBody
 	public Map<String, Object> ownMoney(Long id, Double money, Double pos, Double other, String realPayTime,
-			Long serialNumber, HttpServletRequest req) {
+			String serialNumber, HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
 		// 判断登录
@@ -1371,7 +1414,7 @@ public class TdManagerOrderController {
 	@RequestMapping(value = "/backMoney")
 	@ResponseBody
 	public Map<String, Object> backMoney(Long id, Double money, Double pos, Double other, String realPayTime,
-			Long serialNumber, HttpServletRequest req) {
+			String serialNumber, HttpServletRequest req) {
 		Map<String, Object> res = new HashMap<String, Object>();
 		String username = (String) req.getSession().getAttribute("manager");
 		// 判断登录
@@ -1415,62 +1458,27 @@ public class TdManagerOrderController {
 			res.put("code", -1);
 			return res;
 		}
-		// 保存收款记录
-		TdOwnMoneyRecord rec = new TdOwnMoneyRecord();
-		if (null != serialNumber) {
-			rec.setSerialNumber(serialNumber);
-		}
-		rec.setCreateTime(new Date());
-		rec.setOrderNumber(order.getMainOrderNumber());
-		rec.setDiyCode(order.getDiySiteCode());
-		rec.setOwned(0.0);
-		rec.setPayed(money + pos + other);
-		rec.setBackMoney(money);
-		rec.setBackPos(pos);
-		rec.setBackOther(other);
-		rec.setUsername(order.getUsername());
-		rec.setIsOwn(false);
-		rec.setIsEnable(false);
-		rec.setIsPayed(false);
-		rec.setSortId(99L);
-		rec.setPayTime(new Date());
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date date = null;
-		try {
-			date = sdf.parse(realPayTime);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		rec.setRealPayTime(date);
-		tdOwnMoneyRecordService.save(rec);
-
-		// 门店收款保存到订单
-		order.setCashPay(money);
-		order.setPosPay(pos);
-		order.setBackOtherPay(other);
-		tdOrderService.save(order);
-		
-		// 查找TdOrderData，如果存在，则设置TdOrderData的值
-		TdOrderData orderData = tdOrderDataService.findByMainOrderNumber(order.getMainOrderNumber());
-		if (null != orderData) {
-			orderData.setSellerCash(CountUtil.add(orderData.getSellerCash(), money));
-			orderData.setSellerPos(CountUtil.add(orderData.getSellerPos(), pos));
-			orderData.setSellerOther(CountUtil.add(orderData.getSellerOther(), other));
-			orderData.setDue(orderData.countDue());
-			tdOrderDataService.save(orderData);
-		} else {
-			LOG.warn("未查找到主单号为{}的TdOrderData数据", order.getOrderNumber());
-		}
+		 
 
 		// 2017-02-13：增加信用额度
-		TdUser seller = this.tdUserService.findOne(order.getSellerId());
-		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
-				order.getMainOrderNumber());
+//		TdUser seller = this.tdUserService.findOne(order.getSellerId());
+//		this.tdUserService.repayCredit(CreditChangeType.REPAY, seller, (money + pos + other),
+//				order.getMainOrderNumber());
+//
+//		// 记录收款并发ebs
+//		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
 
-		// 记录收款并发ebs
-		tdInterfaceService.initCashReciptByTdOwnMoneyRecord(rec, INFConstants.INF_RECEIPT_TYPE_DIYSITE_INT);
-
+		try {
+			this.tdUserService.backMoney(order, serialNumber, money, pos, other,realPayTime);
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            res.put("message","系统繁忙,请稍后重试!");
+        }catch (Exception e) {
+            e.printStackTrace();
+            if (res.get("message") == null) {
+                res.put("message", "发生未知异常,订单取消失败");
+            }
+        }
 		res.put("code", 0);
 		res.put("message", "已收款");
 		return res;

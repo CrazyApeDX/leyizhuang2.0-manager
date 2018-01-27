@@ -95,6 +95,9 @@ public class TdPriceCountService {
 	
 	@Autowired
 	private TdDiySiteService tdDiySiteService;
+	
+	@Autowired
+	TdReturnNoteService tdReturnNoteService;
 
 	/**
 	 * 计算订单价格和能使用的最大的预存款的方法
@@ -1199,7 +1202,8 @@ public class TdPriceCountService {
 				tdCashReturnNote.setIsOperated(false);
 				tdCashReturnNote.setFinishTime(new Date());
 			}
-			
+			StringBuffer sb = new StringBuffer("");
+			Double all_cash_return = 0.00;
 			// 修改结束
 
 			Map<Long, Double> price_difference = new HashMap<>();
@@ -1335,6 +1339,7 @@ public class TdPriceCountService {
 											// 开始计算退还几张券
 											for (int i = 0; i < useNumber; i++) {
 												if (number > 0) {
+													sb.append(goods.getTitle() + "【产品券】*1");
 													TdCoupon proCoupon = new TdCoupon();
 													proCoupon.setTypeId(3L);
 													proCoupon.setTypeCategoryId(3L);
@@ -1457,6 +1462,7 @@ public class TdPriceCountService {
 											// add end
 											tdCouponService.save(cashCoupon);
 
+											sb.append(cashPrice + "元【通用现金券】*1");
 											total -= cashPrice;
 											cashTotal -= cashPrice;
 											result.put("cashTotal", cashTotal - cashPrice);
@@ -1485,6 +1491,7 @@ public class TdPriceCountService {
 										uncashBalance = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 										user.setUnCashBalance(user.getUnCashBalance() + uncashBalance);
 										user.setBalance(user.getBalance() + uncashBalance);
+										sb.append(uncashBalance + "元【不可提现预存款】");
 										// 添加用于余额变更明细
 										TdBalanceLog balanceLog = new TdBalanceLog();
 										balanceLog.setUserId(user.getId());
@@ -1536,6 +1543,8 @@ public class TdPriceCountService {
 										cashBalance = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 										user.setCashBalance(user.getCashBalance() + cashBalance);
 										user.setBalance(user.getBalance() + cashBalance);
+										sb.append(cashBalance + "元【可提现预存款】");
+										
 										// 记录余额变更明细
 										TdBalanceLog balanceLog = new TdBalanceLog();
 										balanceLog.setUserId(user.getId());
@@ -1603,15 +1612,18 @@ public class TdPriceCountService {
 											// tdCashReturnNoteService.save(note);
 											if (null != tdCashReturnNote) {
 												tdCashReturnNote.setMoney(tdCashReturnNote.getMoney() + otherReturn);
+												sb.append(otherReturn + "元【" +  payType.getTitle() + "】");
 											} else {
 												TdDiySite tdDiySite = this.tdDiySiteService.findOne(order.getDiySiteId());
 												if (null != tdDiySite && "直营".equals(tdDiySite.getCustTypeName())) {
 													new_return_note.setMoney(new_return_note.getMoney() + otherReturn);
+													all_cash_return += otherReturn;
 												} else {
 													BigDecimal bd = new BigDecimal(otherReturn);
 													otherReturn = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 													user.setCashBalance(user.getCashBalance() + otherReturn);
 													user.setBalance(user.getBalance() + otherReturn);
+													sb.append(otherReturn + "元【可提现预存款】");
 													// 记录余额变更明细
 													TdBalanceLog balanceLog = new TdBalanceLog();
 													balanceLog.setUserId(user.getId());
@@ -1680,7 +1692,7 @@ public class TdPriceCountService {
 											// tdCashReturnNoteService.save(note);
 											new_return_note.setMoney(new_return_note.getMoney() + cashReturn);
 											// 修改结束
-
+											 all_cash_return += cashReturn;
 											total -= cashReturn;
 											cashPay -= cashReturn;
 										}
@@ -1714,7 +1726,7 @@ public class TdPriceCountService {
 												// tdCashReturnNoteService.save(note01);
 												new_return_note.setMoney(new_return_note.getMoney() + posReturn);
 												// 修改结束
-
+												all_cash_return += posReturn;
 												total -= posReturn;
 												posPay -= posReturn;
 											}
@@ -1752,7 +1764,7 @@ public class TdPriceCountService {
 												// tdCashReturnNoteService.save(note);
 												new_return_note.setMoney(new_return_note.getMoney() + otherReturn);
 												// 修改结束
-
+												all_cash_return += otherReturn;
 												total -= otherReturn;
 												backOtherPay -= otherReturn;
 											}
@@ -1782,6 +1794,17 @@ public class TdPriceCountService {
 				}
 				// 修改结束
 			}
+			if (all_cash_return > 0) {
+                BigDecimal bd = new BigDecimal(all_cash_return);
+                all_cash_return = bd.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+                sb.append(all_cash_return + "元【现金】");
+            }
+			TdReturnNote returnNote = tdReturnNoteService.findByReturnNumber(returnNoteNumber);
+			if(null != returnNote){
+				returnNote.setReturnDetail(sb.toString());
+				tdReturnNoteService.save(returnNote);
+			}
+			
 			tdUserService.save(user);
 			if (tdCashReturnNotes != null && tdCashReturnNotes.size() > 0) {
 				return tdCashReturnNotes;

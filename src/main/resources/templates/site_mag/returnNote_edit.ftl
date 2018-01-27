@@ -11,8 +11,8 @@
 			top: 55%;
 			left: 50%;
 			margin: -141px 0 0 -201px;
-			width: 250px;
-			height:200px;
+			width: 450px;
+			height:250px;
 			line-height: 210px;
 			text-align:center;
 			font-size: 14px;
@@ -444,8 +444,8 @@
     </form>
 	<div class="dialog">
 		<div class="dialog_title">选择还款方式</div>
-		<div class="dialog_row"><input type="radio" name="turnType" id="" value="1" checked="checked"/> ${str!'退门店现金'}</div>
-		<div class="dialog_row"><input type="radio" name="turnType" id="" value="2"/> 原路退回&nbsp;&nbsp;&nbsp;</div>
+		<div class="dialog_row" style="text-align:left;margin-left:50px;"><input type="radio" name="turnType" id="" value="1" checked="checked"/> ${str!'退门店现金（门店退现金给客户）'}</div>
+		<div class="dialog_row" style="text-align:left;margin-left:50px;"><input type="radio" name="turnType" id="" value="2"/> 原路退回（退款会在1个工作日内，退回原支付账号）</div>
 		<div class="dialog_row"><input onclick="OrderReceive()" class="dialog_btn btn" type="button" value="确定" /><input onclick="hiddenDialog()" class="dialog_btn btn" type="button" value="取消" /> </div>
 	</div>
 

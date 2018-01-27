@@ -1,10 +1,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"><head>
-<title>修改收货信息窗口</title>
-<script type="text/javascript" src="/client/js/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" src="/client/js/lhgdialog.js?skin=idialog"></script>
-<script type="text/javascript" src="/client/js/PCASClass.js"></script>
-<script type="text/javascript" src="/client/js/layout.js"></script>
 <link href="/mag/style/style.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/mag/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="/mag/js/lhgdialog.js?skin=idialog"></script>
+<script type="text/javascript" src="/mag/js/PCASClass.js"></script>
+<script type="text/javascript" src="/mag/js/layout.js"></script>
+<title>修改收货信息窗口</title>
 <script type="text/javascript">
     //窗口API
     var api = frameElement.api, W = api.opener;

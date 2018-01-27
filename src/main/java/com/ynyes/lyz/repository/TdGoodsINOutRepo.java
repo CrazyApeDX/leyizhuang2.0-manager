@@ -161,6 +161,7 @@ public interface TdGoodsINOutRepo extends
 			+" LEFT JOIN td_tbw_back_recm br ON rn.return_number = br.c_po_no"
 			+" LEFT JOIN td_delivery_info di ON di.order_number = o.main_order_number "
 			+" LEFT JOIN td_user u1 ON u1.op_user = rn.driver "
+			//+" LEFT JOIN td_back_main bm ON bm.po_no = rn.return_number "
 			+" LEFT JOIN td_ware_house wh ON wh.wh_number = di.wh_no "
 			+" LEFT JOIN td_order_goods og ON og.td_return_id = rn.id "
 			+" LEFT JOIN td_goods g ON g.id = og.goods_id "

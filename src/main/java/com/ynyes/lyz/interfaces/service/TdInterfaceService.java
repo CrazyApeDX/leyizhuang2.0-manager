@@ -743,6 +743,9 @@ public class TdInterfaceService {
 			cashReciptInf.setReceiptType(tdRecharge.getTypeTitle());
 			cashReciptInf.setReceiptDate(new Date());
 			cashReciptInf.setAmount(tdRecharge.getTotalPrice());
+			if(null != tdUser.getDiyCode() && tdUser.getDiyCode().contains("FX#")){
+				cashReciptInf.setAttribute3(tdUser.getOpUser());
+			}
 			return tdCashReciptInfService.save(cashReciptInf);
 		}
 		return null;

@@ -275,11 +275,14 @@ var theForm = document.forms['form1'];
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="ltable">
   <tbody>
   <tr class="odd_bg">
-    <th width="15%;">选择</th>
-    <th width="25%" align="left" style="padding:8px 0;">&emsp;用户名</th>
-    <th width="10%" align="left">提现金额</th>
-    <th width="20%" align="left">申请时间</th>
-    <th width="10%" align="left">状态</th>
+    <th width="3%;">选择</th>
+    <th width="22%" align="left" style="padding:8px 0;">&emsp;用户名</th>
+    <th width="9%" align="left">收款人姓名</th>
+    <th width="21%" align="left">收款银行</th>
+    <th width="10%" align="left">收款银行卡号</th>
+    <th width="7%" align="center">提现金额</th>
+    <th width="13%" align="left">申请时间</th>
+    <th width="5%" align="left">状态</th>
     <th width="10%" align="center">操作</th>
   </tr>
 
@@ -297,7 +300,10 @@ var theForm = document.forms['form1'];
                     <h4><b>${cashWithdraw.username!""}</b> (姓名：${cashWithdraw.realName!""})</h4>
                   </div>
                 </td>
-                <td align="left">${cashWithdraw.amount!""}</td>
+                <td align="left">${cashWithdraw.payeeName!""}</td>
+                <td align="left">${cashWithdraw.cashBank!""}</td>
+                <td align="left">${cashWithdraw.payeeCardNumber!""}</td>
+                <td align="center">${cashWithdraw.amount!""}</td>
                 <td align="left">${cashWithdraw.createTime!""}</td>
 	            <td align="left">
 	            	<#if cashWithdraw.status??>

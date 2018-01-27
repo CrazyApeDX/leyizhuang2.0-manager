@@ -468,6 +468,9 @@ public class TdOrder {
     //上次更新时间
     @Column(nullable = false)
     private Timestamp lastUpdateTime;
+    
+    //纸质销货单号
+    private String paperSalesNumber;
 
     public Double getRefund() {
         return refund;
@@ -1404,7 +1407,15 @@ public class TdOrder {
         this.alipayMoney = alipayMoney;
     }
 
-    /**
+    public String getPaperSalesNumber() {
+		return paperSalesNumber;
+	}
+
+	public void setPaperSalesNumber(String paperSalesNumber) {
+		this.paperSalesNumber = paperSalesNumber;
+	}
+
+	/**
      * 计算代收金额的方法：如果是代下单的情况，代收金额为导购自己填写的，如果不是代下单的情况，则值为传递给WMS的应收金额
      * 该方法只对于主单有效（分单缺失部分信息，且所涉及字段只用于WMS）
      *
