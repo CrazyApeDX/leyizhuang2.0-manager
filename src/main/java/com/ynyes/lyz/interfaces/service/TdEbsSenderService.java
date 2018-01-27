@@ -758,7 +758,8 @@ public class TdEbsSenderService {
 		cashReceipt.setUserid(toString(tdCashReciptInf.getUserid()));
 		cashReceipt.setUsername(toString(tdCashReciptInf.getUsername()));
 		cashReceipt.setUserphone(toString(tdCashReciptInf.getUserphone()));
-
+		cashReceipt.setAttribute3(toString(tdCashReciptInf.getAttribute3()));
+		
 		String allocationReceiveJson = JSON.toJSONString(cashReceipt);
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("cashReceiptJson", allocationReceiveJson));
