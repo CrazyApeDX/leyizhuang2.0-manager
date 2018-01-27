@@ -801,7 +801,8 @@ public class TdEbsSenderService {
 		cashRefund.setUserid(toString(tdCashRefundInf.getUserid()));
 		cashRefund.setUsername(toString(tdCashRefundInf.getUsername()));
 		cashRefund.setUserphone(toString(tdCashRefundInf.getUserphone()));
-
+		cashRefund.setAttribute3(tdCashRefundInf.getAttribute3());
+		
 		String allocationReceiveJson = JSON.toJSONString(cashRefund);
 		List<NameValuePair> parameters = new ArrayList<NameValuePair>();
 		parameters.add(new BasicNameValuePair("cashRefundJson", allocationReceiveJson));
