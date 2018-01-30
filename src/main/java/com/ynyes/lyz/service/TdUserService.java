@@ -694,7 +694,7 @@ public class TdUserService {
         return repository.queryFXMemberDownList(begin, end, cityName, diyCode, roleDiyIds);
     }
     
-    public void backMoney(TdOrder tdOrder, String serialNumber, Double money, Double pos, Double other, String realPayTime){
+    public void backMoney(TdOrder tdOrder, String serialNumber, Double money, Double pos, Double other, String realPayTime) throws Exception{
     	TdOwnMoneyRecord ownMoneyRecord = this.generateOwnMoneyRecord(serialNumber, tdOrder, money, pos, other, realPayTime);
     	
     	TdUser seller = this.findOne(tdOrder.getSellerId());

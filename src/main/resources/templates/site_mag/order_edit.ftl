@@ -402,6 +402,8 @@
         }
         //提交还款
         function sumbitBackMoney(owned,id){
+        	$('#ascertain').disabled = true;
+        	$('#ascertain').css('background', '#DCDCDC');
         	var money=$('#money').val();
         	var pos=$('#pos').val();
         	var other = $('#other').val();
@@ -424,36 +426,50 @@
         	
         	if (!realPayTime) {
         		alert("请填写真实收款时间");
+        		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
         		return;
         	}
         	
         	if (Number(pos) < 0) {
         		alert("POS收款不能为负数");
+        		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
         		return;
         	}
         	
         	if (Number(pos) > 0 && !serialNumber) {
         		alert("请填写POS刷卡凭证号");
+        		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
         		return;
         	}
         	
         	if (Number(serialNumber) < 0) {
-    		alert("请正确填写POS刷卡凭证号(后6位)");
-    		return;
+	    		alert("请正确填写POS刷卡凭证号(后6位)");
+	    		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
+    			return;
     		}
         	
         	if (Number(pos) > 0&& null != serialNumber && serialNumber != "" && l != 6) {
         		alert("请正确填写POS刷卡凭证号(后6位)");
+        		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
         		return;
         	}
         	
         	if (!pos && null != serialNumber && serialNumber != "" ) {
         		alert("请填写POS金额");
+        		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
         		return;
         	}
         	
         	if (Number(other) < 0) {
         		alert("其他收款不能为负数");
+        		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
         		return;
         	}
         	
@@ -469,8 +485,10 @@
         	            	 $.dialog.alert('错误提示：' + '网络连接失败', function () { });
         	            },
         	            success: function (data) {
-        	                 if (data.code == -1) {
-        	                	 $.dialog.alert('错误提示：' + data.message, function () { });
+        	                if (data.code == -1) {
+        	                	$.dialog.alert('错误提示：' + data.message, function () { });
+        	                	$('#ascertain').disabled = false;
+        						$('#ascertain').css('background', '#EA5D0E');
         	                } else if(data.code == 0){
         	                	$.dialog.tips(data.message, 2, '32X32/succ.png', function () { location.reload(); }); //刷新页面
         	                }
@@ -478,6 +496,8 @@
         	        });
         	}else{
         		alert("必须一次性交清不允许欠款！");
+        		$('#ascertain').disabled = false;
+        		$('#ascertain').css('background', '#EA5D0E');
         	}
         	
         }
@@ -1365,7 +1385,7 @@
 	            <i>日期</i>
 	        </div>
 		</div>
-		<div class="dialog_row"><input onclick="sumbitBackMoney(<#if ownPrice??>${ownPrice?c}<#else>0</#if>,${order.id?c })" class="dialog_btn btn" type="button" value="确定" /><input onclick="hiddenDialog()" class="dialog_btn btn" type="button" value="取消" /> </div>
+		<div class="dialog_row"><input onclick="sumbitBackMoney(<#if ownPrice??>${ownPrice?c}<#else>0</#if>,${order.id?c })" class="dialog_btn btn" id="ascertain" type="button" value="确定" /><input onclick="hiddenDialog()" class="dialog_btn btn" type="button" value="取消" /> </div>
 	</div>
 
 </body></html>
