@@ -1,19 +1,18 @@
 package com.ynyes.lyz.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
+import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 public class TdReconciliation{
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
+	@GenericGenerator(name= "paymentableGenerator",strategy = "uuid")
+	private String id;
 	//下单时间
 	@Column
 	private Date orderTime;
@@ -110,6 +109,204 @@ public class TdReconciliation{
 	//订单备注
 	@Column
 	private String remark;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public Date getOrderTime() {
+		return orderTime;
+	}
+	public void setOrderTime(Date orderTime) {
+		this.orderTime = orderTime;
+	}
+	public Long getUserId() {
+		return userId;
+	}
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+	public String getMainOrderNumber() {
+		return mainOrderNumber;
+	}
+	public void setMainOrderNumber(String mainOrderNumber) {
+		this.mainOrderNumber = mainOrderNumber;
+	}
+	public String getDeliverTypeTitle() {
+		return deliverTypeTitle;
+	}
+	public void setDeliverTypeTitle(String deliverTypeTitle) {
+		this.deliverTypeTitle = deliverTypeTitle;
+	}
+	public String getDiySiteName() {
+		return diySiteName;
+	}
+	public void setDiySiteName(String diySiteName) {
+		this.diySiteName = diySiteName;
+	}
+	public String getDiySiteType() {
+		return diySiteType;
+	}
+	public void setDiySiteType(String diySiteType) {
+		this.diySiteType = diySiteType;
+	}
+	public String getSellerRealName() {
+		return sellerRealName;
+	}
+	public void setSellerRealName(String sellerRealName) {
+		this.sellerRealName = sellerRealName;
+	}
+	public Double getTotalGoodsPrice() {
+		return totalGoodsPrice;
+	}
+	public void setTotalGoodsPrice(Double totalGoodsPrice) {
+		this.totalGoodsPrice = totalGoodsPrice;
+	}
+	public Double getMemberDiscount() {
+		return memberDiscount;
+	}
+	public void setMemberDiscount(Double memberDiscount) {
+		this.memberDiscount = memberDiscount;
+	}
+	public Double getActivitySub() {
+		return activitySub;
+	}
+	public void setActivitySub(Double activitySub) {
+		this.activitySub = activitySub;
+	}
+	public Double getProCouponFee() {
+		return proCouponFee;
+	}
+	public void setProCouponFee(Double proCouponFee) {
+		this.proCouponFee = proCouponFee;
+	}
+	public Double getCashCouponFee() {
+		return cashCouponFee;
+	}
+	public void setCashCouponFee(Double cashCouponFee) {
+		this.cashCouponFee = cashCouponFee;
+	}
+	public Double getBalanceUsed() {
+		return balanceUsed;
+	}
+	public void setBalanceUsed(Double balanceUsed) {
+		this.balanceUsed = balanceUsed;
+	}
+	public Double getAliPay() {
+		return aliPay;
+	}
+	public void setAliPay(Double aliPay) {
+		this.aliPay = aliPay;
+	}
+	public Double getWechatPay() {
+		return wechatPay;
+	}
+	public void setWechatPay(Double wechatPay) {
+		this.wechatPay = wechatPay;
+	}
+	public Double getUnionPay() {
+		return unionPay;
+	}
+	public void setUnionPay(Double unionPay) {
+		this.unionPay = unionPay;
+	}
+	public Double getDeliveryFee() {
+		return deliveryFee;
+	}
+	public void setDeliveryFee(Double deliveryFee) {
+		this.deliveryFee = deliveryFee;
+	}
+	public Double getLeftPrice() {
+		return leftPrice;
+	}
+	public void setLeftPrice(Double leftPrice) {
+		this.leftPrice = leftPrice;
+	}
+	public Double getDeliveryCash() {
+		return deliveryCash;
+	}
+	public void setDeliveryCash(Double deliveryCash) {
+		this.deliveryCash = deliveryCash;
+	}
+	public Double getDeliveryPos() {
+		return deliveryPos;
+	}
+	public void setDeliveryPos(Double deliveryPos) {
+		this.deliveryPos = deliveryPos;
+	}
+	public Double getSellerCash() {
+		return sellerCash;
+	}
+	public void setSellerCash(Double sellerCash) {
+		this.sellerCash = sellerCash;
+	}
+	public Double getSellerPos() {
+		return sellerPos;
+	}
+	public void setSellerPos(Double sellerPos) {
+		this.sellerPos = sellerPos;
+	}
+	public Double getSellerOther() {
+		return sellerOther;
+	}
+	public void setSellerOther(Double sellerOther) {
+		this.sellerOther = sellerOther;
+	}
+	public Double getDue() {
+		return due;
+	}
+	public void setDue(Double due) {
+		this.due = due;
+	}
+	public String getWhName() {
+		return whName;
+	}
+	public void setWhName(String whName) {
+		this.whName = whName;
+	}
+	public String getDeliverRealName() {
+		return deliverRealName;
+	}
+	public void setDeliverRealName(String deliverRealName) {
+		this.deliverRealName = deliverRealName;
+	}
+	public String getDeliverUsername() {
+		return deliverUsername;
+	}
+	public void setDeliverUsername(String deliverUsername) {
+		this.deliverUsername = deliverUsername;
+	}
+	public String getShippingName() {
+		return shippingName;
+	}
+	public void setShippingName(String shippingName) {
+		this.shippingName = shippingName;
+	}
+	public String getShippingPhone() {
+		return shippingPhone;
+	}
+	public void setShippingPhone(String shippingPhone) {
+		this.shippingPhone = shippingPhone;
+	}
+	public String getShippingAddress() {
+		return shippingAddress;
+	}
+	public void setShippingAddress(String shippingAddress) {
+		this.shippingAddress = shippingAddress;
+	}
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 	
 
 }

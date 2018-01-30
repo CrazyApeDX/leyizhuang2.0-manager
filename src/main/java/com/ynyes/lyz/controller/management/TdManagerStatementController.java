@@ -103,7 +103,6 @@ public class TdManagerStatementController extends TdManagerBaseController {
     TdSettingService tdSettingService;
 
     @Autowired
-
     TdOrderDeliveryFeeDetailStatementService tdOrderDeliveryFeeDetailStatementService;
 
     @Autowired
@@ -116,8 +115,10 @@ public class TdManagerStatementController extends TdManagerBaseController {
     TdSalesDetailForFranchiserService tdSalesDetailForFranchiserService;
 
     @Autowired
-
     TdGoodsInOutFranchiseesService tdGoodsInOutFranchiseesService;
+    
+    @Autowired
+    private TdReconciliationService tdReconciliationService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerStatementController.class);
 
@@ -499,6 +500,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
             fileName = "经销门店会员注册统计表";
         } else if (statusId == 22) {
             fileName = "分销销售统计表";
+        } else if (statusId == 23) {
+            fileName = "对账单报表";
         }
         return fileName;
     }
@@ -561,6 +564,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
             wb = FXMemberWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
         } else if (statusId == 22) {//分销销售明细报表
             wb = FXStoreSalesWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
+        } else if (statusId == 23) {//对账单报表
+            wb = franchisor(begin, end, diyCode, cityName, username, roleDiyIds);
         }
         return wb;
     }
@@ -2190,31 +2195,31 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 Double diyReceipt = 0.0; //门店收款总额
                 for (TdSubOwn tdSubOwn : tdSubOwnList) {
                     if (tdSubOwn.getOrderNumber().contains("HR")) {
-//                        HRTotalPrice +=  tdSubOwn.getTotalPrice();
-//                        HRotherPay += tdSubOwn.getOtherPay();
-                        HRTotalPrice = CountUtil.add(tdSubOwn.getTotalPrice(), HRTotalPrice);
-                        HRotherPay = CountUtil.add(tdSubOwn.getOtherPay(), HRotherPay);
+                        HRTotalPrice +=  tdSubOwn.getTotalPrice();
+                        HRotherPay += tdSubOwn.getOtherPay();
+//                        HRTotalPrice = CountUtil.add(tdSubOwn.getTotalPrice(), HRTotalPrice);
+//                        HRotherPay = CountUtil.add(tdSubOwn.getOtherPay(), HRotherPay);
                     } else if (tdSubOwn.getOrderNumber().contains("LYZ") || tdSubOwn.getOrderNumber().contains("YR") || tdSubOwn.getOrderNumber().contains("YF")) {
-//                        OtherTotalPrice += tdSubOwn.getTotalPrice();
-//                        elseOtherPay += tdSubOwn.getOtherPay();
-                    	OtherTotalPrice = CountUtil.add(tdSubOwn.getTotalPrice(), OtherTotalPrice);
-                    	elseOtherPay = CountUtil.add(tdSubOwn.getOtherPay(), elseOtherPay);
+                        OtherTotalPrice += tdSubOwn.getTotalPrice();
+                        elseOtherPay += tdSubOwn.getOtherPay();
+//                    	OtherTotalPrice = CountUtil.add(tdSubOwn.getTotalPrice(), OtherTotalPrice);
+//                    	elseOtherPay = CountUtil.add(tdSubOwn.getOtherPay(), elseOtherPay);
                     }
-//                    deliveryReceipt = tdSubOwn.getMoney() + tdSubOwn.getPos();
-//                    diyReceipt = tdSubOwn.getBackMoney() + tdSubOwn.getBackPos() + tdSubOwn.getBackOther();
-                    deliveryReceipt = CountUtil.add(tdSubOwn.getMoney(), tdSubOwn.getPos());
-                    diyReceipt = CountUtil.add(tdSubOwn.getBackMoney(), tdSubOwn.getBackPos(),tdSubOwn.getBackOther());
+                    deliveryReceipt = tdSubOwn.getMoney() + tdSubOwn.getPos();
+                    diyReceipt = tdSubOwn.getBackMoney() + tdSubOwn.getBackPos() + tdSubOwn.getBackOther();
+//                    deliveryReceipt = CountUtil.add(tdSubOwn.getMoney(), tdSubOwn.getPos());
+//                    diyReceipt = CountUtil.add(tdSubOwn.getBackMoney(), tdSubOwn.getBackPos(),tdSubOwn.getBackOther());
                 }
 
                 if ((deliveryReceipt + diyReceipt) <= (OtherTotalPrice - elseOtherPay)) {
-//                    HROwn = HRTotalPrice - HRotherPay;
-//                    otherOwn = OtherTotalPrice - elseOtherPay - deliveryReceipt - diyReceipt;
-                	HROwn = CountUtil.sub(HRTotalPrice, HRotherPay);
-                	otherOwn = CountUtil.sub(OtherTotalPrice, elseOtherPay, deliveryReceipt, diyReceipt);
+                    HROwn = HRTotalPrice - HRotherPay;
+                    otherOwn = OtherTotalPrice - elseOtherPay - deliveryReceipt - diyReceipt;
+//                	HROwn = CountUtil.sub(HRTotalPrice, HRotherPay);
+//                	otherOwn = CountUtil.sub(OtherTotalPrice, elseOtherPay, deliveryReceipt, diyReceipt);
                 	
                 } else {
-//                    HROwn = HRTotalPrice + OtherTotalPrice - HRotherPay - elseOtherPay - deliveryReceipt - diyReceipt;
-                	HROwn = CountUtil.sub(CountUtil.add(HRTotalPrice, OtherTotalPrice), OtherTotalPrice, elseOtherPay, deliveryReceipt, diyReceipt);
+                    HROwn = HRTotalPrice + OtherTotalPrice - HRotherPay - elseOtherPay - deliveryReceipt - diyReceipt;
+//                	HROwn = CountUtil.sub(CountUtil.add(HRTotalPrice, OtherTotalPrice), OtherTotalPrice, elseOtherPay, deliveryReceipt, diyReceipt);
                     otherOwn = 0.0;
                 }
 
@@ -4410,6 +4415,283 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 setStoreSalesRowValueAndStyle(cells, cellStyle, row);
             }
         }
+        return wb;
+    }
+    
+    
+    /**
+     * @param begin      开始时间
+     * @param end        结束时间
+     * @param diyCode    门店编码
+     * @param cityName   城市名称
+     * @param username   管理员用户名
+     * @param roleDiyIds 授权管理门店的id
+     * @return
+     */
+    private HSSFWorkbook franchisor(Date begin, Date end, String diyCode, String cityName, String username,
+                                           List<String> roleDiyIds) {
+
+        //创建工作簿
+        HSSFWorkbook wb = new HSSFWorkbook();
+        //查询要写入excel的行记录
+        List<TdReconciliation> franchisorList = this.tdReconciliationService.queryDownList(begin, end, cityName, diyCode, roleDiyIds);
+
+        int maxRowNum = 60000;
+        int maxSize = 0;
+        if (franchisorList != null) {
+            maxSize = franchisorList.size();
+        }
+        int sheets = maxSize / maxRowNum + 1;
+
+        // 写入excel文件数据信息
+        for (int i = 0; i < sheets; i++) {
+
+            // 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+            HSSFSheet sheet = wb.createSheet("第" + (i + 1) + "页");
+            // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+            // 列宽
+            int[] widths = {18, 18, 18, 18, 20, 18, 18, 20, 18, 30, 30, 25, 25, 18, 18, 18, 18, 18,
+            		18, 18, 18, 18, 20, 18, 18, 20, 18, 30, 30, 25, 25,18};
+            sheetColumnWidth(sheet, widths);
+
+            // 第四步，创建单元格，并设置值表头 设置表头居中
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+            style.setWrapText(true);
+
+            // 设置标题
+            HSSFRow row = sheet.createRow((int) 0);
+
+            String[] cellValues = {"下单时间","会员id","会员姓名","主单号","配送方式","门店名称","门店类型","导购名称",
+            		"商品总额","会员折扣","促销折扣","产品券抵扣金额","现金券抵扣金额","预存款使用金额", "支付宝支付金额",
+            		"微信支付金额","银联支付金额","运费","应付金额","配送现金","配送pos","门店现金", "门店pos",
+            		"门店其他","欠款","中转仓","配送人员","配送人员电话","收货人姓名","收货人电话","收货人地址","订单备注",};
+            cellDates(cellValues, style, row);
+
+            for (int j = 0; j < maxRowNum; j++) {
+                if (j + i * maxRowNum >= maxSize) {
+                    break;
+                }
+                TdReconciliation tdReconciliation = franchisorList.get(j + i * maxRowNum);
+                row = sheet.createRow((int) j + 1);
+
+                // 下单时间
+
+                if (null != tdReconciliation.getOrderTime()) {
+                    row.createCell(0).setCellValue(objToString(tdReconciliation.getOrderTime()));
+                } else {
+                    row.createCell(0).setCellValue(" ");
+                }
+
+                // 会员id
+
+                if (null != tdReconciliation.getUserId()) {
+                    row.createCell(1).setCellValue(objToString(tdReconciliation.getUserId()));
+                } else {
+                    row.createCell(1).setCellValue(" ");
+                }
+
+                // 会员姓名
+                if (null != tdReconciliation.getRealName()) {
+                    row.createCell(2).setCellValue(objToString(tdReconciliation.getRealName()));
+                } else {
+                    row.createCell(2).setCellValue(objToString(" "));
+                }
+
+                // 主单号
+                if (null != tdReconciliation.getMainOrderNumber()) {
+                    row.createCell(3).setCellValue(objToString(tdReconciliation.getMainOrderNumber()));
+                } else {
+                    row.createCell(3).setCellValue(objToString(" "));
+                }
+
+                // 配送方式
+                if (null != tdReconciliation.getDeliverTypeTitle()) {
+                    row.createCell(4).setCellValue(objToString(tdReconciliation.getDeliverTypeTitle()));
+                } else {
+                    row.createCell(4).setCellValue(objToString(" "));
+                }
+
+                //门店名称
+                if (null != tdReconciliation.getDiySiteName()) {
+                    row.createCell(5).setCellValue(objToString(tdReconciliation.getDiySiteName()));
+                } else {
+                    row.createCell(5).setCellValue(objToString(" "));
+                }
+
+                // 门店类型
+                if (null != tdReconciliation.getDiySiteType()) {
+                    row.createCell(6).setCellValue(objToString(tdReconciliation.getDiySiteType()));
+                } else {
+                    row.createCell(6).setCellValue(objToString(" "));
+                }
+
+                // 导购名称
+                if (null != tdReconciliation.getSellerRealName()) {
+                    row.createCell(7).setCellValue(
+                            objToString(objToString(tdReconciliation.getSellerRealName())));
+                } else {
+                    row.createCell(7).setCellValue(objToString(" "));
+                }
+
+                // 商品总额
+                if (null != tdReconciliation.getTotalGoodsPrice()) {
+                    row.createCell(8).setCellValue(objToString(tdReconciliation.getTotalGoodsPrice()));
+                } else {
+                    row.createCell(8).setCellValue(objToString("0"));
+                }
+
+                // 会员折扣
+                if (null != tdReconciliation.getMemberDiscount()) {
+                    row.createCell(9).setCellValue(objToString(tdReconciliation.getMemberDiscount()));
+                } else {
+                    row.createCell(9).setCellValue(objToString("0"));
+                }
+
+                // 满减金额
+                if (null != tdReconciliation.getActivitySub()) {
+                    row.createCell(10).setCellValue(objToString(tdReconciliation.getActivitySub()));
+                } else {
+                    row.createCell(10).setCellValue(objToString("0"));
+                }
+
+                // 产品券扣减金额
+                if (null != tdReconciliation.getProCouponFee()) {
+                    row.createCell(11).setCellValue(objToString(tdReconciliation.getProCouponFee()));
+                } else {
+                    row.createCell(11).setCellValue(objToString("0"));
+                }
+
+                // 现金券扣减金额
+                if (null != tdReconciliation.getCashCouponFee()) {
+                    row.createCell(12).setCellValue(objToString(tdReconciliation.getCashCouponFee()));
+                } else {
+                    row.createCell(12).setCellValue(objToString("0"));
+                }
+
+                // 预存款使用额
+                if (null != tdReconciliation.getBalanceUsed()) {
+                	row.createCell(13).setCellValue(objToString(tdReconciliation.getBalanceUsed()));
+                } else {
+                    row.createCell(13).setCellValue(objToString("0"));
+                }
+
+                // 支付宝支付金额
+                if (null != tdReconciliation.getAliPay()) {
+                    row.createCell(14).setCellValue(objToString(tdReconciliation.getAliPay()));
+                } else {
+                    row.createCell(14).setCellValue(objToString("0"));
+                }
+
+                // 微信支付金额
+                if (null != tdReconciliation.getWechatPay()) {
+                    row.createCell(15).setCellValue(objToString(tdReconciliation.getWechatPay()));
+                }  else {
+                    row.createCell(15).setCellValue("0");
+                }
+
+                // 银联支付金额
+                if (null != tdReconciliation.getUnionPay()) {
+                    row.createCell(16).setCellValue(objToString(tdReconciliation.getUnionPay()));
+                } else {
+                    row.createCell(16).setCellValue(objToString("0"));
+                }
+
+                // 运费
+                if (null != tdReconciliation.getDeliveryFee()) {
+                    row.createCell(17).setCellValue(objToString(tdReconciliation.getDeliveryFee()));
+                } else {
+                    row.createCell(17).setCellValue(objToString("0"));
+                }
+
+                // 应付金额
+                if (null != tdReconciliation.getLeftPrice()) {
+                    row.createCell(18).setCellValue(objToString(tdReconciliation.getLeftPrice()));
+                } else {
+                    row.createCell(18).setCellValue(objToString("0"));
+                }
+                // 配送收款现金
+                if (null != tdReconciliation.getDeliveryCash()) {
+                    row.createCell(19).setCellValue(objToString(tdReconciliation.getDeliveryCash()));
+                } else {
+                    row.createCell(19).setCellValue(objToString("0"));
+                }
+                // 配送收款POS
+                if (null != tdReconciliation.getDeliveryPos()) {
+                    row.createCell(20).setCellValue(objToString(tdReconciliation.getDeliveryPos()));
+                } else {
+                    row.createCell(20).setCellValue(objToString("0"));
+                }
+                // 导购收款现金
+                if (null != tdReconciliation.getSellerCash()) {
+                    row.createCell(21).setCellValue(objToString(tdReconciliation.getSellerCash()));
+                } else {
+                    row.createCell(21).setCellValue(objToString("0"));
+                }
+                // 导购收款POS
+                if (null != tdReconciliation.getSellerPos()) {
+                    row.createCell(22).setCellValue(objToString(tdReconciliation.getSellerPos()));
+                } else {
+                    row.createCell(22).setCellValue(objToString("0"));
+                }
+                // 导购收款其他
+                if (null != tdReconciliation.getSellerOther()) {
+                    row.createCell(23).setCellValue(objToString(tdReconciliation.getSellerOther()));
+                } else {
+                    row.createCell(23).setCellValue(objToString("0"));
+                }
+                // 收款之后的欠款金额
+                if (null != tdReconciliation.getDue()) {
+                    row.createCell(24).setCellValue(objToString(tdReconciliation.getDue()));
+                } else {
+                    row.createCell(24).setCellValue(objToString("0"));
+                }
+                // 中转仓
+                if (null != tdReconciliation.getWhName()) {
+                    row.createCell(25).setCellValue(objToString(tdReconciliation.getWhName()));
+                } else {
+                    row.createCell(25).setCellValue(objToString(" "));
+                }
+                // 配送人员
+                if (null != tdReconciliation.getDeliverRealName()) {
+                    row.createCell(26).setCellValue(objToString(tdReconciliation.getDeliverRealName()));
+                } else {
+                    row.createCell(26).setCellValue(objToString(" "));
+                }
+                // 配送人员电话
+                if (null != tdReconciliation.getDeliverUsername()) {
+                    row.createCell(27).setCellValue(objToString(tdReconciliation.getDeliverUsername()));
+                } else {
+                    row.createCell(27).setCellValue(objToString(" "));
+                }
+                // 收货人姓名
+                if (null != tdReconciliation.getShippingName()) {
+                    row.createCell(28).setCellValue(objToString(tdReconciliation.getShippingName()));
+                } else {
+                    row.createCell(28).setCellValue(objToString(" "));
+                }
+                // 收货人电话
+                if (null != tdReconciliation.getShippingPhone()) {
+                    row.createCell(29).setCellValue(objToString(tdReconciliation.getShippingPhone()));
+                } else {
+                    row.createCell(29).setCellValue(objToString(" "));
+                }
+                // 收货人地址
+                if (null != tdReconciliation.getShippingAddress()) {
+                    row.createCell(30).setCellValue(objToString(tdReconciliation.getShippingAddress()));
+                } else {
+                    row.createCell(30).setCellValue(objToString(" "));
+                }
+                // 订单备注
+                if (null != tdReconciliation.getRemark()) {
+                    row.createCell(31).setCellValue(objToString(tdReconciliation.getRemark()));
+                } else {
+                    row.createCell(31).setCellValue(objToString(" "));
+                }
+
+            }
+        }
+
         return wb;
     }
 
