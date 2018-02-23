@@ -179,10 +179,14 @@ public class TdUser {
 	@Column(length = 10, nullable = false)
 	private Long memberRatingId;
 	
-	//绑定微信时间
+	//绑定时间
 	@Column
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date memberRatingUpdateTime;
+	
+	//会员编号
+	private String memberNum;
+		
 	public Integer getRedPacketFlag() {
 		return redPacketFlag;
 	}
@@ -496,6 +500,14 @@ public class TdUser {
 
 	public void setMemberRatingUpdateTime(Date memberRatingUpdateTime) {
 		this.memberRatingUpdateTime = memberRatingUpdateTime;
+	}
+
+	public String getMemberNum() {
+		return memberNum;
+	}
+
+	public void setMemberNum(String memberNum) {
+		this.memberNum = memberNum;
 	}
 
 	@Override
