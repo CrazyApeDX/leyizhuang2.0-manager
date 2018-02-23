@@ -554,6 +554,38 @@ public class TdCommonService {
 
 		return priceItemList.get(0);
 	}
+	
+	/**
+	 * @title 查询专供价
+	 * @describe 
+	 * @author Generation Road
+	 * @date 2018年2月23日
+	 * @param goods
+	 * @param listHeaderId
+	 * @return
+	 */
+	public TdPriceListItem getGoodsZGPrice(TdGoods goods, Long listHeaderId) {
+
+		if (null == goods) {
+			return null;
+		}
+
+		if (null == goods.getInventoryItemId()) {
+			return null;
+		}
+
+		List<TdPriceListItem> priceItemList = tdPriceListItemService
+				.findByListHeaderIdAndInventoryItemIdAndStartDateActiveAndEndDateActive(listHeaderId,
+						goods.getInventoryItemId(), new Date(), new Date());
+
+		if (null == priceItemList || priceItemList.size() == 0 || priceItemList.size() > 1) {
+			return null;
+		}
+
+		return priceItemList.get(0);
+	}
+
+	
 	/**
 	 * @title 查找一个商品价目表项的方法
 	 * @describe 新方法

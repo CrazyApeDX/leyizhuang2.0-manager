@@ -174,6 +174,15 @@ public class TdUser {
 	// 修改导购的时间
 	private Date changeSellerTime;
 	
+
+	// 会员等级id
+	@Column(length = 10, nullable = false)
+	private Long memberRatingId;
+	
+	//绑定微信时间
+	@Column
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	private Date memberRatingUpdateTime;
 	public Integer getRedPacketFlag() {
 		return redPacketFlag;
 	}
@@ -470,6 +479,23 @@ public class TdUser {
 
 	public void setVersion(Timestamp version) {
 		this.version = version;
+	}
+	
+
+	public Long getMemberRatingId() {
+		return memberRatingId;
+	}
+
+	public void setMemberRatingId(Long memberRatingId) {
+		this.memberRatingId = memberRatingId;
+	}
+
+	public Date getMemberRatingUpdateTime() {
+		return memberRatingUpdateTime;
+	}
+
+	public void setMemberRatingUpdateTime(Date memberRatingUpdateTime) {
+		this.memberRatingUpdateTime = memberRatingUpdateTime;
 	}
 
 	@Override

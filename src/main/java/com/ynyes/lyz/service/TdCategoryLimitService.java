@@ -92,4 +92,11 @@ public class TdCategoryLimitService {
 	public List<TdCategoryLimit> findByTitleContaining(String title){
 		return repository.findByTitleContaining(title);
 	}
+	
+	public TdCategoryLimit findBySobIdAndCategoryId(Long sobId, Long categoryId) {
+		if (null == sobId) {
+			return null;
+		}
+		return repository.findBySobIdAndCategoryId(sobId, categoryId);
+	}
 }

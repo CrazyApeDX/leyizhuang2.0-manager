@@ -25,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ynyes.lyz.entity.TdCategoryLimit;
 import com.ynyes.lyz.entity.TdCity;
 import com.ynyes.lyz.entity.TdCoupon;
 import com.ynyes.lyz.entity.TdDiySite;
 import com.ynyes.lyz.entity.TdGoods;
+import com.ynyes.lyz.entity.TdMemberRating;
 import com.ynyes.lyz.entity.TdOrder;
 import com.ynyes.lyz.entity.TdOrderGoods;
 import com.ynyes.lyz.entity.TdPhotoOrderInfo;
@@ -38,11 +40,13 @@ import com.ynyes.lyz.entity.TdSetting;
 import com.ynyes.lyz.entity.TdShippingAddress;
 import com.ynyes.lyz.entity.TdSmsAccount;
 import com.ynyes.lyz.entity.user.TdUser;
+import com.ynyes.lyz.service.TdCategoryLimitService;
 import com.ynyes.lyz.service.TdCityService;
 import com.ynyes.lyz.service.TdCommonService;
 import com.ynyes.lyz.service.TdCouponService;
 import com.ynyes.lyz.service.TdDiySiteService;
 import com.ynyes.lyz.service.TdGoodsService;
+import com.ynyes.lyz.service.TdMemberRatingService;
 import com.ynyes.lyz.service.TdOrderService;
 import com.ynyes.lyz.service.TdPhotoOrderGoodsInfoService;
 import com.ynyes.lyz.service.TdPhotoOrderInfoService;
@@ -95,6 +99,12 @@ public class TdManagerPhotoOrderController {
 	
 	@Autowired
 	private TdSmsAccountService tdSmsAccountService;
+	
+	@Autowired
+	private TdMemberRatingService tdMemberRatingService;
+	
+	@Autowired
+	private TdCategoryLimitService tdCategoryLimitService;
 	
 	private final Logger LOG = LoggerFactory.getLogger(TdManagerPhotoOrderController.class);
 	
@@ -338,17 +348,40 @@ public class TdManagerPhotoOrderController {
 			TdDiySite diySite = tdDiySiteService.findOne(user.getUpperDiySiteId());
 			
 			List<TdGoods> goodsList = new ArrayList<TdGoods>();
+			//查询会员等级
+			TdMemberRating tdMemberRating = this.tdMemberRatingService.findById(user.getMemberRatingId());
 			
 			if (null != goods_page) {
 //				List<TdGoods> tdGoodsList = goods_page.getContent();
 				for (int i = 0; i < goods_page.getContent().size(); i++) {
 					TdGoods goods = goods_page.getContent().get(i);
-					TdPriceListItem priceListItem = tdCommonService.secondGetGoodsPrice(diySite, goods,"ZY");
+					TdPriceListItem priceListItem = null;
+					//查询产品分类
+					TdCategoryLimit tdCategoryLimit = this.tdCategoryLimitService.findBySobIdAndCategoryId(user.getCityId(), goods.getCategoryId());
+					
+					if(null != tdCategoryLimit && null != tdCategoryLimit.getParentId() 
+							&& tdCategoryLimit.getParentId().equals(170L)
+							&& user.getUserType().equals(0L)){
+						if (null != tdMemberRating && tdMemberRating.getRatingNum() >= 2) {
+							Long listHeaderId = tdMemberRating.getHrListHeaderId();
+							if (goods.getBrandId().equals(1L)) {
+								listHeaderId = tdMemberRating.getLyzListHeaderId();
+							} else if (goods.getBrandId().equals(3L)) {
+								listHeaderId = tdMemberRating.getYrListHeaderId();
+							}
+							priceListItem = tdCommonService.getGoodsZGPrice(goods, listHeaderId);
+						}
+					} else {
+						// 根据门店、商品、价格类型查询商品价格信息
+						priceListItem = tdCommonService.secondGetGoodsPrice(diySite, goods, "ZY");
+					}
+					
 					if(priceListItem != null){
 						goods_page.getContent().get(i).setSalePrice(priceListItem.getSalePrice());
 //						goodsList.add(goods);
 					} else {
-						goods_page.getContent().get(i).setSalePrice(0D);
+						goods_page.getContent().remove(i);
+						i--;
 					}
 				}
 			}
@@ -441,7 +474,7 @@ public class TdManagerPhotoOrderController {
 		}
 
 		// 修改订单商品价格
-		if (changeOrderGoodsNewPrice(orderTemp, req)) {
+		if (changeOrderGoodsNewPrice(orderTemp, req, user)) {
 			res.put("status", -1);
 			res.put("message", "亲,你购买的商品已经下架");
 			return res;
@@ -581,7 +614,10 @@ public class TdManagerPhotoOrderController {
 	 * @param req
 	 * @author zp
 	 */
-	private Boolean changeOrderGoodsNewPrice(TdOrder order, HttpServletRequest req) {
+	private Boolean changeOrderGoodsNewPrice(TdOrder order, HttpServletRequest req, TdUser user) {
+		//查询会员等级
+		TdMemberRating tdMemberRating = this.tdMemberRatingService.findById(user.getMemberRatingId());
+		
 		List<TdOrderGoods> goodsList = order.getOrderGoodsList();
 		if (goodsList != null && goodsList.size() > 0) {
 			for (TdOrderGoods tdOrderGoods : goodsList) {
@@ -600,8 +636,27 @@ public class TdManagerPhotoOrderController {
 				// custType = "ZY";
 				// }
 				// }
-				// 根据门店、商品、价格类型查询商品价格信息
-				TdPriceListItem price = tdCommonService.secondGetGoodsPrice(diySite, goods, "ZY");
+				
+				TdPriceListItem price = null;
+				//查询产品分类
+				TdCategoryLimit tdCategoryLimit = this.tdCategoryLimitService.findBySobIdAndCategoryId(user.getCityId(), goods.getCategoryId());
+				
+				if(null != tdCategoryLimit && null != tdCategoryLimit.getParentId() 
+						&& tdCategoryLimit.getParentId().equals(170L)
+						&& user.getUserType().equals(0L)){
+					if (null != tdMemberRating && tdMemberRating.getRatingNum() >= 2) {
+						Long listHeaderId = tdMemberRating.getHrListHeaderId();
+						if (goods.getBrandId().equals(1L)) {
+							listHeaderId = tdMemberRating.getLyzListHeaderId();
+						} else if (goods.getBrandId().equals(3L)) {
+							listHeaderId = tdMemberRating.getYrListHeaderId();
+						}
+						price = tdCommonService.getGoodsZGPrice(goods, listHeaderId);
+					}
+				} else {
+					// 根据门店、商品、价格类型查询商品价格信息
+					price = tdCommonService.secondGetGoodsPrice(diySite, goods, "ZY");
+				}
 
 				if (price == null) {
 					return true;

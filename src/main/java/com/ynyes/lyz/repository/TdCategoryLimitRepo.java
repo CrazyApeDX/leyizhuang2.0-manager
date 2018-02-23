@@ -35,4 +35,6 @@ public interface TdCategoryLimitRepo
 	 * @author zp
 	 */
 	List<TdCategoryLimit> findByTitleContaining(String title);
+	
+	TdCategoryLimit findBySobIdAndCategoryId(Long sobId, Long categoryId);
 }
