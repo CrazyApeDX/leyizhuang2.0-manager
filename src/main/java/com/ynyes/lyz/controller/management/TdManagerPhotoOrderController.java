@@ -380,8 +380,7 @@ public class TdManagerPhotoOrderController {
 						goods_page.getContent().get(i).setSalePrice(priceListItem.getSalePrice());
 //						goodsList.add(goods);
 					} else {
-						goods_page.getContent().remove(i);
-						i--;
+						goods_page.getContent().get(i).setSalePrice(0D);
 					}
 				}
 			}
