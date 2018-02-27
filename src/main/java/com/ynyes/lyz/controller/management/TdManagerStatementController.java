@@ -1,7 +1,9 @@
 package com.ynyes.lyz.controller.management;
 
 import com.ynyes.fitment.foundation.entity.FitCompany;
+import com.ynyes.fitment.foundation.entity.FitSalesManager;
 import com.ynyes.fitment.foundation.service.FitCompanyService;
+import com.ynyes.fitment.foundation.service.FitSalesManagerService;
 import com.ynyes.lyz.entity.*;
 import com.ynyes.lyz.entity.delivery.TdDeliveryFeeHead;
 import com.ynyes.lyz.entity.delivery.TdOrderDeliveryFeeDetail;
@@ -11,7 +13,6 @@ import com.ynyes.lyz.entity.report.TdAgencyFund;
 import com.ynyes.lyz.entity.user.TdUser;
 import com.ynyes.lyz.service.*;
 import com.ynyes.lyz.service.basic.settlement.ISettlementService;
-import com.ynyes.lyz.util.CountUtil;
 import com.ynyes.lyz.util.SiteMagConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.*;
@@ -119,6 +120,9 @@ public class TdManagerStatementController extends TdManagerBaseController {
     
     @Autowired
     private TdReconciliationService tdReconciliationService;
+    
+    @Autowired
+    private FitSalesManagerService fitSalesManagerService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TdManagerStatementController.class);
 
@@ -128,8 +132,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
 	 */
     @RequestMapping(value = "/downdata", method = RequestMethod.GET)
     @ResponseBody
-    public String dowmDataGoodsInOut(HttpServletRequest req, ModelMap map, String begindata, String enddata, HttpServletResponse response, String diyCode, String cityName, Long statusId, String code) throws Exception {
-        LOGGER.info("dowmDataGoodsInOut, begindata=" + begindata + ", enddata=" + enddata + ", diyCode=" + diyCode + ", cityName=" + cityName + ", statusId=" + statusId);
+    public String dowmDataGoodsInOut(HttpServletRequest req, ModelMap map, String begindata, String enddata, HttpServletResponse response, String diyCode, String cityName, Long statusId, String code, Long salasId) throws Exception {
+        LOGGER.info("dowmDataGoodsInOut, begindata=" + begindata + ", enddata=" + enddata + ", diyCode=" + diyCode + ", cityName=" + cityName + ", statusId=" + statusId + ", salasId=" + salasId);
         //检查登录
         String username = (String) req.getSession().getAttribute("manager");
         if (null == username) {
@@ -164,6 +168,19 @@ public class TdManagerStatementController extends TdManagerBaseController {
                 end = getEndTime();
             }
         }
+        
+        List<Long> salesList = new ArrayList<>();
+        if (statusId == 25) {
+        	List<FitSalesManager> fitSalesManagers = new ArrayList<>();
+        	if (null == salasId || salasId.equals(-1L)) {
+        		fitSalesManagers = this.fitSalesManagerService.findAll();
+        		for (int i = 0; i < fitSalesManagers.size(); i++) {
+            		salesList.add(fitSalesManagers.get(i).getId());
+    			}
+			} else {
+				salesList.add(salasId);
+			}
+        } 
 
         //门店管理员只能查询归属门店
         if (tdManagerRole.getTitle().equalsIgnoreCase("门店") || tdManagerRole.getTitle().equalsIgnoreCase("郑州门店")) {
@@ -175,7 +192,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
         try {
             LOGGER.info("dowmDataGoodsInOut, start export excel...");
             HSSFWorkbook wb = acquireHSSWorkBook(statusId, begin, end, diyCode, cityName, username,
-                    tdDiySiteRoleService.userRoleDiyId(tdManagerRole, tdManager), code);
+                    tdDiySiteRoleService.userRoleDiyId(tdManagerRole, tdManager), code, salesList);
             LOGGER.info("dowmDataGoodsInOut, start download excel...");
             String exportAllUrl = SiteMagConstant.backupPath;
             if (statusId == 7) {
@@ -214,7 +231,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
     public String goodsListDialog(String keywords, @PathVariable Long statusId, Integer page, Integer size,
                                   String __EVENTTARGET, String __EVENTARGUMENT, String __VIEWSTATE,
                                   ModelMap map, HttpServletRequest req, String orderStartTime, String orderEndTime, String diyCode, String cityName,
-                                  String oldOrderStartTime, String oldOrderEndTime, String code, Long sobId) {
+                                  String oldOrderStartTime, String oldOrderEndTime, String code, Long sobId, Long salasId) {
 
         String username = (String) req.getSession().getAttribute("manager");
         //判断是否登陆
@@ -266,6 +283,30 @@ public class TdManagerStatementController extends TdManagerBaseController {
         if (statusId == 16) {
             try {
                 companyList = fitCompanyService.findFitCompanyBySobId(sobIdList);
+                System.out.println(companyList);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        if (statusId == 24) {
+            try {
+                companyList.add(fitCompanyService.findOne(7L));
+                System.out.println(companyList);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        if (statusId == 25) {
+            try {
+            	List<FitSalesManager> fitSalesManagers = this.fitSalesManagerService.findAll();
+            	List<Long> salesList = new ArrayList<>();
+            	for (int i = 0; i < fitSalesManagers.size(); i++) {
+            		salesList.add(fitSalesManagers.get(i).getId());
+				}
+            	companyList = fitCompanyService.findFitCompanyBySalesManagerId(salesList);
+            	map.addAttribute("fitSalesManagers", fitSalesManagers);
                 System.out.println(companyList);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
@@ -358,11 +399,16 @@ public class TdManagerStatementController extends TdManagerBaseController {
         map.addAttribute("__EVENTARGUMENT", __EVENTARGUMENT);
         map.addAttribute("__VIEWSTATE", __VIEWSTATE);
         map.addAttribute("code", code);
+        map.addAttribute("salasId", salasId);
 
         if (statusId == 9) {
             return "/site_mag/statement_list_reserve_order";
         } else if (statusId == 16) {
             return "/site_mag/fit_goods_in_out";
+        } else if (statusId == 24) {
+            return "/site_mag/fit_goods_in_out_XQ";
+        } else if (statusId == 25) {
+            return "/site_mag/fit_goods_in_out_JL";
         }
         return "/site_mag/statement_list";
     }
@@ -502,6 +548,10 @@ public class TdManagerStatementController extends TdManagerBaseController {
             fileName = "分销销售统计表";
         } else if (statusId == 23) {
             fileName = "对账单报表";
+        } else if (statusId == 24) {
+            fileName = "喜鹊装饰公司销售明细报表";
+        } else if (statusId == 25) {
+            fileName = "销售经理-装饰公司销售明细报表";
         }
         return fileName;
     }
@@ -518,7 +568,8 @@ public class TdManagerStatementController extends TdManagerBaseController {
      * @return
      * @throws Exception
      */
-    private HSSFWorkbook acquireHSSWorkBook(Long statusId, Date begin, Date end, String diyCode, String cityName, String username, List<String> roleDiyIds, String code) throws Exception {
+    private HSSFWorkbook acquireHSSWorkBook(Long statusId, Date begin, Date end, String diyCode, 
+    		String cityName, String username, List<String> roleDiyIds, String code, List<Long> salesList) throws Exception {
         HSSFWorkbook wb = new HSSFWorkbook();
         if (statusId == 0) {//配送单出退货明细报表
             wb = goodsInOutWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
@@ -551,7 +602,7 @@ public class TdManagerStatementController extends TdManagerBaseController {
         } else if (statusId == 15) {//乐易装华润运费报表（备用）
             wb = LyzHrDeliveryFeeBookBackUp(begin, end, diyCode, cityName, username, roleDiyIds);
         } else if (statusId == 16) {//装饰公司出退货报表
-            wb = fitGoodsInOutBook(begin, end, code, cityName, username);
+            wb = fitGoodsInOutBook(begin, end, code, cityName, username, salesList, statusId);
         } else if (statusId == 17) {//预存款变更商品明细表
             wb = salesDetailForFranchiser(begin, end, diyCode, cityName, username, roleDiyIds);
         } else if (statusId == 18) {//商品出退货报表
@@ -566,6 +617,10 @@ public class TdManagerStatementController extends TdManagerBaseController {
             wb = FXStoreSalesWorkBook(begin, end, diyCode, cityName, username, roleDiyIds);
         } else if (statusId == 23) {//对账单报表
             wb = franchisor(begin, end, diyCode, cityName, username, roleDiyIds);
+        } else if (statusId == 24) {//喜鹊装饰公司销售明细报表
+        	wb = fitGoodsInOutBook(begin, end, code, cityName, username, salesList, statusId);
+        } else if (statusId == 25) {//装饰公司销售明细报表
+        	wb = fitGoodsInOutBook(begin, end, code, cityName, username, salesList, statusId);
         }
         return wb;
     }
@@ -786,12 +841,12 @@ public class TdManagerStatementController extends TdManagerBaseController {
     }
 
 
-    private HSSFWorkbook fitGoodsInOutBook(Date begin, Date end, String code, String cityName, String username) {
+    private HSSFWorkbook fitGoodsInOutBook(Date begin, Date end, String code, String cityName, String username, List<Long> salesList, Long statusId) {
 
         // 第一步，创建一个webbook，对应一个Excel文件
         HSSFWorkbook wb = new HSSFWorkbook();
 
-        List<FitGoodsInOut> goodsInOutList = fitGoodsInOutService.queryDownList(begin, end, cityName, code);
+        List<FitGoodsInOut> goodsInOutList = fitGoodsInOutService.queryDownList(begin, end, cityName, code, salesList, statusId);
 
         int maxRowNum = 60000;
         int maxSize = 0;

@@ -23,4 +23,9 @@ public class FitSalesManagerServiceImpl implements FitSalesManagerService{
 		return this.fitSalesManagerRepo.findByCityCode(cityCode);
 	}
 
+	@Override
+	public List<FitSalesManager> findAll() {
+		return this.fitSalesManagerRepo.findAll();
+	}
+
 }

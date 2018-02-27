@@ -7,5 +7,7 @@ import com.ynyes.fitment.foundation.entity.FitSalesManager;
 public interface FitSalesManagerService {
 	
 	List<FitSalesManager> findByCityCode(String cityCode);
+	
+	List<FitSalesManager> findAll();
 
 }

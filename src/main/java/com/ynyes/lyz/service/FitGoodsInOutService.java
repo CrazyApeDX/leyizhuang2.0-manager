@@ -45,7 +45,8 @@ public class FitGoodsInOutService {
 	 * @return
 	 * @param roleDiyIds 权限门店
 	 */
-	public List<FitGoodsInOut> queryDownList(Date begin,Date end,String cityName,String code){
+	public List<FitGoodsInOut> queryDownList(Date begin,Date end,String cityName,String code,
+			List<Long> salesList, Long statusId){
 		//判断空值
 		if(begin==null){
 			begin=Utils.getSysStartDate();
@@ -59,7 +60,14 @@ public class FitGoodsInOutService {
 		if(StringUtils.isBlank(code)){
 			code="%";
 		}
-		return repository.queryDownList(begin, end, cityName, code);
+		if(salesList==null || salesList.size()==0){
+			salesList.add(0L);
+		}
+		if (statusId.equals(25L)) {
+			return repository.queryDownList(begin, end, cityName, code, salesList);
+		} else {
+			return repository.queryDownList(begin, end, cityName, code);
+		}
 	}
 	
 }

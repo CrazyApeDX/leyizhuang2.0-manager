@@ -31,4 +31,6 @@ public interface FitCompanyService {
 	List<FitCompany> findBySobId(Long sobId);
 	
 	Page<FitCompany> findCompany(Integer page, Integer size, String keywords) throws Exception;
+	
+	List<FitCompany> findFitCompanyBySalesManagerId(List<Long> salesList);
 }
