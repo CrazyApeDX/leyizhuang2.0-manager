@@ -56,7 +56,7 @@ public interface TdDeliveryCheckReportRepo extends
 			+" 		user_type = 5 "
 			+" ) u ON u.op_user = di.driver "
 			+" LEFT JOIN td_ware_house wh ON wh.wh_number = di.wh_no "
-			+" LEFT JOIN td_diy_site diy ON o.diy_site_code = diy.store_code "	
+			+" INNER JOIN td_diy_site diy ON o.diy_site_code = diy.store_code "	
 			+" LEFT JOIN td_return_note rn ON o.order_number = rn.order_number	"
 			+" WHERE "
 			+" 	( diy.city LIKE ?3 or o.city LIKE ?3 ) "
